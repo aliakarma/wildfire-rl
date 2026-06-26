@@ -1,0 +1,16 @@
+# Core runtime dependencies for training / evaluation / figures.
+# Pinned for reproducibility. Regenerate exact hashes with:
+#   pip-compile pyproject.toml -o requirements.lock.txt
+# The geospatial preprocessing stack is intentionally separate (see
+# requirements-geo.txt) because rasterio/GDAL are heavy and only needed to
+# rebuild tensors from raw remote-sensing data.
+
+numpy==1.26.4
+pandas==2.2.2
+matplotlib==3.8.4
+gymnasium==0.29.1
+stable-baselines3==2.3.2
+torch==2.3.1
+omegaconf==2.3.0
+pyyaml==6.0.1
+tqdm==4.66.4

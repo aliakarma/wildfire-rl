@@ -1,0 +1,3 @@
+Evaluation,Reward Mean ± Std,Burned Cells Mean ± Std,Fire Intensity Mean ± Std
+Saudi Native PPO,-40525.74 ± 772.68,521.22 ± 6.75,472.09 ± 5.73
+California PPO,-86180.23 ± 1277.77,794.10 ± 3.20,713.15 ± 2.50

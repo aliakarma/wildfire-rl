@@ -1,0 +1,41 @@
+# =============================================================================
+# Git attributes
+#
+# NOTE ON LARGE FILES:
+# By default this project keeps large binaries (models, raw data, tensors) OUT
+# of git entirely (see .gitignore) and distributes them via Hugging Face Hub /
+# Zenodo. If you deliberately choose to version a SMALL set of derived tensors
+# with Git LFS, uncomment the filters below AND remove the matching ignore rule
+# from .gitignore (e.g. allow data/grids/**). Do NOT LFS-track the 200 MB PPO
+# checkpoints — host those on Hugging Face / Zenodo instead.
+# =============================================================================
+
+# ---- Line endings: keep code LF on all platforms ---------------------------
+* text=auto eol=lf
+*.py    text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.cfg   text eol=lf
+*.toml  text eol=lf
+*.sh    text eol=lf
+Makefile text eol=lf
+
+# ---- Notebooks: treat as text but mark generated for diff sanity -----------
+*.ipynb text eol=lf
+
+# ---- Optional Git LFS (DISABLED by default; see note above) ----------------
+# data/grids/**/*.npy filter=lfs diff=lfs merge=lfs -text
+# *.tif               filter=lfs diff=lfs merge=lfs -text
+# *.nc                filter=lfs diff=lfs merge=lfs -text
+
+# ---- Always treat these as binary ------------------------------------------
+*.png   binary
+*.jpg   binary
+*.gif   binary
+*.pdf   binary
+*.zip   binary
+*.npy   binary
+*.npz   binary
+*.tif   binary
+*.nc    binary

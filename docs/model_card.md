@@ -1,0 +1,49 @@
+# Model Card — Wildfire-RL PPO
+
+## Model details
+
+- **Architecture:** PPO (Stable-Baselines3) with a custom CNN feature extractor
+  (`wildfire_rl.models.cnn.CustomCNN`): Conv(7→32)–ReLU–[MaxPool]–Conv(32→64)–ReLU–
+  [MaxPool]–Flatten–Linear(→256)–ReLU.
+- **Action space:** `Discrete(5)` (up/down/left/right/stay) single-agent;
+  `MultiDiscrete([5]*N)` for centralized MARL.
+- **Observation:** `(7, G, G)` float32 state tensor in [0, 1].
+- **Default hyperparameters:** `lr=3e-4`, `n_steps=2048`, `batch_size=256`, `gamma=0.99`,
+  `gae_lambda=0.95`, `clip_range=0.2`, `ent_coef=0.01`, `total_timesteps=100k`
+  (see `configs/ppo/default.yaml`). Identical across regions for clean domain-shift comparison.
+- **Checkpoint size:** with `cnn_pooling=true` the flattened dim shrinks ~16×, producing far
+  smaller checkpoints than the original no-pooling network (which yielded ~200 MB files).
+
+## Training data
+
+Region state tensors (see [data_card.md](data_card.md)). Models are trained per region and
+per seed (`seeds=[0..4]`).
+
+## Evaluation
+
+- Metrics: episode reward, burned cells (threshold 0.5), fire intensity — over 20 episodes.
+- **Always reported against baselines** (`RandomPolicy`, `NoOpPolicy`) so learned-policy
+  gains are quantifiable.
+- Cross-region transfer is reported as the full symmetric matrix; compare a transferred
+  policy to the **native** policy on the same target environment (not across environments).
+
+## Intended use & limitations
+
+- Research artifact for studying RL wildfire suppression and ecological domain transfer.
+- **Not** for operational fire management. The simulator omits real fire physics; absolute
+  rewards depend on fuel load and are not physically calibrated.
+- A single firefighting agent covers a small patch per step; results should always be read
+  relative to the random/no-op baselines.
+
+## Distribution
+
+Checkpoints are hosted on the Hugging Face Hub (not git). Fetch + verify:
+
+```bash
+python scripts/fetch_models.py --repo aliakarma/wildfire-rl-ppo --verify results/models_manifest.json
+```
+
+## Reproducibility
+
+Each model ships a `results/runs/train_<region>_seed_<s>.json` with git SHA, config hash,
+seed, and library versions. See [reproducibility.md](reproducibility.md).

@@ -1,0 +1,6 @@
+# Northern California — forest/mountain wildfire regime.
+# ROI: ee.Geometry.Rectangle([-124.5, 36.5, -119.0, 41.5])
+region:
+  name: california
+  dir: california
+  grid_size: 32

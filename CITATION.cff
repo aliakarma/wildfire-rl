@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Wildfire-RL: Geospatial Reinforcement Learning for Wildfire Suppression and Cross-Regional Policy Transfer"
+authors:
+  - family-names: Akarma
+    given-names: Ali
+version: 0.1.0
+date-released: "2026-06-26"
+license: MIT
+repository-code: "https://github.com/aliakarma/wildfire-rl"
+keywords:
+  - reinforcement-learning
+  - wildfire
+  - ppo
+  - transfer-learning
+  - multi-agent-reinforcement-learning
+  - geospatial
+  - remote-sensing
+  - domain-generalization
+abstract: >
+  Wildfire-RL is a reproducible framework and benchmark for training proximal-policy-
+  optimization (PPO) agents to suppress wildfires on geospatial state tensors built from
+  ERA5 climate, SRTM terrain, MODIS NDVI fuel, and FIRMS ignition data. It supports
+  single-agent and centralized cooperative multi-agent control, ablation studies,
+  multi-seed statistical evaluation, and a symmetric cross-regional transfer protocol
+  between desert (Saudi Eastern Province) and forest (Northern California) wildfire regimes.
+# Optional: add a Zenodo DOI on first release, e.g.
+# doi: 10.5281/zenodo.XXXXXXX

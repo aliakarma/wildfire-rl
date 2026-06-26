@@ -1,0 +1,4 @@
+Train Environment,Test Environment,Mean Reward,Reward Std,Burned Cells,Fire Intensity
+Saudi,Saudi,-41284.78125,5145.22998046875,598.65,478.530517578125
+Saudi,California,-86674.523438,2820.416016,876.85,715.339294
+California,California,-85326.046875,2272.135254,879.35,718.21991

@@ -1,0 +1,27 @@
+# Keep the Docker build context small and reproducible.
+.git
+.github
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.ipynb_checkpoints
+
+# Large artifacts (mounted at runtime / fetched, never baked into the image)
+models/
+data/
+!data/sample/
+results/logs/
+results/runs/
+figures/*.png
+wandb/
+mlruns/
+*tensorboard*/
+
+# Docs / notebooks not needed at runtime
+docs/
+notebooks/
+*.ipynb

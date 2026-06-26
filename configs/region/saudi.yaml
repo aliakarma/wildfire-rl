@@ -1,0 +1,6 @@
+# Saudi Arabian Eastern Province — desert wildfire regime.
+# ROI: ee.Geometry.Rectangle([45.5, 23.5, 50.5, 28.5])
+region:
+  name: saudi
+  dir: saudi_eastern_province
+  grid_size: 32

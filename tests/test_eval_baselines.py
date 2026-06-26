@@ -1,0 +1,34 @@
+"""Baseline policies + evaluation loop tests (torch-free)."""
+
+from __future__ import annotations
+
+from wildfire_rl.envs.base import make_env_factory
+from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy
+from wildfire_rl.eval.evaluate import evaluate_policy
+
+
+def test_random_policy_evaluation(small_tensor, env_cfg):
+    factory = make_env_factory(state_tensor=small_tensor, config=env_cfg)
+    policy = RandomPolicy(factory().action_space, seed=0)
+    result = evaluate_policy(policy, factory, n_episodes=3, base_seed=0, metrics_cfg=None)
+    s = result["summary"]
+    assert s["n_episodes"] == 3
+    assert "episode_reward_mean" in s
+    assert "burned_cells_mean" in s
+    assert len(result["episodes"]) == 3
+
+
+def test_noop_policy_runs(small_tensor, env_cfg):
+    factory = make_env_factory(state_tensor=small_tensor, config=env_cfg)
+    policy = NoOpPolicy(factory().action_space)
+    result = evaluate_policy(policy, factory, n_episodes=2, base_seed=5)
+    assert result["summary"]["n_episodes"] == 2
+
+
+def test_evaluation_reproducible(small_tensor, env_cfg):
+    factory = make_env_factory(state_tensor=small_tensor, config=env_cfg)
+    p1 = RandomPolicy(factory().action_space, seed=0)
+    p2 = RandomPolicy(factory().action_space, seed=0)
+    r1 = evaluate_policy(p1, factory, n_episodes=3, base_seed=0)
+    r2 = evaluate_policy(p2, factory, n_episodes=3, base_seed=0)
+    assert r1["summary"]["episode_reward_mean"] == r2["summary"]["episode_reward_mean"]

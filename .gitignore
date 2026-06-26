@@ -1,0 +1,149 @@
+# =============================================================================
+# Wildfire-RL .gitignore  —  STRICT: protects against accidental large pushes
+# The repo root is intentionally scoped to THIS project (not the home dir).
+# Large binaries (models, raw data, tensors, figures) are NEVER committed.
+# =============================================================================
+
+# ---- Trained models / checkpoints (2.2 GB+ — published via HF/Zenodo) -------
+# Ignore everything under models/ EXCEPT the explanatory README.
+models/**
+!models/README.md
+*.zip
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.pkl
+*.h5
+*.sb3
+
+# ---- Datasets: raw + processed + generated tensors --------------------------
+# Ignore everything under data/ (re-includes for the sample + README are at the
+# END of this file so they override the *.npy / *.tif rules below).
+data/**
+!data/README.md
+*.npy
+*.npz
+*.nc
+*.nc4
+*.grib
+*.grb
+*.tif
+*.tiff
+*.geotiff
+*.hdf
+*.he5
+
+# ---- Results that are regenerable (keep only canonical small CSVs) ----------
+results/logs/
+results/runs/
+results/**/*.parquet
+
+# ---- Figures (generated; paper-final figures live under docs/paper/) --------
+figures/*.png
+figures/*.jpg
+figures/*.jpeg
+figures/*.gif
+figures/*.svg
+figures/*.pdf
+!figures/.gitkeep
+
+# ---- Experiment tracking ----------------------------------------------------
+wandb/
+mlruns/
+outputs/
+multirun/
+*tensorboard*/
+events.out.tfevents.*
+lightning_logs/
+
+# ---- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ---- Virtual environments ---------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+.conda/
+conda-meta/
+
+# ---- Testing / coverage / typing / linting ----------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+coverage.xml
+*.cover
+
+# ---- Jupyter ----------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+profile_default/
+ipython_config.py
+
+# ---- Secrets / credentials (NEVER commit) -----------------------------------
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.json.key
+.cdsapirc
+.earthengine/
+credentials.json
+service_account*.json
+*secret*
+*token*
+
+# ---- OS / editor ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---- Misc temp --------------------------------------------------------------
+tmp/
+temp/
+_scratch/
+_code/
+_audit_*.py
+_dump.py
+_smoke.py
+_prep.py
+
+# ---- Keep the tiny committed sample (MUST be last to override *.npy etc.) ----
+!data/sample/
+!data/sample/**
+

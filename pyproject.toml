@@ -1,0 +1,110 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wildfire-rl"
+version = "0.1.0"
+description = "Geospatial reinforcement learning for wildfire suppression and cross-regional policy transfer (Saudi Arabia <-> California)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Ali Akarma" }]
+keywords = [
+    "reinforcement-learning", "wildfire", "ppo", "multi-agent-rl",
+    "transfer-learning", "gymnasium", "stable-baselines3", "geospatial",
+    "remote-sensing", "domain-generalization", "benchmark",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Runtime deps. Pinned with compatible-release ranges; exact pins live in
+# requirements.txt for byte-reproducible environments.
+dependencies = [
+    "numpy>=1.24,<2.0",
+    "pandas>=2.0,<3.0",
+    "matplotlib>=3.7,<4.0",
+    "gymnasium>=0.29,<1.1",
+    "stable-baselines3>=2.2,<3.0",
+    "torch>=2.1,<3.0",
+    "omegaconf>=2.3,<3.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+# Geospatial preprocessing stack (heavy; only needed to rebuild tensors from raw).
+geo = [
+    "rasterio>=1.3",
+    "rioxarray>=0.15",
+    "xarray>=2023.1",
+    "netCDF4>=1.6",
+    "cdsapi>=0.6",
+    "earthengine-api>=0.1.380",
+    "geemap>=0.30",
+    "scikit-image>=0.21",
+]
+# Experiment tracking / model hosting (optional).
+track = ["wandb>=0.16", "huggingface-hub>=0.20"]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+    "black>=24.1",
+    "mypy>=1.8",
+    "pre-commit>=3.6",
+    "nbstripout>=0.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/aliakarma/wildfire-rl"
+Repository = "https://github.com/aliakarma/wildfire-rl"
+Issues = "https://github.com/aliakarma/wildfire-rl/issues"
+
+[project.scripts]
+wildfire-rl = "wildfire_rl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+wildfire_rl = ["py.typed"]
+
+# ----------------------------------------------------------------------------
+# Tooling
+# ----------------------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]  # line length handled by black
+
+[tool.ruff.lint.isort]
+known-first-party = ["wildfire_rl"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+ignore_missing_imports = true
+packages = ["wildfire_rl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: end-to-end tests requiring optional deps",
+]
