@@ -14,3 +14,4 @@ torch==2.3.1
 omegaconf==2.3.0
 pyyaml==6.0.1
 tqdm==4.66.4
+scipy==1.13.0

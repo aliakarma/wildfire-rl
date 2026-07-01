@@ -1,0 +1,74 @@
+{
+  "random": {
+    "summary": {
+      "episode_reward_mean": -13205.4519469738,
+      "episode_reward_std": 1453.7155566215515,
+      "burned_cells_mean": 85.5,
+      "burned_cells_std": 12.5,
+      "fire_intensity_mean": 157.14008331298828,
+      "fire_intensity_std": 21.64057159423828,
+      "n_episodes": 2,
+      "burned_threshold": 0.5
+    },
+    "episodes": [
+      {
+        "episode_reward": -11751.73639035225,
+        "burned_cells": 73,
+        "fire_intensity": 135.49951171875
+      },
+      {
+        "episode_reward": -14659.167503595352,
+        "burned_cells": 98,
+        "fire_intensity": 178.78065490722656
+      }
+    ]
+  },
+  "noop": {
+    "summary": {
+      "episode_reward_mean": -13880.322207212448,
+      "episode_reward_std": 645.4139533042908,
+      "burned_cells_mean": 92.5,
+      "burned_cells_std": 5.5,
+      "fire_intensity_mean": 167.9272003173828,
+      "fire_intensity_std": 7.4352874755859375,
+      "n_episodes": 2,
+      "burned_threshold": 0.5
+    },
+    "episodes": [
+      {
+        "episode_reward": -13234.908253908157,
+        "burned_cells": 87,
+        "fire_intensity": 160.49191284179688
+      },
+      {
+        "episode_reward": -14525.736160516739,
+        "burned_cells": 98,
+        "fire_intensity": 175.36248779296875
+      }
+    ]
+  },
+  "ppo_seed_0": {
+    "summary": {
+      "episode_reward_mean": -13947.687814235687,
+      "episode_reward_std": 710.7562272548676,
+      "burned_cells_mean": 92.5,
+      "burned_cells_std": 5.5,
+      "fire_intensity_mean": 169.7673568725586,
+      "fire_intensity_std": 9.013298034667969,
+      "n_episodes": 2,
+      "burned_threshold": 0.5
+    },
+    "episodes": [
+      {
+        "episode_reward": -13236.93158698082,
+        "burned_cells": 87,
+        "fire_intensity": 160.75405883789062
+      },
+      {
+        "episode_reward": -14658.444041490555,
+        "burned_cells": 98,
+        "fire_intensity": 178.78065490722656
+      }
+    ]
+  }
+}
