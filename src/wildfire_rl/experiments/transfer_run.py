@@ -14,9 +14,8 @@ import pandas as pd
 
 from wildfire_rl.config import load_config, to_dict
 from wildfire_rl.envs.base import make_env_factory
-from wildfire_rl.eval.baselines import RandomPolicy
+from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy
 from wildfire_rl.eval.evaluate import evaluate_policy
-from wildfire_rl.eval.transfer import transfer_matrix
 from wildfire_rl.logging_utils import get_logger, write_run_metadata
 from wildfire_rl.paths import ensure_dir, models_dir, region_tensor_path, results_dir
 
@@ -39,17 +38,21 @@ def run_transfer(
     config_path: str | None = None,
     overrides: list[str] | None = None,
     seed: int = 0,
+    allow_missing: bool = False,
 ) -> Path:
-    """Compute and save the transfer matrix CSV; returns the output path."""
+    """Compute and save the transfer matrix CSV; returns the output path.
+
+    Raises ``FileNotFoundError`` if a region has no trained model, unless ``allow_missing``
+    is set (dev dry-run only — substitutes a RandomPolicy, never valid for reported results).
+    """
     cfg = load_config(config_path, overrides)
     if not cfg.regions:
         raise ValueError("transfer requires `regions:` in the config (see configs/experiment/transfer.yaml).")
 
     policies = {}
     env_factories = {}
-    
-    from wildfire_rl.eval.baselines import RandomPolicy, NoOpPolicy
-    from wildfire_rl.eval.significance import paired_ttest, format_significance
+
+    from wildfire_rl.eval.significance import format_significance, paired_ttest
 
     for region in cfg.regions:
         tensor = np.load(region_tensor_path(region.dir, region.grid_size))
@@ -57,14 +60,21 @@ def run_transfer(
 
         model_path = _find_model(region.name, region.grid_size, seed)
         if model_path is None:
+            if not allow_missing:
+                raise FileNotFoundError(
+                    f"No trained model for '{region.name}' (seed={seed}) in {models_dir()}. "
+                    "Train it first, or pass allow_missing=True (CLI: --allow-missing) for a "
+                    "dev dry-run. RandomPolicy placeholders are never valid for reported results."
+                )
             logger.warning(
-                "No trained model for '%s' (looked in %s). Using RandomPolicy as a "
-                "placeholder so the pipeline runs end-to-end; train models for real results.",
-                region.name, models_dir(),
+                "DRY-RUN: no trained model for '%s'; using a RandomPolicy placeholder "
+                "(NOT valid for reported results).",
+                region.name,
             )
             policies[region.name] = RandomPolicy(env_factories[region.name]().action_space, seed=seed)
         else:
             from wildfire_rl.eval.loading import load_ppo_model
+
             logger.info("Loaded %s policy <- %s", region.name, model_path)
             policies[region.name] = load_ppo_model(model_path, env_factories[region.name]())
 
@@ -129,7 +139,7 @@ def run_transfer(
     df = pd.DataFrame(rows)
     out_raw = ensure_dir(results_dir()) / "transfer_matrix_raw.csv"
     out_norm = ensure_dir(results_dir()) / "transfer_matrix.csv"
-    
+
     # Save both or appropriate name
     df.to_csv(out_norm if cfg.env.reward_mode == "normalized" else out_raw, index=False)
     write_run_metadata(results_dir() / "runs" / f"transfer_{cfg.env.reward_mode}.json", config_dict=to_dict(cfg), seed=seed)

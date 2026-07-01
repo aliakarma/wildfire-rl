@@ -382,8 +382,23 @@ def save_baseline_comparisons(df_raw: pd.DataFrame) -> None:
     pd.DataFrame(stats_rows).to_csv(ensure_dir(results_dir()) / "marl_baseline_statistics.csv", index=False)
     pd.DataFrame(effect_rows).to_csv(results_dir() / "marl_effect_sizes.csv", index=False)
     pd.DataFrame(controllability_rows).to_csv(results_dir() / "marl_controllability_metrics.csv", index=False)
+
+    # Scaling table (PPO across team sizes) — the file consumed by make-figures and the report.
+    scaling_cols = [
+        "region",
+        "num_agents",
+        "reward_mean",
+        "reward_std",
+        "reward_ci_lo",
+        "reward_ci_hi",
+        "burned_cells_mean",
+        "fire_intensity_mean",
+    ]
+    scaling = pd.DataFrame(stats_rows)
+    scaling = scaling[scaling["policy"] == "ppo"][scaling_cols]
+    scaling.to_csv(results_dir() / "marl_scaling_results.csv", index=False)
     
-    logger.info("Wrote baseline stats, effect sizes, and controllability metrics under results/")
+    logger.info("Wrote baseline stats, effect sizes, controllability, and scaling tables under results/")
 
 
 def save_coordination_metrics(saudi_ppo_visits: dict, saudi_ppo_repeated: dict, saudi_ppo_entropies: dict) -> None:

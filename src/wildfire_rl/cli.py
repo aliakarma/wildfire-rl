@@ -220,7 +220,9 @@ def cmd_evaluate(args) -> int:
 def cmd_transfer(args) -> int:
     from wildfire_rl.experiments.transfer_run import run_transfer
 
-    out = run_transfer(args.config, args.overrides, seed=args.seed)
+    out = run_transfer(
+        args.config, args.overrides, seed=args.seed, allow_missing=args.allow_missing
+    )
     logger.info("Transfer matrix written to %s", out)
     return 0
 
@@ -318,6 +320,11 @@ def main(argv: list[str] | None = None) -> int:
     p_tf = sub.add_parser("transfer", help="Compute the full cross-region transfer matrix.")
     _add_config_args(p_tf)
     p_tf.add_argument("--seed", type=int, default=0, help="Which trained seed to load per region.")
+    p_tf.add_argument(
+        "--allow-missing",
+        action="store_true",
+        help="Dev dry-run: substitute RandomPolicy for missing models (NOT for reported results).",
+    )
     p_tf.set_defaults(func=cmd_transfer)
 
     p_fig = sub.add_parser("make-figures", help="Regenerate paper figures from results.")

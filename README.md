@@ -164,7 +164,7 @@ wildfire-rl transfer --config configs/experiment/transfer.yaml
 ## Reproducibility
 
 ```bash
-make reproduce        # test → train → evaluate → transfer → figures
+make reproduce        # test → train(both regions) → evaluate → marl → ablation → transfer → figures → seed-check
 make manifest         # write sha256 manifests for data/ and models/
 ```
 Every run writes `results/runs/*.json` capturing git SHA, config hash, library versions,
@@ -197,6 +197,13 @@ python scripts/train.py --config configs/experiment/multiseed.yaml
 python scripts/transfer.py --config configs/experiment/transfer.yaml
 python scripts/make_figures.py
 ```
+
+## Canonical vs Legacy Results
+
+Only `results/*.csv` produced by the current CLI are canonical. `results/archive_legacy_notebooks/`
+is provenance-only and **must not** be cited in the report (see its `PROVENANCE.md`). `wildfire-rl
+transfer` now **aborts** if a required checkpoint is missing — there is no silent random-policy
+fallback; pass `--allow-missing` only for local dry-runs.
 
 ## Datasets
 

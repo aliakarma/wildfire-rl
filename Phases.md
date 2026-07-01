@@ -634,3 +634,83 @@ Execution Integrity).
 ### Notes for later phases
 - Phase 6 will wire `check_seed_integrity.py` into `make reproduce`; Phase 13 makes it a blocking CI gate.
 - Phase 9 retrain + regeneration must flip the guard to exit 0.
+
+---
+
+## Phase 6 — Pipeline Reconnection & Execution Integrity
+
+**Status:** ✅ COMPLETE — all success criteria pass.
+**Actual time:** ~35 min · **Compute used:** CPU only.
+
+### Objective
+Make the pipeline fail loudly on missing artifacts, unify the MARL scaling output so it matches the
+report table, and provide a single `make reproduce` path that regenerates every core CSV from code.
+
+### Actions Taken
+1. **Fail-loud transfer (`transfer_run.py` + `cli.py`).** `run_transfer` now **raises
+   `FileNotFoundError`** when a region has no trained model, instead of silently substituting a
+   `RandomPolicy` and writing a bogus matrix. Added `allow_missing: bool` param and a CLI
+   `--allow-missing` flag (dev dry-run only). While rewriting the function I also removed the
+   pre-existing duplicate `RandomPolicy` import (ruff `F811`) and the dead
+   `transfer_matrix` import (`F401`) — `transfer_run.py` is now fully ruff-clean.
+2. **Complete MARL scaling table (`run_marl_evaluation.py`).** `save_baseline_comparisons` now also
+   writes `results/marl_scaling_results.csv` with the PPO rows for **all** team sizes (1/3/5/10) —
+   fixing the audit's 1-row stub that contradicted `report.md §17`. Verified the filter/column logic
+   produces all team sizes, PPO-only.
+3. **Single `reproduce` target (`Makefile`).** Replaced `reproduce: test train evaluate transfer
+   figures` with an explicit linear recipe: test → train (both regions) → evaluate (both) →
+   `run_marl_evaluation` → `run_ablation` → transfer → `make_figures` → `check_seed_integrity`.
+   Tab indentation verified (10 recipe lines).
+4. **Docs.** README **Canonical vs Legacy Results** section (legacy CSVs are provenance-only, never
+   cited; transfer aborts on missing models) + updated `make reproduce` description.
+
+### Verification Evidence
+```
+transfer fail-loud ....... FileNotFoundError: "No trained model for 'saudi' (seed=0) ..."   ✔
+--allow-missing flag ..... present in `wildfire-rl transfer --help`                          ✔
+marl_scaling logic ....... PPO rows for team sizes [1,3,5,10], correct columns               ✔
+Makefile reproduce ....... 10 tab-indented recipe steps (both regions + seed-check)          ✔
+transfer_run.py .......... ruff clean (F811 + F401 + W293 fixed)                             ✔
+py_compile ............... all edited scripts compile                                        ✔
+pytest ................... 61 passed                                                          ✔
+```
+
+### Deviations / Scope Notes
+1. **Ruff-cleaned `transfer_run.py`** (removed 2 pre-existing issues via `ruff --fix`) because I
+   rewrote the function — the file I touched is now fully ruff-clean. Its black line-wrap debt is
+   still deferred to Phase 13.
+2. **`cli.py:231 I001`** (unsorted imports in `cmd_make_figures`) is pre-existing debt in a function
+   I did **not** touch; my `--allow-missing` additions are clean. Deferred to Phase 13.
+3. **`allow_missing` as a CLI flag**, not a Config field — avoids polluting the structured config and
+   keeps "this is a dev override" explicit.
+4. **Docstring nit:** `transfer_run` still references `transfer_matrix` in its module docstring
+   (the code uses `evaluate_policy` directly). Cosmetic; left as-is.
+
+### Files Changed
+- **src:** `experiments/transfer_run.py` (fail-loud + import cleanup), `cli.py` (`--allow-missing`).
+- **scripts:** `run_marl_evaluation.py` (scaling CSV).
+- **build:** `Makefile` (reproduce recipe + help).
+- **docs:** `README.md`.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] Missing model → transfer raises `FileNotFoundError`
+  - [x] `marl_scaling_results.csv` generator emits all team sizes
+  - [x] `make reproduce` recipe present, tab-indented, inspectable
+- Reproducibility
+  - [x] Legacy CSVs marked non-canonical (README + existing `PROVENANCE.md`)
+  - [x] `check_seed_integrity.py` wired into `reproduce`
+- Scientific validity
+  - [x] No pipeline stage can silently substitute a placeholder policy for a reported run
+- Logging/monitoring
+  - [x] Each stage writes run metadata (unchanged); dry-run path logs a loud warning
+- README completeness
+  - [x] Canonical-vs-legacy section added
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 7** (Metric Verification &
+Evaluation Corrections).
+
+### Notes for Phase 7
+- Next: fix the Cohen's d zero-variance artifact (`significance.py`), add `containment_rate`, label
+  `reward_mode` in every CSV, and add `validate_learning_gate.py` (PPO must beat noop).
+- `make reproduce` is now the authoritative path Phase 9/14 will execute end-to-end.
