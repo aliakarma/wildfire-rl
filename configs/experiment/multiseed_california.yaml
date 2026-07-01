@@ -1,0 +1,26 @@
+# Multi-seed PPO training + evaluation for California.
+#   wildfire-rl train --config configs/experiment/multiseed_california.yaml
+experiment_name: multiseed_california
+seeds: [0, 1, 2, 3, 4]
+
+region:
+  name: california
+  dir: california
+  grid_size: 32
+
+env:
+  max_steps: 200
+  reward_mode: raw
+  randomize_ignition: false
+
+ppo:
+  total_timesteps: 100000
+  batch_size: 256
+  cnn_pooling: true
+
+eval:
+  n_episodes: 20
+  base_seed: 0
+
+metrics:
+  burned_threshold: 0.5

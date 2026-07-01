@@ -1,0 +1,47 @@
+# Hybrid Path-Planning + RL Coordination Configuration — Phase 4
+#
+# Key architecture changes vs V3:
+#   1. Low-level path navigation handled deterministically by A-star/Manhattan router
+#   2. High-level coordination (quadrant sector targeting) handled by PPO
+#   3. Action space: MultiDiscrete([5] * num_agents)
+
+# --- PPO Hyperparameters ---
+ppo:
+  total_timesteps: 300000       # Default; overridden by CLI per team-size
+  learning_rate: 0.0001         # Lower learning rate for training stability
+  n_steps: 4096                 # Longer rollout buffers
+  batch_size: 256
+  n_epochs: 15                  # Optimization epochs per rollout
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.15              # Tight clipping policy
+  ent_coef: 0.01                # Stable entropy coefficient
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  n_envs: 1
+  verbose: 0
+  features_dim: 256
+  cnn_pooling: true
+
+# --- Environment ---
+env:
+  grid_size: 32
+  max_steps: 200
+  reward_mode: normalized
+  randomize_ignition: false
+  routing_strategy: nearest_fire # "nearest_fire" or "frontier"
+  reward_v3:
+    enabled: true
+    spread_reduction_weight: 5.0
+    frontier_blocking_weight: 1.0
+    coverage_weight: 2.0
+    overlap_penalty: -0.05
+    containment_stability_weight: 1.0
+    containment_streak_cap: 10
+    suppression_threshold: 0.05
+
+# --- Evaluation ---
+eval:
+  n_episodes: 20
+  deterministic: true
+  base_seed: 0

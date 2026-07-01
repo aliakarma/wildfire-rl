@@ -1,0 +1,28 @@
+# Generalization evaluation: randomized ignition -> tests whether
+# the agent generalizes beyond the single training scenario.
+experiment_name: generalization
+seeds: [0, 1, 2, 3, 4]
+
+region:
+  name: saudi
+  dir: saudi_eastern_province
+  grid_size: 32
+
+env:
+  max_steps: 200
+  reward_mode: normalized
+  randomize_ignition: true    # <-- KEY: different fire pattern each episode
+  n_ignition_points: 3
+  ignition_intensity: 1.0
+
+ppo:
+  total_timesteps: 100000
+  cnn_pooling: true
+
+eval:
+  n_episodes: 50              # More episodes since scenarios vary
+  base_seed: 10000            # Different from training seed range
+  deterministic: true
+
+metrics:
+  burned_threshold: 0.5
