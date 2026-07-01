@@ -1,0 +1,2 @@
+num_agents,reward_mean,reward_std,reward_ci_lo,reward_ci_hi,fire_mean,fire_std,fire_ci_lo,fire_ci_hi,burned_mean,burned_std,n_seeds
+1,-3336.5460636977828,0.0,-3336.5460636977828,-3336.5460636977828,178.26980056762696,0.0,178.26980056762696,178.26980056762696,98.6,0.0,1

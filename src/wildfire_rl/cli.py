@@ -80,41 +80,139 @@ def cmd_train(args) -> int:
 
 
 def cmd_evaluate(args) -> int:
+    """Evaluate baselines (Random, NoOp) and optionally trained PPO models.
+
+    AAAI-grade: outputs per-policy summary with 95% CIs, per-episode details,
+    and significance tests (PPO vs each baseline).
+    """
     import numpy as np
+    import pandas as pd
 
     from wildfire_rl.envs.base import make_env_factory
     from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy
     from wildfire_rl.eval.evaluate import evaluate_policy
-    from wildfire_rl.paths import ensure_dir, region_tensor_path, results_dir
+    from wildfire_rl.eval.significance import (
+        confidence_interval_95,
+        format_significance,
+        welch_ttest,
+    )
+    from wildfire_rl.paths import ensure_dir, models_dir, region_tensor_path, results_dir
 
     cfg = _cfg(args)
     tensor = np.load(region_tensor_path(cfg.region.dir, cfg.region.grid_size))
     factory = make_env_factory(state_tensor=tensor, config=cfg.env)
 
-    # Baselines run without torch; the PPO model is optional (loaded if --model given).
+    # Baselines run without torch; the PPO model is optional.
     sample_env = factory()
-    results = {}
+    all_results: dict[str, dict] = {}
+
+    # -- Baselines -----------------------------------------------------------
     policies = {
         "random": RandomPolicy(sample_env.action_space, seed=cfg.seed),
         "noop": NoOpPolicy(sample_env.action_space),
     }
-    if args.model:
-        from stable_baselines3 import PPO
 
-        policies["ppo"] = PPO.load(args.model)
+    from wildfire_rl.eval.loading import load_ppo_model
 
+    # -- PPO models (auto-discover per-seed checkpoints) ---------------------
+    for seed in cfg.seeds:
+        model_path = (
+            models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}.zip"
+        )
+        if model_path.exists():
+            policies[f"ppo_seed_{seed}"] = load_ppo_model(model_path, sample_env)
+            logger.info("Loaded PPO seed %d <- %s", seed, model_path)
+
+    # Fall back to explicit --model if no auto-discovered checkpoints.
+    if args.model and not any(k.startswith("ppo_seed_") for k in policies):
+        policies["ppo"] = load_ppo_model(Path(args.model), sample_env)
+        logger.info("Loaded PPO <- %s", args.model)
+
+    # -- Run evaluations -----------------------------------------------------
     for name, policy in policies.items():
         res = evaluate_policy(
             policy, factory, n_episodes=cfg.eval.n_episodes,
             base_seed=cfg.eval.base_seed, deterministic=cfg.eval.deterministic,
             metrics_cfg=cfg.metrics,
         )
-        results[name] = res["summary"]
+        all_results[name] = res
         logger.info("[%s] %s", name, res["summary"])
 
-    out = ensure_dir(results_dir()) / f"eval_{cfg.region.name}.json"
-    out.write_text(json.dumps(results, indent=2))
-    logger.info("Wrote %s", out)
+    # -- Build publication table with significance tests ---------------------
+    rows = []
+    ppo_episode_rewards: list[float] = []  # aggregate across seeds
+
+    for name, res in all_results.items():
+        rewards = [e["episode_reward"] for e in res["episodes"]]
+        burned = [e["burned_cells"] for e in res["episodes"]]
+        fire = [e["fire_intensity"] for e in res["episodes"]]
+
+        ci_reward = confidence_interval_95(rewards)
+        ci_burned = confidence_interval_95(burned)
+        ci_fire = confidence_interval_95(fire)
+
+        row = {
+            "policy": name,
+            "reward_mean": float(np.mean(rewards)),
+            "reward_std": float(np.std(rewards)),
+            "reward_ci_lo": ci_reward[0],
+            "reward_ci_hi": ci_reward[1],
+            "burned_cells_mean": float(np.mean(burned)),
+            "burned_cells_std": float(np.std(burned)),
+            "burned_ci_lo": ci_burned[0],
+            "burned_ci_hi": ci_burned[1],
+            "fire_intensity_mean": float(np.mean(fire)),
+            "fire_intensity_std": float(np.std(fire)),
+            "fire_ci_lo": ci_fire[0],
+            "fire_ci_hi": ci_fire[1],
+            "n_episodes": len(rewards),
+        }
+
+        if name.startswith("ppo"):
+            ppo_episode_rewards.extend(rewards)
+
+        rows.append(row)
+
+    # Significance: PPO (aggregated) vs each baseline
+    if ppo_episode_rewards:
+        ppo_arr = np.array(ppo_episode_rewards)
+        for baseline_name in ["random", "noop"]:
+            if baseline_name in all_results:
+                baseline_arr = np.array(
+                    [e["episode_reward"] for e in all_results[baseline_name]["episodes"]]
+                )
+                test = welch_ttest(ppo_arr, baseline_arr)
+                # Annotate the baseline row with the comparison
+                for row in rows:
+                    if row["policy"] == baseline_name:
+                        row["p_vs_ppo"] = test["p_value"]
+                        row["d_vs_ppo"] = test["cohens_d"]
+                        row["sig_vs_ppo"] = format_significance(test["p_value"])
+                        logger.info(
+                            "  PPO vs %s: p=%.6f, d=%.2f (%s)",
+                            baseline_name, test["p_value"], test["cohens_d"],
+                            format_significance(test["p_value"]),
+                        )
+
+    # -- Write outputs -------------------------------------------------------
+    out_dir = ensure_dir(results_dir())
+    df = pd.DataFrame(rows)
+    exp_name = getattr(cfg, "experiment_name", "multiseed")
+    suffix = f"_{exp_name}" if exp_name != "multiseed" else ""
+    csv_path = out_dir / f"eval_{cfg.region.name}{suffix}.csv"
+    df.to_csv(csv_path, index=False)
+    logger.info("Wrote %s", csv_path)
+
+    # Also write detailed JSON with per-episode data
+    json_path = out_dir / f"eval_{cfg.region.name}{suffix}.json"
+    json_data = {}
+    for name, res in all_results.items():
+        json_data[name] = {
+            "summary": res["summary"],
+            "episodes": res["episodes"],
+        }
+    json_path.write_text(json.dumps(json_data, indent=2))
+    logger.info("Wrote %s", json_path)
     return 0
 
 
@@ -128,11 +226,21 @@ def cmd_transfer(args) -> int:
 
 def cmd_make_figures(args) -> int:
     import pandas as pd
+    import numpy as np
 
-    from wildfire_rl.paths import ensure_dir, figures_dir, results_dir
-    from wildfire_rl.viz.figures import plot_transfer_heatmap
+    from wildfire_rl.paths import ensure_dir, figures_dir, results_dir, region_tensor_path
+    from wildfire_rl.viz.figures import (
+        plot_baseline_comparison,
+        plot_transfer_heatmap,
+        plot_ablation_bars,
+        plot_marl_scaling,
+        plot_generalization_comparison,
+        plot_state_tensor_comparison,
+    )
 
     res, figs = results_dir(), ensure_dir(figures_dir())
+
+    # Transfer heatmap
     transfer_csv = res / "transfer_matrix.csv"
     if transfer_csv.exists():
         df = pd.read_csv(transfer_csv)
@@ -141,6 +249,45 @@ def cmd_make_figures(args) -> int:
         logger.info("Wrote %s", figs / "transfer_reward_heatmap.png")
     else:
         logger.warning("No %s yet — run `wildfire-rl transfer` first.", transfer_csv)
+
+    # Baseline comparison figures (per region)
+    for region in ["saudi", "california"]:
+        eval_csv = res / f"eval_{region}.csv"
+        if eval_csv.exists():
+            plot_baseline_comparison(
+                eval_csv, figs / f"baseline_comparison_{region}.png",
+                title=f"Policy Comparison — {region.title()}",
+            )
+            logger.info("Wrote baseline_comparison_%s.png", region)
+
+    # Ablation bars
+    ablation_csv = res / "ablation_results.csv"
+    if ablation_csv.exists():
+        plot_ablation_bars(ablation_csv, figs / "ablation_results.png")
+        logger.info("Wrote ablation_results.png")
+
+    # MARL scaling
+    marl_csv = res / "marl_scaling_results.csv"
+    if marl_csv.exists():
+        plot_marl_scaling(marl_csv, figs / "marl_scaling.png")
+        logger.info("Wrote marl_scaling.png")
+
+    # State tensor comparison
+    saudi_tensor_path = region_tensor_path("saudi_eastern_province", 32)
+    ca_tensor_path = region_tensor_path("california", 32)
+    if saudi_tensor_path.exists() and ca_tensor_path.exists():
+        saudi_t = np.load(saudi_tensor_path)
+        ca_t = np.load(ca_tensor_path)
+        plot_state_tensor_comparison(saudi_t, ca_t, figs / "state_tensor_comparison.png")
+        logger.info("Wrote state_tensor_comparison.png")
+
+    # Generalization comparison
+    fixed_csv = res / "eval_saudi.csv"
+    gen_csv = res / "eval_saudi_generalization.csv"
+    if fixed_csv.exists() and gen_csv.exists():
+        plot_generalization_comparison(fixed_csv, gen_csv, figs / "generalization_results.png")
+        logger.info("Wrote generalization_results.png")
+
     return 0
 
 

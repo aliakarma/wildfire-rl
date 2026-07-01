@@ -1,0 +1,23 @@
+# Full symmetric cross-region transfer matrix with NORMALIZED rewards.
+#   wildfire-rl transfer --config configs/experiment/transfer_normalized.yaml
+experiment_name: transfer_normalized
+
+regions:
+  - name: saudi
+    dir: saudi_eastern_province
+    grid_size: 32
+  - name: california
+    dir: california
+    grid_size: 32
+
+env:
+  max_steps: 200
+  reward_mode: normalized   # fair cross-region comparison by dividing by initial fire
+
+eval:
+  n_episodes: 20
+  base_seed: 0
+  deterministic: true
+
+metrics:
+  burned_threshold: 0.5

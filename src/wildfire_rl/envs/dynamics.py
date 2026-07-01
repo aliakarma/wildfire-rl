@@ -45,20 +45,35 @@ def spread_fire(state: np.ndarray, cfg: EnvConfig, rng: np.random.Generator) -> 
     terrain = state[4]
 
     active = (fire > cfg.spread_threshold).astype(np.float32)
-    burning_neighbors = sum(_shift(active, di, dj) for di, dj in _OFFSETS)
-    can_ignite = burning_neighbors > 0
 
-    wind_factor = np.hypot(wind_x, wind_y) if cfg.directional_wind else (wind_x + wind_y) / 2.0
-
-    spread_prob = (
-        cfg.base_spread
-        + cfg.fuel_coeff * fuel
-        + cfg.wind_coeff * wind_factor
-        + cfg.terrain_coeff * terrain
-    )
-
-    draws = rng.random(fire.shape)
-    ignite = can_ignite & (draws < spread_prob)
+    if cfg.directional_wind:
+        ignite = np.zeros(fire.shape, dtype=bool)
+        for di, dj in _OFFSETS:
+            shifted = _shift(active, di, dj)
+            # The fire spreads from neighbor (x-di, y-dj) to target (x, y).
+            # The direction vector is (di, dj). Dot product with wind vector:
+            proj = wind_x * di + wind_y * dj
+            prob = (
+                cfg.base_spread
+                + cfg.fuel_coeff * fuel
+                + cfg.wind_coeff * proj
+                + cfg.terrain_coeff * terrain
+            )
+            prob = np.clip(prob, 0.0, 1.0)
+            draws = rng.random(fire.shape)
+            ignite |= (shifted > 0) & (draws < prob)
+    else:
+        burning_neighbors = sum(_shift(active, di, dj) for di, dj in _OFFSETS)
+        can_ignite = burning_neighbors > 0
+        wind_factor = (wind_x + wind_y) / 2.0
+        spread_prob = (
+            cfg.base_spread
+            + cfg.fuel_coeff * fuel
+            + cfg.wind_coeff * wind_factor
+            + cfg.terrain_coeff * terrain
+        )
+        draws = rng.random(fire.shape)
+        ignite = can_ignite & (draws < spread_prob)
 
     new_fire = fire.copy()
     new_fire[ignite] = np.minimum(1.0, new_fire[ignite] + cfg.fire_increment)

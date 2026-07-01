@@ -39,6 +39,10 @@ def evaluate_policy(
 
     for ep in range(n_episodes):
         env = env_factory()
+        if hasattr(policy, "env"):
+            policy.env = env
+        if hasattr(policy, "set_env"):
+            policy.set_env(env)
         obs, _ = env.reset(seed=base_seed + ep)
         done = False
         rewards: list[float] = []

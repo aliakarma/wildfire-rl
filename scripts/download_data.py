@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 """Download raw remote-sensing data needed to rebuild state tensors.
 
+NOTE: This script provides the documented interface for data acquisition.
+The actual API calls require credentials and the [geo] optional dependencies.
+Pre-built tensors can be obtained via the data bundle or by running
+`wildfire-rl build-tensors` after manually placing raw files.
+
+For reviewers: the pre-built state tensors in data/<region>/grids/32x32/
+are the artifacts used for all experiments. Their integrity is verified via
+sha256 manifests (see `make manifest`).
+
 Reads credentials from environment variables (see .env.example) — never hardcodes keys
 (the original notebooks embedded a Google Earth Engine project id). This is a thin,
 documented driver; the heavy ERA5/FIRMS/DEM/NDVI logic lives in the geospatial extras
