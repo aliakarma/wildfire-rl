@@ -59,8 +59,33 @@ def config_hash(config_dict: dict[str, Any]) -> str:
     return hashlib.sha256(blob).hexdigest()[:12]
 
 
-def run_metadata(config_dict: dict[str, Any] | None = None, seed: int | None = None) -> dict[str, Any]:
-    """Assemble a reproducibility metadata record for the current run."""
+def file_sha256(path: str | Path | None) -> str | None:
+    """Full SHA-256 of a file, or ``None`` if the path is unset/missing.
+
+    Binds a run to the exact tensors/checkpoints it consumed.
+    """
+    if not path:
+        return None
+    p = Path(path)
+    if not p.exists():
+        return None
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def run_metadata(
+    config_dict: dict[str, Any] | None = None,
+    seed: int | None = None,
+    artifacts: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Assemble a reproducibility metadata record for the current run.
+
+    ``artifacts`` maps a name to a file path; each is recorded with its SHA-256 so the run is
+    bound to the exact tensors/checkpoints it used.
+    """
     meta: dict[str, Any] = {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "git_sha": _git_sha(),
@@ -70,14 +95,19 @@ def run_metadata(config_dict: dict[str, Any] | None = None, seed: int | None = N
     if config_dict is not None:
         meta["config_hash"] = config_hash(config_dict)
         meta["config"] = config_dict
+    if artifacts:
+        meta["artifacts"] = {name: file_sha256(p) for name, p in artifacts.items()}
     return meta
 
 
 def write_run_metadata(
-    path: str | Path, config_dict: dict[str, Any] | None = None, seed: int | None = None
+    path: str | Path,
+    config_dict: dict[str, Any] | None = None,
+    seed: int | None = None,
+    artifacts: dict[str, Any] | None = None,
 ) -> Path:
     """Write run metadata to ``path`` as JSON and return the path."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(run_metadata(config_dict, seed), indent=2))
+    path.write_text(json.dumps(run_metadata(config_dict, seed, artifacts), indent=2))
     return path

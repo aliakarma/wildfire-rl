@@ -179,9 +179,12 @@ python scripts/validate_learning_gate.py   # PPO must cut burned cells >= 5% vs 
 make reproduce        # test → train(both regions) → evaluate → marl → ablation → transfer → figures → seed-check
 make manifest         # write sha256 manifests for data/ and models/
 ```
-Every run writes `results/runs/*.json` capturing git SHA, config hash, library versions,
-and seed. Determinism is enforced via `wildfire_rl.seeding.set_global_seed` **and** a
-per-environment `np_random` generator. Full protocol: [`docs/reproducibility.md`](docs/reproducibility.md).
+Every training run writes `results/runs/<run_id>/manifest.json` (git SHA, config SHA-256,
+state-tensor **and** model SHA-256, seed, library versions) plus `curve.csv` (ep_rew_mean vs
+timestep — committed evidence that training actually improved). TensorBoard logs, when
+`tensorboard` is installed, land under `results/runs/tb/`. Determinism is enforced via
+`wildfire_rl.seeding.set_global_seed` **and** a per-environment `np_random` generator. Full
+protocol: [`docs/reproducibility.md`](docs/reproducibility.md).
 
 ### Scenario splitting (no leakage)
 

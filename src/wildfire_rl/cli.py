@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 
 from wildfire_rl import __version__
 from wildfire_rl.config import load_config, to_dict
@@ -69,12 +70,32 @@ def cmd_train(args) -> int:
 
     ensure_dir(models_dir())
     for seed in cfg.seeds:
+        run_id = f"train_{cfg.region.name}_seed_{seed}"
+        run_dir = ensure_dir(results_dir() / "runs" / run_id)
         save_path = models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}"
-        train_ppo(factory, cfg.ppo, seed=seed, save_path=save_path)
+
+        # TensorBoard is optional (only if installed); the CSV curve is always written.
+        tb_log = None
+        try:
+            import tensorboard  # noqa: F401
+
+            tb_log = str(results_dir() / "runs" / "tb" / run_id)
+        except ImportError:
+            pass
+
+        train_ppo(
+            factory,
+            cfg.ppo,
+            seed=seed,
+            save_path=save_path,
+            tensorboard_log=tb_log,
+            curve_path=run_dir / "curve.csv",
+        )
         write_run_metadata(
-            results_dir() / "runs" / f"train_{cfg.region.name}_seed_{seed}.json",
+            run_dir / "manifest.json",
             config_dict=to_dict(cfg),
             seed=seed,
+            artifacts={"state_tensor": tensor_path, "model": f"{save_path}.zip"},
         )
     return 0
 
@@ -229,17 +250,17 @@ def cmd_transfer(args) -> int:
 
 
 def cmd_make_figures(args) -> int:
-    import pandas as pd
     import numpy as np
+    import pandas as pd
 
-    from wildfire_rl.paths import ensure_dir, figures_dir, results_dir, region_tensor_path
+    from wildfire_rl.paths import ensure_dir, figures_dir, region_tensor_path, results_dir
     from wildfire_rl.viz.figures import (
-        plot_baseline_comparison,
-        plot_transfer_heatmap,
         plot_ablation_bars,
-        plot_marl_scaling,
+        plot_baseline_comparison,
         plot_generalization_comparison,
+        plot_marl_scaling,
         plot_state_tensor_comparison,
+        plot_transfer_heatmap,
     )
 
     res, figs = results_dir(), ensure_dir(figures_dir())
