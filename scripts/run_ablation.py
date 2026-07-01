@@ -68,6 +68,7 @@ def main() -> int:
                 factory,
                 n_episodes=cfg.eval.n_episodes,
                 base_seed=cfg.eval.base_seed,
+                scenario_seed_offset=cfg.eval.scenario_seed_offset,
                 metrics_cfg=cfg.metrics,
             )
             seed_fires.append(res["summary"]["fire_intensity_mean"])

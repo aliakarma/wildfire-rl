@@ -11,7 +11,15 @@ region:
 env:
   max_steps: 200
   reward_mode: raw
-  randomize_ignition: false
+  # Randomized ignition each reset => training samples a scenario distribution and
+  # evaluation (offset seeds) samples a disjoint held-out set. No train/test leakage.
+  randomize_ignition: true
+  n_ignition_points: 3
+  ignition_intensity: 1.0
+  # California baseline dynamics (no desert specialization) — mirrors configs/region/california.yaml.
+  spread_scale: 1.0
+  ignition_rate: 0.0
+  criticality_weight: 0.0
 
 ppo:
   total_timesteps: 100000
@@ -19,8 +27,9 @@ ppo:
   cnn_pooling: true
 
 eval:
-  n_episodes: 20
+  n_episodes: 50
   base_seed: 0
+  scenario_seed_offset: 100000
 
 metrics:
   burned_threshold: 0.5

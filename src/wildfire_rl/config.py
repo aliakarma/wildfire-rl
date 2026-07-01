@@ -108,6 +108,22 @@ class EnvConfig:
     suppression_bonus: float = 2.0
     suppression_bonus_threshold: float = 0.1
 
+    # --- observation ---
+    # Encodes agent position(s) into the observation so the MDP is Markov.
+    # The stored `state` tensor stays 7-channel; this only affects what the policy sees.
+    include_agent_channel: bool = True
+
+    # --- region realism / asset protection (Phase 15) ---
+    # spread_scale<1  => sparse desert fuel spreads less (multiplies spread probability).
+    # ignition_rate>0 => per-step probability of a new stochastic ignition (more frequent,
+    #                    more random fires).
+    # criticality_*   => asset-value penalty (e.g. petroleum sites): fire on high-value cells
+    #                    costs `criticality_weight * sum(criticality * fire)`.
+    spread_scale: float = 1.0
+    ignition_rate: float = 0.0
+    criticality_weight: float = 0.0
+    criticality_path: str | None = None
+
     # --- termination ---
     termination_fire_threshold: float = 0.1
 
@@ -140,7 +156,6 @@ class EnvConfig:
 
     # --- Phase 6 dynamic fire scenarios toggles ---
     dynamic_scenarios: dict[str, Any] = field(default_factory=dict)
-
 
 
 @dataclass
@@ -186,6 +201,10 @@ class EvalConfig:
     n_episodes: int = 20
     deterministic: bool = True
     base_seed: int = 0
+    # Added to every eval reset seed so evaluation ignition maps are disjoint from the
+    # training reset seeds (which use the small `seeds` integers). Prevents train/test leakage
+    # when `env.randomize_ignition` is enabled.
+    scenario_seed_offset: int = 100_000
 
 
 @dataclass

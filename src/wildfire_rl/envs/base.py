@@ -49,14 +49,31 @@ class WildfireEnv(gym.Env):
         self.grid_size = h
 
         self.action_space = spaces.Discrete(N_ACTIONS)
+        self._obs_channels = c + (1 if self.cfg.include_agent_channel else 0)
         self.observation_space = spaces.Box(
-            low=0.0, high=1.0, shape=(c, h, w), dtype=np.float32
+            low=0.0, high=1.0, shape=(self._obs_channels, h, w), dtype=np.float32
         )
 
         self.state = self.initial_tensor.copy()
         self.agent_pos = [h // 2, w // 2]
         self.current_step = 0
         self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
+        self.criticality = dynamics.load_criticality(self.cfg, self.grid_size)
+
+    # -------------------------------------------------------------- observation
+    def _obs(self) -> np.ndarray:
+        """Policy observation: state tensor + optional agent-position channel.
+
+        The agent-position channel is what makes the environment Markov for a
+        movement policy — the raw ``self.state`` alone does not encode where the
+        agent is, so without this the policy cannot learn to navigate to the fire.
+        """
+        if not self.cfg.include_agent_channel:
+            return self.state.astype(np.float32)
+        pos = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
+        x, y = self.agent_pos
+        pos[0, x, y] = 1.0
+        return np.concatenate([self.state, pos], axis=0).astype(np.float32)
 
     # ------------------------------------------------------------------ reset
     def reset(
@@ -70,7 +87,7 @@ class WildfireEnv(gym.Env):
         self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self.agent_pos = [self.grid_size // 2, self.grid_size // 2]
         self.current_step = 0
-        return self.state.astype(np.float32), {}
+        return self._obs(), {}
 
     # ------------------------------------------------------------------- step
     def _move(self, action: int) -> None:
@@ -93,13 +110,14 @@ class WildfireEnv(gym.Env):
         dynamics.apply_suppression(self.state, [tuple(self.agent_pos)], self.cfg)
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
+        dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
 
         reward = self._reward()
         total_fire = float(self.state[0].sum())
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
         info = {"total_fire": total_fire, "step": self.current_step}
-        return self.state.astype(np.float32), reward, terminated, truncated, info
+        return self._obs(), reward, terminated, truncated, info
 
     def _reward(self) -> float:
         total_fire = float(self.state[0].sum())
@@ -109,9 +127,12 @@ class WildfireEnv(gym.Env):
             if self.state[0, x, y] < self.cfg.suppression_bonus_threshold
             else 0.0
         )
+        penalty = dynamics.asset_penalty(
+            self.criticality, self.state[0], self.cfg.criticality_weight
+        )
         if self.cfg.reward_mode == "normalized":
-            return float(-total_fire / self._initial_fire_total + bonus)
-        return float(-total_fire + bonus)
+            return float(-total_fire / self._initial_fire_total + bonus - penalty)
+        return float(-total_fire + bonus - penalty)
 
 
 def make_env_factory(

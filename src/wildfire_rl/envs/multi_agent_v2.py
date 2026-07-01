@@ -158,4 +158,4 @@ class MultiAgentWildfireEnvV2(MultiAgentWildfireEnv):
             "num_agents": self.num_agents,
             "reward_components": dict(components),
         }
-        return self.state.astype(np.float32), reward, terminated, truncated, info
+        return self._obs(), reward, terminated, truncated, info

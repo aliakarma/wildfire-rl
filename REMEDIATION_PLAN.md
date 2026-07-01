@@ -43,6 +43,34 @@ paper from committed CSVs, and (iv) pass an automated gate proving PPO outperfor
 Every table cell traces to a generating script and a committed result file with a recorded
 seed, config hash, and git SHA.
 
+## 1.1 Advisor Recommendations (Scope Addendum)
+
+Three recommendations from the project advisor are incorporated as first-class scope. Each maps
+to a dedicated **new extension phase** plus supporting existing phases:
+
+| # | Advisor recommendation | New phase (primary) | Supporting existing phases |
+|---|------------------------|---------------------|----------------------------|
+| 1 | Obtain / train a **stronger policy** | **Phase 16 — Policy Strengthening & HPO** | Phase 3 (Markov obs — done), Phase 7 (learning gate), Phase 9 (multi-seed retrain) |
+| 2 | **Visualize policy rollouts** across ablations | **Phase 17 — Rollout Visualization** | Phase 8 (tracking/logging), Phase 7 (ablation metrics), Phase 12 (figures/report) |
+| 3 | Richer **Saudi context** — petroleum-asset criticality score, more frequent & more random ignitions, reduced spread | **Phase 15 — Saudi Context Enrichment** | Phase 4 (ignition/leakage), Phase 11 (data provenance) |
+
+**Updated master execution order** (existing phases keep their numbers; the three extension phases
+interleave; the three specs are appended at the end of this document):
+
+```
+1 → 2 → 3 → 4 → [15] → 5 → 6 → 7 → 8 → 9 → [16] → [17] → 10 → 11 → 12 → 13 → 14 (terminal)
+```
+
+Placement rationale:
+- **Phase 15** changes environment dynamics + reward and therefore MUST precede the authoritative
+  retrain (Phase 9). It runs immediately after leakage elimination (Phase 4), with which it shares
+  the ignition model.
+- **Phase 16** depends on trained artifacts and the learning gate; it runs right after the first
+  authoritative retrain (Phase 9) and re-triggers training with stronger reward/HPO settings.
+- **Phase 17** consumes the strengthened policies and the ablation variants; it runs after Phase 16.
+- **Phase 14** remains the terminal certification gate and now additionally certifies the
+  deliverables of Phases 15–17.
+
 ---
 
 # Phase 1 — Repository Cleanup & Structural Repair
@@ -1986,3 +2014,344 @@ README completeness checklist
 
 ### Proceed Rule
 - If ALL items are `[x]`, the repository is **certified reproducible**. Otherwise remediate the failing item and re-run this phase. Do not tag a release or submit until every box is `[x]`.
+
+---
+---
+
+# Extension Phases (Advisor Recommendations)
+
+> These execute at the positions given in §1.1. Phase 14 (certification) is re-run as the terminal
+> gate after all three land. Each follows the same phase contract as the core plan.
+
+---
+
+# Phase 15 — Saudi Context Enrichment (Domain Modeling)
+Estimated Time: 1–1.5 days
+Execution position: **after Phase 4, before Phase 9** (a modeling change that must be in the authoritative retrain).
+
+## Objective
+Make the Saudi environment domain-faithful along three axes the advisor called out: (a) a
+**petroleum-asset criticality layer** that raises the cost of fire reaching high-value cells, (b)
+**more frequent and more spatially-random ignitions**, and (c) **reduced fire spread** reflecting
+sparse desert fuel. These redefine what "good suppression" means, so they must be baked in before
+the authoritative multi-seed retrain (Phase 9).
+
+## Problems / Goals Addressed
+- Advisor recommendation #3.
+- Region realism gap: Saudi and California currently share identical dynamics constants — only the
+  state tensor differs (`configs/region/*.yaml`), so there is no genuine desert-vs-forest behavior.
+
+## Files To Modify
+| File | Required Changes |
+|------|------------------|
+| `src/wildfire_rl/config.py` | Add `EnvConfig` fields: `criticality_weight`, `criticality_path`, `ignition_rate`, `spread_scale` |
+| `src/wildfire_rl/envs/dynamics.py` | Scale spread by `spread_scale`; add `maybe_reignite()` (per-step stochastic new ignitions) |
+| `src/wildfire_rl/envs/base.py`, `multi_agent.py` | Load criticality raster; add asset-weighted penalty to reward; call `maybe_reignite` in `step` |
+| `configs/region/saudi.yaml` | Saudi dynamics: `spread_scale<1`, `ignition_rate>0`, higher `n_ignition_points`, `randomize_ignition: true`, `criticality_weight>0`, `criticality_path` |
+| `configs/region/california.yaml` | Explicit defaults (`spread_scale: 1.0`, `ignition_rate: 0.0`, `criticality_weight: 0.0`) so the contrast is documented |
+| `scripts/build_criticality.py` (new) | Rasterize petroleum-site coordinates → `criticality.npy` in [0,1] |
+| `data/saudi_eastern_province/grids/32x32/criticality.npy` (new) | Asset-value raster |
+| `tests/test_env_api.py` (+ new) | Criticality-reward, `spread_scale`, and `ignition_rate` tests |
+
+## Step-by-Step Implementation Guide
+
+### Step 1 — Config fields
+Purpose: Parameterize the three Saudi-context axes without hardcoding.
+Code Changes:
+```python
+# src/wildfire_rl/config.py — EnvConfig
+# AFTER (new fields)
+    # --- region realism / asset protection ---
+    criticality_weight: float = 0.0        # >0 penalizes fire on high-value cells
+    criticality_path: str | None = None    # raster of asset values in [0,1], grid-aligned
+    ignition_rate: float = 0.0             # per-step prob. of a new spontaneous ignition
+    spread_scale: float = 1.0              # multiplies spread probability (<1 = less spreading)
+```
+Validation:
+```bash
+venv/Scripts/python -c "from wildfire_rl.config import EnvConfig; c=EnvConfig(); print(c.criticality_weight, c.ignition_rate, c.spread_scale)"
+```
+Expected Result: prints `0.0 0.0 1.0` (backward-compatible defaults).
+
+### Step 2 — Criticality raster builder
+Purpose: Turn petroleum-facility coordinates into a grid-aligned protection-value map.
+Implementation:
+```bash
+venv/Scripts/python scripts/build_criticality.py --region saudi_eastern_province --grid 32 \
+    --sites 49.6,25.4 50.2,26.3 49.9,25.9   # lon,lat of key Eastern-Province facilities
+```
+Code Changes (new `scripts/build_criticality.py`): rasterize each site onto the grid with a Gaussian
+falloff, normalize to [0,1], save `criticality.npy` next to `state_tensor.npy`.
+Validation:
+```bash
+venv/Scripts/python -c "import numpy as np; a=np.load('data/saudi_eastern_province/grids/32x32/criticality.npy'); print(a.shape, a.min(), a.max())"
+```
+Expected Result: `(32, 32) 0.0 1.0`.
+
+### Step 3 — Dynamics: reduced spread + stochastic re-ignition
+Purpose: Desert = less spread, but more frequent random ignitions.
+Code Changes:
+```python
+# dynamics.spread_fire(...): multiply the probability by cfg.spread_scale before clipping
+spread_prob = cfg.spread_scale * (cfg.base_spread + cfg.fuel_coeff*fuel + ...)
+
+# new: dynamics.maybe_reignite(state, cfg, rng)
+def maybe_reignite(state, cfg, rng):
+    if cfg.ignition_rate > 0 and rng.random() < cfg.ignition_rate:
+        h, w = state.shape[1], state.shape[2]
+        x, y = rng.integers(0, h), rng.integers(0, w)
+        state[0, x, y] = max(state[0, x, y], cfg.ignition_intensity)
+```
+Wire `maybe_reignite` into `WildfireEnv.step` and `MultiAgentWildfireEnv.step` (after spread/decay).
+Validation:
+```bash
+venv/Scripts/python - <<'PY'
+import numpy as np; from wildfire_rl.config import EnvConfig; from wildfire_rl.envs.base import WildfireEnv
+t=np.zeros((7,32,32),np.float32); t[0,16,16]=1.0
+hi=WildfireEnv(state_tensor=t, config=EnvConfig(spread_scale=1.0)); lo=WildfireEnv(state_tensor=t, config=EnvConfig(spread_scale=0.3))
+for e in (hi,lo): e.reset(seed=0)
+for _ in range(20):
+    hi.step(4); lo.step(4)
+print("hi fire:", hi.state[0].sum(), "lo fire:", lo.state[0].sum())
+PY
+```
+Expected Result: `lo` (spread_scale=0.3) retains substantially less fire than `hi`.
+
+### Step 4 — Asset-weighted reward
+Purpose: Fire on petroleum-critical cells costs more, so the policy learns to protect assets.
+Code Changes:
+```python
+# env __init__: self.criticality = np.load(cfg.criticality_path) if cfg.criticality_path else None
+# reward: subtract criticality_weight * sum(criticality * fire)
+if self.criticality is not None and self.cfg.criticality_weight > 0:
+    reward -= self.cfg.criticality_weight * float((self.criticality * self.state[0]).sum())
+```
+Validation: a fire placed on a high-criticality cell yields a lower reward than the same fire on a
+zero-criticality cell (add a unit test asserting this ordering).
+Expected Result: reward is strictly lower when fire overlaps high-value cells.
+
+### Step 5 — Saudi vs California region configs
+Code Changes:
+```yaml
+# configs/region/saudi.yaml
+env:
+  spread_scale: 0.5          # sparse desert fuel -> less spreading
+  ignition_rate: 0.05        # more frequent spontaneous ignitions
+  n_ignition_points: 6       # more, more-random initial fires
+  randomize_ignition: true
+  criticality_weight: 2.0
+  criticality_path: data/saudi_eastern_province/grids/32x32/criticality.npy
+# configs/region/california.yaml
+env: { spread_scale: 1.0, ignition_rate: 0.0, criticality_weight: 0.0 }
+```
+Validation: `wildfire-rl info --config configs/region/saudi.yaml` shows the Saudi dynamics.
+
+## README Updates Required
+### Add Section
+```markdown
+## Saudi Domain Model
+
+The Saudi environment is domain-specialized (vs. California): reduced fire spread (`spread_scale<1`,
+sparse desert fuel), more frequent and more random ignitions (`ignition_rate`, higher
+`n_ignition_points`), and a **petroleum-asset criticality** layer (`criticality.npy`) that penalizes
+fire reaching high-value cells (`criticality_weight`). Build the criticality raster with
+`scripts/build_criticality.py`.
+```
+### Modify Existing Section
+- In **Overview / Datasets**, note the new `criticality.npy` layer and the Saudi-specific dynamics.
+
+## Success Criteria (MANDATORY CHECKPOINT)
+Technical verification
+- [ ] New `EnvConfig` fields present and defaulted (backward-compatible)
+- [ ] `criticality.npy` built, shape-aligned, values in [0,1]
+- [ ] `spread_scale<1` measurably reduces fire; `ignition_rate>0` produces new fires
+Reproducibility
+- [ ] Criticality raster hashed into the data manifest (Phase 11)
+Scientific validity
+- [ ] Asset-weighted reward strictly penalizes fire on critical cells (unit test)
+- [ ] Saudi and California now have distinct, documented dynamics
+Logging/monitoring
+- [ ] Region dynamics recorded in run metadata
+README completeness
+- [ ] "Saudi Domain Model" section added
+### Proceed Rule
+- If ALL items are `[x]`, proceed (feeds the Phase 9 retrain). Otherwise fix first.
+
+---
+
+# Phase 16 — Policy Strengthening & Hyperparameter Optimization
+Estimated Time: 1–2 days (compute-heavy; GPU/Colab candidate)
+Execution position: **after Phase 9** (needs trained artifacts + the learning gate).
+
+## Objective
+Convert the "correct-but-weak" post-Markov policy into a **strong** one that clears the learning gate
+with margin and approaches the heuristic baselines (`nearest_fire`/`frontier`). Three levers:
+(a) reward shaping that credits **agent-caused** suppression, (b) longer, vectorized training with
+best-checkpoint selection, (c) a hyperparameter sweep.
+
+## Problems / Goals Addressed
+- Advisor recommendation #1.
+- Audit finding: the canonical reward is dominated by uncontrollable fire mass, giving PPO almost no
+  learnable gradient tied to its own actions (why it collapsed to no-op even before the obs bug).
+
+## Files To Modify
+| File | Required Changes |
+|------|------------------|
+| `src/wildfire_rl/config.py` | `reward_agent_suppression_weight` (credit fire the agent actually removes) |
+| `src/wildfire_rl/envs/base.py`, `multi_agent.py` | Measure pre/post-suppression fire delta; add it to reward |
+| `src/wildfire_rl/train/ppo.py` | `SubprocVecEnv` (n_envs>1), `EvalCallback` + best-model checkpointing, optional LR schedule |
+| `configs/ppo/strong.yaml` (new) | Longer `total_timesteps`, tuned defaults |
+| `scripts/sweep.py` (new) | Grid/random search over `lr`, `ent_coef`, `n_steps`, reward weights |
+| `scripts/validate_learning_gate.py` | Tighten margin (PPO ≤ 0.5 × noop burned) |
+
+## Step-by-Step Implementation Guide
+
+### Step 1 — Agent-attributable suppression reward
+Purpose: Give PPO a gradient tied to its actions (mirrors the `multi_agent_v3` idea, promoted into the canonical env).
+Code Changes:
+```python
+# step(): capture fire before/after apply_suppression, credit the delta
+fire_before = self.state[0].copy()
+dynamics.apply_suppression(self.state, positions, self.cfg)
+agent_removed = float((fire_before - self.state[0]).sum())
+# ... spread/decay ...
+reward += self.cfg.reward_agent_suppression_weight * agent_removed / self._initial_fire_total
+```
+Validation: an agent parked on fire earns strictly more than a no-op agent on the same seed.
+
+### Step 2 — Training scale + best-checkpoint
+Purpose: More gradient steps and honest model selection.
+Code Changes: `make_vec_env(..., vec_env_cls=SubprocVecEnv, n_envs=cfg.n_envs)`; add SB3 `EvalCallback`
+on a held-out (randomized-ignition) eval env, saving the **best** model by mean reward.
+Validation:
+```bash
+venv/Scripts/python scripts/train.py --config configs/ppo/strong.yaml --set ppo.total_timesteps=20000 seeds=[0]
+```
+Expected Result: a `best_model.zip` is saved and its eval reward exceeds the last-step model's.
+
+### Step 3 — Hyperparameter sweep
+Purpose: Find a config that clears the gate.
+Implementation:
+```bash
+venv/Scripts/python scripts/sweep.py --region saudi --trials 12 --timesteps 100000 \
+    --grid lr=1e-4,3e-4 ent_coef=0.0,0.01,0.05
+```
+Selection metric: held-out `containment_rate` (Phase 7). Record the winning config to `configs/ppo/strong.yaml`.
+
+### Step 4 — Final retrain + gate with margin
+Implementation:
+```bash
+venv/Scripts/python scripts/train.py --config configs/ppo/strong.yaml   # 5 seeds, both regions
+venv/Scripts/python scripts/evaluate.py --config configs/experiment/multiseed.yaml
+venv/Scripts/python scripts/validate_learning_gate.py; echo "gate=$?"
+```
+Expected Result: gate exit 0 with margin; PPO significantly beats `random` and `noop` (effect size
+reported), and the gap to `nearest_fire`/`frontier` is quantified.
+
+## README Updates Required
+### Add Section
+```markdown
+## Training a Strong Policy
+
+`configs/ppo/strong.yaml` holds the tuned configuration (agent-suppression reward, vectorized envs,
+best-checkpoint selection) found by `scripts/sweep.py`. It is the configuration used for all reported
+results and must pass `scripts/validate_learning_gate.py` with margin (PPO ≤ 0.5 × noop burned cells).
+```
+### Modify Existing Section
+- **Training** and **Results**: point to `strong.yaml`; state the PPO-vs-baseline outcome honestly, including the remaining gap to heuristic baselines.
+
+## Success Criteria (MANDATORY CHECKPOINT)
+Technical verification
+- [ ] Agent-suppression reward implemented; unit test passes
+- [ ] Vectorized training + best-checkpoint selection working
+Reproducibility
+- [ ] Winning sweep config committed (`configs/ppo/strong.yaml`) + sweep log
+Scientific validity
+- [ ] Learning gate exits 0 **with margin**; PPO > random and > noop (effect size + CI)
+- [ ] Gap to `nearest_fire`/`frontier` quantified and reported
+Logging/monitoring
+- [ ] Training curves show clear improvement (not flat)
+README completeness
+- [ ] "Training a Strong Policy" section added
+### Proceed Rule
+- If ALL items are `[x]`, proceed to Phase 17. **If the gate still fails, STOP** and revisit reward/HPO — do not publish an RL performance claim.
+
+---
+
+# Phase 17 — Policy Rollout Visualization (per Ablation)
+Estimated Time: 4–8 hours
+Execution position: **after Phase 16** (needs strengthened policies + ablation variants).
+
+## Objective
+Produce per-ablation **rollout visualizations** — agent trajectories, fire-spread evolution, and
+suppression footprint — for each policy (`ppo`, `nearest_fire`, `frontier`, `noop`) across each
+ablation variant (`baseline`, `no_wind`, `no_terrain`, `no_suppression`, `dense_fuel`), so behavioral
+differences are visible, not merely tabular.
+
+## Problems / Goals Addressed
+- Advisor recommendation #2.
+- Audit finding: the collapse (PPO ≡ noop) was only detectable in numbers; a rollout view makes
+  policy behavior (and its recovery after Phase 16) legible at a glance.
+
+## Files To Modify
+| File | Required Changes |
+|------|------------------|
+| `src/wildfire_rl/viz/rollout.py` (new) | Record one deterministic episode; render a frame grid (t=0/mid/end) + trajectory overlay; optional animated GIF |
+| `scripts/render_rollouts.py` (new) | Iterate (policy × ablation variant), save figures |
+| `src/wildfire_rl/viz/figures.py` | Shared colormaps / criticality overlay helper |
+| `figures/rollouts/` (new dir) | Output |
+
+## Step-by-Step Implementation Guide
+
+### Step 1 — Rollout recorder
+Purpose: Capture per-step fire field + agent positions for one seeded episode.
+Code Changes (`viz/rollout.py`): `record_rollout(policy, env_factory, seed) -> {frames, agent_paths, criticality}`.
+Validation:
+```bash
+venv/Scripts/python -c "from wildfire_rl.viz.rollout import record_rollout; print('rollout recorder importable')"
+```
+
+### Step 2 — Renderer
+Purpose: One multi-panel figure per rollout (fire heatmap snapshots + agent trajectory; criticality overlay for Saudi).
+Code Changes: `render_rollout(rollout, out_path)`.
+Expected Result: a PNG (and optional GIF) is written.
+
+### Step 3 — Driver over policies × ablations
+Implementation:
+```bash
+venv/Scripts/python scripts/render_rollouts.py --region saudi \
+    --policies ppo nearest_fire frontier noop \
+    --variants baseline no_wind no_terrain no_suppression dense_fuel
+```
+Expected Result: `figures/rollouts/<variant>_<policy>.png` for every combination.
+
+### Step 4 — Reference in report
+- Embed a representative rollout grid in `docs/paper/report.md` (ablation section) and link the folder.
+
+## README Updates Required
+### Add Section
+```markdown
+## Rollout Visualizations
+
+`scripts/render_rollouts.py` renders one deterministic episode per (policy × ablation variant) to
+`figures/rollouts/`, showing agent trajectories over the evolving fire field (with the Saudi
+criticality overlay). Use these to compare PPO behavior against the heuristic and no-op baselines.
+```
+### Modify Existing Section
+- **Results**: reference the rollout figures alongside the ablation table.
+
+## Success Criteria (MANDATORY CHECKPOINT)
+Technical verification
+- [ ] A rollout figure exists for every (policy × ablation variant) pair
+- [ ] Renderer runs headless (`matplotlib Agg`), deterministic seeds
+Reproducibility
+- [ ] `render_rollouts.py` regenerates all figures from committed models
+Scientific validity
+- [ ] Post-Phase-16, the PPO rollout visibly differs from `noop` (behavioral evidence of learning)
+- [ ] Saudi rollouts overlay the criticality map
+Logging/monitoring
+- [ ] Each figure names its policy, variant, seed
+README completeness
+- [ ] "Rollout Visualizations" section added
+### Proceed Rule
+- If ALL items are `[x]`, proceed to the terminal Phase 14 re-certification. Otherwise fix first.

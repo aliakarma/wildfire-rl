@@ -58,7 +58,7 @@ class HybridMultiAgentWildfireEnv(MultiAgentWildfireEnvV3):
         if options and options.get("robustness_testing", False):
             from wildfire_rl.envs.randomized_fire_configs import randomize_env_robustness
             randomize_env_robustness(self, self.np_random)
-            obs = self.state.astype(np.float32)
+            obs = self._obs()
             self._initial_fire_total = float(self.state[0].sum()) or 1.0
 
         self._target_coordinates = [tuple(pos) for pos in self.agent_positions]

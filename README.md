@@ -17,7 +17,7 @@
 
 ## Overview
 
-Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, wind_y, terrain, temperature, humidity)` state tensor and exposes it as a [Gymnasium](https://gymnasium.farama.org/) environment. A PPO agent (Stable-Baselines3) learns to move and suppress fire under stochastic, fuel/terrain/wind-driven spread dynamics. The framework supports:
+Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, wind_y, terrain, temperature, humidity)` state tensor and exposes it as a [Gymnasium](https://gymnasium.farama.org/) environment. The policy **observation** appends an agent-position channel, so the network sees **8 channels** (see *Observation contract* below). A PPO agent (Stable-Baselines3) learns to move and suppress fire under stochastic, fuel/terrain/wind-driven spread dynamics. The framework supports:
 
 - **Single-agent** wildfire suppression (PPO + custom CNN feature extractor).
 - **Centralized cooperative multi-agent** control (MARL scaling: 1 / 3 / 5 agents).
@@ -38,6 +38,18 @@ Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, win
 
 > 📌 _Architecture/result figures live in `figures/` after `make figures` and in `docs/paper/`._
 
+### Observation contract
+
+Each observation is a `(C+1, H, W)` float32 tensor:
+- channels 0–6: `fire, fuel, wind_x, wind_y, terrain, temperature, humidity` (the stored state tensor)
+- channel 7: agent position (single-agent one-hot) / agent-occupancy map (multi-agent)
+
+The position channel makes the environment Markov for a movement policy
+(`EnvConfig.include_agent_channel`, default `True`); without it PPO cannot localize itself and
+collapses to a no-op policy. Metrics are computed from `env.state`, so the added channel does not
+affect reported numbers. Checkpoints trained before this change (`models/deprecated_pre_markov/`)
+expect 7-channel input and are **incompatible** — retrain for reported results.
+
 ### Why cross-regional transfer?
 
 Suppression policies are trained on a region's environmental tensor and evaluated **on the
@@ -45,6 +57,18 @@ same target environment as the native policy** — the only valid way to measure
 This isolates *ecological domain shift* (sparse desert fuel vs. dense forest fuel, flat vs.
 mountainous terrain) from raw fire-load differences. See [`docs/architecture.md`](docs/architecture.md)
 and the methodological notes in [`docs/reproducibility.md`](docs/reproducibility.md).
+
+### Saudi domain model
+
+The Saudi environment is domain-specialized (vs. California): **reduced fire spread**
+(`spread_scale < 1`, sparse desert fuel), **more frequent and more random ignitions**
+(`ignition_rate`, higher `n_ignition_points`), and a **petroleum-asset criticality** layer
+(`data/saudi_eastern_province/grids/32x32/criticality.npy`) that penalizes fire reaching
+high-value cells (`criticality_weight`). Rebuild the raster with
+`python scripts/build_criticality.py --region saudi_eastern_province --grid 32`. California uses
+baseline dynamics (`spread_scale: 1.0`, no criticality), so the two regions differ by more than
+just their state tensors. Canonical dynamics live in `configs/region/*.yaml` and are mirrored into
+`configs/experiment/multiseed*.yaml` for the reported runs.
 
 ---
 
@@ -147,6 +171,25 @@ Every run writes `results/runs/*.json` capturing git SHA, config hash, library v
 and seed. Determinism is enforced via `wildfire_rl.seeding.set_global_seed` **and** a
 per-environment `np_random` generator. Full protocol: [`docs/reproducibility.md`](docs/reproducibility.md).
 
+### Scenario splitting (no leakage)
+
+Reported experiments use randomized ignition (`env.randomize_ignition: true`). Training reset
+seeds occupy `[0, N)`; evaluation reset seeds occupy `[eval.scenario_seed_offset, +)`
+(default `100000`), guaranteeing the evaluation ignition maps are **disjoint** from those seen in
+training. Fixed-ignition runs (`randomize_ignition: false`) are **diagnostic only** — they evaluate
+on the same map used for training and must be labeled as such, never reported as generalization.
+
+### Determinism & seed integrity
+
+`wildfire_rl.seeding.set_global_seed(seed)` fixes the Python / NumPy / Torch / SB3 RNGs, enables
+cuDNN determinism and `torch.use_deterministic_algorithms(warn_only=True)`, and exports
+`CUBLAS_WORKSPACE_CONFIG` for deterministic CUDA GEMM. Guard against fake multi-seed results
+(identical checkpoints or byte-identical per-seed eval rows) with:
+
+```bash
+python scripts/check_seed_integrity.py   # exit 0 = OK; exit 1 = degenerate seeds detected
+```
+
 **PowerShell equivalents** (if `make` is unavailable):
 ```powershell
 python -m pytest -q
@@ -164,6 +207,7 @@ Rebuild them, or download a prepared bundle:
 # Rebuild from raw (needs credentials in .env; see .env.example and [geo] extras)
 python scripts/download_data.py --region saudi_eastern_province --source all
 python scripts/build_tensors.py --region saudi_eastern_province --grid 32
+python scripts/build_criticality.py --region saudi_eastern_province --grid 32  # petroleum-asset map
 ```
 A tiny synthetic sample lives in `data/sample/` for tests and the quickstart. Sources,
 licenses, CRS, and temporal coverage are documented in [`docs/data_card.md`](docs/data_card.md).

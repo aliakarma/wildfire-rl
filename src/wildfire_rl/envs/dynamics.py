@@ -53,7 +53,7 @@ def spread_fire(state: np.ndarray, cfg: EnvConfig, rng: np.random.Generator) -> 
             # The fire spreads from neighbor (x-di, y-dj) to target (x, y).
             # The direction vector is (di, dj). Dot product with wind vector:
             proj = wind_x * di + wind_y * dj
-            prob = (
+            prob = cfg.spread_scale * (
                 cfg.base_spread
                 + cfg.fuel_coeff * fuel
                 + cfg.wind_coeff * proj
@@ -66,7 +66,7 @@ def spread_fire(state: np.ndarray, cfg: EnvConfig, rng: np.random.Generator) -> 
         burning_neighbors = sum(_shift(active, di, dj) for di, dj in _OFFSETS)
         can_ignite = burning_neighbors > 0
         wind_factor = (wind_x + wind_y) / 2.0
-        spread_prob = (
+        spread_prob = cfg.spread_scale * (
             cfg.base_spread
             + cfg.fuel_coeff * fuel
             + cfg.wind_coeff * wind_factor
@@ -84,7 +84,7 @@ def apply_suppression(state: np.ndarray, positions: list[tuple[int, int]], cfg: 
     """Multiply fire by ``suppression_factor`` in the patch around each agent (in place)."""
     h, w = state.shape[1], state.shape[2]
     r = cfg.suppression_radius
-    for (x, y) in positions:
+    for x, y in positions:
         for dx in range(-r, r + 1):
             for dy in range(-r, r + 1):
                 nx, ny = x + dx, y + dy
@@ -117,3 +117,41 @@ def randomize_ignition(
     ys = rng.integers(0, w, size=n)
     tensor[0, xs, ys] = cfg.ignition_intensity
     return tensor
+
+
+def maybe_reignite(state: np.ndarray, cfg: EnvConfig, rng: np.random.Generator) -> None:
+    """With probability ``cfg.ignition_rate``, ignite one random cell (in place).
+
+    Models the higher, more-random ignition frequency of the Saudi desert regime. A no-op
+    when ``ignition_rate <= 0`` (default), so other regions are unaffected.
+    """
+    if cfg.ignition_rate <= 0.0:
+        return
+    if rng.random() < cfg.ignition_rate:
+        h, w = state.shape[1], state.shape[2]
+        x = int(rng.integers(0, h))
+        y = int(rng.integers(0, w))
+        state[0, x, y] = max(float(state[0, x, y]), cfg.ignition_intensity)
+
+
+def asset_penalty(criticality: np.ndarray | None, fire_channel: np.ndarray, weight: float) -> float:
+    """Cost of fire overlapping high-value (e.g. petroleum) cells: ``weight * Σ(crit·fire)``.
+
+    Returns 0.0 when there is no criticality map or the weight is non-positive.
+    """
+    if criticality is None or weight <= 0.0:
+        return 0.0
+    return float(weight * (criticality * fire_channel).sum())
+
+
+def load_criticality(cfg: EnvConfig, grid_size: int) -> np.ndarray | None:
+    """Load a grid-aligned criticality raster in [0, 1], or ``None`` if unset.
+
+    Raises if the raster shape does not match the environment grid.
+    """
+    if not cfg.criticality_path:
+        return None
+    crit = np.load(cfg.criticality_path).astype(np.float32)
+    if crit.shape != (grid_size, grid_size):
+        raise ValueError(f"criticality shape {crit.shape} != grid ({grid_size}, {grid_size})")
+    return crit

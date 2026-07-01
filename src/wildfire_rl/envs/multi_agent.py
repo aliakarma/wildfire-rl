@@ -48,27 +48,57 @@ class MultiAgentWildfireEnv(gym.Env):
         c, h, w = self.initial_tensor.shape
         self.grid_size = h
         self.action_space = spaces.MultiDiscrete([N_ACTIONS] * self.num_agents)
-        self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(c, h, w), dtype=np.float32)
+        self._obs_channels = c + (1 if self.cfg.include_agent_channel else 0)
+        self.observation_space = spaces.Box(
+            low=0.0, high=1.0, shape=(self._obs_channels, h, w), dtype=np.float32
+        )
 
         self.state = self.initial_tensor.copy()
         self.agent_positions: list[list[int]] = []
         self.current_step = 0
         self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
+        self.criticality = dynamics.load_criticality(self.cfg, self.grid_size)
+
+    def _obs(self) -> np.ndarray:
+        """State tensor + optional agent-occupancy channel (Markov observation).
+
+        The occupancy channel marks every agent cell so the centralized policy can
+        observe where its agents are — the raw ``self.state`` does not encode this.
+        """
+        if not self.cfg.include_agent_channel:
+            return self.state.astype(np.float32)
+        occ = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
+        for x, y in self.agent_positions:
+            occ[0, x, y] += 1.0
+        np.clip(occ, 0.0, 1.0, out=occ)
+        return np.concatenate([self.state, occ], axis=0).astype(np.float32)
 
     def _init_positions(self) -> None:
         # Spread agents deterministically around the grid center.
         center = self.grid_size // 2
         offsets = [
-            (0, 0), (-3, 0), (3, 0), (0, -3), (0, 3),
-            (-3, -3), (3, 3), (-3, 3), (3, -3),
-            (-6, 0), (6, 0), (0, -6), (0, 6)
+            (0, 0),
+            (-3, 0),
+            (3, 0),
+            (0, -3),
+            (0, 3),
+            (-3, -3),
+            (3, 3),
+            (-3, 3),
+            (3, -3),
+            (-6, 0),
+            (6, 0),
+            (0, -6),
+            (0, 6),
         ]
         self.agent_positions = []
         for i in range(self.num_agents):
             dx, dy = offsets[i % len(offsets)]
             self.agent_positions.append(
-                [min(max(center + dx, 0), self.grid_size - 1),
-                 min(max(center + dy, 0), self.grid_size - 1)]
+                [
+                    min(max(center + dx, 0), self.grid_size - 1),
+                    min(max(center + dy, 0), self.grid_size - 1),
+                ]
             )
 
     def reset(
@@ -82,7 +112,7 @@ class MultiAgentWildfireEnv(gym.Env):
         self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self._init_positions()
         self.current_step = 0
-        return self.state.astype(np.float32), {}
+        return self._obs(), {}
 
     def _move(self, idx: int, action: int) -> None:
         x, y = self.agent_positions[idx]
@@ -102,11 +132,10 @@ class MultiAgentWildfireEnv(gym.Env):
         for i in range(self.num_agents):
             self._move(i, int(actions[i]))
 
-        dynamics.apply_suppression(
-            self.state, [tuple(p) for p in self.agent_positions], self.cfg
-        )
+        dynamics.apply_suppression(self.state, [tuple(p) for p in self.agent_positions], self.cfg)
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
+        dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
 
         total_fire = float(self.state[0].sum())
 
@@ -117,14 +146,18 @@ class MultiAgentWildfireEnv(gym.Env):
             if self.state[0, x, y] < self.cfg.extinguish_threshold:
                 bonus += self.cfg.suppression_bonus
 
+        # Asset-protection penalty (petroleum criticality)
+        penalty = dynamics.asset_penalty(
+            self.criticality, self.state[0], self.cfg.criticality_weight
+        )
+
         # Reward mode parity with single-agent env
         if self.cfg.reward_mode == "normalized":
-            reward = float(-total_fire / self._initial_fire_total + bonus)
+            reward = float(-total_fire / self._initial_fire_total + bonus - penalty)
         else:
-            reward = float(-total_fire + bonus)
+            reward = float(-total_fire + bonus - penalty)
 
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
         info = {"total_fire": total_fire, "num_agents": self.num_agents}
-        return self.state.astype(np.float32), reward, terminated, truncated, info
-
+        return self._obs(), reward, terminated, truncated, info

@@ -163,6 +163,7 @@ def run_evaluation() -> None:
                     factory,
                     n_episodes=cfg.eval.n_episodes,
                     base_seed=cfg.eval.base_seed,
+                    scenario_seed_offset=cfg.eval.scenario_seed_offset,
                     deterministic=True,
                     metrics_cfg=cfg.metrics,
                 )
@@ -188,6 +189,7 @@ def run_evaluation() -> None:
                     factory,
                     n_episodes=cfg.eval.n_episodes,
                     base_seed=cfg.eval.base_seed,
+                    scenario_seed_offset=cfg.eval.scenario_seed_offset,
                     deterministic=True,
                     metrics_cfg=cfg.metrics,
                 )
@@ -499,6 +501,7 @@ def save_transfer_metrics(cfg: Any, seeds: list[int]) -> None:
                         factory,
                         n_episodes=cfg.eval.n_episodes,
                         base_seed=cfg.eval.base_seed,
+                        scenario_seed_offset=cfg.eval.scenario_seed_offset,
                         deterministic=True,
                         metrics_cfg=cfg.metrics,
                     )

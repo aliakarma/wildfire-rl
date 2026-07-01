@@ -25,6 +25,7 @@ def transfer_matrix(
     base_seed: int = 0,
     deterministic: bool = True,
     metrics_cfg: MetricsConfig | None = None,
+    scenario_seed_offset: int = 0,
 ) -> pd.DataFrame:
     """Evaluate every (train policy) x (test environment) combination.
 
@@ -45,6 +46,7 @@ def transfer_matrix(
                 base_seed=base_seed,
                 deterministic=deterministic,
                 metrics_cfg=metrics_cfg,
+                scenario_seed_offset=scenario_seed_offset,
             )
             s = result["summary"]
             rows.append(

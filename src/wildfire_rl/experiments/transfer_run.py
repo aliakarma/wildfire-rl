@@ -89,6 +89,7 @@ def run_transfer(
                 n_episodes=cfg.eval.n_episodes,
                 base_seed=cfg.eval.base_seed,
                 deterministic=cfg.eval.deterministic,
+                scenario_seed_offset=cfg.eval.scenario_seed_offset,
                 metrics_cfg=cfg.metrics,
             )
             s = result["summary"]

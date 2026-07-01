@@ -38,6 +38,23 @@ Shape `(7, H, W)`, channels frozen in this order:
 | 5 | temperature | ERA5 2m T | temperature |
 | 6 | humidity | ERA5 2m dewpoint | humidity proxy |
 
+## Observation (Markov)
+
+The **stored** `state_tensor.npy` is 7-channel (above). The **observation returned to the
+policy** appends one agent channel, giving `(8, H, W)`:
+
+| idx | channel | meaning |
+|---|---|---|
+| 0–6 | state tensor | fire, fuel, wind_x, wind_y, terrain, temperature, humidity |
+| 7 | agent position | single-agent: one-hot agent cell; MARL: agent-occupancy map |
+
+The agent channel makes the environment Markov for a movement policy
+(`EnvConfig.include_agent_channel`, default `True`) — without it the raw state does not encode
+where the agent is, and the policy cannot learn to navigate to the fire. Metrics
+(`burned_cells`, `fire_intensity`) are computed from `env.state` (channel 0) and are unaffected
+by the added channel. Checkpoints trained before this change (`models/deprecated_pre_markov/`)
+expect 7-channel input and are incompatible.
+
 ## Environment dynamics (per `step`)
 
 1. **Move** the agent(s) (5 discrete actions: up/down/left/right/stay).

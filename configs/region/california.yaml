@@ -4,3 +4,10 @@ region:
   name: california
   dir: california
   grid_size: 32
+
+# California baseline dynamics (no desert specialization) — stated explicitly so the
+# Saudi contrast is documented rather than implicit.
+env:
+  spread_scale: 1.0
+  ignition_rate: 0.0
+  criticality_weight: 0.0

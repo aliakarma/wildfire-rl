@@ -26,13 +26,17 @@ def evaluate_policy(
     base_seed: int = 0,
     deterministic: bool = True,
     metrics_cfg: MetricsConfig | None = None,
+    scenario_seed_offset: int = 0,
 ) -> dict[str, Any]:
     """Run ``n_episodes`` and return aggregated + per-episode metrics.
 
     Args:
         policy: anything with ``predict(obs, deterministic) -> (action, state)``.
         env_factory: zero-arg callable returning a fresh env each episode.
-        base_seed: episode ``i`` uses ``reset(seed=base_seed + i)``.
+        base_seed: episode ``i`` uses ``reset(seed=base_seed + scenario_seed_offset + i)``.
+        scenario_seed_offset: offset added to every reset seed so evaluation scenarios are
+            disjoint from the training reset seeds (no train/test leakage under
+            ``randomize_ignition``). Callers pass ``cfg.eval.scenario_seed_offset``.
     """
     metrics_cfg = metrics_cfg or MetricsConfig()
     per_episode: list[dict[str, float]] = []
@@ -43,7 +47,7 @@ def evaluate_policy(
             policy.env = env
         if hasattr(policy, "set_env"):
             policy.set_env(env)
-        obs, _ = env.reset(seed=base_seed + ep)
+        obs, _ = env.reset(seed=base_seed + scenario_seed_offset + ep)
         done = False
         rewards: list[float] = []
         while not done:

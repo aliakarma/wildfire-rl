@@ -24,6 +24,9 @@ def set_global_seed(seed: int, deterministic_torch: bool = True) -> int:
     environments without those packages installed.
     """
     os.environ["PYTHONHASHSEED"] = str(seed)
+    # Required for deterministic CUDA GEMM under torch.use_deterministic_algorithms.
+    # setdefault so an explicit user setting is respected.
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
     random.seed(seed)
     np.random.seed(seed)
 
@@ -35,6 +38,9 @@ def set_global_seed(seed: int, deterministic_torch: bool = True) -> int:
         if deterministic_torch:
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
+            # warn_only: fall back (with a warning) for ops lacking a deterministic
+            # kernel rather than hard-crashing training.
+            torch.use_deterministic_algorithms(True, warn_only=True)
     except ImportError:
         pass
 
