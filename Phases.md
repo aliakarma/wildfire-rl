@@ -714,3 +714,86 @@ Evaluation Corrections).
 - Next: fix the Cohen's d zero-variance artifact (`significance.py`), add `containment_rate`, label
   `reward_mode` in every CSV, and add `validate_learning_gate.py` (PPO must beat noop).
 - `make reproduce` is now the authoritative path Phase 9/14 will execute end-to-end.
+
+---
+
+## Phase 7 — Metric Verification & Evaluation Corrections
+
+**Status:** ✅ COMPLETE — all success criteria pass.
+**Actual time:** ~35 min · **Compute used:** CPU only.
+
+### Objective
+Fix the Cohen's d zero-variance artifact, add an agent-influenceable metric (`containment_rate`),
+label `reward_mode` in every reported CSV, and add a machine-checkable learning gate (PPO must beat
+no-op).
+
+### Actions Taken
+1. **Cohen's d guard (`eval/significance.py`).** `cohens_d` now returns **`nan`** (undefined) when
+   pooled std ≈ 0 **and** the means differ — instead of `0.0`, which had mislabeled the ablation's
+   massive deterministic effects as "no effect". Still returns `0.0` when both groups are constant
+   *and* equal. Unit-tested.
+2. **`containment_rate` metric (`eval/metrics.py` + `eval/evaluate.py`).** New metric = fraction of
+   initial fire mass extinguished, clipped to `[0,1]`. Wired into the evaluation loop, so every
+   episode/summary now carries `containment_rate` (verified in eval output). This is the
+   agent-influenceable outcome the audit noted was missing (raw `fire_intensity` is dominated by fire
+   a single agent cannot reach).
+3. **`reward_mode` column** added to the three reported CSV writers — `cli.cmd_evaluate` (eval),
+   `run_ablation.py` (ablation), `transfer_run.py` (transfer) — so `raw` vs `normalized` tables are
+   never silently mixed (the §20-vs-§22 confusion from the audit).
+4. **Learning gate (`scripts/validate_learning_gate.py`, new).** Reads the per-region eval CSVs and
+   requires mean PPO `burned_cells` ≤ `(1-margin) ×` noop. Exit 0/1; `--margin` configurable.
+5. **Tests** — `test_degenerate_returns_nan` (cohens_d) and `test_containment_rate`.
+6. **Docs** — README **Metrics & Learning Gate** section.
+
+### Verification Evidence
+```
+pytest ................... 63 passed (was 61; +2 tests)                               ✔
+containment_rate ......... present in episode keys + summary (containment_rate_mean)  ✔
+cohens_d degenerate ...... nan for [1,1,1] vs [9,9,9]; 0.0 for [5,5,5] vs [5,5,5]      ✔
+learning gate ............ exit 1 — correctly FLAGS the collapse:
+    eval_saudi.csv ........... ppo=92.50 == noop=92.50   -> FAIL
+    eval_california.csv ...... ppo=262.33 ~ noop=263.75  -> FAIL
+ruff + black (P7 files) .. clean (formatted files I edited; ruff --fix significance.py I001)
+```
+The learning gate exiting 1 is the **intended** result: it is the machine-checkable detector for the
+audit's central finding (PPO ≡ no-op). It must flip to exit 0 after Phase 9 retrain + Phase 16
+strengthening.
+
+### Deviations / Scope Notes
+1. **`reward_mode` not added to `run_marl_evaluation.py`** (MARL CSVs) — that script hardcodes
+   `reward_mode="normalized"`, so its tables are unambiguous; adding a constant column to the big
+   pre-existing-debt file was not worth the churn. Documented (MARL = normalized).
+2. **Formatting:** black-formatted the files I edited/authored this phase; `ruff --fix` cleared a
+   pre-existing `I001` in `significance.py` (a core file I edited). Repo-wide debt still deferred to
+   Phase 13.
+3. The gate/threshold (5% margin) is a starting value; Phase 16 tightens it and reports effect size +
+   CI alongside.
+
+### Files Changed
+- **src:** `eval/significance.py`, `eval/metrics.py`, `eval/evaluate.py`, `cli.py`,
+  `experiments/transfer_run.py`.
+- **scripts:** `run_ablation.py` (reward_mode), `validate_learning_gate.py` (new).
+- **tests:** `test_significance.py` (+1), `test_metrics.py` (+1).
+- **docs:** `README.md`.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `cohens_d` returns `nan` on degenerate large differences
+  - [x] `containment_rate` implemented and wired into eval
+  - [x] `reward_mode` column in eval/ablation/transfer CSVs
+- Reproducibility
+  - [x] Learning gate script runnable and CI-callable
+- Scientific validity
+  - [x] Effect sizes no longer misreported as 0.0
+  - [x] Learning gate detects the current PPO≡noop collapse (exit 1, expected pre-Phase-9)
+- Logging/monitoring
+  - [x] Gate outcome logged per result set
+- README completeness
+  - [x] Metrics & learning-gate section added
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 8** (Experiment Tracking & Logging).
+
+### Notes for Phase 8 / 9
+- The learning gate + seed-integrity guard are the two blocking checks Phase 9's retrain must satisfy
+  (exit 0). Until then both correctly report the pre-remediation degeneracy.
+- `containment_rate` is now available as the selection metric for the Phase 16 HPO sweep.

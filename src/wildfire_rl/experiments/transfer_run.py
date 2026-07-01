@@ -114,6 +114,7 @@ def run_transfer(
                 "mean_burned_cells": s.get("burned_cells_mean"),
                 "mean_fire_intensity": s.get("fire_intensity_mean"),
                 "n_episodes": cfg.eval.n_episodes,
+                "reward_mode": cfg.env.reward_mode,
             })
 
     # Paired t-tests: compare native PPO vs transferred PPO

@@ -27,6 +27,18 @@ def fire_intensity(state: np.ndarray) -> float:
     return float(np.sum(fire))
 
 
+def containment_rate(initial_fire_total: float, final_state: np.ndarray) -> float:
+    """Fraction of the initial fire mass no longer burning at episode end (higher = better).
+
+    An agent-influenceable outcome metric, unlike raw ``fire_intensity`` (dominated by fire the
+    single agent cannot reach). Clipped to ``[0, 1]``.
+    """
+    fire = final_state[0] if final_state.ndim == 3 else final_state
+    final = float(np.sum(fire))
+    denom = initial_fire_total or 1.0
+    return float(min(1.0, max(0.0, 1.0 - final / denom)))
+
+
 def episode_return(rewards: list[float]) -> float:
     return float(np.sum(rewards))
 

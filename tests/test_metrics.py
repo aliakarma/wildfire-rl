@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from wildfire_rl.eval.metrics import burned_cells, episode_return, fire_intensity, summarize
+from wildfire_rl.eval.metrics import (
+    burned_cells,
+    containment_rate,
+    episode_return,
+    fire_intensity,
+    summarize,
+)
 
 
 def test_burned_cells_threshold():
@@ -29,3 +35,17 @@ def test_summarize_mean_std():
     out = summarize(eps)
     assert out["r_mean"] == 1.0
     assert out["r_std"] == 1.0
+
+
+def test_containment_rate():
+    def _state(fire2d):
+        return np.stack([fire2d] + [np.zeros_like(fire2d)] * 6)
+
+    # No fire remaining -> full containment.
+    assert containment_rate(10.0, _state(np.zeros((4, 4), np.float32))) == 1.0
+    # Half the initial mass remains -> 0.5.
+    half = np.zeros((4, 4), np.float32)
+    half[0, 0] = 5.0
+    assert containment_rate(10.0, _state(half)) == 0.5
+    # More fire than initial (re-ignition) -> clipped to 0.
+    assert containment_rate(1.0, _state(np.ones((4, 4), np.float32))) == 0.0

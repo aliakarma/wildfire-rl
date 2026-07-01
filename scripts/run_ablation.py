@@ -94,6 +94,7 @@ def main() -> int:
             "burned_mean": float(burned_arr.mean()),
             "burned_std": float(burned_arr.std()),
             "n_seeds": len(cfg.seeds),
+            "reward_mode": cfg.env.reward_mode,
         }
 
         if variant == "baseline":

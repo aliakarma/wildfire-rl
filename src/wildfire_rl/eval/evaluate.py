@@ -62,6 +62,9 @@ def evaluate_policy(
                 "episode_reward": metrics.episode_return(rewards),
                 "burned_cells": metrics.burned_cells(final_state, metrics_cfg.burned_threshold),
                 "fire_intensity": metrics.fire_intensity(final_state),
+                "containment_rate": metrics.containment_rate(
+                    getattr(env, "_initial_fire_total", 1.0), final_state
+                ),
             }
         )
 

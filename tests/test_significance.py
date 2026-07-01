@@ -55,6 +55,14 @@ class TestCohensD:
         assert cohens_d(a, b) > 0
         assert cohens_d(b, a) < 0
 
+    def test_degenerate_returns_nan(self):
+        import math
+
+        # Zero within-group variance but different means => effect size undefined, NOT 0.
+        assert math.isnan(cohens_d(np.array([1.0, 1.0, 1.0]), np.array([9.0, 9.0, 9.0])))
+        # Zero variance AND equal means => 0.0.
+        assert cohens_d(np.array([5.0, 5.0, 5.0]), np.array([5.0, 5.0, 5.0])) == 0.0
+
 
 class TestWelchTTest:
     def test_highly_significant(self):
@@ -78,10 +86,15 @@ class TestWelchTTest:
         b = np.array([4.0, 5.0, 6.0])
         result = welch_ttest(a, b)
         expected_keys = {
-            "t_statistic", "p_value", "cohens_d",
-            "group1_mean", "group2_mean",
-            "group1_ci_lo", "group1_ci_hi",
-            "group2_ci_lo", "group2_ci_hi",
+            "t_statistic",
+            "p_value",
+            "cohens_d",
+            "group1_mean",
+            "group2_mean",
+            "group1_ci_lo",
+            "group1_ci_hi",
+            "group2_ci_lo",
+            "group2_ci_hi",
         }
         assert set(result.keys()) == expected_keys
 

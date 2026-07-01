@@ -167,6 +167,7 @@ def cmd_evaluate(args) -> int:
             "fire_ci_lo": ci_fire[0],
             "fire_ci_hi": ci_fire[1],
             "n_episodes": len(rewards),
+            "reward_mode": cfg.env.reward_mode,
         }
 
         if name.startswith("ppo"):

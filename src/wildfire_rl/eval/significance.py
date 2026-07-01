@@ -11,10 +11,10 @@ from __future__ import annotations
 import numpy as np
 from scipy import stats
 
-
 # ---------------------------------------------------------------------------
 # Confidence intervals
 # ---------------------------------------------------------------------------
+
 
 def confidence_interval_95(values: list[float] | np.ndarray) -> tuple[float, float]:
     """Return 95% CI ``(lower, upper)`` using the *t*-distribution.
@@ -36,6 +36,7 @@ def confidence_interval_95(values: list[float] | np.ndarray) -> tuple[float, flo
 # Effect size
 # ---------------------------------------------------------------------------
 
+
 def cohens_d(group1: np.ndarray, group2: np.ndarray) -> float:
     """Cohen's *d* effect size with pooled standard deviation.
 
@@ -46,13 +47,17 @@ def cohens_d(group1: np.ndarray, group2: np.ndarray) -> float:
     var1, var2 = g1.var(ddof=1), g2.var(ddof=1)
     pooled_std = np.sqrt(((n1 - 1) * var1 + (n2 - 1) * var2) / (n1 + n2 - 2))
     if pooled_std < 1e-12:
-        return 0.0
+        # Degenerate (zero within-group variance): the effect size is undefined when the
+        # means differ — NOT zero. Returning 0.0 previously mislabeled huge deterministic
+        # differences as "no effect" (audit finding on the ablation table).
+        return float("nan") if abs(g1.mean() - g2.mean()) > 1e-12 else 0.0
     return float((g1.mean() - g2.mean()) / pooled_std)
 
 
 # ---------------------------------------------------------------------------
 # Hypothesis tests
 # ---------------------------------------------------------------------------
+
 
 def welch_ttest(group1: np.ndarray, group2: np.ndarray) -> dict[str, float]:
     """Welch's *t*-test (unequal variance, independent samples).
@@ -110,6 +115,7 @@ def wilcoxon_test(values1: np.ndarray, values2: np.ndarray) -> dict[str, float]:
 # ---------------------------------------------------------------------------
 # Formatting helpers (for paper tables)
 # ---------------------------------------------------------------------------
+
 
 def format_ci(values: list[float] | np.ndarray, fmt: str = ".2f") -> str:
     """Format as ``'mean [CI_lo, CI_hi]'``."""

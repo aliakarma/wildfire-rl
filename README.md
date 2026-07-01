@@ -161,6 +161,18 @@ wildfire-rl evaluate --config configs/experiment/multiseed.yaml \
 wildfire-rl transfer --config configs/experiment/transfer.yaml
 ```
 
+## Metrics & Learning Gate
+
+Primary metrics: `burned_cells` (fire > 0.5), `fire_intensity`, `containment_rate` (fraction of the
+initial fire mass extinguished — the agent-influenceable outcome, unlike raw intensity), and
+`episode_reward`. Every results CSV now records its `reward_mode`, because `raw` and `normalized`
+rewards are **not** comparable across tables. Effect sizes are reported as `nan` (undefined), never
+`0.0`, when within-group variance is zero. A result set is accepted only if the learning gate passes:
+
+```bash
+python scripts/validate_learning_gate.py   # PPO must cut burned cells >= 5% vs noop, else exit 1
+```
+
 ## Reproducibility
 
 ```bash
