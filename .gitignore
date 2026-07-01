@@ -37,6 +37,7 @@ data/**
 # ---- Results that are regenerable (keep only canonical small CSVs) ----------
 results/logs/
 results/runs/
+results/Legacy/
 results/**/*.parquet
 
 # ---- Figures (generated; paper-final figures live under docs/paper/) --------

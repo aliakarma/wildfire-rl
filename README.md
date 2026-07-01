@@ -55,18 +55,55 @@ and the methodological notes in [`docs/reproducibility.md`](docs/reproducibility
 git clone https://github.com/aliakarma/wildfire-rl.git
 cd wildfire-rl
 
-# 2a. pip (RL stack)
-python -m pip install -e .
+# 2. Create a pinned virtual environment (Python 3.10 or 3.11 — torch==2.3.1 has no 3.12+ wheels)
+python -m venv venv
+source venv/Scripts/activate        # Windows Git Bash
+# source venv/bin/activate          # Linux / macOS
 
-# 2b. or conda (recommended if you need the geospatial preprocessing stack)
+# 3a. Exact, byte-reproducible install (recommended for reproducing results)
+pip install -r requirements-dev.txt   # exact scientific + dev pins (torch==2.3.1, seaborn==0.13.2, ...)
+pip install -e . --no-deps            # the wildfire_rl package itself
+# After the first install, prefer the frozen transitive lock (see "Environment (pinned)"):
+pip install -r requirements.lock.txt
+
+# 3b. or conda (recommended if you need the geospatial preprocessing stack)
 conda env create -f environment.yml
 conda activate wildfire-rl
-pip install -e .
+pip install -e . --no-deps
 
 # Optional extras
 pip install -e ".[geo]"     # rasterio/GDAL/EE/CDS — only to rebuild tensors from raw
-pip install -e ".[dev]"     # tests, linting, pre-commit
 pip install -e ".[track]"   # wandb + huggingface_hub
+```
+
+## Environment (pinned)
+
+The authoritative, byte-reproducible environment for artifact evaluation:
+
+```bash
+python -m venv venv
+source venv/Scripts/activate          # Windows Git Bash
+pip install -r requirements-dev.txt   # exact scientific + dev pins
+pip install -e . --no-deps            # editable package
+pip install -r requirements.lock.txt  # full pinned transitive graph
+```
+
+- `requirements.txt` — exact runtime pins (incl. `scipy==1.13.0`, `seaborn==0.13.2`).
+- `requirements-dev.txt` — the above plus exact test/lint pins.
+- `requirements.lock.txt` — the complete frozen transitive graph (regenerate with
+  `pip freeze --exclude-editable > requirements.lock.txt`). This file is the reference
+  environment for reproducing every reported number.
+
+> Python 3.10 or 3.11 is required: `torch==2.3.1` publishes no wheels for Python 3.12+.
+
+**GPU (optional).** The pinned `torch==2.3.1` from PyPI is the **CPU** build (`2.3.1+cpu`), which is
+the canonical, deterministic, CI-matched environment. For this workload (a small CNN on 32×32
+grids) CPU is adequate. To train on an NVIDIA GPU, override with the CUDA wheel *after* the pinned
+install (this changes the frozen graph; keep it out of `requirements.lock.txt`):
+
+```bash
+pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
 ## Quickstart
@@ -147,13 +184,26 @@ See [`docs/model_card.md`](docs/model_card.md).
 wildfire-rl/
 ├── src/wildfire_rl/      # installable package (envs, models, train, eval, viz, data)
 ├── configs/              # OmegaConf YAML (region / env / ppo / experiment)
-├── scripts/              # CLI entrypoints (train, evaluate, transfer, data, models)
+├── scripts/              # certified CLI entrypoints (train, evaluate, transfer, ablation, marl)
 ├── tests/                # pytest suite (env API, determinism, metrics, config, CLI)
 ├── notebooks/            # demo / exploratory notebooks (outputs stripped)
 ├── docs/                 # architecture, reproducibility, data & model cards
 ├── data/   models/   results/   figures/   # artifacts (mostly git-ignored)
+├── experimental/         # v2–v6 reward-shaping / coordination tracks (NON-certified)
+├── reviews/history/      # archived third-party audits (provenance only)
 └── .github/workflows/    # CI: lint, test, install, large-file guard
 ```
+
+## Repository Layout Guarantee
+
+The reproducible research pipeline consists of:
+- `src/wildfire_rl/` — the installable package
+- `scripts/{train,evaluate,transfer,run_ablation,run_marl_evaluation}.py`
+- `configs/` and the canonical `results/*.csv`
+
+Exploratory reward-shaping and coordination experiments (v2–v6) live under `experimental/`
+and are **not** part of the certified reproducibility path. Archived third-party audits live
+under `reviews/history/` for provenance only and must not be cited as project claims.
 
 ## Roadmap
 

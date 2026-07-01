@@ -387,13 +387,7 @@ To understand the influence of individual environmental factors, we evaluated PP
 Key Observation:
 * **Wind** is the most dominant factor in fire spread: disabling wind reduction (`No Wind`) leads to a **87.2% reduction** in burned cells and a **61.4% reduction** in fire intensity.
 * **Fuel Density** (`Dense Fuel`) dramatically accelerates propagation: increasing NDVI to a uniform 0.3 increases burned cells by **456.8%** and fire intensity by **181.7%**, which is statistically highly significant.
-* Disabling agent suppression (`No Suppression`) does not significantly degrade containment compared to baseline, indicating that single-agent PPO at 100k timesteps has limited suppression capacity, which motivates the multi-agent scaling results.rnia wildfire regimes.
-Performance degradation exceeded:
-•	100% relative reward difference.
-This strongly supports:
-•	ecological specialization,
-•	RL domain dependence,
-•	environmental transfer limitations.
+* Disabling agent suppression (`No Suppression`) does not significantly degrade containment compared to baseline, indicating that single-agent PPO at 100k timesteps has limited suppression capacity, which motivates the multi-agent scaling results.
 ________________________________________
 23. Statistical Stability
 Standard deviations remained low across seeds.
