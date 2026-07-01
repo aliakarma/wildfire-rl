@@ -15,7 +15,14 @@ from torch import nn
 
 
 class CustomCNN(BaseFeaturesExtractor):
-    """Conv stack -> flatten -> linear projection, for ``(C, H, W)`` wildfire tensors."""
+    """Conv stack -> flatten -> linear projection, for ``(C, H, W)`` wildfire tensors.
+
+    NOTE: Legacy checkpoints (~200MB) were trained with use_pooling=False.
+    The current default (use_pooling=True) produces smaller checkpoints.
+    To load legacy checkpoints, set ppo.cnn_pooling=false in the config.
+    Our loading utilities automatically detect and fallback to use_pooling=False
+    if a size mismatch is encountered.
+    """
 
     def __init__(
         self,

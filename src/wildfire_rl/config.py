@@ -28,6 +28,59 @@ DEFAULT_CHANNELS: list[str] = [
 
 
 @dataclass
+class RewardV2Config:
+    """Configurable weights for V2 reward shaping components.
+
+    Each component can be toggled on/off via its weight (0.0 = disabled).
+    """
+
+    enabled: bool = False  # False => use original reward; True => use V2
+
+    # 1. Spread reduction: reward = w * (prev_fire - curr_fire) / initial_fire
+    spread_reduction_weight: float = 1.0
+
+    # 2. Frontier blocking: reward agents positioned at fire frontier cells
+    frontier_blocking_weight: float = 3.0
+
+    # 3. Coverage: reward unique cells visited this step / grid_size^2
+    coverage_weight: float = 0.5
+
+    # 4. Overlap penalty: penalize agent pairs sharing the same cell
+    overlap_penalty: float = -2.0
+
+    # 5. Containment stability: bonus for consecutive steps where fire decreases
+    containment_stability_weight: float = 0.5
+    containment_streak_cap: int = 10  # cap the streak multiplier
+
+
+@dataclass
+class RewardV3Config:
+    """Configurable weights for V3 reward shaping components.
+
+    Each component can be toggled on/off via its weight (0.0 = disabled).
+    """
+
+    enabled: bool = False
+
+    # 1. Spread reduction (agent-caused only): reward = w * agent_suppressed / initial_fire
+    spread_reduction_weight: float = 5.0
+
+    # 2. Frontier blocking: reward agents positioned at fire frontier cells
+    frontier_blocking_weight: float = 1.0
+
+    # 3. Coverage: reward unique cells visited / grid_size^2 (encourages exploration)
+    coverage_weight: float = 2.0
+
+    # 4. Overlap penalty: penalize agent pairs sharing the same cell (massively reduced)
+    overlap_penalty: float = -0.05
+
+    # 5. Containment stability: streak bonus based on active agent-caused suppression
+    containment_stability_weight: float = 1.0
+    containment_streak_cap: int = 10
+    suppression_threshold: float = 0.05  # minimum fire suppressed to increment streak
+
+
+@dataclass
 class EnvConfig:
     """Wildfire environment dynamics. Every magic number from the notebooks lives here."""
 
@@ -63,6 +116,16 @@ class EnvConfig:
     # "normalized": reward divided by initial total fire (comparable across regions)
     reward_mode: str = "raw"
 
+    # --- V2 reward shaping (multi-component) ---
+    reward_v2: RewardV2Config = field(default_factory=RewardV2Config)
+
+    # --- V3 reward shaping (leakage-free coordination) ---
+    reward_v3: RewardV3Config = field(default_factory=RewardV3Config)
+
+    # --- Routing strategy for hybrid environment ---
+    # "nearest_fire" | "frontier"
+    routing_strategy: str = "nearest_fire"
+
     # --- wind model ---
     # False => isotropic (original: (wind_x + wind_y) / 2, no direction)
     # True  => magnitude-weighted (experimental hook for directional wind)
@@ -74,6 +137,10 @@ class EnvConfig:
     randomize_ignition: bool = False
     n_ignition_points: int = 3
     ignition_intensity: float = 1.0
+
+    # --- Phase 6 dynamic fire scenarios toggles ---
+    dynamic_scenarios: dict[str, Any] = field(default_factory=dict)
+
 
 
 @dataclass

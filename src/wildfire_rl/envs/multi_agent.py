@@ -4,6 +4,9 @@ Replaces the two ``MultiAgentSaudiEnv`` copies. This is *centralized* cooperativ
 control (one policy emits a MultiDiscrete action vector for all agents) — matching the
 scope described in the report. It shares the exact dynamics functions used by the
 single-agent env, so there is no behavioral drift between the two.
+
+Reward parity with single-agent env: supports ``reward_mode`` (``"raw"`` / ``"normalized"``)
+and ``suppression_bonus``, matching :class:`WildfireEnv`.
 """
 
 from __future__ import annotations
@@ -50,11 +53,16 @@ class MultiAgentWildfireEnv(gym.Env):
         self.state = self.initial_tensor.copy()
         self.agent_positions: list[list[int]] = []
         self.current_step = 0
+        self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
 
     def _init_positions(self) -> None:
         # Spread agents deterministically around the grid center.
         center = self.grid_size // 2
-        offsets = [(0, 0), (-3, 0), (3, 0), (0, -3), (0, 3), (-3, -3), (3, 3)]
+        offsets = [
+            (0, 0), (-3, 0), (3, 0), (0, -3), (0, 3),
+            (-3, -3), (3, 3), (-3, 3), (3, -3),
+            (-6, 0), (6, 0), (0, -6), (0, 6)
+        ]
         self.agent_positions = []
         for i in range(self.num_agents):
             dx, dy = offsets[i % len(offsets)]
@@ -71,6 +79,7 @@ class MultiAgentWildfireEnv(gym.Env):
             self.state = dynamics.randomize_ignition(self.initial_tensor, self.cfg, self.np_random)
         else:
             self.state = self.initial_tensor.copy()
+        self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self._init_positions()
         self.current_step = 0
         return self.state.astype(np.float32), {}
@@ -100,8 +109,22 @@ class MultiAgentWildfireEnv(gym.Env):
         dynamics.decay_and_deplete(self.state, self.cfg)
 
         total_fire = float(self.state[0].sum())
-        reward = -total_fire
+
+        # Suppression bonus — reward agents for being near extinguished fire
+        bonus = 0.0
+        for pos in self.agent_positions:
+            x, y = pos
+            if self.state[0, x, y] < self.cfg.extinguish_threshold:
+                bonus += self.cfg.suppression_bonus
+
+        # Reward mode parity with single-agent env
+        if self.cfg.reward_mode == "normalized":
+            reward = float(-total_fire / self._initial_fire_total + bonus)
+        else:
+            reward = float(-total_fire + bonus)
+
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
         info = {"total_fire": total_fire, "num_agents": self.num_agents}
         return self.state.astype(np.float32), reward, terminated, truncated, info
+
