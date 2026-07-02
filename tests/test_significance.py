@@ -38,6 +38,22 @@ class TestConfidenceInterval:
         assert hi - lo > 50  # wide
 
 
+class TestBootstrapCI:
+    def test_contains_mean_and_reproducible(self):
+        from wildfire_rl.eval.significance import bootstrap_ci
+
+        vals = [1.0, 2.0, 3.0, 4.0, 5.0]
+        lo, hi = bootstrap_ci(vals, n_boot=2000, seed=0)
+        assert lo < np.mean(vals) < hi
+        # Seeded => identical bounds on repeat.
+        assert bootstrap_ci(vals, n_boot=2000, seed=0) == (lo, hi)
+
+    def test_single_value_degenerate(self):
+        from wildfire_rl.eval.significance import bootstrap_ci
+
+        assert bootstrap_ci([42.0]) == (42.0, 42.0)
+
+
 class TestCohensD:
     def test_identical_groups(self):
         a = np.array([1.0, 2.0, 3.0])

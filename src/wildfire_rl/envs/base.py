@@ -107,19 +107,21 @@ class WildfireEnv(gym.Env):
         self.current_step += 1
         self._move(int(action))
 
+        fire_before = self.state[0].copy()
         dynamics.apply_suppression(self.state, [tuple(self.agent_pos)], self.cfg)
+        agent_removed = float((fire_before - self.state[0]).sum())
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
         dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
 
-        reward = self._reward()
+        reward = self._reward(agent_removed)
         total_fire = float(self.state[0].sum())
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
         info = {"total_fire": total_fire, "step": self.current_step}
         return self._obs(), reward, terminated, truncated, info
 
-    def _reward(self) -> float:
+    def _reward(self, agent_removed: float = 0.0) -> float:
         total_fire = float(self.state[0].sum())
         x, y = self.agent_pos
         bonus = (
@@ -130,9 +132,28 @@ class WildfireEnv(gym.Env):
         penalty = dynamics.asset_penalty(
             self.criticality, self.state[0], self.cfg.criticality_weight
         )
+        # Agent-attributable suppression credit: fire the agent actually removed this step,
+        # normalized by initial fire — a learnable signal tied to the agent's own actions.
+        supp = self.cfg.reward_agent_suppression_weight * agent_removed / self._initial_fire_total
+        prox = self._proximity_reward()
+        fw = self.cfg.reward_fire_weight
         if self.cfg.reward_mode == "normalized":
-            return float(-total_fire / self._initial_fire_total + bonus - penalty)
-        return float(-total_fire + bonus - penalty)
+            return float(
+                -fw * total_fire / self._initial_fire_total + bonus - penalty + supp + prox
+            )
+        return float(-fw * total_fire + bonus - penalty + supp + prox)
+
+    def _proximity_reward(self) -> float:
+        """Dense guidance: reward for being near the nearest burning cell (0 when disabled)."""
+        w = self.cfg.reward_proximity_weight
+        if w <= 0.0:
+            return 0.0
+        fire = np.argwhere(self.state[0] > self.cfg.spread_threshold)
+        if len(fire) == 0:
+            return 0.0
+        ax, ay = self.agent_pos
+        dmin = int((np.abs(fire[:, 0] - ax) + np.abs(fire[:, 1] - ay)).min())
+        return float(w * max(0.0, 1.0 - dmin / self.grid_size))
 
 
 def make_env_factory(

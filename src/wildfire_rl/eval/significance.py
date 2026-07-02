@@ -32,6 +32,26 @@ def confidence_interval_95(values: list[float] | np.ndarray) -> tuple[float, flo
     return (m - h, m + h)
 
 
+def bootstrap_ci(
+    values: list[float] | np.ndarray,
+    n_boot: int = 10000,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> tuple[float, float]:
+    """Distribution-free bootstrap CI of the mean (percentile method).
+
+    Preferred over the *t*-based CI for small *n* (e.g. 5 seeds). For *n* < 2 the mean is
+    returned as both bounds. Seeded for reproducibility.
+    """
+    a = np.asarray(values, dtype=float)
+    if len(a) < 2:
+        m = float(a.mean())
+        return (m, m)
+    rng = np.random.default_rng(seed)
+    boot = rng.choice(a, size=(n_boot, len(a)), replace=True).mean(axis=1)
+    return (float(np.quantile(boot, alpha / 2)), float(np.quantile(boot, 1 - alpha / 2)))
+
+
 # ---------------------------------------------------------------------------
 # Effect size
 # ---------------------------------------------------------------------------

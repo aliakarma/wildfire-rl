@@ -132,7 +132,9 @@ class MultiAgentWildfireEnv(gym.Env):
         for i in range(self.num_agents):
             self._move(i, int(actions[i]))
 
+        fire_before = self.state[0].copy()
         dynamics.apply_suppression(self.state, [tuple(p) for p in self.agent_positions], self.cfg)
+        agent_removed = float((fire_before - self.state[0]).sum())
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
         dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
@@ -151,11 +153,15 @@ class MultiAgentWildfireEnv(gym.Env):
             self.criticality, self.state[0], self.cfg.criticality_weight
         )
 
+        # Agent-attributable suppression credit (learnable signal tied to agent actions).
+        supp = self.cfg.reward_agent_suppression_weight * agent_removed / self._initial_fire_total
+        fw = self.cfg.reward_fire_weight
+
         # Reward mode parity with single-agent env
         if self.cfg.reward_mode == "normalized":
-            reward = float(-total_fire / self._initial_fire_total + bonus - penalty)
+            reward = float(-fw * total_fire / self._initial_fire_total + bonus - penalty + supp)
         else:
-            reward = float(-total_fire + bonus - penalty)
+            reward = float(-fw * total_fire + bonus - penalty + supp)
 
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps

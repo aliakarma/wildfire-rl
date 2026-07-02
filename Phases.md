@@ -878,3 +878,111 @@ Authoritative Regeneration — the compute-heavy retrain; GPU/Colab decision poi
   now capture provenance for every reported model, and the curves are the evidence PPO learned.
 - Two blocking guards must flip to green after Phase 9: `check_seed_integrity.py` (Phase 5) and
   `validate_learning_gate.py` (Phase 7).
+
+---
+
+## Phase 9 — Statistical Validity & Authoritative Regeneration (IN PROGRESS — gate-validation done)
+
+**Status:** 🟡 VALIDATION COMPLETE — **full run deferred**; learning gate blocked pending Phase 16 +
+a Phase 15 re-tune (both diagnosed with data).
+**Compute:** RTX 3050 (`torch 2.3.1+cu121`) now working after 3 download attempts (pip ×2 failed on
+the 2.4 GB wheel; resumable `curl -C -` succeeded).
+
+### Done
+- **`bootstrap_ci`** (distribution-free CI for small-n seed samples) added to `significance.py` + 2 tests.
+- **CUDA enabled** on the RTX 3050. Throughput measured: **GPU ≈85 steps/s, CPU ≈70 steps/s** — nearly
+  equal, because the CNN is tiny and the env-step + SB3 update overhead dominates. Implication: the full
+  5-seed × 2-region run (incl. 24 MARL scaling models) is **~10 h**.
+- **Scaled gate-validation** (Saudi, 2 seeds × 40k, GPU): pipeline runs end-to-end
+  (train → curve → model → eval → guards).
+
+### Findings (the reason we validated first)
+1. **Seed integrity works** — Saudi produced 2 **distinct** checkpoints + 2 distinct eval rows. (The
+   overall guard still FAILs only on the stale California/generalization CSVs, which weren't retrained.)
+2. **Learning gate FAILS** — PPO=3.08 vs noop=3.14 burned; PPO vs noop p=0.59, d=0.09 (n.s.); PPO is
+   even slightly worse than random. Curves flat (~−4500 over 40k steps → no learning signal).
+3. **Root cause A — Phase 15 over-tuned `spread_scale`.** A no-training sweep of Saudi noop burned:
+   `0.5→3.4`, `0.7→34.9`, `0.85→107.8`, `1.0→222.7`. At 0.5 the fire self-extinguishes to ~3 cells —
+   **there is nothing to suppress**. **Fixed: `spread_scale` 0.5 → 0.7** (region/saudi.yaml +
+   multiseed.yaml) → ~35 burned (real fire) while still ≪ California (~223).
+4. **Root cause B — reward lacks agent-attributable credit.** Even with a real fire, a single agent's
+   3×3 suppression barely dents `−Σfire`, so PPO has no learnable gradient tied to its actions (the
+   audit's original "No-Suppression == baseline" finding). **This is exactly Phase 16 Step 1.**
+
+### Decision Point
+The learning gate **cannot pass on the Markov fix alone**. It needs (a) the `spread_scale` re-tune
+(done) and (b) Phase 16's agent-attributable reward + HPO. Therefore **Phase 16 must precede the full
+authoritative run.** This is the "validate first" strategy working as intended — it saved ~10 h of
+compute that would have produced a PPO ≈ no-op result.
+
+### Carry-forward
+- Validation artifacts left in place (undertrained 40k models `ppo_saudi_32_seed_{0,1}.zip`,
+  `eval_saudi.csv` now holds honest-but-weak validation data) — all overwritten by the post-Phase-16
+  authoritative run.
+- Open Phase 9 tasks (deferred): full multi-seed retrain (both regions) + `run_marl_evaluation` +
+  `run_ablation` + `transfer`, then both guards must flip to green, then regenerate figures.
+
+---
+
+## Phase 16 — Policy Strengthening → **Honest Negative Result + Heuristic Reframe**
+
+**Status:** ✅ RESOLVED (via owner decision) — PPO does not beat a heuristic on this task; the project
+is **reframed around heuristic routing as the effective method**, with PPO reported as a rigorous
+negative result. **Compute:** RTX 3050, 4 training iterations (~1 h total).
+
+### What was tried (single-agent PPO, Saudi, GPU)
+| Iteration | Change | Result (PPO vs noop burned) | Curve |
+|---|---|---|---|
+| 1 | Suppression reward (w=10), normalized, bonus off | 33.5 vs 33.3 (n.s.) | flat |
+| 2 | + dense proximity reward (w=1), ent_coef 0.05 | 33.7 vs 33.3 (n.s.) | flat |
+| 3 | + rebalance: fire_weight 0.2, prox 20, supp 20 | 32.8 vs 33.3 (n.s.) | flat (~1100) |
+| — | action-dist diagnostics | iter 2 **collapsed to constant "left"**; iter 3 varied but ineffective | — |
+
+Root cause diagnosed with data: the reward is dominated by the **uncontrollable** `−total_fire`
+term (stochastic spread/reignition the single 3×3 agent can't affect), which drowns the controllable
+navigation signal → high-variance advantage → **policy collapse**. Rebalancing to controllable-dominant
+reward *prevented* full collapse (varied actions) but PPO still converged to a mediocre policy no
+better than no-op. Meanwhile the **heuristic router solves the task trivially**.
+
+### The honest result (Saudi, 50 eps, disjoint eval seeds)
+```
+noop         burned 33.3
+random       burned 30.4
+nearest_fire burned  2.1   (containment 0.35)   <-- effective method (-94% vs noop)
+frontier     burned  2.1
+PPO (60k)    burned 32.8   n.s. vs noop          <-- NEGATIVE RESULT
+```
+
+### Owner decision (pivot)
+- **Accept the honest negative result** AND **reframe around heuristic routing** as the effective
+  method; **report heuristics as the effective method**. Forcing a PPO "win" would recreate the
+  original repo's fabrication — the exact thing this remediation removes. A rigorous
+  "corrected-RL-fails-vs-heuristic" negative result is publishable and is the remediation's success.
+
+### Reframe implemented
+1. **Heuristic baselines are now first-class in evaluation** (`cli.cmd_evaluate` adds `nearest_fire`
+   + `frontier`) — the effective method appears in every eval CSV. (This absorbs Phase 10.)
+2. **Learning gate → "effective-method gate"** (`validate_learning_gate.py`): now verifies the BEST
+   reported policy beats no-op (a working method exists) and prints PPO's honest status. Re-run:
+   `PASS` — `nearest_fire` 2.1 ≪ noop 33.3; `PPO … does NOT beat no-op (negative result)`.
+3. New env knobs retained as documented ablation levers: `reward_agent_suppression_weight`,
+   `reward_proximity_weight`, `reward_fire_weight` (all default 0/1 = off).
+
+### Files Changed (Phase 16)
+- **src:** `config.py` (3 reward knobs), `envs/base.py` (+`_proximity_reward`, fire-weight, supp),
+  `envs/multi_agent.py` (supp + fire-weight), `cli.py` (heuristics in eval).
+- **scripts:** `validate_learning_gate.py` (reframed to effective-method gate).
+- **configs:** `multiseed.yaml`, `multiseed_california.yaml` (reward params); `region/saudi.yaml`
+  (`spread_scale` 0.5→0.7); tests: `test_env_api.py` (+suppression-reward test).
+
+### Superseded plan item
+- REMEDIATION_PLAN Phase 16 "PPO must beat noop with margin" is **superseded**: the evidence shows it
+  cannot on this task. The certified claim is now "heuristic routing is effective; PPO is a negative
+  result," enforced by the effective-method gate.
+
+### Impact on remaining phases (reframed)
+- **Phase 9 authoritative run is now much lighter:** heuristics need **no training** (just eval);
+  PPO is a negative-result baseline (a few seeds suffice — no need to tune it to win). The ~10 h
+  estimate drops substantially.
+- **Phase 12 report** leads with heuristic routing as the effective method + PPO negative result.
+- **Phase 17 rollout viz** becomes compelling evidence: heuristic (contains fire) vs PPO (collapsed).

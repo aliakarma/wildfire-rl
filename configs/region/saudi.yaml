@@ -9,7 +9,8 @@ region:
 # random ignitions; and a petroleum-asset criticality penalty. These are the CANONICAL Saudi
 # dynamics — mirrored into configs/experiment/multiseed.yaml for the reported retrain.
 env:
-  spread_scale: 0.5        # sparse desert fuel -> reduced spread
+  spread_scale: 0.7        # sparse desert fuel -> reduced spread (calibrated: noop ~35 burned
+                           # vs California ~223; 0.5 collapsed the fire to ~3 cells — too trivial)
   ignition_rate: 0.05      # per-step prob. of a new stochastic ignition (more frequent)
   n_ignition_points: 6     # more, more-random initial fires
   ignition_intensity: 1.0

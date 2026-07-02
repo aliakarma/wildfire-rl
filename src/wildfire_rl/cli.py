@@ -29,7 +29,10 @@ logger = get_logger("wildfire_rl.cli")
 def _add_config_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--config", type=str, default=None, help="Path to a YAML config file.")
     p.add_argument(
-        "--set", dest="overrides", nargs="*", default=None,
+        "--set",
+        dest="overrides",
+        nargs="*",
+        default=None,
         help="Dotlist overrides, e.g. ppo.total_timesteps=1000 seed=1",
     )
 
@@ -110,7 +113,12 @@ def cmd_evaluate(args) -> int:
     import pandas as pd
 
     from wildfire_rl.envs.base import make_env_factory
-    from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy
+    from wildfire_rl.eval.baselines import (
+        FrontierPolicy,
+        NearestFirePolicy,
+        NoOpPolicy,
+        RandomPolicy,
+    )
     from wildfire_rl.eval.evaluate import evaluate_policy
     from wildfire_rl.eval.significance import (
         confidence_interval_95,
@@ -127,19 +135,20 @@ def cmd_evaluate(args) -> int:
     sample_env = factory()
     all_results: dict[str, dict] = {}
 
-    # -- Baselines -----------------------------------------------------------
+    # -- Baselines (incl. heuristic routers — the effective method) ----------
+    gs = cfg.region.grid_size
     policies = {
         "random": RandomPolicy(sample_env.action_space, seed=cfg.seed),
         "noop": NoOpPolicy(sample_env.action_space),
+        "nearest_fire": NearestFirePolicy(sample_env.action_space, grid_size=gs, env=sample_env),
+        "frontier": FrontierPolicy(sample_env.action_space, grid_size=gs, env=sample_env),
     }
 
     from wildfire_rl.eval.loading import load_ppo_model
 
     # -- PPO models (auto-discover per-seed checkpoints) ---------------------
     for seed in cfg.seeds:
-        model_path = (
-            models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}.zip"
-        )
+        model_path = models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}.zip"
         if model_path.exists():
             policies[f"ppo_seed_{seed}"] = load_ppo_model(model_path, sample_env)
             logger.info("Loaded PPO seed %d <- %s", seed, model_path)
@@ -152,8 +161,11 @@ def cmd_evaluate(args) -> int:
     # -- Run evaluations -----------------------------------------------------
     for name, policy in policies.items():
         res = evaluate_policy(
-            policy, factory, n_episodes=cfg.eval.n_episodes,
-            base_seed=cfg.eval.base_seed, deterministic=cfg.eval.deterministic,
+            policy,
+            factory,
+            n_episodes=cfg.eval.n_episodes,
+            base_seed=cfg.eval.base_seed,
+            deterministic=cfg.eval.deterministic,
             scenario_seed_offset=cfg.eval.scenario_seed_offset,
             metrics_cfg=cfg.metrics,
         )
@@ -213,7 +225,9 @@ def cmd_evaluate(args) -> int:
                         row["sig_vs_ppo"] = format_significance(test["p_value"])
                         logger.info(
                             "  PPO vs %s: p=%.6f, d=%.2f (%s)",
-                            baseline_name, test["p_value"], test["cohens_d"],
+                            baseline_name,
+                            test["p_value"],
+                            test["cohens_d"],
                             format_significance(test["p_value"]),
                         )
 
@@ -269,8 +283,12 @@ def cmd_make_figures(args) -> int:
     transfer_csv = res / "transfer_matrix.csv"
     if transfer_csv.exists():
         df = pd.read_csv(transfer_csv)
-        plot_transfer_heatmap(df, "mean_reward", figs / "transfer_reward_heatmap.png",
-                              "Cross-region transfer (mean reward)")
+        plot_transfer_heatmap(
+            df,
+            "mean_reward",
+            figs / "transfer_reward_heatmap.png",
+            "Cross-region transfer (mean reward)",
+        )
         logger.info("Wrote %s", figs / "transfer_reward_heatmap.png")
     else:
         logger.warning("No %s yet — run `wildfire-rl transfer` first.", transfer_csv)
@@ -280,7 +298,8 @@ def cmd_make_figures(args) -> int:
         eval_csv = res / f"eval_{region}.csv"
         if eval_csv.exists():
             plot_baseline_comparison(
-                eval_csv, figs / f"baseline_comparison_{region}.png",
+                eval_csv,
+                figs / f"baseline_comparison_{region}.png",
                 title=f"Policy Comparison — {region.title()}",
             )
             logger.info("Wrote baseline_comparison_%s.png", region)

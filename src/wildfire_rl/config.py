@@ -132,6 +132,20 @@ class EnvConfig:
     # "normalized": reward divided by initial total fire (comparable across regions)
     reward_mode: str = "raw"
 
+    # Agent-attributable suppression credit (Phase 16): adds `w * (fire the agent removed this
+    # step) / initial_fire` to the reward. 0 = off (default); >0 gives PPO a learnable gradient
+    # tied to its own actions (fixes the "one agent barely dents -Σfire" collapse).
+    reward_agent_suppression_weight: float = 0.0
+
+    # Dense navigation guidance (Phase 16): rewards proximity to the nearest burning cell so PPO
+    # gets a gradient toward the fire *before* it arrives (fixes sparse-reward exploration). 0 = off.
+    reward_proximity_weight: float = 0.0
+
+    # Weight on the (largely uncontrollable) total-fire penalty. Lowering it (<1) lets the
+    # agent-controllable proximity/suppression terms dominate the gradient, preventing the policy
+    # collapse caused by high-variance uncontrollable reward (Phase 16).
+    reward_fire_weight: float = 1.0
+
     # --- V2 reward shaping (multi-component) ---
     reward_v2: RewardV2Config = field(default_factory=RewardV2Config)
 

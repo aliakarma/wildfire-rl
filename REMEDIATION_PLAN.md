@@ -53,23 +53,53 @@ to a dedicated **new extension phase** plus supporting existing phases:
 | 1 | Obtain / train a **stronger policy** | **Phase 16 — Policy Strengthening & HPO** | Phase 3 (Markov obs — done), Phase 7 (learning gate), Phase 9 (multi-seed retrain) |
 | 2 | **Visualize policy rollouts** across ablations | **Phase 17 — Rollout Visualization** | Phase 8 (tracking/logging), Phase 7 (ablation metrics), Phase 12 (figures/report) |
 | 3 | Richer **Saudi context** — petroleum-asset criticality score, more frequent & more random ignitions, reduced spread | **Phase 15 — Saudi Context Enrichment** | Phase 4 (ignition/leakage), Phase 11 (data provenance) |
+| 4 | **AAAI research core** — critical-infrastructure protection, symmetric cross-region transfer, hierarchical hybrid control, strategic coordination, petroleum-risk modeling, domain generalization, hybrid heuristic+RL | **Phase 15B — Critical Infrastructure & Strategic Coordination** | Phase 15 (Saudi context), Phase 4 (leakage), Phases 9 / 12 / 14 |
 
-**Updated master execution order** (existing phases keep their numbers; the three extension phases
-interleave; the three specs are appended at the end of this document):
+**Updated master execution order** (existing phases keep their numbers; extension phases interleave;
+their specs are appended at the end of this document):
 
 ```
-1 → 2 → 3 → 4 → [15] → 5 → 6 → 7 → 8 → 9 → [16] → [17] → 10 → 11 → 12 → 13 → 14 (terminal)
+1 → 2 → 3 → 4 → [15] → [15B] → 5 → 6 → 7 → 8 → 9 → [16] → [17] → 10 → 11 → 12 → 13 → 14 (terminal)
 ```
 
 Placement rationale:
 - **Phase 15** changes environment dynamics + reward and therefore MUST precede the authoritative
   retrain (Phase 9). It runs immediately after leakage elimination (Phase 4), with which it shares
   the ignition model.
-- **Phase 16** depends on trained artifacts and the learning gate; it runs right after the first
-  authoritative retrain (Phase 9) and re-triggers training with stronger reward/HPO settings.
-- **Phase 17** consumes the strengthened policies and the ablation variants; it runs after Phase 16.
-- **Phase 14** remains the terminal certification gate and now additionally certifies the
-  deliverables of Phases 15–17.
+- **Phase 15B (NEW — the AAAI research core)** builds the infrastructure-aware, hierarchical, and
+  cross-region transfer system on top of Phase 15. It runs before the authoritative regeneration so
+  its observation channels, reward terms, and metrics are baked into the reported results.
+- **Phase 16** is **reframed** by the empirical finding in §1.2: its "PPO must beat no-op" goal is
+  *superseded*; it is retained as an honest negative-result ablation, never a success criterion.
+- **Phase 17** consumes the heuristic/hierarchical policies and produces the strategic rollout figures.
+- **Phase 14** remains the terminal certification gate and now additionally certifies Phases 15 / 15B / 16 / 17.
+
+## 1.2 Research Direction Pivot (empirical finding, preserved honestly)
+
+Rigorous evaluation under the remediated pipeline (Markov observation, leakage-free protocol,
+agent-attributable + dense-proximity reward, anti-collapse reward rebalancing, exploration tuning)
+established a **robust negative result**: single-agent PPO does **not** significantly outperform a
+no-op baseline, while deterministic heuristic routers (`nearest_fire` / `frontier`) contain the fire
+near-perfectly (Saudi: ~2 vs ~33 burned cells). PPO exhibited **policy collapse** and
+**reward-dominance** pathologies, both diagnosed with data (constant-action collapse; the
+uncontrollable `−Σfire` term drowning the controllable navigation signal). **This negative result is
+a primary scientific contribution and is preserved honestly — it is never "fixed" by fabricating a
+PPO win.**
+
+The research question therefore pivots from *"Can PPO learn low-level navigation?"* to:
+
+> **"How can hybrid autonomous wildfire-response systems generalize across geographically distinct
+> environments while protecting high-risk critical infrastructure?"**
+
+The system pivots to a **hierarchical hybrid architecture**: a robust, interpretable *heuristic
+low-level controller* (navigation + deterministic suppression) beneath a *strategic high-level
+controller* (RL or optimization) responsible for resource allocation, infrastructure prioritization,
+and regional dispatch. Low-level PPO navigation is **no longer a primary claim**; heuristic local
+control is the **reliable operational baseline**. The full research roadmap is **Phase 15B**, and the
+report is reframed as trustworthy evaluation of a safety-critical hybrid coordination system (§AAAI
+framing in Phase 15B.6). All remediation guarantees (reproducibility, leakage elimination, seed
+integrity, effective-method gate, provenance, CI validation) remain in force and are inherited by the
+new experiments.
 
 ---
 
@@ -1301,74 +1331,134 @@ README completeness checklist
 
 ---
 
-# Phase 9 — Statistical Validity Upgrades & Authoritative Regeneration
-Estimated Time: 1–2 days (mostly compute)
+# Phase 9 — Statistical Validity & Authoritative Regeneration (FULL EXECUTION PLAN)
+Estimated Time: 1–2 days wall-clock (evaluation-dominated; PPO negative-baseline training is light).
+Execution position: **after Phases 15 + 15B + 15B.8 land in code**, then this phase regenerates the
+authoritative, certified numbers that Phases 12/14 report.
+
+> **STATUS — REFRAMED (reconciled with the Phase 16 pivot and the 15B/15B.8 additions).**
+> The original success criterion ("learning gate exit 0 = PPO beats noop") is **superseded**. The
+> owner-approved finding (Phase 16, evidenced) is that **single-agent PPO does not beat a heuristic on
+> this task**; the project is reframed around **heuristic routing as the effective method** with PPO
+> reported as a rigorous **negative result**. Accordingly the blocking scientific gate is now the
+> **effective-method gate** (the *best reported* policy beats no-op), not a forced PPO win. This phase
+> also folds in everything 15B/15B.8 add: infrastructure-aware metrics, the hybrid controller, the
+> symmetric cross-region transfer matrix, the eight ablation groups, and the canonical animated-rollout
+> GIFs. **Never** relabel or tune PPO to "win" to satisfy a checkbox — the honest negative result is a
+> contribution (§1.2, Phase 16).
 
 ## Objective
-Run the authoritative multi-seed experiments on the corrected environment and regenerate every
-core CSV with effect-size-primary reporting, bootstrap CIs, and verified seed independence.
+Produce the **single authoritative, provenance-bound result surface** on the corrected environment
+(Markov obs · leakage-free splits · determinism · Saudi domain model · infrastructure + hybrid +
+transfer from 15B · ablations from 15B.8), reported with **effect-size-primary** statistics
+(bootstrap 95% CIs + Cohen's d), verified seed independence, run manifests + artifact hashes, and a
+canonical animated-rollout GIF per experiment/ablation cell. Every reported number traces to a
+committed CSV + `run_id`; no hand-edited results.
 
 ## Problems Addressed
-- Degenerate multi-seed (std=0, duplicates), significance-without-effect framing.
+- Degenerate multi-seed (std=0, duplicate checkpoints/rows) and significance-without-effect framing.
 - No bootstrap CIs; over-reliance on p-values from paired tests on near-identical trajectories.
+- Stale, pre-remediation CSVs still on disk (California / generalization) that predate the Markov fix,
+  the leakage fix, the Saudi re-tune, and the pivot — they must be regenerated or retired, not cited.
+- The result surface does not yet reflect 15B (infrastructure/hybrid/transfer) or 15B.8 (ablations).
+
+## What Is Already Done (carried from the 🟡 validation pass — do NOT redo)
+- **`bootstrap_ci(values, n_boot=10000, ...)`** implemented + tested in `eval/significance.py`.
+- **`spread_scale` re-tuned 0.5 → 0.7** (Saudi) so a real fire exists to suppress (noop ≈ 35 burned,
+  still ≪ California ≈ 223). Applied to `region/saudi.yaml` + `multiseed.yaml`.
+- **CUDA working** on the RTX 3050 (`torch 2.3.1+cu121`); measured GPU ≈85 vs CPU ≈70 steps/s (tiny
+  CNN → env/SB3 overhead dominates). Use CPU or GPU interchangeably; determinism is preserved on CPU.
+- **Effective-method gate**: `validate_learning_gate.py` reframed to verify the *best* policy beats
+  no-op and to print PPO's honest status. On current Saudi data it **PASSes** (`nearest_fire` 2.1 ≪
+  noop 33.3; "PPO … does NOT beat no-op (negative result)").
+- **2-seed × 40k Saudi validation** proved the pipeline runs end-to-end (train→curve→model→eval→guards).
+
+## Dependency Gate (must be true before the full run)
+This phase consumes the outputs of 15B/15B.8. Before launching the authoritative run, confirm:
+- [ ] Phase 15B success checkpoint is green (infra rasters + cascade + infra obs channel + hierarchy +
+      strategic/transfer metrics implemented & tested).
+- [ ] Phase 15B.8 success checkpoint is green (`AblationConfig` toggles, 8 group configs, `ablation/runner`,
+      new metrics CE/PA/ERL/TRG/CCL, `test_ablation.py` + `test_rollout_viz.py` green).
+- [ ] Canonical rollout renderer + palette locked in `configs/viz.yaml`.
+
+If 15B/15B.8 are not yet coded, run **Phase 9-Core** (below) to certify the *current* heuristic-vs-PPO
++ transfer surface now, then re-run the full phase once 15B/15B.8 land. Phase 9-Core is a strict
+subset of the full run using the same gates and provenance — its numbers are superseded, not
+contradicted, by the extended run.
 
 ## Files To Modify
 | File | Required Changes |
 |------|------------------|
-| `src/wildfire_rl/eval/significance.py` | Add `bootstrap_ci(values, n=10000)` |
-| `configs/experiment/multiseed*.yaml` | `seeds: [0,1,2,3,4]`, `eval.n_episodes: 50` |
-| all result CSVs | Regenerated from corrected code |
+| `src/wildfire_rl/eval/significance.py` | `bootstrap_ci` (done); ensure it is threaded into every summary writer |
+| `configs/experiment/multiseed*.yaml` | `seeds: [0,1,2,3,4]`, `eval.n_episodes: 50`, `scenario_seed_offset: 100000` (verify) |
+| `Makefile` | `reproduce` recipe = test → (light PPO negative-baseline train) → evaluate (heuristics + PPO, both regions) → `run_marl_evaluation` (heuristic scaling 1/3/5/10) → `run_ablations --group all` (15B.8) → `run_transfer_hybrid` (15B.4 symmetric) → figures + canonical GIFs → `check_seed_integrity` → `validate_learning_gate` |
+| `scripts/make_figures.py` / `scripts/run_ablations.py --render-figures` | Regenerate all static figures **and** canonical rollout GIFs from the fresh CSVs |
+| all result CSVs under `results/` + `results/ablation/` | Regenerated from corrected code; stale pre-remediation CSVs retired or overwritten |
+| `results/runs/reproduce_<ts>.log` | The committed authoritative-run log |
 
 ## Step-by-Step Implementation Guide
 
-### Step 1 — Bootstrap confidence intervals
-Purpose: Report distribution-free CIs that do not depend on the t-approximation for tiny n.
-
-Code Changes:
-```python
-# src/wildfire_rl/eval/significance.py — ADD
-def bootstrap_ci(values, n_boot: int = 10000, alpha: float = 0.05, seed: int = 0):
-    import numpy as np
-    a = np.asarray(values, float); rng = np.random.default_rng(seed)
-    if len(a) < 2: return (float(a.mean()), float(a.mean()))
-    boot = rng.choice(a, size=(n_boot, len(a)), replace=True).mean(axis=1)
-    return (float(np.quantile(boot, alpha/2)), float(np.quantile(boot, 1 - alpha/2)))
-```
-
-Validation:
-```bash
-python -c "from wildfire_rl.eval.significance import bootstrap_ci; print(bootstrap_ci([1,2,3,4,5]))"
-```
-
-Expected Result: a plausible `(lo, hi)` interval.
-
-### Step 2 — Authoritative regeneration (the expensive run)
-Purpose: Produce trustworthy numbers on the fixed, non-leaking, Markov environment.
-
-Implementation:
+### Step 0 — Pre-flight (fast, no compute)
 ```bash
 source venv/Scripts/activate
+python -m pytest -q                                   # expect all green (66+ tests + 15B/15B.8 tests)
+python -c "from wildfire_rl.eval.significance import bootstrap_ci; print(bootstrap_ci([1,2,3,4,5]))"
+python scripts/check_seed_integrity.py; echo "integrity exit=$?"   # may still flag stale CSVs (expected pre-run)
+grep -n "seeds\|n_episodes\|scenario_seed_offset" configs/experiment/multiseed*.yaml
+```
+Expected: tests green; `bootstrap_ci` returns a plausible `(lo, hi)`; configs show 5 disjoint seeds ×
+50 eval episodes × offset 100000. Retire any pre-remediation CSV that will **not** be overwritten by
+the recipe (move to `experimental/results/` rather than leaving it citable).
+
+### Step 1 — Authoritative regeneration (the main run)
+Purpose: produce trustworthy numbers on the fixed, non-leaking, Markov + domain-modeled environment,
+covering the effective method (heuristics), the negative baseline (PPO), infrastructure/hybrid, the
+symmetric transfer matrix, and all ablation groups.
+```bash
 make reproduce 2>&1 | tee results/runs/reproduce_$(date +%Y%m%d_%H%M%S).log
 ```
+Compute budget (reframed — much lighter than the original ~10 h estimate):
+- **Heuristic evaluation** (nearest_fire / frontier, single + MARL scaling 1/3/5/10, both regions):
+  no training, evaluation-only — minutes.
+- **PPO negative baseline**: a few seeds at a modest budget — enough to *characterize* the collapse,
+  **not** to tune it to win. Do not launch open-ended HPO here.
+- **15B transfer + 15B.8 ablations**: evaluation-dominated over disjoint seeds.
+Prefer running the heuristic/transfer/ablation blocks first (they carry the paper) and the PPO block
+last (it is the documented negative baseline).
 
-Validation:
+### Step 2 — Gates (blocking)
 ```bash
-python scripts/check_seed_integrity.py
-python scripts/validate_learning_gate.py; echo "gate exit=$?"
+python scripts/check_seed_integrity.py;         echo "integrity exit=$?"   # MUST be 0
+python scripts/validate_learning_gate.py;        echo "gate exit=$?"        # MUST be 0 (effective-method)
+python scripts/validate_learning_gate.py --scope ablation                    # ablation surface gate
+python scripts/check_provenance.py results/*.csv results/ablation/*.csv       # every row → run_id
 ```
+Expected: seed-integrity **OK** on the regenerated CSVs (distinct checkpoints + distinct per-seed
+rows); **effective-method gate exit 0** — the best reported policy (heuristic/hybrid) beats no-op with
+a bootstrap CI excluding parity, and PPO is printed as a negative result. **If seed integrity fails,
+STOP** (degenerate seeds). **If the effective-method gate fails**, no method beats no-op on this task —
+halt and revisit Phases 3/7/15/15B before publishing any claim. **The gate must never be satisfied by
+forcing a PPO win.**
 
-Expected Result: seed-integrity `OK`; learning gate exit 0 (PPO beats noop). If the gate fails,
-the environment/reward still does not admit a useful policy — halt and revisit Phases 3/7 before
-publishing any RL claim.
-
-### Step 3 — Regenerate figures from fresh CSVs
-Implementation:
+### Step 3 — Figures + canonical rollout GIFs from fresh CSVs
 ```bash
 python scripts/make_figures.py
+python scripts/run_ablations.py --render-figures      # static ablation figs + canonical GIFs per cell
 git status --short figures/ results/
 ```
+Expected: every static figure and every canonical animated-rollout GIF (`Timestep #` header + the
+fixed Grass/Fire/Populated/Evacuating/Path/Finished legend, palette from `configs/viz.yaml`) reflects
+**only** the regenerated CSVs. At minimum a heuristic-contains-vs-PPO-collapse rollout pair exists per
+region, and one GIF exists per ablation cell.
 
-Expected Result: figures reflect the regenerated CSVs only.
+### Step 4 — Provenance lock
+```bash
+python scripts/build_report_tables.py > docs/paper/_generated_tables.md      # incl. Section 5 ablation tables
+git status --short results/ figures/ docs/paper/
+```
+Expected: the committed `reproduce_<ts>.log`, per-run manifests under `results/runs/`, and the
+generated tables all agree; each table/figure/GIF cell carries a `run_id` and (where applicable) an
+artifact SHA.
 
 ## README Updates Required
 
@@ -1378,34 +1468,49 @@ Expected Result: figures reflect the regenerated CSVs only.
 
 Results report mean, bootstrap 95% CI (`bootstrap_ci`, 10k resamples), and Cohen's d as the
 primary evidence; p-values are secondary and never reported without an accompanying effect size.
-Minimum 5 independent, verified-distinct seeds × 50 evaluation episodes.
+Minimum 5 independent, verified-distinct seeds × 50 evaluation episodes. The **effective-method gate**
+(`validate_learning_gate.py`) requires the best reported policy (heuristic/hybrid routing) to beat
+no-op; single-agent PPO is retained as an honest negative baseline and is never tuned to "win".
 ```
 
 ### Modify Existing Section
-- Replace the **Results** narrative wholesale with numbers regenerated in this phase (do not hand-edit).
+- Replace the **Results** narrative wholesale with numbers regenerated in this phase (do not hand-edit),
+  leading with the effective (heuristic/hybrid) method + transfer/infrastructure findings and framing
+  PPO as the negative result.
 
 ## Success Criteria (MANDATORY CHECKPOINT)
 
 Technical verification checklist
-- [ ] `bootstrap_ci` implemented and used in reporting
-- [ ] All core CSVs regenerated from corrected code
+- [ ] `bootstrap_ci` implemented and threaded into every reported summary
+- [ ] All core CSVs (eval, MARL scaling, transfer, ablation) regenerated from corrected code
+- [ ] Configs pinned to 5 disjoint seeds × 50 eval episodes × offset 100000
 
 Reproducibility checklist
 - [ ] `make reproduce` log committed under `results/runs/`
+- [ ] Every regenerated CSV/figure/GIF traceable to a run manifest + `run_id` (`check_provenance.py` green)
 
 Scientific validity checklist
-- [ ] `check_seed_integrity.py` → OK (no duplicate seeds)
-- [ ] `validate_learning_gate.py` → exit 0 (PPO > noop)
-- [ ] Effect size reported alongside every p-value
+- [ ] `check_seed_integrity.py` → OK (no duplicate seeds/checkpoints) on the **regenerated** CSVs
+- [ ] `validate_learning_gate.py` → exit 0 as the **effective-method gate** (best policy > no-op, CI excludes parity)
+- [ ] PPO reported honestly as a negative baseline (printed n.s. vs no-op); **not** tuned/relabeled to win
+- [ ] Effect size (Cohen's d) reported alongside every p-value; no significance-without-effect
+- [ ] Symmetric transfer matrix complete (incl. California→Saudi) with per-cell bootstrap CIs
 
 Logging/monitoring checklist
-- [ ] Each regenerated CSV traceable to a run manifest
+- [ ] Each regenerated CSV traceable to a run manifest; training curves persisted for the PPO baseline
+
+Visualization checklist
+- [ ] Canonical animated-rollout GIF regenerated per experiment + per ablation cell (palette locked)
 
 README completeness checklist
-- [ ] Statistical-protocol section added
+- [ ] Statistical-protocol section added/updated with the effective-method gate wording
 
 ### Proceed Rule
-- If ALL items are `[x]`, proceed. **If the learning gate fails, STOP** — no RL claim is defensible; return to Phase 3/7.
+- If ALL items are `[x]`, Phase 9 is certified and feeds Phase 12 (report) / Phase 14 (final
+  certification). **If seed integrity fails, STOP** (degenerate seeds — return to Phase 5).
+- **If the effective-method gate fails** (no method beats no-op), STOP — no result is defensible;
+  return to Phases 3/7/15/15B. **Never** satisfy the gate by forcing or relabeling a PPO win; the
+  honest negative result is the deliverable, not a failure.
 
 ---
 
@@ -2179,9 +2284,728 @@ README completeness
 
 ---
 
+# Phase 15B — Critical Infrastructure & Strategic Coordination (AAAI Research Core)
+Estimated Time: 2–3 weeks (research), decomposed into 7 work-streams below.
+Execution position: **after Phase 15, before the authoritative regeneration (Phase 9)** — its
+observation channels, reward terms, and metrics must be baked into every reported result.
+
+## Objective
+Transform wildfire-rl from a single-agent PPO benchmark into a **trustworthy hybrid wildfire-response
+platform**: infrastructure-aware, hierarchical (interpretable heuristic low-level control under a
+strategic high-level controller), and evaluated for **cross-region generalization** and
+**critical-asset protection**. This is the AAAI-oriented research core built on the honest negative
+result (§1.2). All Phase 1–14 remediation guarantees remain in force and are inherited here.
+
+## Problems / Goals Addressed
+- **The negative result (§1.2):** single-agent PPO fails; deterministic heuristics succeed → pivot to
+  a hybrid, hierarchical design instead of forcing low-level RL.
+- **Objective mis-specification:** the environment currently optimizes only *burned cells*, not
+  *strategic/infrastructure damage* — inappropriate for a petroleum-critical region.
+- **No transfer science:** cross-region generalization (Saudi ↔ California) is claimed by the repo but
+  never rigorously measured with infrastructure-aware metrics or adaptation asymmetry.
+- **Advisor + AAAI directions:** infrastructure protection, strategic coordination, hierarchical
+  control, Saudi petroleum-risk modeling, domain generalization, hybrid heuristic+RL systems.
+
+## Retained-Rigor Contract
+Every experiment in 15B **inherits and must pass**: leakage-free disjoint eval seeds (Phase 4),
+determinism + seed-integrity (Phase 5), the **effective-method gate** (Phase 7/16-reframe: a reported
+method must beat no-op), run manifests + artifact hashes (Phase 8), bootstrap CIs + effect sizes
+(Phase 9), CI validation (Phase 13). No claim ships without a committed CSV + `run_id`.
+
+---
+
+## 15B.1 — Petroleum Infrastructure Modeling
+
+### Objective
+Model Eastern-Province petroleum infrastructure (refineries, pipelines, storage depots, industrial
+energy zones) as high-value, high-risk assets whose loss incurs **catastrophic** and **cascading**
+damage — so the agent optimizes *risk-weighted strategic damage*, not raw burned cells.
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `scripts/build_infrastructure.py` (new) | Emit multi-layer asset rasters: `criticality.npy` (value in [0,1], from `build_criticality.py`), `asset_type.npy` (0=none,1=refinery,2=pipeline,3=storage,4=industrial), `blast_radius.npy` |
+| `data/<region>/grids/32x32/infrastructure/*.npy` (new) | Committed via manifest hashes (Phase 11) |
+| `src/wildfire_rl/config.py` | `InfraConfig`: `infra_dir`, `catastrophe_weight`, `cascade_prob`, `blast_radius`, `asset_values: dict[int,float]` |
+| `src/wildfire_rl/envs/dynamics.py` | `cascade_explosion(state, infra, cfg, rng)` — fire on a petroleum cell ignites cells within `blast_radius` with prob `cascade_prob` |
+| `src/wildfire_rl/envs/base.py`, `multi_agent.py` | Add infrastructure-criticality **observation channel**; add **catastrophe penalty** + cascade to the step/reward; track per-asset damage |
+| `src/wildfire_rl/eval/metrics.py` | Infrastructure/strategic metrics (15B.3) |
+| `configs/region/saudi.yaml` | Enable infra (petroleum); `configs/region/california.yaml` uses forest-value assets or none |
+
+### Key Implementation
+```python
+# config.py
+@dataclass
+class InfraConfig:
+    infra_dir: str | None = None            # dir with asset_type/blast_radius/criticality .npy
+    catastrophe_weight: float = 0.0         # penalty scale when fire reaches an asset
+    cascade_prob: float = 0.0               # per-neighbor ignition prob on asset detonation
+    blast_radius: int = 2                   # cells
+    asset_values: dict[int, float] = field(default_factory=lambda: {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0})
+
+# dynamics.cascade_explosion(...): for each burning asset cell, ignite neighbors within blast_radius
+#   with prob cascade_prob (uses self.np_random for reproducibility). Called in step() after spread.
+
+# reward (base/_reward): subtract catastrophe_weight * Σ_assets value_a * fire_on_asset_a
+#   -> the agent is driven to defend high-value cells, not merely minimize total burned cells.
+```
+The observation gains one channel = normalized infrastructure criticality (stacked after the
+agent-position channel → obs is `(C+2, H, W)`; the CNN's `in_channels` tracks this automatically).
+
+### Validation
+```bash
+python scripts/build_infrastructure.py --region saudi_eastern_province --grid 32
+python - <<'PY'
+# a fire reaching a refinery must (a) incur a catastrophe penalty and (b) trigger a cascade
+PY
+```
+Expected: risk-weighted damage diverges from raw burned cells; cascade ignites neighbors; a policy
+that defends assets scores higher on strategic metrics than one that only minimizes burned cells.
+
+---
+
+## 15B.2 — Hierarchical / Hybrid Control Architecture
+
+### Objective
+Formalize the two-level controller that the negative result motivates.
+
+```
+                     ┌─────────────────────────────────────────────┐
+ HIGH-LEVEL (strategic; RL or optimization)                        │
+   obs:  sector fire load, per-sector infra risk, agent availability│
+   act:  allocate/dispatch agents to sectors; prioritize assets     │
+                     └───────────────┬─────────────────────────────┘
+                                     │ target sector / asset per agent
+                     ┌───────────────▼─────────────────────────────┐
+ LOW-LEVEL (robust, interpretable heuristic)                       │
+   nearest_fire / frontier routing  +  deterministic suppression   │
+   obs:  local fire + agent position    act: up/down/left/right/stay │
+                     └─────────────────────────────────────────────┘
+```
+
+**Why this is scientifically justified** (state explicitly in the paper): (i) PPO empirically fails
+at low-level control and collapses; (ii) heuristic local control is robust, interpretable, and
+near-optimal; (iii) hierarchical decomposition is the standard, safer design for safety-critical
+autonomy, isolating a *learnable strategic* problem from an *un-learnable-here navigation* problem.
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `src/wildfire_rl/envs/hybrid_multi_agent.py` (exists) | Extend high-level action to sector/asset prioritization; low-level uses `routing/` |
+| `src/wildfire_rl/coordination/strategic_controller.py` (new) | High-level policy interface: `greedy_risk`, `rl`, `risk_aware` variants + a `StrategicController` contract |
+| `src/wildfire_rl/routing/*` (exists) | Low-level routers reused unchanged as the operational baseline |
+| `src/wildfire_rl/config.py` | `HierarchyConfig`: `high_level: {greedy_risk,rl,risk_aware}`, `num_sectors`, `dispatch_policy` |
+| `docs/architecture.md` | Add the hierarchy diagram + module responsibilities + observation contracts |
+
+### Coordination Interface (contract)
+- **High-level obs** `(K_sectors × F)`: per-sector aggregated fire load, infra risk, distance, agent count.
+- **High-level action**: for each agent, a target sector/asset id (MultiDiscrete).
+- **Low-level**: `compute_step_action` routes each agent toward its assigned target; suppression is deterministic.
+- Interface is env-agnostic so `greedy_risk` (argmax risk), `risk_aware` (optimization), and `rl`
+  (PPO over the *small, learnable* strategic action space) are drop-in comparable.
+
+### Validation
+```bash
+python -m pytest tests/test_hybrid.py -q
+python - <<'PY'
+# high-level dispatch changes which assets survive; ablate greedy_risk vs risk_aware vs rl
+PY
+```
+Expected: changing the high-level controller measurably changes infrastructure survival; the
+strategic action space is small enough that even simple high-level policies are stable (no collapse).
+
+---
+
+## 15B.3 — Strategic & Transfer Metrics
+
+### Objective
+Report outcomes the domain actually cares about, with formulas.
+
+| Metric | Formula | Meaning |
+|--------|---------|---------|
+| Infrastructure Survival Rate (ISR) | `protected_assets / total_assets` | fraction of assets never reached by fire |
+| Weighted Economic Loss (WEL) | `Σ_a value_a · damage_a` | risk-weighted loss (lower better) |
+| Catastrophe Prevention Score (CPS) | `1 − catastrophic_events / potential_catastrophes` | avoided detonations |
+| Risk-Adjusted Containment (RAC) | `1 − Σ crit·fire_final / Σ crit·fire_initial` | criticality-weighted containment |
+| Protected Critical Assets (PCA) | `count(assets with damage_a = 0)` | absolute assets saved |
+| Transfer Robustness Score (TRS) | `metric_transfer / metric_native` | 1.0 = no degradation |
+| Cross-Domain Generalization Gap (CDGG) | `metric_native − metric_transfer` | absolute generalization loss |
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `src/wildfire_rl/eval/metrics.py` | Implement ISR, WEL, CPS, RAC, PCA (per-episode) |
+| `src/wildfire_rl/eval/transfer.py` | Compute TRS/CDGG per metric from native vs transfer runs |
+| `src/wildfire_rl/eval/evaluate.py` | Thread the new per-episode metrics into the summary |
+| `tests/test_metrics.py` | Unit tests with known assets/damage |
+
+### Validation
+Unit tests assert each formula on synthetic asset/damage inputs; a policy that defends assets beats
+one that minimizes burned cells on ISR/WEL/CPS even when their burned-cell counts are equal.
+
+---
+
+## 15B.4 — Cross-Region Transfer Learning (symmetric, infrastructure-aware)
+
+### Objective
+Rigorously measure generalization across ecological domains **in both directions**, with
+infrastructure-aware metrics and adaptation asymmetry — the central AAAI transfer claim.
+
+Protocol (per policy family = {`nearest_fire`, `frontier`, `hierarchical-greedy`, `hierarchical-rl`}):
+- **Train/configure on source** (Saudi | California), **evaluate on target** with **disjoint eval
+  seeds** (Phase 4 `scenario_seed_offset`).
+- Cells: Saudi→Saudi, Saudi→California, California→California, California→Saudi (full N×N).
+- Report per cell: burned, RAC, ISR, WEL, CPS; and per off-diagonal: TRS, CDGG.
+- **Adaptation asymmetry** = |CDGG(Saudi→CA) − CDGG(CA→Saudi)| per metric.
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `configs/experiment/transfer_hybrid.yaml` (new) | `regions:` + hierarchy + infra; normalized reward |
+| `scripts/run_transfer_hybrid.py` (new) | Compute the symmetric matrix for all policy families incl. strategic metrics; write `results/transfer_hybrid.csv` + per-metric TRS/CDGG |
+| `src/wildfire_rl/experiments/transfer_run.py` | Reuse fail-loud model resolution; add strategic-metric aggregation |
+| `src/wildfire_rl/viz/figures.py` | Transfer heatmaps per metric; degradation-curve figures |
+| `scripts/build_report_tables.py` | Render the transfer + asymmetry tables from the CSV |
+
+### Statistical Protocol
+Bootstrap 95% CIs (`bootstrap_ci`, 10k) + Cohen's d, ≥5 disjoint eval-seed batches per cell,
+significance reported **only** with effect size (never significance-without-effect). Heuristic/hybrid
+policies are deterministic given seeds, so distinct eval seeds drive the variance.
+
+### Validation
+```bash
+python scripts/run_transfer_hybrid.py --config configs/experiment/transfer_hybrid.yaml
+python scripts/build_report_tables.py > docs/paper/_generated_tables.md
+```
+Expected: complete symmetric matrix (incl. the previously-missing California→Saudi cell), quantified
+adaptation asymmetry, and a documented generalization gap with CIs.
+
+---
+
+## 15B.5 — Strategic Visualization & Analysis (extends Phase 17)
+
+### Objective
+Make the strategic behavior legible: what the system defends, how it dispatches, and where transfer
+fails.
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `src/wildfire_rl/viz/rollout.py` (Phase 17) | Base rollout recorder/renderer |
+| `src/wildfire_rl/viz/strategic.py` (new) | Overlays: petroleum-asset prioritization, sector dispatch timeline, infrastructure-defense trajectories |
+| `scripts/render_strategic.py` (new) | Iterate (policy family × region × native/transfer) → figures |
+| `figures/strategic/` (new) | Output |
+
+### Deliverable figures
+- Petroleum-site prioritization (which assets were defended, colored by value).
+- Transfer-failure rollouts (native vs transferred side-by-side).
+- Coordination behavior (per-sector agent dispatch over time).
+- Infrastructure-defense trajectories over the criticality map.
+- Comparative Saudi vs California spread + protection heatmaps.
+
+### Validation
+A figure exists for every (policy family × region × {native, transferred}); the Saudi figures overlay
+the petroleum criticality map; heuristic-contains vs PPO-collapse is visually unambiguous.
+
+---
+
+## 15B.6 — AAAI-Style Report Framing
+
+### Objective
+Reframe the manuscript as a trustworthy AI-systems / safety-critical coordination paper.
+
+**Recommended contribution list:**
+1. A reproducible, leakage-free geospatial wildfire-response benchmark with infrastructure-aware,
+   risk-weighted objectives (not just burned cells).
+2. A **hierarchical hybrid** architecture (heuristic low-level + strategic high-level) motivated by a
+   rigorous negative result for naïve deep RL.
+3. A **failure analysis** of single-agent PPO (policy collapse; reward-dominance), with the controls
+   that expose it (effective-method gate, seed integrity).
+4. A **symmetric cross-region transfer** study with infrastructure-aware metrics and adaptation
+   asymmetry between desert (petroleum) and forest (mountain) regimes.
+5. Strategic **critical-infrastructure protection** as a first-class objective for autonomous response.
+
+**Recommended section structure:** Introduction · Related work (RL for wildfire, hierarchical control,
+trustworthy/​safety-critical AI, transfer) · Problem formulation (risk-weighted MDP + infrastructure) ·
+Hybrid architecture · Negative result & failure analysis (PPO) · Experiments (heuristic/hybrid
+scaling, transfer, infrastructure protection) · Trustworthy-evaluation protocol (reproducibility,
+gates, provenance) · Limitations · Broader impact.
+
+**Suggested title directions:** *"Trustworthy Hybrid Coordination for Wildfire Response: Infrastructure-Aware
+Control and Cross-Regional Transfer"*; *"When Deep RL Fails Safely: A Hierarchical Heuristic+RL System
+for Petroleum-Critical Wildfire Defense"*; *"Cross-Domain Generalization of Strategic Wildfire
+Coordination under Critical-Infrastructure Risk."*
+
+**Future work:** decentralized MARL for the strategic layer; learned low-level control with
+curriculum/​imitation from the heuristic; partial observability; real ERA5/FIRMS streaming; additional
+domains (Australia, Mediterranean).
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `docs/paper/report.md` | Reframe: heuristics = effective method, PPO = honest negative result, transfer + infrastructure central |
+| `docs/paper/aaai_outline.md` (new) | Section skeleton + contribution list + claims→evidence map |
+
+### Validation
+Every claim in `report.md` maps to a committed CSV + `run_id` (Phase 12 provenance rule); no sentence
+claims "PPO solves wildfire suppression."
+
+---
+
+## 15B.7 — Compute & Experimental Scope (reprioritized)
+
+### Objective
+Redirect compute away from open-ended PPO tuning toward the questions that now carry the paper.
+
+**Prioritize (in order):**
+1. **Heuristic MARL scaling** (1/3/5/10 agents; `nearest_fire`/`frontier`) — no training, evaluation
+   only; the honest cooperative-scaling result.
+2. **Cross-region transfer** (symmetric, infrastructure-aware) — evaluation-heavy, training-light.
+3. **Strategic coordination** experiments (high-level greedy_risk vs risk_aware vs small RL).
+
+**De-prioritize:** single-agent PPO hyperparameter search (documented negative baseline only).
+
+**Explicit statements for the paper and README:**
+- *Low-level PPO navigation is no longer the primary research claim.*
+- *Heuristic local control is the reliable operational baseline.*
+- *The learnable component, if any, is the small strategic action space — not raw movement.*
+
+### Validation
+The authoritative regeneration budget is dominated by *evaluation* (heuristics/transfer), not PPO
+training; the effective-method gate passes on the heuristic/hierarchical method for every reported
+region.
+
+---
+
+## 15B.8 — Strategic Ablation Studies (AAAI Scientific Core)
+
+### Objective
+Elevate ablation from *supplementary* to a **central scientific contribution**. The project's question
+has moved from *"Can PPO learn wildfire suppression?"* (answered honestly in §1.2: no) to *"How do
+hybrid autonomous wildfire-response systems generalize across domains while protecting critical
+infrastructure?"* Answering the new question **requires** controlled ablations that isolate the causal
+contribution of each design decision. This work-stream defines eight ablation groups that jointly
+justify — with committed CSVs, bootstrap CIs, and effect sizes — (i) the **hybrid hierarchical
+architecture**, (ii) **infrastructure-aware coordination**, (iii) **strategic prioritization**, (iv)
+**transfer robustness**, (v) **hierarchical control decomposition**, and (vi) the **heuristic-vs-RL
+role separation**. Every ablation inherits the Retained-Rigor Contract (Phase 15B) verbatim: disjoint
+eval seeds, determinism + seed integrity, the effective-method gate, run manifests + artifact hashes,
+bootstrap CIs + effect sizes, CI validation. **No ablation cell ships without a committed CSV + `run_id`.**
+
+### Problems / Goals Addressed
+- **Unjustified architecture:** the hybrid/hierarchical design (15B.2) is *asserted*; ablation must
+  *prove* it beats both pure-RL and pure-heuristic ends of the spectrum on the strategic metrics.
+- **Unproven strategic objectives:** infrastructure weighting, cascade risk, and prioritization
+  (15B.1/15B.3) must be shown to **change behavior**, not merely re-score identical trajectories.
+- **Opaque component value:** the strategic controller bundles prioritization, coordination, a risk
+  map, and an infrastructure observation channel; each must be independently knocked out to establish
+  necessity (avoids the "kitchen-sink system" reviewer critique).
+- **Under-characterized transfer:** the symmetric transfer matrix (15B.4) needs an ablation lens —
+  degradation, adaptation asymmetry, and robustness gap decomposed per design choice.
+- **Observation sufficiency / Markov concerns:** channel-removal ablations connect empirical
+  degradation to the MDP's observation contract and the Markov assumption (§ base env).
+- **Reviewer expectation:** AAAI ablation tables with per-metric CIs and qualitative rollout evidence
+  are table-stakes for the systems/safety-critical framing (15B.6).
+- **Compute discipline:** ablations must not regress into PPO hyperparameter tourism (15B.7).
+
+### Retained-Rigor Contract (inherited, restated)
+Each ablation cell = a `run_id` with: a config diff committed under `configs/ablation/`, ≥5 disjoint
+eval-seed batches (Phase 4 `scenario_seed_offset`), a run manifest with artifact SHAs (Phase 8),
+bootstrap 95% CIs (`bootstrap_ci`, 10k) + Cohen's d (Phase 9), and a row in exactly one authoritative
+CSV under `results/ablation/`. Ablations **must not** be used to manufacture a PPO win; where PPO is a
+knob it remains the honest negative baseline.
+
+### Files To Modify
+| File | Change |
+|------|--------|
+| `configs/ablation/*.yaml` (new dir) | One config per ablation cell; each inherits a base and overrides exactly one factor (single-factor-at-a-time discipline). Group manifests: `hybrid_vs_pure.yaml`, `infra_reward.yaml`, `transfer_matrix.yaml`, `strategic_components.yaml`, `infra_density.yaml`, `lowlevel_heuristic.yaml`, `obs_channels.yaml`, `catastrophe.yaml` |
+| `src/wildfire_rl/ablation/__init__.py` (new) | Ablation registry: maps a factor name → the config-override + toggle it flips |
+| `src/wildfire_rl/ablation/runner.py` (new) | `run_ablation_group(group, seeds, out_csv)` — enumerate cells, evaluate each policy family, aggregate strategic metrics + CIs, write tidy CSV (`group,cell,factor,value,policy_family,region_src,region_tgt,metric,mean,ci_lo,ci_hi,cohen_d,n_seeds,run_id`) |
+| `src/wildfire_rl/ablation/factors.py` (new) | Declarative factor definitions: `AblationFactor(name, values, applies_to, toggle_fn)` for each of the 8 groups |
+| `src/wildfire_rl/config.py` | Add ablation toggles: `AblationConfig{ infra_weighting:bool, cascade:bool, prioritization:bool, coordination:bool, risk_map:bool, infra_channel:bool, occupancy_channel:bool, low_level:str, high_level:str }`; all default to the full proposed system |
+| `src/wildfire_rl/envs/base.py`, `multi_agent.py`, `hybrid_multi_agent.py` | Honor the toggles: gate the infra reward term, cascade dynamics, risk map, and each observation channel behind `AblationConfig` (already-wired channels become individually removable) |
+| `src/wildfire_rl/coordination/strategic_controller.py` | Support `prioritization=off` (uniform target weights) and `coordination=off` (per-agent independent greedy, no sector deconfliction) |
+| `src/wildfire_rl/eval/metrics.py` | Add coordination-efficiency, prioritization-accuracy, and emergency-response-latency metrics (formulas below) |
+| `src/wildfire_rl/eval/transfer.py` | Expose `transfer_robustness_gap()` + `adaptation_asymmetry()` as reusable functions for the transfer ablation |
+| `src/wildfire_rl/viz/figures.py` | Ablation bar charts (with CIs), transfer heatmaps, component-knockout waterfall, density-sweep curves |
+| `src/wildfire_rl/viz/strategic.py` | Catastrophe-rollout overlays: chain explosions, emergency reprioritization, regional-sacrifice decisions |
+| `scripts/run_ablations.py` (new) | CLI: `--group {all,hybrid,infra_reward,transfer,components,density,lowlevel,obs,catastrophe}`; dispatches to `ablation.runner` |
+| `scripts/build_report_tables.py` | Render Section-5 ablation tables (5.1–5.7) from `results/ablation/*.csv` |
+| `tests/test_ablation.py` (new) | Assert each factor toggle actually changes an observation/reward/behavior signature (no silent no-ops); assert CSV schema + provenance columns present |
+| `Makefile` | `make ablations` target: runs all groups, builds figures + tables, verifies gate + provenance |
+| `results/ablation/*.csv` (new) | Authoritative per-group outputs, manifest-hashed |
+| `figures/ablation/` (new) | Rendered figures |
+| `docs/paper/report.md`, `docs/paper/aaai_outline.md` | Add Section 5 (structure below) |
+
+### New / Extended Metrics
+Reuse the 15B.3 strategic metrics — **ISR, WEL, CPS, RAC, PCA, TRS, CDGG** — and add:
+
+| Metric | Formula | Meaning |
+|--------|---------|---------|
+| Coordination Efficiency (CE) | `assets_defended / Σ_agents redundant_dispatch` | inverse of wasted/duplicated dispatch; higher = less agent collision on the same target |
+| Prioritization Accuracy (PA) | `Σ (defended_asset_value) / Σ (top-k_by_value asset_value)` | fraction of the *ideal high-value defense set* actually protected |
+| Emergency Response Latency (ERL) | `mean_t(first_agent_arrival − ignition)` over threatened assets | median steps from asset-threat onset to first responder |
+| Transfer Robustness Gap (TRG) | `1 − min_metric(TRS over off-diagonal cells)` | worst-case transfer degradation across the matrix |
+| Catastrophe Chain Length (CCL) | `mean cascade depth per detonation` | severity of petroleum chain reactions (lower = better containment) |
+
+All new metrics are per-episode, unit-tested on synthetic inputs, threaded through `evaluate.py`, and
+reported with bootstrap CIs. TRS/CDGG/TRG are computed only from native-vs-transfer paired runs.
+
+### Ablation Groups — Step-by-Step Implementation Guide
+
+Common protocol for **every** group: (1) define the factor in `factors.py`; (2) emit one config per
+cell under `configs/ablation/<group>.yaml`; (3) evaluate each policy family over ≥5 disjoint eval-seed
+batches; (4) aggregate metrics + bootstrap CIs + Cohen's d vs the group's reference cell; (5) write one
+tidy CSV row per (cell × policy_family × region-pair × metric); (6) render the figure(s); (7) emit the
+Section-5 table. Single-factor-at-a-time unless a group explicitly sweeps a range.
+
+#### Group 1 — Hybrid vs Pure-RL vs Pure-Heuristic *(most important)*
+Compare three controllers head-to-head:
+- **A. Pure PPO controller** — single-agent PPO doing low-level control (the §1.2 negative baseline).
+- **B. Pure heuristic controller** — `nearest_fire`/`frontier` routing + deterministic suppression, **no** strategic high level.
+- **C. Hybrid hierarchical controller (proposed)** — strategic high level (dispatch + prioritization) over the heuristic low level.
+
+Explicit framing baked into configs, tables, and prose: *PPO remains a negative baseline; the heuristic
+is the trusted operational low-level controller; the hybrid is the proposed system.* Never label PPO a
+"win."
+
+Measure: containment (RAC/burned), **infrastructure survival (ISR/PCA)**, **transfer robustness
+(TRS/TRG)**, **catastrophic-loss reduction (CPS/WEL/CCL)**, coordination efficiency (CE).
+```yaml
+# configs/ablation/hybrid_vs_pure.yaml
+base: configs/experiment/multiseed.yaml
+cells:
+  pure_ppo:       { controller: ppo,        high_level: none,        low_level: ppo }
+  pure_heuristic: { controller: heuristic,  high_level: none,        low_level: frontier }
+  hybrid:         { controller: hierarchical, high_level: risk_aware, low_level: frontier }
+regions: [saudi, california]
+seeds: {batches: 5, disjoint_eval: true}
+```
+Outputs: `results/ablation/hybrid_vs_pure.csv`; grouped bar chart per metric with CIs
+(`figures/ablation/hybrid_vs_pure_*.png`); Section-5.2 table. Statistical test: Cohen's d of
+hybrid-vs-heuristic and heuristic-vs-PPO per metric, bootstrap CIs, significance reported only with
+effect size. **Expected/allowed conclusion:** hybrid ≥ heuristic ≫ PPO on strategic metrics; if hybrid
+does **not** beat heuristic on a metric, report that honestly (it bounds the value of the strategic layer).
+
+#### Group 2 — Infrastructure-Aware Reward Ablation
+Cells: **A.** no infrastructure weighting (`catastrophe_weight=0`, burned-cell objective only); **B.**
+infrastructure weighting enabled; **C.** cascading petroleum-risk enabled (`cascade_prob>0` +
+catastrophe penalty). Hold the controller fixed (hybrid) and vary only the objective.
+
+Measure: strategic prioritization *changes* (PA shift, which assets are defended), protected
+infrastructure (ISR/PCA), economic loss reduction (WEL), catastrophic-event prevention (CPS/CCL).
+**Goal — prove the objective changes behavior, not just the score.** The decisive check: at *equal
+burned-cell counts*, B/C must differ from A on ISR/WEL/PA — otherwise the reward is cosmetic.
+Outputs: `results/ablation/infra_reward.csv`; PA-vs-condition figure; Section-5.3 table.
+
+#### Group 3 — Cross-Region Transfer Ablation
+Reuse the symmetric matrix (15B.4) as an ablation over source→target: **Saudi→Saudi**,
+**Saudi→California**, **California→California**, **California→Saudi** (full N×N per policy family).
+Measure: transfer degradation (CDGG), adaptation asymmetry (`|CDGG(S→C) − CDGG(C→S)|`), robustness gap
+(TRG), generalization performance (TRS per metric).
+Deliverables: transfer matrices + **heatmaps** per metric (`figures/ablation/transfer_*.png`);
+statistical protocol = ≥5 disjoint eval-seed batches per cell, bootstrap-CI reporting on every cell and
+on the asymmetry; `results/ablation/transfer_matrix.csv`; Section-5.4 table. **Include the previously
+missing California→Saudi cell** — its absence was a rigor gap.
+
+#### Group 4 — Strategic Coordination Ablation *(component knockout)*
+Disable strategic modules **individually** (single-factor knockout from the full hybrid):
+**A.** no prioritization (uniform target weights); **B.** no coordination (independent per-agent greedy,
+no sector deconfliction); **C.** no risk map (high level blind to criticality); **D.** no infrastructure
+channel (obs channel removed from the high level).
+Measure: infrastructure losses (ISR/PCA/WEL), delayed response (ERL), coordination collapse (CE),
+catastrophic spread (CPS/CCL). **Goal — prove each component is necessary:** each knockout should
+degrade ≥1 metric with a CI excluding zero vs the full system. Present as a **waterfall/knockout chart**
+(`figures/ablation/component_knockout.png`); `results/ablation/strategic_components.csv`; Section-5.5 table.
+
+#### Group 5 — Infrastructure-Density Ablation *(environmental stress test)*
+Sweep environmental stress (multi-value, not single toggle): number of petroleum sites, clustering
+density, explosion/blast radius, criticality-score distribution.
+```yaml
+# configs/ablation/infra_density.yaml
+sweep:
+  num_sites:        [4, 8, 16, 32]
+  cluster_sigma:    [low, med, high]     # spatial clustering
+  blast_radius:     [1, 2, 4]
+  criticality_dist: [uniform, heavy_tail]
+```
+Measure: coordination scaling (CE vs density), prioritization behavior (PA vs density), transfer
+robustness degradation (TRS/TRG under stress), resource-allocation shifts (dispatch distribution).
+Frame explicitly as **environmental stress-testing** of the strategic layer. Outputs: density-sweep
+curves with CIs (`figures/ablation/density_*.png`); `results/ablation/infra_density.csv`; feeds
+Section-5.7. Keep the sweep grid modest and evaluation-only to respect the compute budget (15B.7).
+
+#### Group 6 — Low-Level Heuristic Ablation
+The heuristic is now **part of the proposed system**, so its choice is a first-class factor. Compare
+low-level routers under a fixed hybrid high level: **`nearest_fire`**, **`frontier`**, **risk-aware
+frontier** (routes weighted by criticality), **infrastructure-aware routing** (biases paths to defend
+assets). Measure: containment efficiency (RAC), strategic responsiveness (PA/ERL), transfer robustness
+(TRS). Outputs: `results/ablation/lowlevel_heuristic.csv`; Section-5.2/5.5 table. Report which router is
+the reliable operational default and whether risk-/infra-aware routing pays off under transfer.
+
+#### Group 7 — Observation-Channel Ablation
+Remove observation channels **individually**: **infrastructure map**, **risk heatmap**, **transfer
+metadata**, **occupancy channel**. Measure: prioritization collapse (PA), transfer degradation
+(TRS/CDGG), infrastructure losses (ISR/WEL), navigation instability (CE/ERL). The plan must connect
+results explicitly to: **observation sufficiency**, the **Markov assumption** (a channel whose removal
+degrades performance is Markov-relevant state the agent needs), and **strategic situational awareness**.
+Outputs: `results/ablation/obs_channels.csv`; per-channel degradation figure; Section-5.6 table. The
+`test_ablation.py` guard asserts each removed channel actually changes the observation tensor shape/content.
+
+#### Group 8 — Catastrophic-Event Ablation
+Compare **no explosion propagation** (`cascade_prob=0`) vs **cascading petroleum explosions**
+(`cascade_prob>0`), controller fixed. Measure: policy behavior changes (dispatch distribution),
+dispatch urgency (ERL), infrastructure-defense patterns (which assets prioritized), containment
+tradeoffs (RAC vs ISR/CPS). **Rollout-visualization requirements** (via `viz/strategic.py`), each
+rendered for Saudi native + transfer: (a) **chain explosions** propagating through clustered petroleum
+sites; (b) **emergency reprioritization** (the high level re-dispatching under a detonation); (c)
+**regional-sacrifice decisions** (deliberately ceding low-value cells to save high-value assets).
+Outputs: `results/ablation/catastrophe.csv`; rollout GIF/PNG sequences under `figures/ablation/catastrophe/`;
+Section-5.7 table + qualitative analysis. Report CCL and CPS deltas with CIs.
+
+### Mandatory Animated-Rollout Visualization Standard (all experiments + ablations)
+**Every experiment and every ablation cell must emit a per-timestep animated grid rollout (GIF) in the
+canonical wildfire-RL format** — the same style used across the repo's environment renderer — so results
+are visually comparable across groups, regions, and the native/transfer axis. The static per-group
+figures (bars/heatmaps/waterfalls) remain required; the animated rollout is an **additional, mandatory**
+deliverable, not a substitute.
+
+**Canonical format (fixed contract):**
+- **Header:** `Timestep #: <t>` at top-left, updated each frame, plus a horizontal **legend** with the
+  exact class → color mapping below.
+- **Grid:** the region raster rendered as equal square cells with thin white gridlines; consistent cell
+  size and orientation across all rollouts so frames are directly comparable.
+- **Class → color legend (canonical palette, do not re-map):**
+
+  | Class | Meaning | Color |
+  |-------|---------|-------|
+  | Grass | unburned burnable cell | green (`#2CC295`) |
+  | Fire | actively burning cell | red/pink (`#F04A6E`) |
+  | Populated | occupied population/asset cell (pre-evacuation) | dark navy (`#0E2A3B`) |
+  | Evacuating | population currently moving along a route | blue (`#1F7A9E`) |
+  | Path | evacuation / dispatch route cell | yellow (`#F5C24B`) |
+  | Finished | successfully evacuated / resolved cell | purple (`#C39BD3`) |
+
+- **Semantics for the strategic domain:** `Populated`/`Evacuating`/`Finished` render the population &
+  evacuation state; `Path` overlays both evacuation routes and high-level agent dispatch/routing;
+  `Fire` includes cascade-ignited petroleum cells. Infrastructure/criticality may be shown as an
+  optional faint underlay but must **not** recolor the six canonical classes.
+- **Frames:** one frame per environment timestep from `t=1` to episode end; fixed frame rate; loop.
+
+**Files To Modify (visualization standard):**
+| File | Change |
+|------|--------|
+| `src/wildfire_rl/viz/rollout.py` | Implement/lock the canonical renderer: fixed palette + legend + `Timestep #` header; `render_rollout(states, out_path.gif)` |
+| `src/wildfire_rl/viz/strategic.py` | Strategic overlays (dispatch/prioritization/catastrophe) draw **on top of** the canonical palette, never replace it |
+| `src/wildfire_rl/ablation/runner.py` | For every ablation cell, record the state trajectory and emit `<cell>.gif` alongside the CSV row (path stored in a `rollout_gif` column) |
+| `scripts/run_ablations.py` | `--render-figures` also renders one canonical GIF per cell (and per representative seed) |
+| `configs/viz.yaml` (new) | Single source of truth for the palette, legend labels, cell size, and frame rate — imported by both renderers so every experiment/ablation is pixel-consistent |
+| `tests/test_rollout_viz.py` (new) | Assert the palette + legend labels match the canonical contract exactly and a GIF is produced for a synthetic trajectory |
+
+**Provenance:** each GIF is manifest-hashed (Phase 8) and its path recorded in the owning CSV row so
+every animated result traces to a `run_id`, identical to the static-figure provenance rule.
+
+**Output layout:** `figures/ablation/<group>/<cell>.gif`; `figures/rollouts/<experiment>/<region>_<policy>.gif`.
+
+### Report / Paper Integration
+Add **Section 5 — Ablation Studies** to `docs/paper/report.md` and mirror in `docs/paper/aaai_outline.md`:
+```
+5. Ablation Studies
+   5.1 PPO Remediation & Failure Analysis      (Group 1 pure-PPO arm; ties to §1.2 + Phase 16 negative result)
+   5.2 Hybrid Architecture Ablation            (Group 1 + Group 6)
+   5.3 Infrastructure-Aware Coordination       (Group 2)
+   5.4 Cross-Region Transfer                    (Group 3)
+   5.5 Strategic Coordination Components        (Group 4)
+   5.6 Observation Sufficiency                  (Group 7)
+   5.7 Environmental Stress Testing             (Group 5 + Group 8)
+```
+Guidance to encode:
+- **AAAI ablation-table structure:** one row per ablation cell, one column per metric; cell = `mean
+  [ci_lo, ci_hi]`; bold the proposed/full-system row; a `Δ vs full` column with Cohen's d; footnote the
+  seed count and `run_id`. Full-system row is the reference; knockouts show degradation.
+- **Figure-generation requirements:** every ablation group ships ≥1 figure with **visible CIs**
+  (grouped bars for 1/2/6, heatmaps for 3, waterfall for 4, sweep curves for 5, per-channel bars for 7,
+  rollout sequences for 8) **plus** a canonical animated-rollout GIF per cell (see the Mandatory
+  Animated-Rollout Visualization Standard above). All figures/GIFs generated by
+  `scripts/run_ablations.py`/`viz` — never hand-drawn.
+- **Qualitative rollout analysis:** §5.7 pairs quantitative catastrophe metrics with the Group-8 rollout
+  narratives (chain explosion, emergency reprioritization, regional sacrifice) — the interpretability story.
+- **Appendix organization:** Appendix A = full per-cell CSV tables + `run_id`s; Appendix B = per-metric
+  transfer matrices; Appendix C = density-sweep grids; Appendix D = ablation reproduction commands.
+- **Statistical-reporting standards:** bootstrap 95% CIs + Cohen's d on every claim; significance
+  reported **only** with effect size; the full-system row is the reference for all Δ; no p-value stands alone.
+- **Honesty guardrail:** if an ablation shows a component *doesn't* help (e.g., hybrid ≈ heuristic on a
+  metric, or a router underperforms), report it plainly — negative ablation findings bound the
+  contribution and are themselves results. Never imply PPO "eventually succeeded."
+
+### Compute & Experimental Priorities
+State explicitly in the phase, README, and paper:
+- **PRIORITIZE:** heuristic MARL scaling · transfer analysis · infrastructure coordination · strategic
+  evaluation — all **evaluation-heavy, training-light**.
+- **DE-EMPHASIZE:** endless PPO hyperparameter tuning (Group 1's PPO arm is the fixed §1.2 baseline, not a search).
+- **Explicit statements:** *low-level PPO navigation is no longer the central research claim*; *heuristic
+  local control is the trusted operational baseline*; *the only learnable component of interest is the
+  small strategic action space.* The ablation compute budget is dominated by evaluation over disjoint
+  seeds, not by training runs.
+
+### Validation Procedures
+```bash
+# 1. Toggles are real (no silent no-ops) + CSV schema/provenance guarded
+python -m pytest tests/test_ablation.py -q
+
+# 2. Run each group (evaluation-only, disjoint eval seeds)
+python scripts/run_ablations.py --group all            # or: hybrid | infra_reward | transfer | components | density | lowlevel | obs | catastrophe
+
+# 3. Provenance + gate: every CSV row has a run_id; manifests hashed; effective-method gate passes
+python scripts/validate_learning_gate.py --scope ablation
+python scripts/check_provenance.py results/ablation/*.csv
+
+# 4. Figures + Section-5 tables regenerate from the CSVs (no hand editing)
+python scripts/run_ablations.py --render-figures
+python scripts/build_report_tables.py --section 5 > docs/paper/_generated_ablation_tables.md
+
+# 5. One-command reproduction
+make ablations
+```
+Expected: (a) every factor toggle provably changes obs/reward/behavior; (b) the hybrid ≥ heuristic ≫
+PPO ordering holds on strategic metrics *or* the exception is reported honestly; (c) infra-reward and
+component knockouts produce CI-separated behavior changes; (d) the symmetric transfer matrix is complete
+incl. California→Saudi with per-cell CIs; (e) every table/figure traces to a committed CSV + `run_id`.
+
+### README Updates Required
+Add a **"Strategic Ablation Studies"** subsection under the Hybrid Wildfire-Response System section:
+```markdown
+### Strategic Ablation Studies
+Ablations are a central contribution, not an appendix. Eight controlled studies isolate the causal
+value of each design choice — hybrid-vs-pure control, infrastructure-aware reward, cross-region
+transfer, strategic-component knockouts, infrastructure-density stress tests, low-level heuristic
+choice, observation-channel sufficiency, and catastrophic cascade events — each reported with bootstrap
+CIs and effect sizes over disjoint eval seeds. PPO appears only as the honest negative baseline.
+
+    make ablations                              # run all groups, render figures + Section-5 tables
+    python scripts/run_ablations.py --group transfer   # a single group
+```
+Every experiment and ablation cell also emits a canonical **animated-rollout GIF** — a per-timestep grid
+with a `Timestep #` header and the fixed **Grass / Fire / Populated / Evacuating / Path / Finished**
+legend — so results are visually comparable across groups, regions, and native/transfer. The palette is
+locked in `configs/viz.yaml`; GIFs land under `figures/ablation/<group>/` and `figures/rollouts/`.
+
+Also: (i) add CE / PA / ERL / TRG / CCL to the **Metrics** list; (ii) note in **Results** that
+ablation Section 5 leads with the effective (hybrid/heuristic) method and frames PPO as the negative
+result; (iii) document `configs/ablation/` and `results/ablation/` in the repo-layout section.
+
+### Success Criteria (MANDATORY CHECKPOINT)
+Technical verification
+- [ ] `AblationConfig` toggles wired into env/reward/obs/controller; each individually removable
+- [ ] All 8 group configs committed under `configs/ablation/`; single-factor discipline enforced
+- [ ] `ablation/runner.py` + `scripts/run_ablations.py` produce tidy CSVs with the full provenance schema
+- [ ] New metrics (CE, PA, ERL, TRG, CCL) implemented + unit-tested alongside ISR/WEL/CPS/RAC/PCA/TRS/CDGG
+- [ ] `tests/test_ablation.py` green: every toggle changes a signature; no silent no-ops; CSV schema asserted
+
+Reproducibility
+- [ ] Every ablation cell uses ≥5 disjoint eval-seed batches, a run manifest, and hashed artifacts
+- [ ] `make ablations` regenerates every CSV, figure, and Section-5 table end-to-end
+- [ ] `check_provenance.py` passes: every table/figure row maps to a committed CSV + `run_id`
+
+Scientific validity
+- [ ] Effective-method gate passes on the hybrid/heuristic method for every reported region
+- [ ] Group 1 ordering (hybrid ≥ heuristic ≫ PPO) reported with CIs + Cohen's d, or the exception stated honestly
+- [ ] Symmetric transfer matrix complete (incl. California→Saudi) with per-cell + asymmetry CIs
+- [ ] Component knockouts (Group 4) each degrade ≥1 metric with a zero-excluding CI, or necessity is not claimed
+- [ ] PPO never tuned or relabeled to "win"; negative ablation findings retained honestly
+
+Visualization / reporting
+- [ ] Every experiment + ablation cell emits a canonical animated-rollout GIF (`Timestep #` header +
+      the fixed Grass/Fire/Populated/Evacuating/Path/Finished legend), palette locked in `configs/viz.yaml`
+- [ ] `tests/test_rollout_viz.py` green: palette + legend labels match the canonical contract; GIF produced
+- [ ] Every group ships ≥1 figure with visible CIs; Group 8 ships catastrophe rollout sequences
+- [ ] Section 5 (5.1–5.7) drafted in `report.md` + `aaai_outline.md`, tables auto-generated
+
+README completeness
+- [ ] "Strategic Ablation Studies" subsection added; CE/PA/ERL/TRG/CCL in Metrics; ablation dirs documented
+
+### Proceed Rule
+- If ALL items are `[x]`, the strategic ablation framework is complete and feeds the Phase 15B checkpoint,
+  Phase 9 regeneration, Phase 12 report (Section 5), and Phase 14 certification. Otherwise fix the failing
+  item before advancing. **Never** satisfy a criterion by forcing a PPO win, by relabeling the negative
+  baseline, or by dropping an ablation cell that produced an inconvenient (e.g., "component didn't help")
+  result — honest negative ablation findings are contributions, not failures.
+
+---
+
+## Phase 15B — README Updates Required
+
+### Add Section
+```markdown
+## Hybrid Wildfire-Response System
+
+Wildfire-RL is a **hierarchical hybrid** wildfire-response platform: an interpretable heuristic
+low-level controller (routing + deterministic suppression) under a strategic high-level controller
+(agent dispatch, infrastructure prioritization). The environment optimizes **risk-weighted strategic
+damage** — including petroleum-infrastructure survival and cascading-explosion risk — not just burned
+cells. Single-agent deep RL (PPO) is included as a rigorously-characterized **negative-result
+baseline** (see "Failure analysis"). Effective method = heuristic/hybrid routing.
+
+Build infrastructure rasters, run the symmetric transfer study, and render strategic rollouts:
+```bash
+python scripts/build_infrastructure.py --region saudi_eastern_province --grid 32
+python scripts/run_transfer_hybrid.py --config configs/experiment/transfer_hybrid.yaml
+python scripts/render_strategic.py --regions saudi california
+```
+```
+
+### Modify Existing Section
+- **Overview / Observation contract:** document the infrastructure-criticality channel and the
+  two-level obs/action contracts.
+- **Metrics:** add ISR / WEL / CPS / RAC / PCA / TRS / CDGG.
+- **Results:** lead with the effective (heuristic/hybrid) method and the transfer/​infrastructure
+  findings; frame PPO as the negative result.
+
+## Phase 15B — Success Criteria (MANDATORY CHECKPOINT)
+
+Technical verification
+- [ ] Infrastructure rasters built (asset type + criticality + blast radius), hashed in the manifest
+- [ ] Cascade/explosion dynamics + catastrophe penalty implemented and unit-tested
+- [ ] Infrastructure-criticality observation channel added; CNN tracks channel count
+- [ ] Hierarchical controller runs (greedy_risk / risk_aware / rl); `test_hybrid.py` green
+- [ ] Strategic + transfer metrics (ISR, WEL, CPS, RAC, PCA, TRS, CDGG) implemented + tested
+
+Reproducibility
+- [ ] All 15B experiments use disjoint eval seeds, run manifests, and hashed artifacts
+- [ ] Symmetric transfer matrix + asymmetry regenerated by `run_transfer_hybrid.py`
+
+Scientific validity
+- [ ] Effective-method gate passes on the heuristic/hierarchical method per region
+- [ ] PPO retained honestly as a negative-result baseline (never tuned to "win")
+- [ ] Every table/figure traces to a CSV + `run_id`; bootstrap CIs + effect sizes reported
+
+Logging / monitoring
+- [ ] Strategic rollouts rendered for every (policy family × region × native/transfer)
+
+README completeness
+- [ ] "Hybrid Wildfire-Response System" section added; metrics + observation contract updated
+
+### Proceed Rule
+- If ALL items are `[x]`, the AAAI research core is complete and feeds Phase 9 regeneration / Phase 12
+  report / Phase 14 certification. Otherwise fix the failing item before advancing. **Never** satisfy
+  a criterion by forcing a PPO win — the honest negative result is a contribution, not a bug.
+
+---
+
 # Phase 16 — Policy Strengthening & Hyperparameter Optimization
 Estimated Time: 1–2 days (compute-heavy; GPU/Colab candidate)
 Execution position: **after Phase 9** (needs trained artifacts + the learning gate).
+
+> **STATUS — REFRAMED (see §1.2).** The empirical finding is that single-agent PPO does **not** beat a
+> no-op / heuristic baseline on this task despite every lever below (Markov obs, agent-attributable +
+> dense-proximity reward, anti-collapse reward rebalancing, exploration tuning), and collapses to a
+> near-constant policy. This phase is **retained as an honest negative-result ablation** — its levers
+> are documented `EnvConfig` knobs (`reward_agent_suppression_weight`, `reward_proximity_weight`,
+> `reward_fire_weight`) used to *characterize* the failure, **not** a success criterion. Its
+> "PPO beats noop with margin" gate is **superseded by the effective-method gate** (Phase 7 reframe:
+> the effective method is heuristic/hierarchical routing). **Do not tune PPO to force a win** — that
+> would recreate the fabrication this remediation exists to remove. The steps below are preserved for
+> completeness and as the exact ablation protocol behind the negative result.
 
 ## Objective
 Convert the "correct-but-weak" post-Markov policy into a **strong** one that clears the learning gate

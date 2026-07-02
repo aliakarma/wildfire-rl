@@ -83,3 +83,20 @@ def test_include_agent_channel_toggle(small_tensor):
     env = WildfireEnv(state_tensor=small_tensor, config=cfg)
     o0, _ = env.reset(seed=0)
     assert o0.shape == (7, 8, 8)
+
+
+def test_agent_suppression_reward_credits_removal():
+    """Phase 16: a step that removes fire scores higher when the suppression weight is on."""
+    from wildfire_rl.config import EnvConfig
+
+    t = np.zeros((7, 8, 8), dtype=np.float32)
+    t[0, 4, 4] = 1.0  # fire directly under the agent's start position [4, 4]
+
+    def reward_after_suppress(weight: float) -> float:
+        cfg = EnvConfig(grid_size=8, max_steps=10, reward_agent_suppression_weight=weight)
+        env = WildfireEnv(state_tensor=t, config=cfg)
+        env.reset(seed=0)
+        _, r, *_ = env.step(4)  # stay -> suppress the fire at [4, 4]
+        return r
+
+    assert reward_after_suppress(10.0) > reward_after_suppress(0.0)

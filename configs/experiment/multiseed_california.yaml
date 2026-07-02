@@ -10,7 +10,9 @@ region:
 
 env:
   max_steps: 200
-  reward_mode: raw
+  reward_mode: normalized                  # Phase 16: balanced terms for the suppression signal
+  suppression_bonus: 0.0                   # Phase 16: drop the legacy "stand on empty cell" bonus
+  reward_agent_suppression_weight: 10.0    # Phase 16: credit fire the agent actually removes
   # Randomized ignition each reset => training samples a scenario distribution and
   # evaluation (offset seeds) samples a disjoint held-out set. No train/test leakage.
   randomize_ignition: true
