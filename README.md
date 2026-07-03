@@ -161,6 +161,25 @@ wildfire-rl evaluate --config configs/experiment/multiseed.yaml \
 wildfire-rl transfer --config configs/experiment/transfer.yaml
 ```
 
+## Baselines
+
+Every single-agent evaluation reports the full policy set on **identical eval seeds** (the eval loop
+resets each policy with the same `base_seed + scenario_seed_offset + episode`, so the comparison is
+paired):
+
+| Policy | Privileged? | Role |
+|--------|-------------|------|
+| `noop` | no | lower bound (do nothing; local suppression still applies) |
+| `random` | no | uninformed control |
+| `nearest_fire` | **yes** (reads agent position) | strong heuristic — the effective method |
+| `frontier` | **yes** (reads agent position) | strong heuristic — the effective method |
+
+The heuristic baselines use **oracle localization**: they read `env.agent_pos` / `env.agent_positions`
+directly (`uses_privileged_state = True`, queryable on each policy class). PPO observes its own
+position via an observation channel (Phase 3) but does **not** receive the fire-argmin, so wherever a
+heuristic outperforms PPO the comparison is reported **with this asymmetry stated explicitly**. PPO is
+retained as an honest negative baseline; the heuristic routers are the effective method.
+
 ## Metrics & Learning Gate
 
 Primary metrics: `burned_cells` (fire > 0.5), `fire_intensity`, `containment_rate` (fraction of the

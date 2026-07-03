@@ -38,6 +38,14 @@ def test_heuristic_policies_run(small_tensor, env_cfg):
     assert r2["summary"]["n_episodes"] == 2
 
 
+def test_privileged_state_flags():
+    """Phase 10: the oracle-localization asymmetry must be self-declared and queryable."""
+    assert NearestFirePolicy.uses_privileged_state is True
+    assert FrontierPolicy.uses_privileged_state is True
+    assert RandomPolicy.uses_privileged_state is False
+    assert NoOpPolicy.uses_privileged_state is False
+
+
 def test_evaluation_reproducible(small_tensor, env_cfg):
     factory = make_env_factory(state_tensor=small_tensor, config=env_cfg)
     p1 = RandomPolicy(factory().action_space, seed=0)

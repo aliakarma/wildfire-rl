@@ -881,7 +881,11 @@ Authoritative Regeneration — the compute-heavy retrain; GPU/Colab decision poi
 
 ---
 
-## Phase 9 — Statistical Validity & Authoritative Regeneration (IN PROGRESS — gate-validation done)
+## Phase 9 (Part A) — Statistical Validity & Gate-Validation *(SUPERSEDED — see Phase 9-Core below)*
+
+> **This entry is the mid-run validation snapshot. It is SUPERSEDED by "Phase 9 — Authoritative
+> Regeneration (Phase 9-Core)" further down, which is ✅ COMPLETE.** Kept as a chronological record of
+> why the full run was deferred (learning gate needed the Phase 16 pivot + Phase 15 re-tune first).
 
 **Status:** 🟡 VALIDATION COMPLETE — **full run deferred**; learning gate blocked pending Phase 16 +
 a Phase 15 re-tune (both diagnosed with data).
@@ -986,3 +990,118 @@ PPO (60k)    burned 32.8   n.s. vs noop          <-- NEGATIVE RESULT
   estimate drops substantially.
 - **Phase 12 report** leads with heuristic routing as the effective method + PPO negative result.
 - **Phase 17 rollout viz** becomes compelling evidence: heuristic (contains fire) vs PPO (collapsed).
+
+---
+
+## Phase 9 — Authoritative Regeneration (Phase 9-Core) — COMPLETE via Colab + cleanup
+
+**Status:** ✅ COMPLETE (Phase 9-Core). Extended 15B/15B.8 surface deferred (those phases not yet coded).
+**Compute:** Colab T4 (user-run authoritative training) + local CPU cleanup/verification.
+
+### Done
+- **Authoritative training on Colab T4** (models saved to Drive, extracted into `models/`): **34 distinct
+  checkpoints** — 10 single-agent (saudi/california × 5 seeds) + 24 MARL scaling (1/3/5/10 × 3 seeds ×
+  2 regions) — plus **10 run manifests** under `results/runs/train_*/` and fresh eval/transfer/MARL CSVs.
+- **Cleanup pass (this session):**
+  1. **Root-caused the California "identical" PPO rows** = honest policy collapse, not fake seeds. All 5
+     California checkpoints have DISTINCT weights (verified by `policy.state_dict` SHA); each collapsed to
+     a CONSTANT action (seed0=4, seed1=1, seed2=1, seed3=2, seed4=2), so seeds 1≡2 and 3≡4 produce
+     byte-identical eval rows on the fixed scenarios — the Phase 16 negative result.
+  2. **Retired 8 stale pre-remediation CSVs** → `experimental/results/stale_pre_phase9/`
+     (`eval_california.csv`, `eval_saudi_generalization.csv`, `transfer_matrix.csv`, `ablation_results.csv`,
+     `baseline_statistics.csv`, `effect_sizes.csv`, `controllability_metrics.csv`,
+     `action_influence_metrics.csv`). All remaining `results/*.csv` are Jul-2 fresh.
+  3. **Fixed `check_seed_integrity.py` false positive:** identical eval rows backed by *provably-distinct
+     checkpoints* now WARN (honest collapse); genuine fraud (identical checkpoints) still FAILs. CSV list
+     updated to the certified files.
+  4. **Re-pointed `validate_learning_gate.py`** California source → `eval_california_multiseed_california.csv`
+     (was reading the stale `eval_california.csv`, which mislabeled `random` as effective).
+  5. **Fixed a figure crash** (`plot_marl_scaling` KeyError `fire_mean` → tolerant of the
+     `fire_intensity_mean`/per-region schema) and made `cmd_make_figures` locate fresh files (transfer
+     `_raw` fallback; config-suffixed per-region eval).
+
+### Verification (this session)
+```
+check_seed_integrity.py .... SEED INTEGRITY: OK          (exit 0)  34 distinct checkpoints
+validate_learning_gate.py .. EFFECTIVE-METHOD GATE: PASS (exit 0)
+    saudi:      nearest_fire 2.10 << noop 33.34 ; PPO 32.58 -> negative result
+    california: nearest_fire 0.00 << noop 182.82; PPO 184.77 -> negative result
+pytest ..................... 69 passed ; ruff (edited files) clean
+figures .................... regenerated from fresh CSVs (transfer, baseline saudi+california, marl_scaling)
+provenance ................. results/runs/phase9_cleanup_20260703_154035.log
+```
+
+### Deferred (not blocking Phase 9-Core)
+- Single-agent PPO ablation CSV (stale one retired, not regenerated — negative-result diagnostic only).
+- **Extended Phase 9** (15B/15B.8): infrastructure/hybrid metrics, symmetric transfer matrix, 8 ablation
+  groups, canonical rollout GIFs — pending those phases being coded.
+
+### Success Criteria (Gate) — Phase 9-Core
+- [x] `bootstrap_ci` implemented; core CSVs regenerated from corrected code
+- [x] `check_seed_integrity.py` → OK on regenerated CSVs (distinct checkpoints)
+- [x] `validate_learning_gate.py` → exit 0 (effective-method gate; best policy > no-op)
+- [x] PPO reported honestly as a negative baseline (both regions), never tuned/relabeled to win
+- [x] Each model traceable to a run manifest; provenance log written
+- [ ] Symmetric transfer + canonical GIFs + 15B ablations → **Extended Phase 9** (future)
+
+**Proceed Rule:** Phase 9-Core criteria all `[x]` → **cleared to proceed to Phase 10**. (No commits made,
+per owner instruction.)
+
+---
+
+## Phase 10 — Baseline Reimplementation & Fair Comparison
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~20 min · **Compute:** CPU only.
+
+### Objective
+Report the heuristic baselines in every headline comparison, document the oracle-position asymmetry,
+and ensure PPO + baselines are evaluated on identical seeds.
+
+### Actions Taken
+1. **Heuristics already first-class in single-agent eval** (`cli.cmd_evaluate` has `random`, `noop`,
+   `nearest_fire`, `frontier`) — confirmed present in both regenerated eval CSVs. This was landed by the
+   Phase 16 pivot; verified, not re-added.
+2. **Privileged-state disclosure (`eval/baselines.py`):** added a queryable class attribute
+   `uses_privileged_state` — `True` on `NearestFirePolicy`/`FrontierPolicy` (they read `env.agent_pos` /
+   `env.agent_positions` for oracle localization), `False` on `RandomPolicy`/`NoOpPolicy`. Added
+   oracle-disclosure docstrings to both heuristics.
+3. **Test (`tests/test_eval_baselines.py`):** `test_privileged_state_flags` asserts the True/False contract.
+4. **README `## Baselines` section** added: policy table with a Privileged? column + identical-seed and
+   oracle-localization caveats; frames heuristics as the effective method and PPO as the negative baseline.
+5. **`docs/paper/report.md` §12.4** — "Baselines & Privileged-State Disclosure (remediation)" note: every
+   comparison table lists all baselines; privilege asymmetry stated; marks the stale results sections as
+   superseded by the Phase 12 rewrite.
+
+### Verification Evidence
+```
+uses_privileged_state .... nearest True, frontier True, random False, noop False   ✔
+heuristics in CSVs ....... eval_saudi.csv + eval_california_multiseed_california.csv both include
+                           frontier + nearest_fire (+ noop, random, 5 PPO seeds)     ✔
+identical eval seeds ..... guaranteed by evaluate_policy (base_seed+offset+ep per policy)  ✔
+ruff (baselines.py) ...... clean (test-file W293/I001 = pre-existing debt, Phase 13)  ✔
+pytest ................... 70 passed (was 69; +1 privilege test)                      ✔
+```
+
+### Deviations / Scope Notes
+1. **Step 1 was already satisfied** by the Phase 16 pivot; verified rather than duplicated.
+2. **`report.md` results tables not rewritten** — the wholesale numbers rewrite is Phase 9 README step +
+   Phase 12. Phase 10 adds the §12.4 disclosure note and marks the stale sections superseded, avoiding
+   duplicate/inconsistent edits to a doc slated for replacement.
+3. **Pre-existing lint debt** in `test_eval_baselines.py` (W293×6, I001) left for the Phase 13 repo-wide
+   pass, per the established policy; my added code is clean.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `nearest_fire`, `frontier` in single-agent eval CSVs
+  - [x] `uses_privileged_state` flag exposed (and tested)
+- Reproducibility
+  - [x] All policies share identical eval seeds (by construction in `evaluate_policy`)
+- Scientific validity
+  - [x] No headline table omits a computed baseline (README table; report §12.4 mandate)
+- Logging/monitoring
+  - [x] Baseline provenance recorded (policy set + `reward_mode` in every eval CSV)
+- README completeness
+  - [x] Baselines table added with privilege column
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 11** (Dataset Validation & Provenance
+Hashing). No commits made, per owner instruction.

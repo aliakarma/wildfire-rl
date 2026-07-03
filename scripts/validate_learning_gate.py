@@ -23,7 +23,10 @@ from pathlib import Path
 
 import pandas as pd
 
-EVAL_CSVS = ["results/eval_saudi.csv", "results/eval_california.csv"]
+EVAL_CSVS = [
+    "results/eval_saudi.csv",
+    "results/eval_california_multiseed_california.csv",
+]
 
 
 def gate(csv: str, margin: float) -> bool | None:

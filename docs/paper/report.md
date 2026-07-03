@@ -234,6 +234,18 @@ Wildfire tensors represent:
 •	spatial geophysical fields,
 not natural RGB images.
 ________________________________________
+12.4 Baselines & Privileged-State Disclosure (remediation)
+Every single-agent comparison reports the full policy set — noop, random, nearest_fire, frontier,
+and PPO — on identical evaluation seeds (paired reset seeds); no headline table omits a computed
+baseline. The heuristic routers nearest_fire and frontier are the effective method and must appear in
+every comparison table. They are privileged: they read the agent's true grid position directly
+(uses_privileged_state = True) for oracle localization, whereas PPO localizes only through its
+observation channel (agent-position channel, Phase 3) and does not receive the fire-argmin. Wherever a
+heuristic outperforms PPO, that asymmetry is stated explicitly. PPO is retained as an honest
+negative-result baseline and is never tuned or relabeled to "win"; the effective-method gate certifies
+that a working method (the heuristic) beats no-op. (The results sections below predate this framing and
+are superseded by the regenerated, effective-method-first narrative — see Phase 12.)
+________________________________________
 13. Wildfire Dynamics Implemented
 The environment includes:
 Mechanic	Status

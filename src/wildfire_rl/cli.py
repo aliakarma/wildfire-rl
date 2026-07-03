@@ -279,8 +279,10 @@ def cmd_make_figures(args) -> int:
 
     res, figs = results_dir(), ensure_dir(figures_dir())
 
-    # Transfer heatmap
+    # Transfer heatmap — prefer normalized, fall back to the raw-mode matrix
     transfer_csv = res / "transfer_matrix.csv"
+    if not transfer_csv.exists():
+        transfer_csv = res / "transfer_matrix_raw.csv"
     if transfer_csv.exists():
         df = pd.read_csv(transfer_csv)
         plot_transfer_heatmap(
@@ -293,16 +295,20 @@ def cmd_make_figures(args) -> int:
     else:
         logger.warning("No %s yet — run `wildfire-rl transfer` first.", transfer_csv)
 
-    # Baseline comparison figures (per region)
+    # Baseline comparison figures (per region) — accept the exact name or a config-suffixed variant
+    # (e.g. eval_california_multiseed_california.csv), preferring the canonical name when present.
     for region in ["saudi", "california"]:
         eval_csv = res / f"eval_{region}.csv"
+        if not eval_csv.exists():
+            variants = sorted(res.glob(f"eval_{region}*.csv"))
+            eval_csv = variants[0] if variants else eval_csv
         if eval_csv.exists():
             plot_baseline_comparison(
                 eval_csv,
                 figs / f"baseline_comparison_{region}.png",
                 title=f"Policy Comparison — {region.title()}",
             )
-            logger.info("Wrote baseline_comparison_%s.png", region)
+            logger.info("Wrote baseline_comparison_%s.png (<- %s)", region, eval_csv.name)
 
     # Ablation bars
     ablation_csv = res / "ablation_results.csv"

@@ -170,19 +170,30 @@ def plot_ablation_bars(ablation_csv: str | Path, out_path: str | Path):
 
 
 def plot_marl_scaling(marl_csv: str | Path, out_path: str | Path):
-    """Line plot: fire intensity vs number of agents with CI bands."""
+    """Line plot: fire intensity vs number of agents, per region, with CI bands when present.
+
+    Tolerant of the ``run_marl_evaluation`` schema (``fire_intensity_mean``, one row per
+    region × team-size) and the older ``fire_mean``/``fire_ci_*`` schema.
+    """
     import matplotlib.pyplot as plt
 
     df = pd.read_csv(marl_csv)
+    fire_col = "fire_mean" if "fire_mean" in df.columns else "fire_intensity_mean"
+    has_ci = {"fire_ci_lo", "fire_ci_hi"}.issubset(df.columns)
     fig, ax = plt.subplots(figsize=(7, 5))
 
-    ax.plot(df["num_agents"], df["fire_mean"], marker="o", linewidth=2, color="#1f77b4", label="Mean Fire Intensity")
-    ax.fill_between(df["num_agents"], df["fire_ci_lo"], df["fire_ci_hi"], color="#1f77b4", alpha=0.2, label="95% CI")
+    regions = list(df["region"].unique()) if "region" in df.columns else [None]
+    for reg in regions:
+        sub = (df if reg is None else df[df["region"] == reg]).sort_values("num_agents")
+        label = str(reg) if reg is not None else "Mean Fire Intensity"
+        ax.plot(sub["num_agents"], sub[fire_col], marker="o", linewidth=2, label=label)
+        if has_ci:
+            ax.fill_between(sub["num_agents"], sub["fire_ci_lo"], sub["fire_ci_hi"], alpha=0.2)
 
     ax.set_xlabel("Number of Agents")
     ax.set_ylabel("Mean Fire Intensity")
     ax.set_title("MARL Cooperative Scaling")
-    ax.set_xticks(df["num_agents"])
+    ax.set_xticks(sorted(df["num_agents"].unique()))
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend()
 

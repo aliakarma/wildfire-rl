@@ -20,6 +20,8 @@ STAY_ACTION = 4
 class RandomPolicy:
     """Uniformly random actions. The lower-bound control for 'did the agent learn?'."""
 
+    uses_privileged_state = False
+
     def __init__(self, action_space, seed: int | None = None) -> None:
         self.action_space = action_space
         self.rng = np.random.default_rng(seed)
@@ -35,6 +37,8 @@ class RandomPolicy:
 class NoOpPolicy:
     """Agent never moves (constant 'stay'). Note: local suppression still applies."""
 
+    uses_privileged_state = False
+
     def __init__(self, action_space) -> None:
         self.action_space = action_space
 
@@ -48,9 +52,17 @@ class NoOpPolicy:
 
 class NearestFirePolicy:
     """Agent moves towards the closest burning cell.
-    
+
     If no fire exists, it stays. Supports both single-agent and MultiDiscrete MARL.
+
+    Privileged baseline: reads ``env.agent_pos`` / ``env.agent_positions`` directly for oracle
+    self-localization (see ``uses_privileged_state``). PPO does not receive the fire-argmin and
+    localizes only via its observation channel (Phase 3), so any heuristic advantage must be
+    reported with this asymmetry stated explicitly.
     """
+
+    #: reads the agent's true grid position from the env (oracle localization)
+    uses_privileged_state = True
 
     def __init__(self, action_space, grid_size: int = 32, env: Any = None) -> None:
         self.action_space = action_space
@@ -132,7 +144,15 @@ class NearestFirePolicy:
 
 
 class FrontierPolicy:
-    """Agent moves towards the closest fire frontier cell (burning but has unburnt neighbors)."""
+    """Agent moves towards the closest fire frontier cell (burning but has unburnt neighbors).
+
+    Privileged baseline: reads ``env.agent_pos`` / ``env.agent_positions`` directly for oracle
+    self-localization (see ``uses_privileged_state``). Reported with the same asymmetry caveat as
+    :class:`NearestFirePolicy`.
+    """
+
+    #: reads the agent's true grid position from the env (oracle localization)
+    uses_privileged_state = True
 
     def __init__(self, action_space, grid_size: int = 32, env: Any = None) -> None:
         self.action_space = action_space
