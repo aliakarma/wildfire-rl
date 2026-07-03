@@ -47,7 +47,9 @@ def run_transfer(
     """
     cfg = load_config(config_path, overrides)
     if not cfg.regions:
-        raise ValueError("transfer requires `regions:` in the config (see configs/experiment/transfer.yaml).")
+        raise ValueError(
+            "transfer requires `regions:` in the config (see configs/experiment/transfer.yaml)."
+        )
 
     policies = {}
     env_factories = {}
@@ -71,7 +73,9 @@ def run_transfer(
                 "(NOT valid for reported results).",
                 region.name,
             )
-            policies[region.name] = RandomPolicy(env_factories[region.name]().action_space, seed=seed)
+            policies[region.name] = RandomPolicy(
+                env_factories[region.name]().action_space, seed=seed
+            )
         else:
             from wildfire_rl.eval.loading import load_ppo_model
 
@@ -79,7 +83,9 @@ def run_transfer(
             policies[region.name] = load_ppo_model(model_path, env_factories[region.name]())
 
         # Add baselines for this region
-        policies[f"random_{region.name}"] = RandomPolicy(env_factories[region.name]().action_space, seed=seed)
+        policies[f"random_{region.name}"] = RandomPolicy(
+            env_factories[region.name]().action_space, seed=seed
+        )
         policies[f"noop_{region.name}"] = NoOpPolicy(env_factories[region.name]().action_space)
 
     rows = []
@@ -106,16 +112,18 @@ def run_transfer(
             rewards = [ep["episode_reward"] for ep in result["episodes"]]
             episode_rewards[(train_name, test_name)] = rewards
 
-            rows.append({
-                "train_region": train_name,
-                "test_region": test_name,
-                "mean_reward": s.get("episode_reward_mean"),
-                "reward_std": s.get("episode_reward_std"),
-                "mean_burned_cells": s.get("burned_cells_mean"),
-                "mean_fire_intensity": s.get("fire_intensity_mean"),
-                "n_episodes": cfg.eval.n_episodes,
-                "reward_mode": cfg.env.reward_mode,
-            })
+            rows.append(
+                {
+                    "train_region": train_name,
+                    "test_region": test_name,
+                    "mean_reward": s.get("episode_reward_mean"),
+                    "reward_std": s.get("episode_reward_std"),
+                    "mean_burned_cells": s.get("burned_cells_mean"),
+                    "mean_fire_intensity": s.get("fire_intensity_mean"),
+                    "n_episodes": cfg.eval.n_episodes,
+                    "reward_mode": cfg.env.reward_mode,
+                }
+            )
 
     # Paired t-tests: compare native PPO vs transferred PPO
     for row in rows:
@@ -133,8 +141,11 @@ def run_transfer(
                 row["sig_vs_native"] = format_significance(test_res["p_value"])
                 logger.info(
                     "  Transfer %s -> %s vs Native: p=%.4f, d=%.2f (%s)",
-                    train, test, test_res["p_value"], test_res["cohens_d"],
-                    format_significance(test_res["p_value"])
+                    train,
+                    test,
+                    test_res["p_value"],
+                    test_res["cohens_d"],
+                    format_significance(test_res["p_value"]),
                 )
 
     df = pd.DataFrame(rows)
@@ -143,6 +154,14 @@ def run_transfer(
 
     # Save both or appropriate name
     df.to_csv(out_norm if cfg.env.reward_mode == "normalized" else out_raw, index=False)
-    write_run_metadata(results_dir() / "runs" / f"transfer_{cfg.env.reward_mode}.json", config_dict=to_dict(cfg), seed=seed)
-    logger.info("Wrote transfer matrix -> %s\n%s", out_norm if cfg.env.reward_mode == "normalized" else out_raw, df.to_string(index=False))
+    write_run_metadata(
+        results_dir() / "runs" / f"transfer_{cfg.env.reward_mode}.json",
+        config_dict=to_dict(cfg),
+        seed=seed,
+    )
+    logger.info(
+        "Wrote transfer matrix -> %s\n%s",
+        out_norm if cfg.env.reward_mode == "normalized" else out_raw,
+        df.to_string(index=False),
+    )
     return out_norm if cfg.env.reward_mode == "normalized" else out_raw

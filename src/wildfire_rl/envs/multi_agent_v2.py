@@ -21,7 +21,6 @@ from typing import Any
 import numpy as np
 from scipy.ndimage import convolve
 
-from wildfire_rl.config import EnvConfig
 from wildfire_rl.envs import dynamics
 from wildfire_rl.envs.multi_agent import MultiAgentWildfireEnv
 
@@ -69,9 +68,7 @@ class MultiAgentWildfireEnvV2(MultiAgentWildfireEnv):
             self._visited_cells.add(cell)
 
         # Apply dynamics (same as V1)
-        dynamics.apply_suppression(
-            self.state, [tuple(p) for p in self.agent_positions], self.cfg
-        )
+        dynamics.apply_suppression(self.state, [tuple(p) for p in self.agent_positions], self.cfg)
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
 
@@ -106,15 +103,9 @@ class MultiAgentWildfireEnvV2(MultiAgentWildfireEnv):
         else:
             components["frontier_blocking"] = 0.0
 
-        # 3. Coverage: unique cells visited this step / grid_area
-        new_cells_this_step = sum(
-            1 for c in step_positions if c not in self._visited_cells
-            or self.current_step == 1  # count first step
-        )
+        # 3. Coverage: unique cells visited / grid_area
         grid_area = self.grid_size * self.grid_size
-        components["coverage"] = (
-            rv2.coverage_weight * len(self._visited_cells) / grid_area
-        )
+        components["coverage"] = rv2.coverage_weight * len(self._visited_cells) / grid_area
 
         # 4. Overlap Penalty: penalize agents sharing the same cell
         unique_positions = set(step_positions)
@@ -123,9 +114,7 @@ class MultiAgentWildfireEnvV2(MultiAgentWildfireEnv):
 
         # 5. Containment Stability: streak bonus for consecutive fire-decrease steps
         if curr_fire_total < self._prev_fire_total:
-            self._containment_streak = min(
-                self._containment_streak + 1, rv2.containment_streak_cap
-            )
+            self._containment_streak = min(self._containment_streak + 1, rv2.containment_streak_cap)
         else:
             self._containment_streak = 0
 

@@ -96,8 +96,16 @@ def plot_baseline_comparison(eval_csv: str | Path, out_path: str | Path, title: 
     rand_mean = rand_row["reward_mean"].values[0] if not rand_row.empty else 0.0
     noop_mean = noop_row["reward_mean"].values[0] if not noop_row.empty else 0.0
 
-    rand_err = (rand_row["reward_ci_hi"].values[0] - rand_row["reward_ci_lo"].values[0]) / 2 if not rand_row.empty else 0.0
-    noop_err = (noop_row["reward_ci_hi"].values[0] - noop_row["reward_ci_lo"].values[0]) / 2 if not noop_row.empty else 0.0
+    rand_err = (
+        (rand_row["reward_ci_hi"].values[0] - rand_row["reward_ci_lo"].values[0]) / 2
+        if not rand_row.empty
+        else 0.0
+    )
+    noop_err = (
+        (noop_row["reward_ci_hi"].values[0] - noop_row["reward_ci_lo"].values[0]) / 2
+        if not noop_row.empty
+        else 0.0
+    )
 
     policies = ["PPO (Ours)", "Random", "No-Action"]
     means = [ppo_mean, rand_mean, noop_mean]
@@ -120,7 +128,9 @@ def plot_baseline_comparison(eval_csv: str | Path, out_path: str | Path, title: 
                 val = means[idx + 1]
                 offset = abs(val) * 0.05
                 y_pos = val + offset if val > 0 else val - offset
-                ax.text(idx + 1, y_pos, sig, ha="center", va="bottom", fontsize=12, fontweight="bold")
+                ax.text(
+                    idx + 1, y_pos, sig, ha="center", va="bottom", fontsize=12, fontweight="bold"
+                )
 
     path = _save(fig, out_path)
     plt.close(fig)
@@ -148,7 +158,9 @@ def plot_ablation_bars(ablation_csv: str | Path, out_path: str | Path):
     colors = ["#2ca02c" if x == "baseline" else "#d62728" for x in df["experiment"]]
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.bar(labels, df["fire_mean"], yerr=yerr, capsize=5, color=colors, edgecolor="black", alpha=0.85)
+    ax.bar(
+        labels, df["fire_mean"], yerr=yerr, capsize=5, color=colors, edgecolor="black", alpha=0.85
+    )
 
     ax.set_ylabel("Mean Fire Intensity")
     ax.set_title("Ablation Study: Impact of Dynamics Components")
@@ -202,7 +214,9 @@ def plot_marl_scaling(marl_csv: str | Path, out_path: str | Path):
     return path
 
 
-def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path, out_path: str | Path):
+def plot_generalization_comparison(
+    fixed_csv: str | Path, random_csv: str | Path, out_path: str | Path
+):
     """Side-by-side comparison: fixed ignition vs randomized ignition performance."""
     import matplotlib.pyplot as plt
 
@@ -222,7 +236,16 @@ def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path
     yerrs = [ppo_fixed_err, ppo_rand_err]
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    ax.bar(categories, means, yerr=yerrs, capsize=5, color=["#2ca02c", "#9467bd"], edgecolor="black", alpha=0.85, width=0.5)
+    ax.bar(
+        categories,
+        means,
+        yerr=yerrs,
+        capsize=5,
+        color=["#2ca02c", "#9467bd"],
+        edgecolor="black",
+        alpha=0.85,
+        width=0.5,
+    )
 
     ax.set_ylabel("Mean Episode Reward")
     ax.set_title("Domain Generalization Analysis")
@@ -233,7 +256,9 @@ def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path
     return path
 
 
-def plot_state_tensor_comparison(saudi_tensor: np.ndarray, ca_tensor: np.ndarray, out_path: str | Path):
+def plot_state_tensor_comparison(
+    saudi_tensor: np.ndarray, ca_tensor: np.ndarray, out_path: str | Path
+):
     """Side-by-side 7-channel comparison of both regions (shows ecological difference)."""
     import matplotlib.pyplot as plt
 

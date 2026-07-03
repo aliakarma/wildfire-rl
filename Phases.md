@@ -1245,3 +1245,79 @@ pytest .................... 70 passed (no regression)                           
 
 **Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 13** (CI/CD & Automated Validation).
 No commits made, per owner instruction.
+
+---
+
+## Phase 13 — CI/CD & Automated Validation
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~50 min · **Compute:** CPU only.
+
+### Objective
+Extend CI beyond lint/smoke to enforce determinism, seed integrity, tensor validity, the
+effective-method gate, and report↔CSV consistency on every push — and clear the repo-wide lint debt so
+the `lint` job is green.
+
+### Actions Taken
+1. **New `validate` CI job (`.github/workflows/ci.yml`)** — blocking steps: determinism (seeding
+   reproducible), `validate_tensors.py`, `check_seed_integrity.py`, `validate_learning_gate.py`, and
+   `pytest test_report_consistency.py test_significance.py`; plus a best-effort CI-sized learning smoke
+   that **skips gracefully** when region tensors aren't in the checkout. YAML parses; 5 jobs total.
+2. **Made `check_seed_integrity.py` CI-robust** — `models/` is git-ignored, so a bare CI checkout has no
+   checkpoints. Added a tri-state distinctness signal: local checkpoints → else committed
+   `results/models_manifest.json` hashes → else "no evidence, skip the eval-row check with a warning".
+   Verified across three scenarios (local OK, manifest-only OK, bare-checkout skip) and that genuine
+   fraud (duplicate hashes) still FAILs.
+3. **New `tests/test_report_consistency.py`** — asserts (a) the Phase-12 purged literals never resurface
+   and (b) every table row rendered from the current CSVs appears verbatim in `report.md` (catches
+   report↔CSV drift). Degrades to skip when CSVs are absent.
+4. **Cleared the repo-wide lint debt** (the carry-forward flagged since Phase 3): `black` reformatted 25
+   files; `ruff --fix` cleared 29; the **14 remaining non-auto-fixable issues were fixed by hand** —
+   real missing-import bugs (`from pathlib import Path` / `from typing import Any` in 5 v2–v6 +
+   `run_marl_evaluation.py`), a loop-variable binding (B023) and two `lambda`→`def` conversions (E731)
+   in the certified `run_marl_evaluation.py`, and 3 dead-assignment removals (F841). Whole tree now
+   `black --check` + `ruff` clean (76 files).
+5. **README `## Continuous Validation`** section added (five jobs; `validate` is blocking).
+6. **Degenerate `cohens_d` → nan** test already present (`test_significance.py::test_degenerate_returns_nan`,
+   Phase 7) — verified, satisfies the criterion.
+
+### Verification Evidence
+```
+ci.yml ................... parses; jobs = [lint, test, install-check, large-files, validate]   ✔
+validate steps (local) .. determinism / tensors / seed-integrity / gate / report+sig -> all exit 0  ✔
+seed-integrity CI-robust  local OK · manifest-only OK · bare-checkout skip · fraud still FAILs   ✔
+black --check ........... 76 files unchanged (was: 25 would reformat)                            ✔
+ruff check .............. All checks passed (was: 167 errors)                                    ✔
+run_marl_evaluation.py .. compiles; behavior-preserving edits                                    ✔
+pytest .................. 72 passed (was 70; +2 report-consistency)                              ✔
+```
+
+### Deviations / Scope Notes
+1. **Repo-wide format was in-scope here** even though the plan's file list named only ci.yml + 2 tests:
+   the `lint` job was red on `main` (documented Phase 3/4/5 carry-forward), so CI could not be green
+   without it. Formatting/import fixes are behavior-preserving; the full suite still passes.
+2. **Seed-integrity manifest fallback** requires `results/models_manifest.json` to be committed for the
+   strongest CI check; without it the guard safely skips the eval-row check (bare checkout) rather than
+   false-failing on the honest California collapse.
+3. **Learning smoke is `continue-on-error`** (region tensors are git-ignored, not in CI) — consistent
+   with the plan's `|| true`; it self-skips with a message rather than failing.
+4. **Certified `run_marl_evaluation.py` edited** for B023/E731 — semantics preserved (default-arg
+   binding; `lambda`→`def`); compiles and imports resolve.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `validate` job added and YAML parses
+  - [x] Determinism check runs in CI
+  - [x] Report-consistency test present (`tests/test_report_consistency.py`)
+- Reproducibility
+  - [x] Seed-integrity check callable in CI (manifest fallback for checkpoint-less checkouts)
+- Scientific validity
+  - [x] Degenerate `cohens_d` unit test asserts nan (`test_degenerate_returns_nan`)
+- Logging/monitoring
+  - [x] CI surfaces validation failures (blocking `validate` job)
+- README completeness
+  - [x] Continuous-validation section added
+- Bonus (CI health)
+  - [x] Repo-wide `lint` job now green (black + ruff), clearing the long-standing carry-forward
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 14** (Final Reproducibility
+Certification). No commits made, per owner instruction.

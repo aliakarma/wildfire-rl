@@ -1,25 +1,24 @@
-import pytest
 import numpy as np
 
 from wildfire_rl.config import EnvConfig
 from wildfire_rl.envs.hybrid_multi_agent import HybridMultiAgentWildfireEnv
-from wildfire_rl.routing import compute_step_action, get_frontier_target, get_nearest_fire_target
+from wildfire_rl.routing import compute_step_action, get_nearest_fire_target
 
 
 def test_routing_logic():
     """Verify that Manhattan step routing calculates correct movement actions."""
     # Stay at target
     assert compute_step_action(10, 10, 10, 10) == 4
-    
+
     # Move up (row index decreases)
     assert compute_step_action(10, 10, 5, 10) == 0
-    
+
     # Move down (row index increases)
     assert compute_step_action(10, 10, 15, 10) == 1
-    
+
     # Move left (col index decreases)
     assert compute_step_action(10, 10, 10, 5) == 2
-    
+
     # Move right (col index increases)
     assert compute_step_action(10, 10, 10, 15) == 3
 
@@ -66,6 +65,14 @@ def test_hybrid_multi_agent_step():
     # Step action should move agent UP (row 16 -> 15)
     obs, reward, term, trunc, info = env.step([0])
 
-    assert env.agent_positions[0] == [15, 16], f"Expected agent to move UP to [15, 16], got {env.agent_positions[0]}"
-    assert info["target_coordinates"][0] == (5, 5), f"Expected target coordinates to be (5, 5), got {info['target_coordinates'][0]}"
-    assert info["step_actions"][0] == 0, f"Expected step action to be 0 (UP), got {info['step_actions'][0]}"
+    assert env.agent_positions[0] == [
+        15,
+        16,
+    ], f"Expected agent to move UP to [15, 16], got {env.agent_positions[0]}"
+    assert info["target_coordinates"][0] == (
+        5,
+        5,
+    ), f"Expected target coordinates to be (5, 5), got {info['target_coordinates'][0]}"
+    assert (
+        info["step_actions"][0] == 0
+    ), f"Expected step action to be 0 (UP), got {info['step_actions'][0]}"

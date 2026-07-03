@@ -106,7 +106,9 @@ def main() -> int:
             row["sig_vs_baseline"] = format_significance(test["p_value"])
             logger.info(
                 "  %s vs baseline: p=%.4f, d=%.2f (%s)",
-                variant, test["p_value"], test["cohens_d"],
+                variant,
+                test["p_value"],
+                test["cohens_d"],
                 format_significance(test["p_value"]),
             )
 

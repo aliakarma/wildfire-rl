@@ -8,17 +8,16 @@ spatial coverage, and intervention impact, and outputs 4 figures and 3 tables.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Any
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind
 
 from wildfire_rl.config import load_config
 from wildfire_rl.envs.base import make_env_factory
-from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy, NearestFirePolicy, FrontierPolicy
+from wildfire_rl.eval.baselines import FrontierPolicy, NearestFirePolicy, NoOpPolicy, RandomPolicy
 from wildfire_rl.eval.evaluate import evaluate_policy
 from wildfire_rl.eval.loading import load_ppo_model
 from wildfire_rl.paths import ensure_dir, models_dir, region_tensor_path, results_dir
@@ -69,7 +68,7 @@ def run_scientific_validation() -> None:
         print(f"\n==================== Region: {region_name} ====================")
         tensor_path = region_tensor_path(reg["dir"], reg["grid"])
         tensor = np.load(tensor_path)
-        
+
         # Override config region
         cfg.region.name = region_name
         cfg.region.dir = reg["dir"]
@@ -107,7 +106,7 @@ def run_scientific_validation() -> None:
                 metrics_cfg=cfg.metrics,
             )
             s = result["summary"]
-            
+
             # Extract raw values for statistical tests
             rewards = np.array([ep["episode_reward"] for ep in result["episodes"]])
             burned = np.array([ep["burned_cells"] for ep in result["episodes"]])
@@ -118,18 +117,22 @@ def run_scientific_validation() -> None:
             episode_fire[name] = fire
 
             # Record baseline stats row
-            stats_rows.append({
-                "region": region_name,
-                "policy": name,
-                "reward_mean": s.get("episode_reward_mean"),
-                "reward_std": s.get("episode_reward_std"),
-                "reward_ci_lo": s.get("episode_reward_mean") - 1.96 * s.get("episode_reward_std") / np.sqrt(len(rewards)),
-                "reward_ci_hi": s.get("episode_reward_mean") + 1.96 * s.get("episode_reward_std") / np.sqrt(len(rewards)),
-                "burned_cells_mean": s.get("burned_cells_mean"),
-                "burned_cells_std": s.get("burned_cells_std"),
-                "fire_intensity_mean": s.get("fire_intensity_mean"),
-                "fire_intensity_std": s.get("fire_intensity_std"),
-            })
+            stats_rows.append(
+                {
+                    "region": region_name,
+                    "policy": name,
+                    "reward_mean": s.get("episode_reward_mean"),
+                    "reward_std": s.get("episode_reward_std"),
+                    "reward_ci_lo": s.get("episode_reward_mean")
+                    - 1.96 * s.get("episode_reward_std") / np.sqrt(len(rewards)),
+                    "reward_ci_hi": s.get("episode_reward_mean")
+                    + 1.96 * s.get("episode_reward_std") / np.sqrt(len(rewards)),
+                    "burned_cells_mean": s.get("burned_cells_mean"),
+                    "burned_cells_std": s.get("burned_cells_std"),
+                    "fire_intensity_mean": s.get("fire_intensity_mean"),
+                    "fire_intensity_std": s.get("fire_intensity_std"),
+                }
+            )
 
             # Run 1 detailed trajectory evaluation to measure collapse, action entropy, etc.
             sample_env = factory()
@@ -138,7 +141,7 @@ def run_scientific_validation() -> None:
             actions = []
             fire_sizes = []
             agent_visits = np.zeros((reg["grid"], reg["grid"]))
-            
+
             # We track initial fire total to calculate relative containment metrics
             init_fire = float(sample_env.state[0].sum()) or 1.0
 
@@ -147,7 +150,7 @@ def run_scientific_validation() -> None:
                 actions.append(int(action))
                 obs, _, terminated, truncated, _ = sample_env.step(action)
                 fire_sizes.append(float(sample_env.state[0].sum()))
-                
+
                 ax, ay = sample_env.agent_pos
                 agent_visits[ax, ay] += 1
                 done = bool(terminated or truncated)
@@ -155,18 +158,24 @@ def run_scientific_validation() -> None:
             # Compute Policy Collapse Metrics
             actions = np.array(actions)
             n_steps = len(actions)
-            
+
             # Entropy: -sum(p * log(p))
             _, counts = np.unique(actions, return_counts=True)
             probs = counts / n_steps
             entropy = -np.sum(probs * np.log2(probs)) if n_steps > 0 else 0.0
-            
+
             # Action diversity: ratio of unique actions taken
-            diversity = len(counts) / len(env.action_space.nvec) if hasattr(env.action_space, "nvec") else len(counts) / 5
-            
+            diversity = (
+                len(counts) / len(env.action_space.nvec)
+                if hasattr(env.action_space, "nvec")
+                else len(counts) / 5
+            )
+
             # Repeated action ratio: fraction of consecutive same actions
-            consecutive = np.sum(actions[:-1] == actions[1:]) / (n_steps - 1) if n_steps > 1 else 0.0
-            
+            consecutive = (
+                np.sum(actions[:-1] == actions[1:]) / (n_steps - 1) if n_steps > 1 else 0.0
+            )
+
             # Spatial coverage: fraction of unique grid cells visited
             unique_visited = np.count_nonzero(agent_visits)
             spatial_coverage = unique_visited / (reg["grid"] ** 2)
@@ -183,17 +192,19 @@ def run_scientific_validation() -> None:
             # Suppression radius is 1, so the agent acts on 3x3 patch
             extinguished_cells = (init_fire - final_fire) if final_fire < init_fire else 0.0
 
-            action_influence_rows.append({
-                "region": region_name,
-                "policy": name,
-                "action_entropy": entropy,
-                "action_diversity": diversity,
-                "repeated_action_ratio": consecutive,
-                "spatial_coverage": spatial_coverage,
-                "containment_efficiency": containment_eff,
-                "spread_rate": spread_rate,
-                "extinguished_cells": extinguished_cells,
-            })
+            action_influence_rows.append(
+                {
+                    "region": region_name,
+                    "policy": name,
+                    "action_entropy": entropy,
+                    "action_diversity": diversity,
+                    "repeated_action_ratio": consecutive,
+                    "spatial_coverage": spatial_coverage,
+                    "containment_efficiency": containment_eff,
+                    "spread_rate": spread_rate,
+                    "extinguished_cells": extinguished_cells,
+                }
+            )
 
             # Save Saudi trajectories/heatmaps for plotting
             if region_name == "saudi":
@@ -209,13 +220,15 @@ def run_scientific_validation() -> None:
                     comp_rewards = episode_rewards[comp_name]
                     t_res = ttest_ind(ppo_rewards, comp_rewards, equal_var=False)
                     d = compute_cohens_d(ppo_rewards, comp_rewards)
-                    effect_rows.append({
-                        "region": region_name,
-                        "comparison": f"ppo_vs_{comp_name}",
-                        "p_value": t_res.pvalue,
-                        "cohens_d": d,
-                        "significant": bool(t_res.pvalue < 0.05),
-                    })
+                    effect_rows.append(
+                        {
+                            "region": region_name,
+                            "comparison": f"ppo_vs_{comp_name}",
+                            "p_value": t_res.pvalue,
+                            "cohens_d": d,
+                            "significant": bool(t_res.pvalue < 0.05),
+                        }
+                    )
 
     # Save Tables
     stats_df = pd.DataFrame(stats_rows)
@@ -241,7 +254,7 @@ def run_scientific_validation() -> None:
     plt.figure(figsize=(7, 4.5))
     names = list(all_entropies.keys())
     entropies = list(all_entropies.values())
-    plt.bar(names, entropies, color=["gray", "blue", "green", "purple", "red"][:len(names)])
+    plt.bar(names, entropies, color=["gray", "blue", "green", "purple", "red"][: len(names)])
     plt.ylabel("Action Entropy (Bits)")
     plt.title("Action Entropy across Policies")
     plt.grid(axis="y", linestyle="--", alpha=0.6)

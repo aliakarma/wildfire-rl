@@ -28,29 +28,60 @@ TABLES = [
     (
         "eval_saudi.csv",
         "Saudi — Single-Agent Policy Comparison (effective method vs PPO negative result)",
-        ["policy", "reward_mean", "reward_std", "burned_cells_mean", "fire_intensity_mean",
-         "reward_mode", "d_vs_ppo", "sig_vs_ppo"],
+        [
+            "policy",
+            "reward_mean",
+            "reward_std",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+            "reward_mode",
+            "d_vs_ppo",
+            "sig_vs_ppo",
+        ],
         "results/runs/train_saudi_seed_*/manifest.json",
     ),
     (
         "eval_california_multiseed_california.csv",
         "California — Single-Agent Policy Comparison (effective method vs PPO negative result)",
-        ["policy", "reward_mean", "reward_std", "burned_cells_mean", "fire_intensity_mean",
-         "reward_mode", "d_vs_ppo", "sig_vs_ppo"],
+        [
+            "policy",
+            "reward_mean",
+            "reward_std",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+            "reward_mode",
+            "d_vs_ppo",
+            "sig_vs_ppo",
+        ],
         "results/runs/train_california_seed_*/manifest.json",
     ),
     (
         "marl_scaling_results.csv",
         "MARL Cooperative Scaling (PPO, matched 100k-step budget per team size)",
-        ["region", "num_agents", "reward_mean", "reward_ci_lo", "reward_ci_hi",
-         "burned_cells_mean", "fire_intensity_mean"],
+        [
+            "region",
+            "num_agents",
+            "reward_mean",
+            "reward_ci_lo",
+            "reward_ci_hi",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+        ],
         "results/runs/ (marl scaling checkpoints)",
     ),
     (
         "transfer_matrix_raw.csv",
         "Cross-Region Transfer (raw reward mode)",
-        ["train_region", "test_region", "mean_reward", "mean_burned_cells", "mean_fire_intensity",
-         "reward_mode", "d_vs_native", "sig_vs_native"],
+        [
+            "train_region",
+            "test_region",
+            "mean_reward",
+            "mean_burned_cells",
+            "mean_fire_intensity",
+            "reward_mode",
+            "d_vs_native",
+            "sig_vs_native",
+        ],
         "results/runs/train_*/manifest.json",
     ),
 ]
@@ -72,8 +103,7 @@ def _fmt(v: object) -> str:
 
 def _to_md(df: pd.DataFrame) -> str:
     cols = list(df.columns)
-    rows = ["| " + " | ".join(cols) + " |",
-            "| " + " | ".join("---" for _ in cols) + " |"]
+    rows = ["| " + " | ".join(cols) + " |", "| " + " | ".join("---" for _ in cols) + " |"]
     for _, row in df.iterrows():
         rows.append("| " + " | ".join(_fmt(row[c]) for c in cols) + " |")
     return "\n".join(rows)

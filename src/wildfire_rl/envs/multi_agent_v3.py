@@ -18,7 +18,6 @@ from typing import Any
 import numpy as np
 from scipy.ndimage import convolve
 
-from wildfire_rl.config import EnvConfig
 from wildfire_rl.envs import dynamics
 from wildfire_rl.envs.multi_agent import MultiAgentWildfireEnv
 
@@ -64,9 +63,7 @@ class MultiAgentWildfireEnvV3(MultiAgentWildfireEnv):
         fire_before = self.state[0].copy()
 
         # Apply suppression
-        dynamics.apply_suppression(
-            self.state, [tuple(p) for p in self.agent_positions], self.cfg
-        )
+        dynamics.apply_suppression(self.state, [tuple(p) for p in self.agent_positions], self.cfg)
 
         # Capture fire state AFTER suppression (but BEFORE spread/decay)
         fire_after_suppression = self.state[0].copy()
@@ -111,9 +108,7 @@ class MultiAgentWildfireEnvV3(MultiAgentWildfireEnv):
 
         # 3. Coverage: unique cells visited / grid_area (exploration incentive)
         grid_area = self.grid_size * self.grid_size
-        components["coverage"] = (
-            rv3.coverage_weight * len(self._visited_cells) / grid_area
-        )
+        components["coverage"] = rv3.coverage_weight * len(self._visited_cells) / grid_area
 
         # 4. Overlap Penalty: penalize agents sharing the same cell (massively reduced)
         unique_positions = set(step_positions)
@@ -123,9 +118,7 @@ class MultiAgentWildfireEnvV3(MultiAgentWildfireEnv):
         # 5. Containment Stability: streak bonus ONLY if agents actively suppress fire
         # Prevents decay leakage
         if agent_suppressed > rv3.suppression_threshold:
-            self._containment_streak = min(
-                self._containment_streak + 1, rv3.containment_streak_cap
-            )
+            self._containment_streak = min(self._containment_streak + 1, rv3.containment_streak_cap)
         else:
             self._containment_streak = 0
 

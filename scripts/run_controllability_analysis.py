@@ -10,14 +10,14 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from wildfire_rl.config import load_config
 from wildfire_rl.envs.base import make_env_factory
-from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy, NearestFirePolicy, FrontierPolicy
+from wildfire_rl.eval.baselines import FrontierPolicy, NearestFirePolicy, NoOpPolicy, RandomPolicy
 from wildfire_rl.eval.evaluate import evaluate_policy
 from wildfire_rl.paths import ensure_dir, models_dir, region_tensor_path, results_dir
 
@@ -45,14 +45,14 @@ def run_controllability(
     cfg = load_config(config_path, overrides)
     tensor_path = region_tensor_path(cfg.region.dir, cfg.region.grid_size)
     tensor = np.load(tensor_path)
-    
+
     # 1. Environment Audit Calculations
     grid_size = cfg.region.grid_size
     suppression_radius = cfg.env.suppression_radius
     cells_suppressed = (2 * suppression_radius + 1) ** 2
-    total_cells = grid_size ** 2
+    total_cells = grid_size**2
     coverage_ratio = cells_suppressed / total_cells
-    
+
     audit_stats = {
         "grid_size": grid_size,
         "suppression_radius": suppression_radius,
@@ -65,7 +65,7 @@ def run_controllability(
         "wind_coeff": cfg.env.wind_coeff,
         "terrain_coeff": cfg.env.terrain_coeff,
     }
-    
+
     # Save suppression coverage stats
     stats_out = ensure_dir(results_dir()) / "suppression_coverage_statistics.txt"
     with open(stats_out, "w") as f:
@@ -87,6 +87,7 @@ def run_controllability(
     model_path = _find_model(cfg.region.name, cfg.region.grid_size, seed)
     if model_path is not None:
         from wildfire_rl.eval.loading import load_ppo_model
+
         print(f"Loading trained PPO model from {model_path} for comparison")
         policies["ppo"] = load_ppo_model(model_path, env)
     else:
@@ -108,15 +109,17 @@ def run_controllability(
             metrics_cfg=cfg.metrics,
         )
         s = result["summary"]
-        rows.append({
-            "policy": name,
-            "reward_mean": s.get("episode_reward_mean"),
-            "reward_std": s.get("episode_reward_std"),
-            "burned_cells_mean": s.get("burned_cells_mean"),
-            "burned_cells_std": s.get("burned_cells_std"),
-            "fire_intensity_mean": s.get("fire_intensity_mean"),
-            "fire_intensity_std": s.get("fire_intensity_std"),
-        })
+        rows.append(
+            {
+                "policy": name,
+                "reward_mean": s.get("episode_reward_mean"),
+                "reward_std": s.get("episode_reward_std"),
+                "burned_cells_mean": s.get("burned_cells_mean"),
+                "burned_cells_std": s.get("burned_cells_std"),
+                "fire_intensity_mean": s.get("fire_intensity_mean"),
+                "fire_intensity_std": s.get("fire_intensity_std"),
+            }
+        )
 
         # Track trajectory steps over 1 sample episode for plotting
         sample_env = factory()
@@ -124,12 +127,12 @@ def run_controllability(
         done = False
         fire_sizes = []
         agent_visits = np.zeros((grid_size, grid_size))
-        
+
         while not done:
             action, _ = policy.predict(obs, deterministic=cfg.eval.deterministic)
             obs, _, terminated, truncated, _ = sample_env.step(action)
             fire_sizes.append(float(sample_env.state[0].sum()))
-            
+
             # Record agent location
             ax, ay = sample_env.agent_pos
             agent_visits[ax, ay] += 1
@@ -194,7 +197,13 @@ def run_controllability(
 
     # Figure 4: Controllability Bar Plots
     plt.figure(figsize=(8, 5))
-    plt.bar(metrics_df["policy"], metrics_df["fire_intensity_mean"], yerr=metrics_df["fire_intensity_std"], capsize=5, color="skyblue")
+    plt.bar(
+        metrics_df["policy"],
+        metrics_df["fire_intensity_mean"],
+        yerr=metrics_df["fire_intensity_std"],
+        capsize=5,
+        color="skyblue",
+    )
     plt.xlabel("Policy")
     plt.ylabel("Mean Fire Intensity (Lower is Better)")
     plt.title("Policy Performance Comparison")
@@ -210,7 +219,7 @@ def main() -> int:
     ap.add_argument("--config", default="configs/experiment/ablation.yaml")
     ap.add_argument("--set", nargs="*", help="OmegaConf overrides")
     args = ap.parse_args()
-    
+
     run_controllability(args.config, args.set)
     return 0
 

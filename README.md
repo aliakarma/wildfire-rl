@@ -290,6 +290,23 @@ temperature, humidity`; shape `(7, H, W)`, all finite, every channel min-max-nor
 and the Saudi `criticality.npy` asset raster's `[0, 1]` range. It is part of `make manifest` and a
 CI gate (Phase 13).
 
+## Continuous Validation
+
+CI runs five jobs on every push/PR: `lint` (ruff + black), `test` (pytest on Python 3.10/3.11 +
+CLI smoke), `install-check`, `large-files`, and **`validate`**. The `validate` job makes the
+scientific-integrity checks blocking:
+
+- **Determinism** — `set_global_seed` produces identical draws.
+- **Tensor validity** — `validate_tensors.py` (channel contract + `[0, 1]` ranges).
+- **Seed integrity** — `check_seed_integrity.py` (distinct checkpoints via `models_manifest.json`;
+  identical collapsed-policy rows are the honest negative result, not fraud).
+- **Effective-method gate** — `validate_learning_gate.py` on the committed eval CSVs.
+- **Report ↔ CSV consistency** — `test_report_consistency.py` fails if a report table drifts from its
+  source CSV or a purged untraceable literal resurfaces.
+- A best-effort CI-sized learning smoke (skipped when region tensors aren't in the checkout).
+
+A red `validate` job blocks merge.
+
 ## Model checkpoints
 
 Trained PPO checkpoints (~200 MB each) are hosted on the Hugging Face Hub, not git:

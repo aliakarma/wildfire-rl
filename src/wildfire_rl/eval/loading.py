@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from stable_baselines3 import PPO
+
 from wildfire_rl.models.cnn import CustomCNN
 
 
@@ -42,7 +43,12 @@ def load_ppo_model(model_path: str | Path, env: Any) -> PPO:
         return PPO.load(str(model_path), custom_objects=custom_objects)
     except Exception as e:
         # If there's a size mismatch or key missing, try with use_pooling = False
-        if "size mismatch" in str(e) or "Missing key" in str(e) or "Unexpected key" in str(e) or isinstance(e, RuntimeError):
+        if (
+            "size mismatch" in str(e)
+            or "Missing key" in str(e)
+            or "Unexpected key" in str(e)
+            or isinstance(e, RuntimeError)
+        ):
             custom_objects["policy_kwargs"] = {
                 "features_extractor_class": CustomCNN,
                 "features_extractor_kwargs": {

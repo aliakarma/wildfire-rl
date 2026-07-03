@@ -5,12 +5,14 @@ Allows robust parallelization using independent OS processes in Google Colab.
 """
 
 import argparse
+
 import numpy as np
-from functools import partial
+
 from wildfire_rl.config import load_config
 from wildfire_rl.envs.multi_agent import MultiAgentWildfireEnv
 from wildfire_rl.paths import ensure_dir, models_dir, region_tensor_path
 from wildfire_rl.train.ppo import train_ppo
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -39,6 +41,7 @@ def main():
     save_path = models_dir() / f"ppo_marl_{args.region}_{args.agents}agents_seed_{args.seed}"
     train_ppo(_factory, ppo_cfg, seed=args.seed, save_path=save_path)
     print(f"FINISHED: {args.region}, {args.agents} agents, seed={args.seed}")
+
 
 if __name__ == "__main__":
     main()

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import numpy as np
-
 
 def get_sector_bounds(sector_idx: int, grid_size: int = 32) -> tuple[slice, slice]:
     """Return the row and col slices for a given quadrant sector index.
@@ -28,9 +26,7 @@ def get_sector_bounds(sector_idx: int, grid_size: int = 32) -> tuple[slice, slic
         return slice(0, grid_size), slice(0, grid_size)
 
 
-def compute_step_action(
-    ax: int, ay: int, tx: int, ty: int, grid_size: int = 32
-) -> int:
+def compute_step_action(ax: int, ay: int, tx: int, ty: int, grid_size: int = 32) -> int:
     """Return movement step action (0-4) towards the target cell (tx, ty).
 
     Step Actions:
@@ -51,5 +47,5 @@ def compute_step_action(
         return 0 if dx < 0 else 1
     elif dy != 0:
         return 2 if dy < 0 else 3
-    
+
     return 4  # stay

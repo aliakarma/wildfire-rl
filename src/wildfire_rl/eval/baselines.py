@@ -84,10 +84,12 @@ class NearestFirePolicy:
                 agent_positions = []
                 for i in range(num_agents):
                     dx, dy = offsets[i % len(offsets)]
-                    agent_positions.append([
-                        min(max(center + dx, 0), self.grid_size - 1),
-                        min(max(center + dy, 0), self.grid_size - 1)
-                    ])
+                    agent_positions.append(
+                        [
+                            min(max(center + dx, 0), self.grid_size - 1),
+                            min(max(center + dy, 0), self.grid_size - 1),
+                        ]
+                    )
 
             if len(burning_indices) == 0:
                 return np.full(num_agents, STAY_ACTION, dtype=int), None
@@ -167,8 +169,9 @@ class FrontierPolicy:
 
         # Count active neighbors
         from scipy.ndimage import convolve
+
         kernel = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
-        active_neighbors = convolve(active.astype(int), kernel, mode='constant', cval=0)
+        active_neighbors = convolve(active.astype(int), kernel, mode="constant", cval=0)
 
         # Frontier cells are active but have < 4 active neighbors
         frontier = active & (active_neighbors < 4)
@@ -188,10 +191,12 @@ class FrontierPolicy:
                 agent_positions = []
                 for i in range(num_agents):
                     dx, dy = offsets[i % len(offsets)]
-                    agent_positions.append([
-                        min(max(center + dx, 0), self.grid_size - 1),
-                        min(max(center + dy, 0), self.grid_size - 1)
-                    ])
+                    agent_positions.append(
+                        [
+                            min(max(center + dx, 0), self.grid_size - 1),
+                            min(max(center + dy, 0), self.grid_size - 1),
+                        ]
+                    )
 
             if len(burning_indices) == 0:
                 return np.full(num_agents, STAY_ACTION, dtype=int), None

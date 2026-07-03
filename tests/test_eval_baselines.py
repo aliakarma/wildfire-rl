@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from wildfire_rl.envs.base import make_env_factory
-from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy, NearestFirePolicy, FrontierPolicy
+from wildfire_rl.eval.baselines import FrontierPolicy, NearestFirePolicy, NoOpPolicy, RandomPolicy
 from wildfire_rl.eval.evaluate import evaluate_policy
 
 
@@ -30,10 +30,10 @@ def test_heuristic_policies_run(small_tensor, env_cfg):
     env = factory()
     p1 = NearestFirePolicy(env.action_space, env=env)
     p2 = FrontierPolicy(env.action_space, env=env)
-    
+
     r1 = evaluate_policy(p1, factory, n_episodes=2, base_seed=10)
     r2 = evaluate_policy(p2, factory, n_episodes=2, base_seed=10)
-    
+
     assert r1["summary"]["n_episodes"] == 2
     assert r2["summary"]["n_episodes"] == 2
 
@@ -57,16 +57,16 @@ def test_evaluation_reproducible(small_tensor, env_cfg):
 
 def test_multi_agent_baselines(small_tensor, env_cfg):
     from wildfire_rl.envs.multi_agent import MultiAgentWildfireEnv
-    
+
     def factory():
         return MultiAgentWildfireEnv(state_tensor=small_tensor, config=env_cfg, num_agents=3)
-        
+
     env = factory()
     p1 = NearestFirePolicy(env.action_space, env=env)
     p2 = FrontierPolicy(env.action_space, env=env)
-    
+
     r1 = evaluate_policy(p1, factory, n_episodes=2, base_seed=10)
     r2 = evaluate_policy(p2, factory, n_episodes=2, base_seed=10)
-    
+
     assert r1["summary"]["n_episodes"] == 2
     assert r2["summary"]["n_episodes"] == 2

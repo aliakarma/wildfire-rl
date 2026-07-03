@@ -1,5 +1,5 @@
-import pytest
 import numpy as np
+
 from wildfire_rl.config import EnvConfig
 from wildfire_rl.envs.multi_agent_v3 import MultiAgentWildfireEnvV3
 
@@ -14,7 +14,9 @@ def test_unique_starting_positions():
         env.reset(seed=0)
         positions = [tuple(p) for p in env.agent_positions]
         unique_positions = set(positions)
-        assert len(unique_positions) == n_agents, f"Overlapping positions detected for {n_agents} agents: {positions}"
+        assert (
+            len(unique_positions) == n_agents
+        ), f"Overlapping positions detected for {n_agents} agents: {positions}"
 
 
 def test_v3_reward_active_suppression():
