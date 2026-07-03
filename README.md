@@ -253,6 +253,24 @@ python scripts/build_criticality.py --region saudi_eastern_province --grid 32  #
 A tiny synthetic sample lives in `data/sample/` for tests and the quickstart. Sources,
 licenses, CRS, and temporal coverage are documented in [`docs/data_card.md`](docs/data_card.md).
 
+## Data & Model Manifests
+
+`results/data_manifest.json` and `results/models_manifest.json` pin SHA-256 hashes (and byte sizes)
+for every `.npy` tensor and every model checkpoint, so anyone can verify they pulled the exact bytes a
+result was produced from. Regenerate and validate with:
+
+```bash
+make manifest                       # validate_tensors.py + write both manifests
+python scripts/validate_tensors.py  # per-channel shape/finite/[0,1] invariants for every state tensor
+python scripts/fetch_models.py --repo aliakarma/wildfire-rl-ppo \
+    --verify results/models_manifest.json   # checksum-verify downloaded checkpoints
+```
+
+`validate_tensors.py` enforces the frozen channel contract (`fire, fuel, wind_x, wind_y, terrain,
+temperature, humidity`; shape `(7, H, W)`, all finite, every channel min-max-normalized to `[0, 1]`)
+and the Saudi `criticality.npy` asset raster's `[0, 1]` range. It is part of `make manifest` and a
+CI gate (Phase 13).
+
 ## Model checkpoints
 
 Trained PPO checkpoints (~200 MB each) are hosted on the Hugging Face Hub, not git:
@@ -261,7 +279,8 @@ Trained PPO checkpoints (~200 MB each) are hosted on the Hugging Face Hub, not g
 python scripts/fetch_models.py --repo aliakarma/wildfire-rl-ppo \
     --verify results/models_manifest.json
 ```
-See [`docs/model_card.md`](docs/model_card.md).
+Checkpoints are pinned by SHA-256 in [`results/models_manifest.json`](results/models_manifest.json)
+(see **Data & Model Manifests** above). See [`docs/model_card.md`](docs/model_card.md).
 
 ## Project structure
 

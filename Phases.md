@@ -1105,3 +1105,70 @@ pytest ................... 70 passed (was 69; +1 privilege test)                
 
 **Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 11** (Dataset Validation & Provenance
 Hashing). No commits made, per owner instruction.
+
+---
+
+## Phase 11 — Dataset Validation & Provenance Hashing
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~25 min · **Compute:** CPU only.
+
+### Objective
+Hash all tensors and checkpoints into the manifests the README references, and add an automated
+per-channel tensor-invariant check so silently corrupt/mis-scaled data fails loudly.
+
+### Actions Taken
+1. **Manifests generated** (`scripts/make_manifest.py` + `wildfire_rl.data.manifest.write_manifest`,
+   both already present): `results/data_manifest.json` (**40** `.npy` entries) and
+   `results/models_manifest.json` (**162** checkpoint entries — full `models/` snapshot incl. the
+   quarantined `deprecated_pre_markov/` set). Each entry = `{sha256, bytes}`.
+2. **New tensor-invariant guard (`scripts/validate_tensors.py`):** imports the frozen
+   `wildfire_rl.data.CHANNEL_ORDER` (single source of truth) and asserts, for every
+   `data/**/state_tensor.npy`: shape `(7, H, W)`, square grid, all-finite, and **every** channel in
+   `[0,1]` (not just `fire`) — matching the data card's per-channel min-max normalization. Also range-
+   checks the Saudi `criticality.npy` asset raster. Exit 0/1, CI-callable.
+3. **Wired into `make manifest`** — the target now runs `validate_tensors.py` before writing manifests.
+4. **README `## Data & Model Manifests` section** added (regenerate + validate + verify commands, frozen
+   channel contract). Resolved the previously-dangling `results/models_manifest.json` reference (the
+   file now exists) and cross-linked it from **Model checkpoints**.
+5. **`docs/data_card.md`** — added explicit CRS (EPSG:4326 / WGS84, north-up), the frozen channel order,
+   the Phase-15 criticality raster note, and cross-linked both manifest files + `validate_tensors.py`
+   from the Provenance section.
+
+### Verification Evidence
+```
+make_manifest.py ......... data_manifest.json (40 entries) + models_manifest.json (162)   ✔
+manifests non-empty ...... test -s both -> OK                                              ✔
+validate_tensors.py ...... OK on all 4 state tensors (saudi/california 32, california 64,
+                           sample 8) + saudi criticality.npy -> exit 0                     ✔
+guard catches bad input .. wrong-channel-count / out-of-range / NaN all FLAGGED; good OK   ✔
+ruff (validate_tensors) .. All checks passed                                               ✔
+pytest ................... 70 passed (no regression)                                       ✔
+```
+
+### Deviations / Scope Notes
+1. **`make_manifest.py` kept its existing no-arg form** (writes both manifests via `write_manifest`)
+   rather than the plan's illustrative `--target/--out` CLI — same outcome, no churn.
+2. **Models manifest is a full `models/` snapshot** (162 entries) including `deprecated_pre_markov/`.
+   Complete-snapshot provenance is defensible and the deprecated keys are clearly namespaced; the 34
+   certified checkpoints are a subset. Left as-is.
+3. **Stronger-than-spec validator:** the plan checked only `fire ∈ [0,1]`; since the data card
+   guarantees per-channel min-max, all 7 channels are range-checked. `saudi 64x64` has no
+   `state_tensor.npy` (only layers) — `rglob` simply skips it; not a reported/used tensor.
+4. **No dedicated pytest** for the guard (consistent with `check_seed_integrity` / `validate_learning_gate`,
+   which are integration-run); correctness verified via CLI + a negative-case probe of the check function.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `data_manifest.json` and `models_manifest.json` generated
+  - [x] `validate_tensors.py` passes on all tensors (and flags corrupt ones)
+- Reproducibility
+  - [x] Manifest hashes written (regenerable via `make manifest`)
+- Scientific validity
+  - [x] Channel ranges validated against the data card (all 7 channels ∈ [0,1] + criticality)
+- Logging/monitoring
+  - [x] Manifest generation logged (`make_manifest` logger)
+- README completeness
+  - [x] Manifest section added; dangling `models_manifest.json` reference resolved
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 12** (README & Documentation
+Reconstruction). No commits made, per owner instruction.

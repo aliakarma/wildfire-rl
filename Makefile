@@ -71,6 +71,7 @@ figures:
 	$(PYTHON) scripts/make_figures.py
 
 manifest:
+	$(PYTHON) scripts/validate_tensors.py
 	$(PYTHON) scripts/make_manifest.py
 
 strip-notebooks:
