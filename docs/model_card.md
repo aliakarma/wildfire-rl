@@ -25,9 +25,13 @@ per seed (`seeds=[0..4]`).
 
 ## Evaluation
 
-- Metrics: episode reward, burned cells (threshold 0.5), fire intensity — over 20 episodes.
-- **Always reported against baselines** (`RandomPolicy`, `NoOpPolicy`) so learned-policy
-  gains are quantifiable.
+- Metrics: episode reward, burned cells (threshold 0.5), fire intensity, containment_rate — over
+  50 episodes / 5 disjoint seeds, with bootstrap 95% CIs and Cohen's d.
+- **Always reported against baselines** (`RandomPolicy`, `NoOpPolicy`) **and the heuristic routers**
+  (`NearestFirePolicy`, `FrontierPolicy`). The heuristics are the **effective method**; single-agent
+  PPO does **not** beat no-op on this task (a rigorous **negative result**, enforced by the
+  effective-method gate). The heuristics are privileged (oracle localization); PPO is not — this
+  asymmetry is stated wherever a heuristic outperforms PPO.
 - Cross-region transfer is reported as the full symmetric matrix; compare a transferred
   policy to the **native** policy on the same target environment (not across environments).
 

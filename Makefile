@@ -89,7 +89,10 @@ reproduce: test
 	$(PYTHON) scripts/run_ablation.py --config configs/experiment/ablation.yaml
 	$(PYTHON) scripts/transfer.py --config configs/experiment/transfer.yaml
 	$(PYTHON) scripts/make_figures.py
+	$(PYTHON) scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+	$(PYTHON) scripts/validate_tensors.py
 	$(PYTHON) scripts/check_seed_integrity.py
+	$(PYTHON) scripts/validate_learning_gate.py
 	@echo "Reproduction pipeline complete. See results/ and figures/."
 
 clean:

@@ -1172,3 +1172,76 @@ pytest ................... 70 passed (no regression)                            
 
 **Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 12** (README & Documentation
 Reconstruction). No commits made, per owner instruction.
+
+---
+
+## Phase 12 — README & Documentation Reconstruction
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~45 min · **Compute:** CPU only.
+
+### Objective
+Rebuild the report so every quantitative claim cites a committed CSV + `run_id`, purge untraceable /
+fabricated numbers, and align the narrative with the regenerated data (heuristics effective, PPO
+negative result).
+
+### Actions Taken
+1. **New `scripts/build_report_tables.py`** — renders headline tables directly from the certified
+   `results/*.csv` (Saudi eval, California eval, MARL scaling, transfer-raw) as Markdown, **without a
+   `tabulate` dependency** (manual renderer). Each table carries a `<!-- source: <csv> | sha256: … |
+   provenance: results/runs/… -->` comment. Tolerant of retired/renamed CSVs (skips, never crashes).
+   Output → `docs/paper/_generated_tables.md` (4 tables).
+2. **Rewrote the report's fabricated results block (`docs/paper/report.md` §16–§22.2 → new §16).** The
+   old sections asserted numbers absent from any CSV and contradicted by the data — removed the
+   untraceable literals (`-14581.66`, `-1564.89`, `-38672.41`, "Cohen's d > 11", the `d = 1306.86`
+   zero-variance artifact) and the "cooperative suppression improves containment" overclaim. The new
+   §16 embeds the generated tables verbatim (with source comments) and an honest narrative: heuristics
+   are the effective method; PPO is a negative result in both regions; MARL scaling improves reward but
+   not burned cells; transfer degrades across domains. Withdrawn (retired-CSV) analyses are marked
+   pending Phase 15B.8 regeneration rather than restated.
+3. **Fixed contradictory prose** in §23 (Statistical Stability — low variance = reproducible collapse,
+   not competent convergence) and §24.2 (Cooperative Scaling — reward, not containment).
+4. **README:** added `## Results Provenance` (regenerate command + headline results), corrected the
+   learning-gate wording to the effective-method framing.
+5. **`docs/reproducibility.md`:** added Observation (Markov 8-channel), no-leakage split
+   (`scenario_seed_offset`), the statistical protocol + effective-method gate + seed-integrity, and the
+   `build_report_tables` provenance rule; fixed the run-metadata path and eval-N (50/5).
+6. **`docs/model_card.md`:** evaluation now lists the heuristic routers + the PPO negative-result /
+   privileged-baseline framing; metrics updated to 50 eps / 5 seeds with bootstrap CIs.
+7. **`make reproduce`** now also runs `build_report_tables.py`, `validate_tensors.py`, and
+   `validate_learning_gate.py` (tables + integrity regenerate as part of reproduction).
+
+### Verification Evidence
+```
+build_report_tables.py .... 4 tables, 4 source: comments; idempotent                     ✔
+report.md ................. embeds generated tables; untraceable-literal purge -> clean   ✔
+report §23/§24 intact ..... narrative reworded to match data                             ✔
+ruff (new script) ......... All checks passed                                            ✔
+pytest .................... 70 passed (no regression)                                     ✔
+```
+
+### Deviations / Scope Notes
+1. **CSV names differ from the plan** (`transfer_matrix_raw.csv`, `eval_california_multiseed_california.csv`
+   — the raw-mode + config-suffixed fresh files; the plan's `transfer_matrix.csv`/`ablation_results.csv`
+   were retired in Phase 9). The generator targets the certified fresh files.
+2. **No `tabulate`** — implemented a manual Markdown renderer to avoid adding a dependency.
+3. **Withdrawn, not fabricated:** the zero-shot generalization and environmental-dynamics ablation
+   tables derived from retired pre-remediation CSVs are withdrawn (marked pending 15B.8), not
+   re-estimated — honest rather than inventing replacements.
+4. **Report tables embedded, not `include`d** (Markdown has no include); they are regeneratable and
+   provenance-commented, and `_generated_tables.md` is the canonical artifact.
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `build_report_tables.py` renders every headline table
+  - [x] No untraceable literals in `report.md`
+- Reproducibility
+  - [x] Each table has a `source:` CSV (+ sha256) and maps to a `results/runs/` manifest
+- Scientific validity
+  - [x] Narrative matches regenerated data (heuristics effective; PPO negative; scaling = reward not containment)
+- Logging/monitoring
+  - [x] Table generation reproducible from CSVs (`make reproduce` + standalone)
+- README completeness
+  - [x] Results-provenance section added; headline metrics synced; gate wording corrected
+
+**Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 13** (CI/CD & Automated Validation).
+No commits made, per owner instruction.
