@@ -102,6 +102,74 @@ def _agent_positions(env):
     return [tuple(env.agent_pos)]
 
 
+def record_episode(env, policy, seed: int = 0, max_steps: int = 60) -> dict:
+    """Record one deterministic episode's raw fire fields + agent path (Phase 17).
+
+    Returns ``{frames: [fire2d, ...], agent_paths: [[(x,y), ...], ...], criticality, seed}`` for the
+    static multi-panel renderer. ``agent_paths[t]`` is the list of agent cells at step ``t``.
+    """
+    obs, _ = env.reset(seed=seed)
+    if hasattr(policy, "env"):
+        policy.env = env
+    frames, agent_paths = [], []
+    for _ in range(max_steps):
+        frames.append(env.state[0].copy())
+        agent_paths.append(_agent_positions(env))
+        action, _ = policy.predict(obs, deterministic=True)
+        obs, _, term, trunc, _ = env.step(action)
+        if term or trunc:
+            frames.append(env.state[0].copy())
+            agent_paths.append(_agent_positions(env))
+            break
+    return {
+        "frames": frames,
+        "agent_paths": agent_paths,
+        "criticality": getattr(env, "infra_criticality", None),
+        "seed": seed,
+    }
+
+
+def render_rollout(record: dict, out_path: str | Path, title: str = "", n_panels: int = 5):
+    """Multi-panel PNG: fire snapshots at key timesteps + agent trajectory + criticality overlay.
+
+    Headless (Agg). Snapshots at t = 0 / quarters / end; the agent trajectory is drawn up to each
+    panel's timestep; the Saudi criticality map is contoured underneath when present.
+    """
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    frames = record["frames"]
+    paths = record["agent_paths"]
+    crit = record.get("criticality")
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    idxs = np.linspace(0, len(frames) - 1, min(n_panels, len(frames))).astype(int)
+    fig, axes = plt.subplots(1, len(idxs), figsize=(3 * len(idxs), 3.3))
+    if len(idxs) == 1:
+        axes = [axes]
+    for ax, k in zip(axes, idxs, strict=False):
+        if crit is not None:
+            ax.contour(crit, levels=[0.3, 0.6], colors="#0E2A3B", linewidths=0.8, alpha=0.7)
+        ax.imshow(frames[k], cmap="hot", vmin=0, vmax=1)  # fire field
+        # agent trajectory up to this timestep
+        xs = [p[0] for step in paths[: k + 1] for p in [step[0]]]
+        ys = [p[1] for step in paths[: k + 1] for p in [step[0]]]
+        if len(xs) > 1:
+            ax.plot(ys, xs, "-", color="#1F7A9E", linewidth=1.2, alpha=0.8)
+        for x, y in paths[k]:
+            ax.scatter([y], [x], s=25, c="#1F7A9E", marker="o", edgecolors="w", linewidths=0.5)
+        ax.set_title(f"t={k}", fontsize=9)
+        ax.set_xticks([])
+        ax.set_yticks([])
+    fig.suptitle(title, fontsize=10)
+    fig.savefig(out_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return out_path
+
+
 def render_gif(
     frames: list[dict], out_path: str | Path, title: str = "", palette: Palette | None = None
 ):

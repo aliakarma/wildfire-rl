@@ -53,3 +53,22 @@ def test_render_gif_produces_file(tmp_path):
     out = tmp_path / "rollout.gif"
     render_gif(frames, out, title="test")
     assert out.exists() and out.stat().st_size > 0
+
+
+def test_record_episode_and_render_rollout(tmp_path):
+    """Phase 17: the raw-episode recorder + multi-panel PNG renderer run headless."""
+    from wildfire_rl.config import EnvConfig
+    from wildfire_rl.envs.base import WildfireEnv
+    from wildfire_rl.eval.baselines import NearestFirePolicy
+    from wildfire_rl.viz.rollout import record_episode, render_rollout
+
+    tensor = np.zeros((7, 8, 8), dtype=np.float32)
+    tensor[0, 4, 4] = 1.0
+    env = WildfireEnv(state_tensor=tensor, config=EnvConfig())
+    policy = NearestFirePolicy(env.action_space, grid_size=8, env=env)
+    rec = record_episode(env, policy, seed=0, max_steps=10)
+    assert len(rec["frames"]) >= 1
+    assert len(rec["agent_paths"]) == len(rec["frames"])
+    out = tmp_path / "rollout.png"
+    render_rollout(rec, out, title="test")
+    assert out.exists() and out.stat().st_size > 0

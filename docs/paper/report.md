@@ -450,6 +450,16 @@ which matters for RL). PPO remains the negative baseline (see §16.1).
 | no_coordination | 0.690 | -111.557 | 0.880 | 0.698 | 5.282 |
 
 ________________________________________
+16.7 Rollout Visualizations (Phase 17 / 15B.5)
+
+Per-ablation static rollout grids — `figures/rollouts/<variant>_<policy>.png` for every (policy ×
+{baseline, no_wind, no_terrain, no_suppression, dense_fuel}) — show the fire field, agent trajectory,
+and Saudi criticality overlay. The PPO panels make the honest **collapse** (near-constant action ≈
+no-op) visible next to the heuristic routers that contain the fire. Canonical animated GIFs and
+strategic filmstrips: `figures/strategic/`. Regenerate: `python scripts/render_rollouts.py` and
+`python scripts/render_strategic.py`.
+
+________________________________________
 16.4 Withdrawn analyses (pending provenance-bound regeneration)
 * The earlier "Zero-Shot Generalization (randomized ignition)" and "Ablation Study of Environmental
   Dynamics" tables derived from **pre-remediation CSVs** (`eval_saudi_generalization.csv`,

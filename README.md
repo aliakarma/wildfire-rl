@@ -340,6 +340,24 @@ scientific-integrity checks blocking:
 
 A red `validate` job blocks merge.
 
+## Rollout Visualizations
+
+Two complementary renderers make policy behavior legible, not merely tabular:
+
+- **Static rollout grids (Phase 17)** — `scripts/render_rollouts.py` renders one deterministic episode
+  per (policy × environmental-ablation variant) to `figures/rollouts/<variant>_<policy>.png`: the fire
+  field at key timesteps, the agent trajectory, and the Saudi criticality overlay. Policies:
+  `ppo` (authoritative checkpoint), `nearest_fire`, `frontier`, `noop`; variants: `baseline`, `no_wind`,
+  `no_terrain`, `no_suppression`, `dense_fuel`. These make the honest **PPO collapse** (near-constant
+  action, ≈ no-op) visible next to the heuristic routers that contain the fire.
+- **Canonical animated GIFs (Phase 15B.5)** — `scripts/render_strategic.py` writes per-region/family
+  GIFs (fixed legend, palette in `configs/viz.yaml`) + strategic filmstrips under `figures/strategic/`.
+
+```bash
+python scripts/render_rollouts.py     # figures/rollouts/<variant>_<policy>.png (headless, deterministic)
+python scripts/render_strategic.py    # figures/strategic/<region>_<family>.gif
+```
+
 ## Model checkpoints
 
 Trained PPO checkpoints (~200 MB each) are hosted on the Hugging Face Hub, not git:

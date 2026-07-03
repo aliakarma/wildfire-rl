@@ -1748,3 +1748,58 @@ Real committed results throughout; heuristic/hybrid effective-method framing pre
 negative baseline. **Remaining project work:** owner git commit + push; HF model upload; external
 clean-clone certification; Phase 17 (standalone rollout viz — largely subsumed by 15B.5). No commits made,
 per owner instruction.
+
+---
+
+## Phase 17 — Policy Rollout Visualization (per Ablation)
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~30 min · **Compute:** CPU only
+(20 deterministic rollouts rendered).
+
+### Objective
+Produce per-ablation rollout visualizations (agent trajectory + fire evolution + criticality overlay)
+for each policy across each environmental-ablation variant, so behavioral differences — especially the
+honest PPO collapse — are legible, not merely tabular.
+
+### Actions Taken
+1. **`viz/rollout.py`** — added `record_episode(env, policy, seed)` (raw fire fields + agent paths +
+   criticality) and `render_rollout(record, out_path)` (headless multi-panel PNG: fire snapshots at
+   t=0/quarters/end + agent trajectory + Saudi criticality contour overlay). Reuses the 15B.5 canonical
+   GIF machinery.
+2. **`scripts/render_rollouts.py` (new)** — iterates (policy × variant) → `figures/rollouts/<variant>_<policy>.png`.
+   Policies: `ppo` (authoritative `ppo_saudi_32_seed_0.zip`, 8-channel), `nearest_fire`, `frontier`,
+   `noop`. Variants (env-dynamics ablations): `baseline`, `no_wind` (wind_coeff=0), `no_terrain`
+   (terrain_coeff=0), `no_suppression` (suppression_factor=1.0), `dense_fuel` (fuel_coeff=0.6).
+3. **`tests/test_rollout_viz.py`** (+1) — `record_episode` + `render_rollout` run headless, produce a PNG.
+4. **README "Rollout Visualizations"** section (static grids + canonical GIFs); **report §16.7** reference.
+
+### Verification Evidence
+```
+render_rollouts .......... 20/20 PNGs (4 policies × 5 variants); PPO checkpoint loads   ✔
+criticality overlay ...... Saudi rollouts contour the petroleum criticality map          ✔
+headless / deterministic . matplotlib Agg; fixed seeds; each figure titled policy·variant·seed  ✔
+pytest ................... 105 passed (+1); black + ruff clean; gates exit 0             ✔
+```
+
+### Deviations / Scope Notes
+1. **Honest reframe of the "PPO visibly differs from noop" criterion.** Post-Phase-16 the PPO policy
+   *collapsed* (near-constant action ≈ no-op), so the rollout makes the **collapse** legible rather than
+   "evidence of learning" — which is exactly what the plan's Problems section intended ("a rollout view
+   makes policy behavior/collapse legible"). The heuristic routers visibly contain the fire; PPO does not.
+2. **Env-dynamics variants** (`no_wind`/`no_terrain`/`dense_fuel`/`no_suppression`) map to `EnvConfig`
+   coefficient overrides; obs stays 8-channel (`observe_infra` off) so the authoritative model loads.
+   These are the classic single-agent ablation variants — distinct from the 15B.8 strategic ablations.
+
+### Success Criteria (Gate)
+- [x] A rollout figure exists for every (policy × ablation variant) pair (20/20)
+- [x] Renderer runs headless (Agg), deterministic seeds
+- [x] `render_rollouts.py` regenerates all figures from the committed model
+- [x] PPO rollout behavior is legible vs `noop`/heuristics (shows the honest collapse)
+- [x] Saudi rollouts overlay the criticality map
+- [x] Each figure names its policy, variant, seed
+- [x] "Rollout Visualizations" README section added
+
+**Proceed Rule:** Phase 17 complete. Per the plan this feeds the **terminal Phase 14 re-certification** —
+the local certification still holds (gates green, tests pass, new artifacts hashed into the manifest);
+a full re-cert is an owner step alongside commit/push. **All planned phases (1–17 incl. 15/15B/16) are
+now complete.** No commits made, per owner instruction.
