@@ -68,6 +68,7 @@ def main() -> int:
                 factory,
                 n_episodes=cfg.eval.n_episodes,
                 base_seed=cfg.eval.base_seed,
+                scenario_seed_offset=cfg.eval.scenario_seed_offset,
                 metrics_cfg=cfg.metrics,
             )
             seed_fires.append(res["summary"]["fire_intensity_mean"])
@@ -93,6 +94,7 @@ def main() -> int:
             "burned_mean": float(burned_arr.mean()),
             "burned_std": float(burned_arr.std()),
             "n_seeds": len(cfg.seeds),
+            "reward_mode": cfg.env.reward_mode,
         }
 
         if variant == "baseline":
@@ -104,7 +106,9 @@ def main() -> int:
             row["sig_vs_baseline"] = format_significance(test["p_value"])
             logger.info(
                 "  %s vs baseline: p=%.4f, d=%.2f (%s)",
-                variant, test["p_value"], test["cohens_d"],
+                variant,
+                test["p_value"],
+                test["cohens_d"],
                 format_significance(test["p_value"]),
             )
 

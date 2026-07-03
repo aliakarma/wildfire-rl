@@ -20,6 +20,8 @@ STAY_ACTION = 4
 class RandomPolicy:
     """Uniformly random actions. The lower-bound control for 'did the agent learn?'."""
 
+    uses_privileged_state = False
+
     def __init__(self, action_space, seed: int | None = None) -> None:
         self.action_space = action_space
         self.rng = np.random.default_rng(seed)
@@ -35,6 +37,8 @@ class RandomPolicy:
 class NoOpPolicy:
     """Agent never moves (constant 'stay'). Note: local suppression still applies."""
 
+    uses_privileged_state = False
+
     def __init__(self, action_space) -> None:
         self.action_space = action_space
 
@@ -48,9 +52,17 @@ class NoOpPolicy:
 
 class NearestFirePolicy:
     """Agent moves towards the closest burning cell.
-    
+
     If no fire exists, it stays. Supports both single-agent and MultiDiscrete MARL.
+
+    Privileged baseline: reads ``env.agent_pos`` / ``env.agent_positions`` directly for oracle
+    self-localization (see ``uses_privileged_state``). PPO does not receive the fire-argmin and
+    localizes only via its observation channel (Phase 3), so any heuristic advantage must be
+    reported with this asymmetry stated explicitly.
     """
+
+    #: reads the agent's true grid position from the env (oracle localization)
+    uses_privileged_state = True
 
     def __init__(self, action_space, grid_size: int = 32, env: Any = None) -> None:
         self.action_space = action_space
@@ -72,10 +84,12 @@ class NearestFirePolicy:
                 agent_positions = []
                 for i in range(num_agents):
                     dx, dy = offsets[i % len(offsets)]
-                    agent_positions.append([
-                        min(max(center + dx, 0), self.grid_size - 1),
-                        min(max(center + dy, 0), self.grid_size - 1)
-                    ])
+                    agent_positions.append(
+                        [
+                            min(max(center + dx, 0), self.grid_size - 1),
+                            min(max(center + dy, 0), self.grid_size - 1),
+                        ]
+                    )
 
             if len(burning_indices) == 0:
                 return np.full(num_agents, STAY_ACTION, dtype=int), None
@@ -132,7 +146,15 @@ class NearestFirePolicy:
 
 
 class FrontierPolicy:
-    """Agent moves towards the closest fire frontier cell (burning but has unburnt neighbors)."""
+    """Agent moves towards the closest fire frontier cell (burning but has unburnt neighbors).
+
+    Privileged baseline: reads ``env.agent_pos`` / ``env.agent_positions`` directly for oracle
+    self-localization (see ``uses_privileged_state``). Reported with the same asymmetry caveat as
+    :class:`NearestFirePolicy`.
+    """
+
+    #: reads the agent's true grid position from the env (oracle localization)
+    uses_privileged_state = True
 
     def __init__(self, action_space, grid_size: int = 32, env: Any = None) -> None:
         self.action_space = action_space
@@ -147,8 +169,9 @@ class FrontierPolicy:
 
         # Count active neighbors
         from scipy.ndimage import convolve
+
         kernel = np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
-        active_neighbors = convolve(active.astype(int), kernel, mode='constant', cval=0)
+        active_neighbors = convolve(active.astype(int), kernel, mode="constant", cval=0)
 
         # Frontier cells are active but have < 4 active neighbors
         frontier = active & (active_neighbors < 4)
@@ -168,10 +191,12 @@ class FrontierPolicy:
                 agent_positions = []
                 for i in range(num_agents):
                     dx, dy = offsets[i % len(offsets)]
-                    agent_positions.append([
-                        min(max(center + dx, 0), self.grid_size - 1),
-                        min(max(center + dy, 0), self.grid_size - 1)
-                    ])
+                    agent_positions.append(
+                        [
+                            min(max(center + dx, 0), self.grid_size - 1),
+                            min(max(center + dy, 0), self.grid_size - 1),
+                        ]
+                    )
 
             if len(burning_indices) == 0:
                 return np.full(num_agents, STAY_ACTION, dtype=int), None

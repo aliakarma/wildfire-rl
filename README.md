@@ -17,7 +17,7 @@
 
 ## Overview
 
-Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, wind_y, terrain, temperature, humidity)` state tensor and exposes it as a [Gymnasium](https://gymnasium.farama.org/) environment. A PPO agent (Stable-Baselines3) learns to move and suppress fire under stochastic, fuel/terrain/wind-driven spread dynamics. The framework supports:
+Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, wind_y, terrain, temperature, humidity)` state tensor and exposes it as a [Gymnasium](https://gymnasium.farama.org/) environment. The policy **observation** appends an agent-position channel, so the network sees **8 channels** (see *Observation contract* below). A PPO agent (Stable-Baselines3) learns to move and suppress fire under stochastic, fuel/terrain/wind-driven spread dynamics. The framework supports:
 
 - **Single-agent** wildfire suppression (PPO + custom CNN feature extractor).
 - **Centralized cooperative multi-agent** control (MARL scaling: 1 / 3 / 5 agents).
@@ -38,6 +38,18 @@ Wildfire-RL fuses remote-sensing data into a 7-channel `(fire, fuel, wind_x, win
 
 > 📌 _Architecture/result figures live in `figures/` after `make figures` and in `docs/paper/`._
 
+### Observation contract
+
+Each observation is a `(C+1, H, W)` float32 tensor:
+- channels 0–6: `fire, fuel, wind_x, wind_y, terrain, temperature, humidity` (the stored state tensor)
+- channel 7: agent position (single-agent one-hot) / agent-occupancy map (multi-agent)
+
+The position channel makes the environment Markov for a movement policy
+(`EnvConfig.include_agent_channel`, default `True`); without it PPO cannot localize itself and
+collapses to a no-op policy. Metrics are computed from `env.state`, so the added channel does not
+affect reported numbers. Checkpoints trained before this change (`models/deprecated_pre_markov/`)
+expect 7-channel input and are **incompatible** — retrain for reported results.
+
 ### Why cross-regional transfer?
 
 Suppression policies are trained on a region's environmental tensor and evaluated **on the
@@ -45,6 +57,33 @@ same target environment as the native policy** — the only valid way to measure
 This isolates *ecological domain shift* (sparse desert fuel vs. dense forest fuel, flat vs.
 mountainous terrain) from raw fire-load differences. See [`docs/architecture.md`](docs/architecture.md)
 and the methodological notes in [`docs/reproducibility.md`](docs/reproducibility.md).
+
+### Saudi domain model
+
+The Saudi environment is domain-specialized (vs. California): **reduced fire spread**
+(`spread_scale < 1`, sparse desert fuel), **more frequent and more random ignitions**
+(`ignition_rate`, higher `n_ignition_points`), and a **petroleum-asset criticality** layer
+(`data/saudi_eastern_province/grids/32x32/criticality.npy`) that penalizes fire reaching
+high-value cells (`criticality_weight`). Rebuild the raster with
+`python scripts/build_criticality.py --region saudi_eastern_province --grid 32`. California uses
+baseline dynamics (`spread_scale: 1.0`, no criticality), so the two regions differ by more than
+just their state tensors. Canonical dynamics live in `configs/region/*.yaml` and are mirrored into
+`configs/experiment/multiseed*.yaml` for the reported runs.
+
+#### Critical petroleum infrastructure (Phase 15B.1)
+
+The Saudi region additionally models **petroleum infrastructure** as high-value, high-risk assets
+(`EnvConfig.infra`): asset-type/criticality/blast rasters (`build_infrastructure.py`), a
+**value-weighted catastrophe penalty** (fire on a refinery costs far more than an empty cell),
+**cascading detonation** (a burning asset ignites cells within its blast radius), and an optional
+**infrastructure observation channel** (`observe_infra`). All infra features default to no-op, so
+other regions and the 8-channel authoritative models (Phase 9) are unaffected; enabling
+`observe_infra` adds a 9th channel and is used only by the 15B hybrid/strategic experiments, which
+train fresh models.
+
+```bash
+python scripts/build_infrastructure.py --region saudi_eastern_province --grid 32
+```
 
 ---
 
@@ -55,18 +94,55 @@ and the methodological notes in [`docs/reproducibility.md`](docs/reproducibility
 git clone https://github.com/aliakarma/wildfire-rl.git
 cd wildfire-rl
 
-# 2a. pip (RL stack)
-python -m pip install -e .
+# 2. Create a pinned virtual environment (Python 3.10 or 3.11 — torch==2.3.1 has no 3.12+ wheels)
+python -m venv venv
+source venv/Scripts/activate        # Windows Git Bash
+# source venv/bin/activate          # Linux / macOS
 
-# 2b. or conda (recommended if you need the geospatial preprocessing stack)
+# 3a. Exact, byte-reproducible install (recommended for reproducing results)
+pip install -r requirements-dev.txt   # exact scientific + dev pins (torch==2.3.1, seaborn==0.13.2, ...)
+pip install -e . --no-deps            # the wildfire_rl package itself
+# After the first install, prefer the frozen transitive lock (see "Environment (pinned)"):
+pip install -r requirements.lock.txt
+
+# 3b. or conda (recommended if you need the geospatial preprocessing stack)
 conda env create -f environment.yml
 conda activate wildfire-rl
-pip install -e .
+pip install -e . --no-deps
 
 # Optional extras
 pip install -e ".[geo]"     # rasterio/GDAL/EE/CDS — only to rebuild tensors from raw
-pip install -e ".[dev]"     # tests, linting, pre-commit
 pip install -e ".[track]"   # wandb + huggingface_hub
+```
+
+## Environment (pinned)
+
+The authoritative, byte-reproducible environment for artifact evaluation:
+
+```bash
+python -m venv venv
+source venv/Scripts/activate          # Windows Git Bash
+pip install -r requirements-dev.txt   # exact scientific + dev pins
+pip install -e . --no-deps            # editable package
+pip install -r requirements.lock.txt  # full pinned transitive graph
+```
+
+- `requirements.txt` — exact runtime pins (incl. `scipy==1.13.0`, `seaborn==0.13.2`).
+- `requirements-dev.txt` — the above plus exact test/lint pins.
+- `requirements.lock.txt` — the complete frozen transitive graph (regenerate with
+  `pip freeze --exclude-editable > requirements.lock.txt`). This file is the reference
+  environment for reproducing every reported number.
+
+> Python 3.10 or 3.11 is required: `torch==2.3.1` publishes no wheels for Python 3.12+.
+
+**GPU (optional).** The pinned `torch==2.3.1` from PyPI is the **CPU** build (`2.3.1+cpu`), which is
+the canonical, deterministic, CI-matched environment. For this workload (a small CNN on 32×32
+grids) CPU is adequate. To train on an NVIDIA GPU, override with the CUDA wheel *after* the pinned
+install (this changes the frozen graph; keep it out of `requirements.lock.txt`):
+
+```bash
+pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
 ## Quickstart
@@ -100,15 +176,105 @@ wildfire-rl evaluate --config configs/experiment/multiseed.yaml \
 wildfire-rl transfer --config configs/experiment/transfer.yaml
 ```
 
+## Baselines
+
+Every single-agent evaluation reports the full policy set on **identical eval seeds** (the eval loop
+resets each policy with the same `base_seed + scenario_seed_offset + episode`, so the comparison is
+paired):
+
+| Policy | Privileged? | Role |
+|--------|-------------|------|
+| `noop` | no | lower bound (do nothing; local suppression still applies) |
+| `random` | no | uninformed control |
+| `nearest_fire` | **yes** (reads agent position) | strong heuristic — the effective method |
+| `frontier` | **yes** (reads agent position) | strong heuristic — the effective method |
+
+The heuristic baselines use **oracle localization**: they read `env.agent_pos` / `env.agent_positions`
+directly (`uses_privileged_state = True`, queryable on each policy class). PPO observes its own
+position via an observation channel (Phase 3) but does **not** receive the fire-argmin, so wherever a
+heuristic outperforms PPO the comparison is reported **with this asymmetry stated explicitly**. PPO is
+retained as an honest negative baseline; the heuristic routers are the effective method.
+
+## Metrics & Learning Gate
+
+Primary metrics: `burned_cells` (fire > 0.5), `fire_intensity`, `containment_rate` (fraction of the
+initial fire mass extinguished — the agent-influenceable outcome, unlike raw intensity), and
+`episode_reward`. Every results CSV now records its `reward_mode`, because `raw` and `normalized`
+rewards are **not** comparable across tables. Effect sizes are reported as `nan` (undefined), never
+`0.0`, when within-group variance is zero. A result set is accepted only if the **effective-method
+gate** passes — the best reported policy (heuristic routing) must beat no-op; PPO is retained as an
+honest negative baseline and is never tuned to "win":
+
+```bash
+python scripts/validate_learning_gate.py   # best policy must cut burned cells >= 5% vs noop, else exit 1
+```
+
+## Compute & Experimental Scope (Phase 15B.7)
+
+Compute is directed at the questions that carry the work, **not** open-ended PPO tuning. Priority order:
+
+1. **Heuristic MARL scaling** (1/3/5/10 agents; `nearest_fire`/`frontier`) — evaluation-only, no training.
+2. **Cross-region transfer** (symmetric, infrastructure-aware; `run_transfer_hybrid.py`) — evaluation-heavy.
+3. **Strategic coordination** (high-level `greedy_risk` vs `risk_aware` vs small RL).
+
+Single-agent PPO hyperparameter search is **de-prioritized** — it is a documented negative baseline, not
+tuned to "win". Explicitly:
+
+- *Low-level PPO navigation is no longer the primary research claim.*
+- *Heuristic local control is the reliable operational baseline.*
+- *The only learnable component of interest is the small strategic action space — not raw movement.*
+
+The authoritative regeneration budget is therefore dominated by evaluation (heuristics/transfer/strategic),
+and the effective-method gate certifies the heuristic/hybrid method, never a forced PPO win.
+
+## Results Provenance
+
+Every table in [`docs/paper/report.md`](docs/paper/report.md) is generated by
+[`scripts/build_report_tables.py`](scripts/build_report_tables.py) from `results/*.csv` — **no number
+is hand-entered**. Each table carries a `source:` CSV + SHA-256 provenance comment and maps to a run
+manifest under `results/runs/<run_id>/`. Regenerate with:
+
+```bash
+python scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+```
+
+**Headline results (regenerated):** heuristic routing (`nearest_fire`/`frontier`) is the effective
+method — Saudi ~2.1 vs no-op ~33 burned cells; California ~0 vs no-op ~183. Single-agent PPO does
+**not** beat no-op in either region (a rigorous negative result). Cooperative MARL raises episode
+reward with team size but does not materially reduce burned cells. See report §16 for the full,
+provenance-bound tables.
+
 ## Reproducibility
 
 ```bash
-make reproduce        # test → train → evaluate → transfer → figures
+make reproduce        # test → train(both regions) → evaluate → marl → ablation → transfer → figures → seed-check
 make manifest         # write sha256 manifests for data/ and models/
 ```
-Every run writes `results/runs/*.json` capturing git SHA, config hash, library versions,
-and seed. Determinism is enforced via `wildfire_rl.seeding.set_global_seed` **and** a
-per-environment `np_random` generator. Full protocol: [`docs/reproducibility.md`](docs/reproducibility.md).
+Every training run writes `results/runs/<run_id>/manifest.json` (git SHA, config SHA-256,
+state-tensor **and** model SHA-256, seed, library versions) plus `curve.csv` (ep_rew_mean vs
+timestep — committed evidence that training actually improved). TensorBoard logs, when
+`tensorboard` is installed, land under `results/runs/tb/`. Determinism is enforced via
+`wildfire_rl.seeding.set_global_seed` **and** a per-environment `np_random` generator. Full
+protocol: [`docs/reproducibility.md`](docs/reproducibility.md).
+
+### Scenario splitting (no leakage)
+
+Reported experiments use randomized ignition (`env.randomize_ignition: true`). Training reset
+seeds occupy `[0, N)`; evaluation reset seeds occupy `[eval.scenario_seed_offset, +)`
+(default `100000`), guaranteeing the evaluation ignition maps are **disjoint** from those seen in
+training. Fixed-ignition runs (`randomize_ignition: false`) are **diagnostic only** — they evaluate
+on the same map used for training and must be labeled as such, never reported as generalization.
+
+### Determinism & seed integrity
+
+`wildfire_rl.seeding.set_global_seed(seed)` fixes the Python / NumPy / Torch / SB3 RNGs, enables
+cuDNN determinism and `torch.use_deterministic_algorithms(warn_only=True)`, and exports
+`CUBLAS_WORKSPACE_CONFIG` for deterministic CUDA GEMM. Guard against fake multi-seed results
+(identical checkpoints or byte-identical per-seed eval rows) with:
+
+```bash
+python scripts/check_seed_integrity.py   # exit 0 = OK; exit 1 = degenerate seeds detected
+```
 
 **PowerShell equivalents** (if `make` is unavailable):
 ```powershell
@@ -117,6 +283,13 @@ python scripts/train.py --config configs/experiment/multiseed.yaml
 python scripts/transfer.py --config configs/experiment/transfer.yaml
 python scripts/make_figures.py
 ```
+
+## Canonical vs Legacy Results
+
+Only `results/*.csv` produced by the current CLI are canonical. `results/archive_legacy_notebooks/`
+is provenance-only and **must not** be cited in the report (see its `PROVENANCE.md`). `wildfire-rl
+transfer` now **aborts** if a required checkpoint is missing — there is no silent random-policy
+fallback; pass `--allow-missing` only for local dry-runs.
 
 ## Datasets
 
@@ -127,9 +300,63 @@ Rebuild them, or download a prepared bundle:
 # Rebuild from raw (needs credentials in .env; see .env.example and [geo] extras)
 python scripts/download_data.py --region saudi_eastern_province --source all
 python scripts/build_tensors.py --region saudi_eastern_province --grid 32
+python scripts/build_criticality.py --region saudi_eastern_province --grid 32  # petroleum-asset map
 ```
 A tiny synthetic sample lives in `data/sample/` for tests and the quickstart. Sources,
 licenses, CRS, and temporal coverage are documented in [`docs/data_card.md`](docs/data_card.md).
+
+## Data & Model Manifests
+
+`results/data_manifest.json` and `results/models_manifest.json` pin SHA-256 hashes (and byte sizes)
+for every `.npy` tensor and every model checkpoint, so anyone can verify they pulled the exact bytes a
+result was produced from. Regenerate and validate with:
+
+```bash
+make manifest                       # validate_tensors.py + write both manifests
+python scripts/validate_tensors.py  # per-channel shape/finite/[0,1] invariants for every state tensor
+python scripts/fetch_models.py --repo aliakarma/wildfire-rl-ppo \
+    --verify results/models_manifest.json   # checksum-verify downloaded checkpoints
+```
+
+`validate_tensors.py` enforces the frozen channel contract (`fire, fuel, wind_x, wind_y, terrain,
+temperature, humidity`; shape `(7, H, W)`, all finite, every channel min-max-normalized to `[0, 1]`)
+and the Saudi `criticality.npy` asset raster's `[0, 1]` range. It is part of `make manifest` and a
+CI gate (Phase 13).
+
+## Continuous Validation
+
+CI runs five jobs on every push/PR: `lint` (ruff + black), `test` (pytest on Python 3.10/3.11 +
+CLI smoke), `install-check`, `large-files`, and **`validate`**. The `validate` job makes the
+scientific-integrity checks blocking:
+
+- **Determinism** — `set_global_seed` produces identical draws.
+- **Tensor validity** — `validate_tensors.py` (channel contract + `[0, 1]` ranges).
+- **Seed integrity** — `check_seed_integrity.py` (distinct checkpoints via `models_manifest.json`;
+  identical collapsed-policy rows are the honest negative result, not fraud).
+- **Effective-method gate** — `validate_learning_gate.py` on the committed eval CSVs.
+- **Report ↔ CSV consistency** — `test_report_consistency.py` fails if a report table drifts from its
+  source CSV or a purged untraceable literal resurfaces.
+- A best-effort CI-sized learning smoke (skipped when region tensors aren't in the checkout).
+
+A red `validate` job blocks merge.
+
+## Rollout Visualizations
+
+Two complementary renderers make policy behavior legible, not merely tabular:
+
+- **Static rollout grids (Phase 17)** — `scripts/render_rollouts.py` renders one deterministic episode
+  per (policy × environmental-ablation variant) to `figures/rollouts/<variant>_<policy>.png`: the fire
+  field at key timesteps, the agent trajectory, and the Saudi criticality overlay. Policies:
+  `ppo` (authoritative checkpoint), `nearest_fire`, `frontier`, `noop`; variants: `baseline`, `no_wind`,
+  `no_terrain`, `no_suppression`, `dense_fuel`. These make the honest **PPO collapse** (near-constant
+  action, ≈ no-op) visible next to the heuristic routers that contain the fire.
+- **Canonical animated GIFs (Phase 15B.5)** — `scripts/render_strategic.py` writes per-region/family
+  GIFs (fixed legend, palette in `configs/viz.yaml`) + strategic filmstrips under `figures/strategic/`.
+
+```bash
+python scripts/render_rollouts.py     # figures/rollouts/<variant>_<policy>.png (headless, deterministic)
+python scripts/render_strategic.py    # figures/strategic/<region>_<family>.gif
+```
 
 ## Model checkpoints
 
@@ -139,7 +366,8 @@ Trained PPO checkpoints (~200 MB each) are hosted on the Hugging Face Hub, not g
 python scripts/fetch_models.py --repo aliakarma/wildfire-rl-ppo \
     --verify results/models_manifest.json
 ```
-See [`docs/model_card.md`](docs/model_card.md).
+Checkpoints are pinned by SHA-256 in [`results/models_manifest.json`](results/models_manifest.json)
+(see **Data & Model Manifests** above). See [`docs/model_card.md`](docs/model_card.md).
 
 ## Project structure
 
@@ -147,13 +375,26 @@ See [`docs/model_card.md`](docs/model_card.md).
 wildfire-rl/
 ├── src/wildfire_rl/      # installable package (envs, models, train, eval, viz, data)
 ├── configs/              # OmegaConf YAML (region / env / ppo / experiment)
-├── scripts/              # CLI entrypoints (train, evaluate, transfer, data, models)
+├── scripts/              # certified CLI entrypoints (train, evaluate, transfer, ablation, marl)
 ├── tests/                # pytest suite (env API, determinism, metrics, config, CLI)
 ├── notebooks/            # demo / exploratory notebooks (outputs stripped)
 ├── docs/                 # architecture, reproducibility, data & model cards
 ├── data/   models/   results/   figures/   # artifacts (mostly git-ignored)
+├── experimental/         # v2–v6 reward-shaping / coordination tracks (NON-certified)
+├── reviews/history/      # archived third-party audits (provenance only)
 └── .github/workflows/    # CI: lint, test, install, large-file guard
 ```
+
+## Repository Layout Guarantee
+
+The reproducible research pipeline consists of:
+- `src/wildfire_rl/` — the installable package
+- `scripts/{train,evaluate,transfer,run_ablation,run_marl_evaluation}.py`
+- `configs/` and the canonical `results/*.csv`
+
+Exploratory reward-shaping and coordination experiments (v2–v6) live under `experimental/`
+and are **not** part of the certified reproducibility path. Archived third-party audits live
+under `reviews/history/` for provenance only and must not be cited as project claims.
 
 ## Roadmap
 

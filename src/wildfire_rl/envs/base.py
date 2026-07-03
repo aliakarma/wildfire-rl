@@ -49,14 +49,49 @@ class WildfireEnv(gym.Env):
         self.grid_size = h
 
         self.action_space = spaces.Discrete(N_ACTIONS)
+
+        # Critical-infrastructure layers (Phase 15B.1): asset-type grid + criticality raster.
+        self.infra_asset_type, self.infra_criticality = dynamics.load_infrastructure(
+            self.cfg, self.grid_size
+        )
+        self._observe_infra = bool(
+            self.cfg.infra.observe_infra and self.infra_criticality is not None
+        )
+
+        self._obs_channels = (
+            c + (1 if self.cfg.include_agent_channel else 0) + (1 if self._observe_infra else 0)
+        )
         self.observation_space = spaces.Box(
-            low=0.0, high=1.0, shape=(c, h, w), dtype=np.float32
+            low=0.0, high=1.0, shape=(self._obs_channels, h, w), dtype=np.float32
         )
 
         self.state = self.initial_tensor.copy()
         self.agent_pos = [h // 2, w // 2]
         self.current_step = 0
         self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
+        self.criticality = dynamics.load_criticality(self.cfg, self.grid_size)
+        self._cascade_ignited_total = 0
+
+    # -------------------------------------------------------------- observation
+    def _obs(self) -> np.ndarray:
+        """Policy observation: state tensor + optional agent-position channel.
+
+        The agent-position channel is what makes the environment Markov for a
+        movement policy — the raw ``self.state`` alone does not encode where the
+        agent is, so without this the policy cannot learn to navigate to the fire.
+        """
+        layers = [self.state]
+        if self.cfg.include_agent_channel:
+            pos = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
+            x, y = self.agent_pos
+            pos[0, x, y] = 1.0
+            layers.append(pos)
+        # Infrastructure-criticality channel (Phase 15B.1): strategic situational awareness.
+        if self._observe_infra:
+            layers.append(self.infra_criticality[None, :, :])
+        if len(layers) == 1:
+            return self.state.astype(np.float32)
+        return np.concatenate(layers, axis=0).astype(np.float32)
 
     # ------------------------------------------------------------------ reset
     def reset(
@@ -70,7 +105,8 @@ class WildfireEnv(gym.Env):
         self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self.agent_pos = [self.grid_size // 2, self.grid_size // 2]
         self.current_step = 0
-        return self.state.astype(np.float32), {}
+        self._cascade_ignited_total = 0
+        return self._obs(), {}
 
     # ------------------------------------------------------------------- step
     def _move(self, action: int) -> None:
@@ -90,18 +126,29 @@ class WildfireEnv(gym.Env):
         self.current_step += 1
         self._move(int(action))
 
+        fire_before = self.state[0].copy()
         dynamics.apply_suppression(self.state, [tuple(self.agent_pos)], self.cfg)
+        agent_removed = float((fire_before - self.state[0]).sum())
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
+        dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
+        # Cascading petroleum detonation (Phase 15B.1): burning assets ignite their blast radius.
+        self._cascade_ignited_total += dynamics.cascade_explosion(
+            self.state, self.infra_asset_type, self.cfg.infra, self.np_random
+        )
 
-        reward = self._reward()
+        reward = self._reward(agent_removed)
         total_fire = float(self.state[0].sum())
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
-        info = {"total_fire": total_fire, "step": self.current_step}
-        return self.state.astype(np.float32), reward, terminated, truncated, info
+        info = {
+            "total_fire": total_fire,
+            "step": self.current_step,
+            "cascade_ignited": self._cascade_ignited_total,
+        }
+        return self._obs(), reward, terminated, truncated, info
 
-    def _reward(self) -> float:
+    def _reward(self, agent_removed: float = 0.0) -> float:
         total_fire = float(self.state[0].sum())
         x, y = self.agent_pos
         bonus = (
@@ -109,9 +156,39 @@ class WildfireEnv(gym.Env):
             if self.state[0, x, y] < self.cfg.suppression_bonus_threshold
             else 0.0
         )
+        penalty = dynamics.asset_penalty(
+            self.criticality, self.state[0], self.cfg.criticality_weight
+        )
+        # Catastrophe penalty (Phase 15B.1): value-weighted cost of fire reaching infrastructure,
+        # so the agent defends high-value assets (refineries) rather than only minimizing burned area.
+        penalty += dynamics.catastrophe_penalty(
+            self.infra_asset_type,
+            self.state[0],
+            self.cfg.infra.asset_values,
+            self.cfg.infra.catastrophe_weight,
+        )
+        # Agent-attributable suppression credit: fire the agent actually removed this step,
+        # normalized by initial fire — a learnable signal tied to the agent's own actions.
+        supp = self.cfg.reward_agent_suppression_weight * agent_removed / self._initial_fire_total
+        prox = self._proximity_reward()
+        fw = self.cfg.reward_fire_weight
         if self.cfg.reward_mode == "normalized":
-            return float(-total_fire / self._initial_fire_total + bonus)
-        return float(-total_fire + bonus)
+            return float(
+                -fw * total_fire / self._initial_fire_total + bonus - penalty + supp + prox
+            )
+        return float(-fw * total_fire + bonus - penalty + supp + prox)
+
+    def _proximity_reward(self) -> float:
+        """Dense guidance: reward for being near the nearest burning cell (0 when disabled)."""
+        w = self.cfg.reward_proximity_weight
+        if w <= 0.0:
+            return 0.0
+        fire = np.argwhere(self.state[0] > self.cfg.spread_threshold)
+        if len(fire) == 0:
+            return 0.0
+        ax, ay = self.agent_pos
+        dmin = int((np.abs(fire[:, 0] - ax) + np.abs(fire[:, 1] - ay)).min())
+        return float(w * max(0.0, 1.0 - dmin / self.grid_size))
 
 
 def make_env_factory(

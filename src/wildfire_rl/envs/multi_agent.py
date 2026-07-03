@@ -48,27 +48,74 @@ class MultiAgentWildfireEnv(gym.Env):
         c, h, w = self.initial_tensor.shape
         self.grid_size = h
         self.action_space = spaces.MultiDiscrete([N_ACTIONS] * self.num_agents)
-        self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(c, h, w), dtype=np.float32)
+
+        # Critical-infrastructure layers (Phase 15B.1).
+        self.infra_asset_type, self.infra_criticality = dynamics.load_infrastructure(
+            self.cfg, self.grid_size
+        )
+        self._observe_infra = bool(
+            self.cfg.infra.observe_infra and self.infra_criticality is not None
+        )
+
+        self._obs_channels = (
+            c + (1 if self.cfg.include_agent_channel else 0) + (1 if self._observe_infra else 0)
+        )
+        self.observation_space = spaces.Box(
+            low=0.0, high=1.0, shape=(self._obs_channels, h, w), dtype=np.float32
+        )
 
         self.state = self.initial_tensor.copy()
         self.agent_positions: list[list[int]] = []
         self.current_step = 0
         self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
+        self.criticality = dynamics.load_criticality(self.cfg, self.grid_size)
+        self._cascade_ignited_total = 0
+
+    def _obs(self) -> np.ndarray:
+        """State tensor + optional agent-occupancy channel (Markov observation).
+
+        The occupancy channel marks every agent cell so the centralized policy can
+        observe where its agents are — the raw ``self.state`` does not encode this.
+        """
+        layers = [self.state]
+        if self.cfg.include_agent_channel:
+            occ = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
+            for x, y in self.agent_positions:
+                occ[0, x, y] += 1.0
+            np.clip(occ, 0.0, 1.0, out=occ)
+            layers.append(occ)
+        if self._observe_infra:
+            layers.append(self.infra_criticality[None, :, :])
+        if len(layers) == 1:
+            return self.state.astype(np.float32)
+        return np.concatenate(layers, axis=0).astype(np.float32)
 
     def _init_positions(self) -> None:
         # Spread agents deterministically around the grid center.
         center = self.grid_size // 2
         offsets = [
-            (0, 0), (-3, 0), (3, 0), (0, -3), (0, 3),
-            (-3, -3), (3, 3), (-3, 3), (3, -3),
-            (-6, 0), (6, 0), (0, -6), (0, 6)
+            (0, 0),
+            (-3, 0),
+            (3, 0),
+            (0, -3),
+            (0, 3),
+            (-3, -3),
+            (3, 3),
+            (-3, 3),
+            (3, -3),
+            (-6, 0),
+            (6, 0),
+            (0, -6),
+            (0, 6),
         ]
         self.agent_positions = []
         for i in range(self.num_agents):
             dx, dy = offsets[i % len(offsets)]
             self.agent_positions.append(
-                [min(max(center + dx, 0), self.grid_size - 1),
-                 min(max(center + dy, 0), self.grid_size - 1)]
+                [
+                    min(max(center + dx, 0), self.grid_size - 1),
+                    min(max(center + dy, 0), self.grid_size - 1),
+                ]
             )
 
     def reset(
@@ -82,7 +129,8 @@ class MultiAgentWildfireEnv(gym.Env):
         self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self._init_positions()
         self.current_step = 0
-        return self.state.astype(np.float32), {}
+        self._cascade_ignited_total = 0
+        return self._obs(), {}
 
     def _move(self, idx: int, action: int) -> None:
         x, y = self.agent_positions[idx]
@@ -102,11 +150,15 @@ class MultiAgentWildfireEnv(gym.Env):
         for i in range(self.num_agents):
             self._move(i, int(actions[i]))
 
-        dynamics.apply_suppression(
-            self.state, [tuple(p) for p in self.agent_positions], self.cfg
-        )
+        fire_before = self.state[0].copy()
+        dynamics.apply_suppression(self.state, [tuple(p) for p in self.agent_positions], self.cfg)
+        agent_removed = float((fire_before - self.state[0]).sum())
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
+        dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
+        self._cascade_ignited_total += dynamics.cascade_explosion(
+            self.state, self.infra_asset_type, self.cfg.infra, self.np_random
+        )
 
         total_fire = float(self.state[0].sum())
 
@@ -117,14 +169,32 @@ class MultiAgentWildfireEnv(gym.Env):
             if self.state[0, x, y] < self.cfg.extinguish_threshold:
                 bonus += self.cfg.suppression_bonus
 
+        # Asset-protection penalty (petroleum criticality) + catastrophe penalty (Phase 15B.1)
+        penalty = dynamics.asset_penalty(
+            self.criticality, self.state[0], self.cfg.criticality_weight
+        )
+        penalty += dynamics.catastrophe_penalty(
+            self.infra_asset_type,
+            self.state[0],
+            self.cfg.infra.asset_values,
+            self.cfg.infra.catastrophe_weight,
+        )
+
+        # Agent-attributable suppression credit (learnable signal tied to agent actions).
+        supp = self.cfg.reward_agent_suppression_weight * agent_removed / self._initial_fire_total
+        fw = self.cfg.reward_fire_weight
+
         # Reward mode parity with single-agent env
         if self.cfg.reward_mode == "normalized":
-            reward = float(-total_fire / self._initial_fire_total + bonus)
+            reward = float(-fw * total_fire / self._initial_fire_total + bonus - penalty + supp)
         else:
-            reward = float(-total_fire + bonus)
+            reward = float(-fw * total_fire + bonus - penalty + supp)
 
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
-        info = {"total_fire": total_fire, "num_agents": self.num_agents}
-        return self.state.astype(np.float32), reward, terminated, truncated, info
-
+        info = {
+            "total_fire": total_fire,
+            "num_agents": self.num_agents,
+            "cascade_ignited": self._cascade_ignited_total,
+        }
+        return self._obs(), reward, terminated, truncated, info

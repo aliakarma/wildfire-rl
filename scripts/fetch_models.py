@@ -35,8 +35,11 @@ def main() -> int:
 
     logger.info("Downloading %s@%s -> %s", args.repo, args.revision, dest)
     snapshot_download(
-        repo_id=args.repo, revision=args.revision, local_dir=str(dest),
-        local_dir_use_symlinks=False, allow_patterns=["*.zip", "*.json"],
+        repo_id=args.repo,
+        revision=args.revision,
+        local_dir=str(dest),
+        local_dir_use_symlinks=False,
+        allow_patterns=["*.zip", "*.json"],
     )
 
     if args.verify:

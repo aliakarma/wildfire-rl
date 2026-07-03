@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 
 from wildfire_rl import __version__
 from wildfire_rl.config import load_config, to_dict
@@ -28,7 +29,10 @@ logger = get_logger("wildfire_rl.cli")
 def _add_config_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--config", type=str, default=None, help="Path to a YAML config file.")
     p.add_argument(
-        "--set", dest="overrides", nargs="*", default=None,
+        "--set",
+        dest="overrides",
+        nargs="*",
+        default=None,
         help="Dotlist overrides, e.g. ppo.total_timesteps=1000 seed=1",
     )
 
@@ -69,12 +73,32 @@ def cmd_train(args) -> int:
 
     ensure_dir(models_dir())
     for seed in cfg.seeds:
+        run_id = f"train_{cfg.region.name}_seed_{seed}"
+        run_dir = ensure_dir(results_dir() / "runs" / run_id)
         save_path = models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}"
-        train_ppo(factory, cfg.ppo, seed=seed, save_path=save_path)
+
+        # TensorBoard is optional (only if installed); the CSV curve is always written.
+        tb_log = None
+        try:
+            import tensorboard  # noqa: F401
+
+            tb_log = str(results_dir() / "runs" / "tb" / run_id)
+        except ImportError:
+            pass
+
+        train_ppo(
+            factory,
+            cfg.ppo,
+            seed=seed,
+            save_path=save_path,
+            tensorboard_log=tb_log,
+            curve_path=run_dir / "curve.csv",
+        )
         write_run_metadata(
-            results_dir() / "runs" / f"train_{cfg.region.name}_seed_{seed}.json",
+            run_dir / "manifest.json",
             config_dict=to_dict(cfg),
             seed=seed,
+            artifacts={"state_tensor": tensor_path, "model": f"{save_path}.zip"},
         )
     return 0
 
@@ -89,7 +113,12 @@ def cmd_evaluate(args) -> int:
     import pandas as pd
 
     from wildfire_rl.envs.base import make_env_factory
-    from wildfire_rl.eval.baselines import NoOpPolicy, RandomPolicy
+    from wildfire_rl.eval.baselines import (
+        FrontierPolicy,
+        NearestFirePolicy,
+        NoOpPolicy,
+        RandomPolicy,
+    )
     from wildfire_rl.eval.evaluate import evaluate_policy
     from wildfire_rl.eval.significance import (
         confidence_interval_95,
@@ -106,19 +135,20 @@ def cmd_evaluate(args) -> int:
     sample_env = factory()
     all_results: dict[str, dict] = {}
 
-    # -- Baselines -----------------------------------------------------------
+    # -- Baselines (incl. heuristic routers — the effective method) ----------
+    gs = cfg.region.grid_size
     policies = {
         "random": RandomPolicy(sample_env.action_space, seed=cfg.seed),
         "noop": NoOpPolicy(sample_env.action_space),
+        "nearest_fire": NearestFirePolicy(sample_env.action_space, grid_size=gs, env=sample_env),
+        "frontier": FrontierPolicy(sample_env.action_space, grid_size=gs, env=sample_env),
     }
 
     from wildfire_rl.eval.loading import load_ppo_model
 
     # -- PPO models (auto-discover per-seed checkpoints) ---------------------
     for seed in cfg.seeds:
-        model_path = (
-            models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}.zip"
-        )
+        model_path = models_dir() / f"ppo_{cfg.region.name}_{cfg.region.grid_size}_seed_{seed}.zip"
         if model_path.exists():
             policies[f"ppo_seed_{seed}"] = load_ppo_model(model_path, sample_env)
             logger.info("Loaded PPO seed %d <- %s", seed, model_path)
@@ -131,8 +161,12 @@ def cmd_evaluate(args) -> int:
     # -- Run evaluations -----------------------------------------------------
     for name, policy in policies.items():
         res = evaluate_policy(
-            policy, factory, n_episodes=cfg.eval.n_episodes,
-            base_seed=cfg.eval.base_seed, deterministic=cfg.eval.deterministic,
+            policy,
+            factory,
+            n_episodes=cfg.eval.n_episodes,
+            base_seed=cfg.eval.base_seed,
+            deterministic=cfg.eval.deterministic,
+            scenario_seed_offset=cfg.eval.scenario_seed_offset,
             metrics_cfg=cfg.metrics,
         )
         all_results[name] = res
@@ -166,6 +200,7 @@ def cmd_evaluate(args) -> int:
             "fire_ci_lo": ci_fire[0],
             "fire_ci_hi": ci_fire[1],
             "n_episodes": len(rewards),
+            "reward_mode": cfg.env.reward_mode,
         }
 
         if name.startswith("ppo"):
@@ -190,7 +225,9 @@ def cmd_evaluate(args) -> int:
                         row["sig_vs_ppo"] = format_significance(test["p_value"])
                         logger.info(
                             "  PPO vs %s: p=%.6f, d=%.2f (%s)",
-                            baseline_name, test["p_value"], test["cohens_d"],
+                            baseline_name,
+                            test["p_value"],
+                            test["cohens_d"],
                             format_significance(test["p_value"]),
                         )
 
@@ -219,46 +256,60 @@ def cmd_evaluate(args) -> int:
 def cmd_transfer(args) -> int:
     from wildfire_rl.experiments.transfer_run import run_transfer
 
-    out = run_transfer(args.config, args.overrides, seed=args.seed)
+    out = run_transfer(
+        args.config, args.overrides, seed=args.seed, allow_missing=args.allow_missing
+    )
     logger.info("Transfer matrix written to %s", out)
     return 0
 
 
 def cmd_make_figures(args) -> int:
-    import pandas as pd
     import numpy as np
+    import pandas as pd
 
-    from wildfire_rl.paths import ensure_dir, figures_dir, results_dir, region_tensor_path
+    from wildfire_rl.paths import ensure_dir, figures_dir, region_tensor_path, results_dir
     from wildfire_rl.viz.figures import (
-        plot_baseline_comparison,
-        plot_transfer_heatmap,
         plot_ablation_bars,
-        plot_marl_scaling,
+        plot_baseline_comparison,
         plot_generalization_comparison,
+        plot_marl_scaling,
         plot_state_tensor_comparison,
+        plot_strategic_transfer,
+        plot_transfer_heatmap,
     )
 
     res, figs = results_dir(), ensure_dir(figures_dir())
 
-    # Transfer heatmap
+    # Transfer heatmap — prefer normalized, fall back to the raw-mode matrix
     transfer_csv = res / "transfer_matrix.csv"
+    if not transfer_csv.exists():
+        transfer_csv = res / "transfer_matrix_raw.csv"
     if transfer_csv.exists():
         df = pd.read_csv(transfer_csv)
-        plot_transfer_heatmap(df, "mean_reward", figs / "transfer_reward_heatmap.png",
-                              "Cross-region transfer (mean reward)")
+        plot_transfer_heatmap(
+            df,
+            "mean_reward",
+            figs / "transfer_reward_heatmap.png",
+            "Cross-region transfer (mean reward)",
+        )
         logger.info("Wrote %s", figs / "transfer_reward_heatmap.png")
     else:
         logger.warning("No %s yet — run `wildfire-rl transfer` first.", transfer_csv)
 
-    # Baseline comparison figures (per region)
+    # Baseline comparison figures (per region) — accept the exact name or a config-suffixed variant
+    # (e.g. eval_california_multiseed_california.csv), preferring the canonical name when present.
     for region in ["saudi", "california"]:
         eval_csv = res / f"eval_{region}.csv"
+        if not eval_csv.exists():
+            variants = sorted(res.glob(f"eval_{region}*.csv"))
+            eval_csv = variants[0] if variants else eval_csv
         if eval_csv.exists():
             plot_baseline_comparison(
-                eval_csv, figs / f"baseline_comparison_{region}.png",
+                eval_csv,
+                figs / f"baseline_comparison_{region}.png",
                 title=f"Policy Comparison — {region.title()}",
             )
-            logger.info("Wrote baseline_comparison_%s.png", region)
+            logger.info("Wrote baseline_comparison_%s.png (<- %s)", region, eval_csv.name)
 
     # Ablation bars
     ablation_csv = res / "ablation_results.csv"
@@ -271,6 +322,13 @@ def cmd_make_figures(args) -> int:
     if marl_csv.exists():
         plot_marl_scaling(marl_csv, figs / "marl_scaling.png")
         logger.info("Wrote marl_scaling.png")
+
+    # Infrastructure-aware transfer (Phase 15B.4): strategic-metric heatmaps
+    hybrid_csv = res / "transfer_hybrid.csv"
+    if hybrid_csv.exists():
+        for metric in ("isr", "cps", "rac"):
+            if plot_strategic_transfer(hybrid_csv, metric, figs / f"transfer_hybrid_{metric}.png"):
+                logger.info("Wrote transfer_hybrid_%s.png", metric)
 
     # State tensor comparison
     saudi_tensor_path = region_tensor_path("saudi_eastern_province", 32)
@@ -317,6 +375,11 @@ def main(argv: list[str] | None = None) -> int:
     p_tf = sub.add_parser("transfer", help="Compute the full cross-region transfer matrix.")
     _add_config_args(p_tf)
     p_tf.add_argument("--seed", type=int, default=0, help="Which trained seed to load per region.")
+    p_tf.add_argument(
+        "--allow-missing",
+        action="store_true",
+        help="Dev dry-run: substitute RandomPolicy for missing models (NOT for reported results).",
+    )
     p_tf.set_defaults(func=cmd_transfer)
 
     p_fig = sub.add_parser("make-figures", help="Regenerate paper figures from results.")

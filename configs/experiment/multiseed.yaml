@@ -10,8 +10,21 @@ region:
 
 env:
   max_steps: 200
-  reward_mode: raw
-  randomize_ignition: false
+  reward_mode: normalized                  # Phase 16: balanced terms for the suppression signal
+  suppression_bonus: 0.0                   # Phase 16: drop the legacy "stand on empty cell" bonus
+  reward_agent_suppression_weight: 20.0    # Phase 16: credit fire the agent actually removes
+  reward_proximity_weight: 20.0            # Phase 16: dense guidance toward the nearest fire (dominant)
+  reward_fire_weight: 0.2                   # Phase 16: down-weight uncontrollable fire term (anti-collapse)
+  # Randomized ignition each reset => training samples a scenario distribution and
+  # evaluation (offset seeds) samples a disjoint held-out set. No train/test leakage.
+  randomize_ignition: true
+  n_ignition_points: 6
+  ignition_intensity: 1.0
+  # Saudi desert domain model (Phase 15; spread_scale calibrated Phase 9) — mirrors region/saudi.yaml.
+  spread_scale: 0.7
+  ignition_rate: 0.05
+  criticality_weight: 2.0
+  criticality_path: data/saudi_eastern_province/grids/32x32/criticality.npy
 
 ppo:
   total_timesteps: 100000
@@ -19,8 +32,9 @@ ppo:
   cnn_pooling: true
 
 eval:
-  n_episodes: 20
+  n_episodes: 50
   base_seed: 0
+  scenario_seed_offset: 100000
 
 metrics:
   burned_threshold: 0.5

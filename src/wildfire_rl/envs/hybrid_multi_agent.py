@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
@@ -53,12 +53,13 @@ class HybridMultiAgentWildfireEnv(MultiAgentWildfireEnvV3):
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[np.ndarray, dict[str, Any]]:
         obs, info = super().reset(seed=seed, options=options)
-        
+
         # Check for Phase 5 robustness testing options
         if options and options.get("robustness_testing", False):
             from wildfire_rl.envs.randomized_fire_configs import randomize_env_robustness
+
             randomize_env_robustness(self, self.np_random)
-            obs = self.state.astype(np.float32)
+            obs = self._obs()
             self._initial_fire_total = float(self.state[0].sum()) or 1.0
 
         self._target_coordinates = [tuple(pos) for pos in self.agent_positions]
@@ -104,14 +105,11 @@ class HybridMultiAgentWildfireEnv(MultiAgentWildfireEnvV3):
         for cell in step_positions:
             self._visited_cells.add(cell)
 
-        # 3. Apply suppression and environment dynamics
-        fire_before = self.state[0].copy()
-        dynamics = super().step  # Retrieve step implementation from MultiAgentWildfireEnvV3
-        
+        # 3. Apply suppression and environment dynamics (movement already executed above).
         # We temporarily stub _move in step execution since we handled movement ourselves
         original_move = self._move
         self._move = lambda idx, act: None  # No-op since movement is already executed
-        
+
         try:
             obs, reward, terminated, truncated, info = super().step(step_actions)
         finally:

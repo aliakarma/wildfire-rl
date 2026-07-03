@@ -61,7 +61,9 @@ def download_gee(region: str, source: str) -> None:
         return
     out = ensure_dir(data_dir() / region / "raw" / source)
     logger.info("%s via Earth Engine (project=%s) -> %s", source.upper(), project, out)
-    logger.info("Install geo extras: import ee; ee.Initialize(project=os.environ['EE_PROJECT_ID']).")
+    logger.info(
+        "Install geo extras: import ee; ee.Initialize(project=os.environ['EE_PROJECT_ID'])."
+    )
 
 
 def main() -> int:
@@ -78,7 +80,9 @@ def main() -> int:
             download_firms(args.region)
         else:
             download_gee(args.region, src)
-    logger.info("Done. Then run: python scripts/build_tensors.py --region %s --grid 32", args.region)
+    logger.info(
+        "Done. Then run: python scripts/build_tensors.py --region %s --grid 32", args.region
+    )
     return 0
 
 

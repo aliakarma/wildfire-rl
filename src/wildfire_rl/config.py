@@ -81,6 +81,56 @@ class RewardV3Config:
 
 
 @dataclass
+class InfraConfig:
+    """Critical / petroleum-infrastructure modeling (Phase 15B.1).
+
+    Assets are high-value cells whose loss is *catastrophic* and can *cascade* (explode) to nearby
+    cells. Rasters live under ``infra_dir`` (``asset_type.npy``, ``criticality.npy``,
+    ``blast_radius.npy``) and are built by ``scripts/build_infrastructure.py``. Every default is a
+    no-op, so non-infrastructure regions and existing tests are unaffected.
+    """
+
+    infra_dir: str | None = None  # dir with asset_type/criticality/blast_radius .npy
+    observe_infra: bool = False  # add a normalized infrastructure-criticality observation channel
+    catastrophe_weight: float = 0.0  # reward penalty scale for fire on an asset (× asset value)
+    cascade_prob: float = 0.0  # per-neighbor ignition prob when an asset cell burns
+    blast_radius: int = 2  # cascade radius in cells (fallback when no per-cell raster)
+    # asset_type code -> economic value: 1=refinery, 2=pipeline, 3=storage, 4=industrial
+    asset_values: dict[int, float] = field(
+        default_factory=lambda: {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0}
+    )
+
+
+@dataclass
+class AblationConfig:
+    """Single-factor ablation toggles (Phase 15B.8). Each maps to one env/controller knob so a cell
+    flips exactly one factor from the full proposed system (all True/on = the proposed system)."""
+
+    controller: str = "hybrid"  # {hybrid, heuristic, ppo(negative baseline)}
+    low_level: str = "frontier"  # nearest_fire | frontier
+    infra_weighting: bool = True  # catastrophe penalty on/off
+    cascade: bool = True  # cascading detonation on/off
+    prioritization: bool = True  # risk_aware (True) vs uniform greedy (False)
+    coordination: bool = True  # sector deconfliction (True) vs pile-on (False)
+    infra_channel: bool = True  # infrastructure observation channel (RL only)
+
+
+@dataclass
+class HierarchyConfig:
+    """Two-level (hybrid) controller config (Phase 15B.2).
+
+    A strategic high level dispatches agents to sectors/assets; a robust heuristic low level routes
+    each agent toward its target and suppresses. The high level is the small, learnable problem;
+    the low level is the trusted operational controller (the honest negative result motivates this).
+    """
+
+    high_level: str = "greedy_risk"  # {greedy_risk, risk_aware, rl}
+    low_level: str = "nearest_fire"  # {nearest_fire, frontier}
+    num_sectors: int = 4
+    infra_risk_weight: float = 5.0  # risk_aware: extra weight on fire threatening high-value assets
+
+
+@dataclass
 class EnvConfig:
     """Wildfire environment dynamics. Every magic number from the notebooks lives here."""
 
@@ -108,6 +158,22 @@ class EnvConfig:
     suppression_bonus: float = 2.0
     suppression_bonus_threshold: float = 0.1
 
+    # --- observation ---
+    # Encodes agent position(s) into the observation so the MDP is Markov.
+    # The stored `state` tensor stays 7-channel; this only affects what the policy sees.
+    include_agent_channel: bool = True
+
+    # --- region realism / asset protection (Phase 15) ---
+    # spread_scale<1  => sparse desert fuel spreads less (multiplies spread probability).
+    # ignition_rate>0 => per-step probability of a new stochastic ignition (more frequent,
+    #                    more random fires).
+    # criticality_*   => asset-value penalty (e.g. petroleum sites): fire on high-value cells
+    #                    costs `criticality_weight * sum(criticality * fire)`.
+    spread_scale: float = 1.0
+    ignition_rate: float = 0.0
+    criticality_weight: float = 0.0
+    criticality_path: str | None = None
+
     # --- termination ---
     termination_fire_threshold: float = 0.1
 
@@ -116,11 +182,28 @@ class EnvConfig:
     # "normalized": reward divided by initial total fire (comparable across regions)
     reward_mode: str = "raw"
 
+    # Agent-attributable suppression credit (Phase 16): adds `w * (fire the agent removed this
+    # step) / initial_fire` to the reward. 0 = off (default); >0 gives PPO a learnable gradient
+    # tied to its own actions (fixes the "one agent barely dents -Σfire" collapse).
+    reward_agent_suppression_weight: float = 0.0
+
+    # Dense navigation guidance (Phase 16): rewards proximity to the nearest burning cell so PPO
+    # gets a gradient toward the fire *before* it arrives (fixes sparse-reward exploration). 0 = off.
+    reward_proximity_weight: float = 0.0
+
+    # Weight on the (largely uncontrollable) total-fire penalty. Lowering it (<1) lets the
+    # agent-controllable proximity/suppression terms dominate the gradient, preventing the policy
+    # collapse caused by high-variance uncontrollable reward (Phase 16).
+    reward_fire_weight: float = 1.0
+
     # --- V2 reward shaping (multi-component) ---
     reward_v2: RewardV2Config = field(default_factory=RewardV2Config)
 
     # --- V3 reward shaping (leakage-free coordination) ---
     reward_v3: RewardV3Config = field(default_factory=RewardV3Config)
+
+    # --- critical / petroleum infrastructure (Phase 15B.1) ---
+    infra: InfraConfig = field(default_factory=InfraConfig)
 
     # --- Routing strategy for hybrid environment ---
     # "nearest_fire" | "frontier"
@@ -140,7 +223,6 @@ class EnvConfig:
 
     # --- Phase 6 dynamic fire scenarios toggles ---
     dynamic_scenarios: dict[str, Any] = field(default_factory=dict)
-
 
 
 @dataclass
@@ -186,6 +268,10 @@ class EvalConfig:
     n_episodes: int = 20
     deterministic: bool = True
     base_seed: int = 0
+    # Added to every eval reset seed so evaluation ignition maps are disjoint from the
+    # training reset seeds (which use the small `seeds` integers). Prevents train/test leakage
+    # when `env.randomize_ignition` is enabled.
+    scenario_seed_offset: int = 100_000
 
 
 @dataclass

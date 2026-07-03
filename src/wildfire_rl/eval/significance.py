@@ -11,10 +11,10 @@ from __future__ import annotations
 import numpy as np
 from scipy import stats
 
-
 # ---------------------------------------------------------------------------
 # Confidence intervals
 # ---------------------------------------------------------------------------
+
 
 def confidence_interval_95(values: list[float] | np.ndarray) -> tuple[float, float]:
     """Return 95% CI ``(lower, upper)`` using the *t*-distribution.
@@ -32,9 +32,30 @@ def confidence_interval_95(values: list[float] | np.ndarray) -> tuple[float, flo
     return (m - h, m + h)
 
 
+def bootstrap_ci(
+    values: list[float] | np.ndarray,
+    n_boot: int = 10000,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> tuple[float, float]:
+    """Distribution-free bootstrap CI of the mean (percentile method).
+
+    Preferred over the *t*-based CI for small *n* (e.g. 5 seeds). For *n* < 2 the mean is
+    returned as both bounds. Seeded for reproducibility.
+    """
+    a = np.asarray(values, dtype=float)
+    if len(a) < 2:
+        m = float(a.mean())
+        return (m, m)
+    rng = np.random.default_rng(seed)
+    boot = rng.choice(a, size=(n_boot, len(a)), replace=True).mean(axis=1)
+    return (float(np.quantile(boot, alpha / 2)), float(np.quantile(boot, 1 - alpha / 2)))
+
+
 # ---------------------------------------------------------------------------
 # Effect size
 # ---------------------------------------------------------------------------
+
 
 def cohens_d(group1: np.ndarray, group2: np.ndarray) -> float:
     """Cohen's *d* effect size with pooled standard deviation.
@@ -46,13 +67,17 @@ def cohens_d(group1: np.ndarray, group2: np.ndarray) -> float:
     var1, var2 = g1.var(ddof=1), g2.var(ddof=1)
     pooled_std = np.sqrt(((n1 - 1) * var1 + (n2 - 1) * var2) / (n1 + n2 - 2))
     if pooled_std < 1e-12:
-        return 0.0
+        # Degenerate (zero within-group variance): the effect size is undefined when the
+        # means differ — NOT zero. Returning 0.0 previously mislabeled huge deterministic
+        # differences as "no effect" (audit finding on the ablation table).
+        return float("nan") if abs(g1.mean() - g2.mean()) > 1e-12 else 0.0
     return float((g1.mean() - g2.mean()) / pooled_std)
 
 
 # ---------------------------------------------------------------------------
 # Hypothesis tests
 # ---------------------------------------------------------------------------
+
 
 def welch_ttest(group1: np.ndarray, group2: np.ndarray) -> dict[str, float]:
     """Welch's *t*-test (unequal variance, independent samples).
@@ -110,6 +135,7 @@ def wilcoxon_test(values1: np.ndarray, values2: np.ndarray) -> dict[str, float]:
 # ---------------------------------------------------------------------------
 # Formatting helpers (for paper tables)
 # ---------------------------------------------------------------------------
+
 
 def format_ci(values: list[float] | np.ndarray, fmt: str = ".2f") -> str:
     """Format as ``'mean [CI_lo, CI_hi]'``."""

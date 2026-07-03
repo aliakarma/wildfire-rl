@@ -22,7 +22,7 @@ help:
 	@echo "  ablation / marl - ablation study / MARL scaling"
 	@echo "  figures        - regenerate figures from results"
 	@echo "  manifest       - write sha256 manifests for data/ and models/"
-	@echo "  reproduce      - test -> train -> evaluate -> transfer -> figures"
+	@echo "  reproduce      - full pipeline: test, train(both regions), evaluate, marl, ablation, transfer, figures, seed-check"
 	@echo "  check-size     - fail if staged files exceed 50 MB (git safety)"
 
 install:
@@ -71,7 +71,16 @@ figures:
 	$(PYTHON) scripts/make_figures.py
 
 manifest:
+	$(PYTHON) scripts/validate_tensors.py
 	$(PYTHON) scripts/make_manifest.py
+
+ablations:
+	$(PYTHON) scripts/run_ablations.py --group all --render-figures
+	$(PYTHON) scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+
+strategic-figures:
+	$(PYTHON) scripts/run_transfer_hybrid.py
+	$(PYTHON) scripts/render_strategic.py
 
 strip-notebooks:
 	$(PYTHON) scripts/strip_notebooks.py notebooks
@@ -79,7 +88,19 @@ strip-notebooks:
 check-size:
 	$(PYTHON) scripts/check_repo_size.py --max-mb 50
 
-reproduce: test train evaluate transfer figures
+reproduce: test
+	$(PYTHON) scripts/train.py --config configs/experiment/multiseed.yaml
+	$(PYTHON) scripts/train.py --config configs/experiment/multiseed_california.yaml
+	$(PYTHON) scripts/evaluate.py --config configs/experiment/multiseed.yaml
+	$(PYTHON) scripts/evaluate.py --config configs/experiment/multiseed_california.yaml
+	$(PYTHON) scripts/run_marl_evaluation.py --timesteps 100000
+	$(PYTHON) scripts/run_ablation.py --config configs/experiment/ablation.yaml
+	$(PYTHON) scripts/transfer.py --config configs/experiment/transfer.yaml
+	$(PYTHON) scripts/make_figures.py
+	$(PYTHON) scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+	$(PYTHON) scripts/validate_tensors.py
+	$(PYTHON) scripts/check_seed_integrity.py
+	$(PYTHON) scripts/validate_learning_gate.py
 	@echo "Reproduction pipeline complete. See results/ and figures/."
 
 clean:

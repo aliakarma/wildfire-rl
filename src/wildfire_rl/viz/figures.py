@@ -96,8 +96,16 @@ def plot_baseline_comparison(eval_csv: str | Path, out_path: str | Path, title: 
     rand_mean = rand_row["reward_mean"].values[0] if not rand_row.empty else 0.0
     noop_mean = noop_row["reward_mean"].values[0] if not noop_row.empty else 0.0
 
-    rand_err = (rand_row["reward_ci_hi"].values[0] - rand_row["reward_ci_lo"].values[0]) / 2 if not rand_row.empty else 0.0
-    noop_err = (noop_row["reward_ci_hi"].values[0] - noop_row["reward_ci_lo"].values[0]) / 2 if not noop_row.empty else 0.0
+    rand_err = (
+        (rand_row["reward_ci_hi"].values[0] - rand_row["reward_ci_lo"].values[0]) / 2
+        if not rand_row.empty
+        else 0.0
+    )
+    noop_err = (
+        (noop_row["reward_ci_hi"].values[0] - noop_row["reward_ci_lo"].values[0]) / 2
+        if not noop_row.empty
+        else 0.0
+    )
 
     policies = ["PPO (Ours)", "Random", "No-Action"]
     means = [ppo_mean, rand_mean, noop_mean]
@@ -120,7 +128,9 @@ def plot_baseline_comparison(eval_csv: str | Path, out_path: str | Path, title: 
                 val = means[idx + 1]
                 offset = abs(val) * 0.05
                 y_pos = val + offset if val > 0 else val - offset
-                ax.text(idx + 1, y_pos, sig, ha="center", va="bottom", fontsize=12, fontweight="bold")
+                ax.text(
+                    idx + 1, y_pos, sig, ha="center", va="bottom", fontsize=12, fontweight="bold"
+                )
 
     path = _save(fig, out_path)
     plt.close(fig)
@@ -148,7 +158,9 @@ def plot_ablation_bars(ablation_csv: str | Path, out_path: str | Path):
     colors = ["#2ca02c" if x == "baseline" else "#d62728" for x in df["experiment"]]
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.bar(labels, df["fire_mean"], yerr=yerr, capsize=5, color=colors, edgecolor="black", alpha=0.85)
+    ax.bar(
+        labels, df["fire_mean"], yerr=yerr, capsize=5, color=colors, edgecolor="black", alpha=0.85
+    )
 
     ax.set_ylabel("Mean Fire Intensity")
     ax.set_title("Ablation Study: Impact of Dynamics Components")
@@ -169,20 +181,59 @@ def plot_ablation_bars(ablation_csv: str | Path, out_path: str | Path):
     return path
 
 
+def plot_strategic_transfer(transfer_hybrid_csv: str | Path, metric: str, out_path: str | Path):
+    """Heatmap of a strategic metric (rows=policy_family, cols=region) — Phase 15B.4.
+
+    Reads ``results/transfer_hybrid.csv`` (``<metric>_mean`` columns). Higher is better for
+    ISR/CPS/RAC; annotate each cell with its value.
+    """
+    import matplotlib.pyplot as plt
+
+    df = pd.read_csv(transfer_hybrid_csv)
+    col = f"{metric}_mean"
+    if col not in df.columns:
+        return None
+    pivot = df.pivot(index="policy_family", columns="region", values=col)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    im = ax.imshow(pivot.values, aspect="auto", cmap="viridis")
+    ax.set_xticks(range(len(pivot.columns)), pivot.columns)
+    ax.set_yticks(range(len(pivot.index)), pivot.index)
+    ax.set_xlabel("Region")
+    ax.set_title(f"Infrastructure-aware transfer: {metric.upper()}")
+    for i in range(pivot.shape[0]):
+        for j in range(pivot.shape[1]):
+            ax.text(j, i, f"{pivot.values[i, j]:.3f}", ha="center", va="center", color="w")
+    fig.colorbar(im, ax=ax)
+    path = _save(fig, out_path)
+    plt.close(fig)
+    return path
+
+
 def plot_marl_scaling(marl_csv: str | Path, out_path: str | Path):
-    """Line plot: fire intensity vs number of agents with CI bands."""
+    """Line plot: fire intensity vs number of agents, per region, with CI bands when present.
+
+    Tolerant of the ``run_marl_evaluation`` schema (``fire_intensity_mean``, one row per
+    region × team-size) and the older ``fire_mean``/``fire_ci_*`` schema.
+    """
     import matplotlib.pyplot as plt
 
     df = pd.read_csv(marl_csv)
+    fire_col = "fire_mean" if "fire_mean" in df.columns else "fire_intensity_mean"
+    has_ci = {"fire_ci_lo", "fire_ci_hi"}.issubset(df.columns)
     fig, ax = plt.subplots(figsize=(7, 5))
 
-    ax.plot(df["num_agents"], df["fire_mean"], marker="o", linewidth=2, color="#1f77b4", label="Mean Fire Intensity")
-    ax.fill_between(df["num_agents"], df["fire_ci_lo"], df["fire_ci_hi"], color="#1f77b4", alpha=0.2, label="95% CI")
+    regions = list(df["region"].unique()) if "region" in df.columns else [None]
+    for reg in regions:
+        sub = (df if reg is None else df[df["region"] == reg]).sort_values("num_agents")
+        label = str(reg) if reg is not None else "Mean Fire Intensity"
+        ax.plot(sub["num_agents"], sub[fire_col], marker="o", linewidth=2, label=label)
+        if has_ci:
+            ax.fill_between(sub["num_agents"], sub["fire_ci_lo"], sub["fire_ci_hi"], alpha=0.2)
 
     ax.set_xlabel("Number of Agents")
     ax.set_ylabel("Mean Fire Intensity")
     ax.set_title("MARL Cooperative Scaling")
-    ax.set_xticks(df["num_agents"])
+    ax.set_xticks(sorted(df["num_agents"].unique()))
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend()
 
@@ -191,7 +242,9 @@ def plot_marl_scaling(marl_csv: str | Path, out_path: str | Path):
     return path
 
 
-def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path, out_path: str | Path):
+def plot_generalization_comparison(
+    fixed_csv: str | Path, random_csv: str | Path, out_path: str | Path
+):
     """Side-by-side comparison: fixed ignition vs randomized ignition performance."""
     import matplotlib.pyplot as plt
 
@@ -211,7 +264,16 @@ def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path
     yerrs = [ppo_fixed_err, ppo_rand_err]
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    ax.bar(categories, means, yerr=yerrs, capsize=5, color=["#2ca02c", "#9467bd"], edgecolor="black", alpha=0.85, width=0.5)
+    ax.bar(
+        categories,
+        means,
+        yerr=yerrs,
+        capsize=5,
+        color=["#2ca02c", "#9467bd"],
+        edgecolor="black",
+        alpha=0.85,
+        width=0.5,
+    )
 
     ax.set_ylabel("Mean Episode Reward")
     ax.set_title("Domain Generalization Analysis")
@@ -222,7 +284,9 @@ def plot_generalization_comparison(fixed_csv: str | Path, random_csv: str | Path
     return path
 
 
-def plot_state_tensor_comparison(saudi_tensor: np.ndarray, ca_tensor: np.ndarray, out_path: str | Path):
+def plot_state_tensor_comparison(
+    saudi_tensor: np.ndarray, ca_tensor: np.ndarray, out_path: str | Path
+):
     """Side-by-side 7-channel comparison of both regions (shows ecological difference)."""
     import matplotlib.pyplot as plt
 

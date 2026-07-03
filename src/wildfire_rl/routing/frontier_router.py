@@ -48,7 +48,7 @@ def get_frontier_target(
     row_slice, col_slice = get_sector_bounds(sector_idx, grid_size)
     sector_mask = np.zeros_like(frontier_mask, dtype=bool)
     sector_mask[row_slice, col_slice] = True
-    
+
     sector_frontier = np.argwhere(frontier_mask & sector_mask)
 
     # Fall back to global frontier search if target sector has no frontier cells
@@ -57,6 +57,6 @@ def get_frontier_target(
     # Find closest target using Manhattan distance
     dists = np.abs(targets[:, 0] - ax) + np.abs(targets[:, 1] - ay)
     closest_idx = np.argmin(dists)
-    
+
     tx, ty = targets[closest_idx]
     return int(tx), int(ty)

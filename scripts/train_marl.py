@@ -59,7 +59,9 @@ def main() -> int:
 
         for seed in cfg.seeds:
             factory = partial(_factory, tensor, cfg.env, n_agents)
-            logger.info("MARL: %d agents, seed=%d (budget=%d)", n_agents, seed, cfg.ppo.total_timesteps)
+            logger.info(
+                "MARL: %d agents, seed=%d (budget=%d)", n_agents, seed, cfg.ppo.total_timesteps
+            )
             save_path = models_dir() / f"ppo_marl_{cfg.region.name}_{n_agents}agents_seed_{seed}"
             model = train_ppo(factory, cfg.ppo, seed=seed, save_path=save_path)
             res = evaluate_policy(
@@ -104,8 +106,10 @@ def main() -> int:
             row["sig_vs_1agent"] = format_significance(test["p_value"])
             logger.info(
                 "  %d agents vs %d agent: p=%.4f, d=%.2f (%s)",
-                n_agents, cfg.marl.agent_counts[0],
-                test["p_value"], test["cohens_d"],
+                n_agents,
+                cfg.marl.agent_counts[0],
+                test["p_value"],
+                test["cohens_d"],
                 format_significance(test["p_value"]),
             )
 

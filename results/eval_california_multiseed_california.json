@@ -1,799 +1,2845 @@
 {
   "random": {
     "summary": {
-      "episode_reward_mean": -36266.49972105026,
-      "episode_reward_std": 1651.7103313529826,
-      "burned_cells_mean": 245.95,
-      "burned_cells_std": 15.982725049252396,
-      "fire_intensity_mean": 335.5903823852539,
-      "fire_intensity_std": 9.40834427926874,
-      "n_episodes": 20,
+      "episode_reward_mean": -5938.582720841343,
+      "episode_reward_std": 1889.4697649549214,
+      "burned_cells_mean": 162.86,
+      "burned_cells_std": 48.80287286625655,
+      "fire_intensity_mean": 217.8395211791992,
+      "fire_intensity_std": 56.728469429020535,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -36664.105363845825,
-        "burned_cells": 232,
-        "fire_intensity": 339.97711181640625
+        "episode_reward": -4191.873850738009,
+        "burned_cells": 124,
+        "fire_intensity": 165.5301971435547,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -34237.45345401764,
-        "burned_cells": 271,
-        "fire_intensity": 345.5397033691406
+        "episode_reward": -6628.377103274068,
+        "burned_cells": 202,
+        "fire_intensity": 250.07933044433594,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35493.214935302734,
-        "burned_cells": 253,
-        "fire_intensity": 330.7530517578125
+        "episode_reward": -6255.39901632443,
+        "burned_cells": 156,
+        "fire_intensity": 228.98281860351562,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -33659.84161186218,
-        "burned_cells": 216,
-        "fire_intensity": 321.3891906738281
+        "episode_reward": -6070.460042968393,
+        "burned_cells": 143,
+        "fire_intensity": 230.59547424316406,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36261.19227313995,
-        "burned_cells": 232,
-        "fire_intensity": 325.06817626953125
+        "episode_reward": -5419.439390704036,
+        "burned_cells": 175,
+        "fire_intensity": 229.37188720703125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -33879.69229507446,
-        "burned_cells": 247,
-        "fire_intensity": 339.58740234375
+        "episode_reward": -4090.189628317952,
+        "burned_cells": 132,
+        "fire_intensity": 189.49688720703125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36467.78978347778,
-        "burned_cells": 258,
-        "fire_intensity": 332.35418701171875
+        "episode_reward": -9896.635285286853,
+        "burned_cells": 257,
+        "fire_intensity": 303.7277526855469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37900.542947769165,
-        "burned_cells": 248,
-        "fire_intensity": 337.9730529785156
+        "episode_reward": -2345.537993809829,
+        "burned_cells": 53,
+        "fire_intensity": 102.02250671386719,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35504.65609455109,
+        "episode_reward": -6294.309924542904,
+        "burned_cells": 171,
+        "fire_intensity": 229.32748413085938,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7851.094974101832,
+        "burned_cells": 202,
+        "fire_intensity": 256.1105041503906,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4981.373296737671,
+        "burned_cells": 125,
+        "fire_intensity": 176.4815673828125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6061.108280307303,
+        "burned_cells": 161,
+        "fire_intensity": 200.2281036376953,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4699.344744049013,
+        "burned_cells": 108,
+        "fire_intensity": 174.63565063476562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7188.3318834727015,
+        "burned_cells": 191,
+        "fire_intensity": 245.7752685546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5214.141398951412,
+        "burned_cells": 154,
+        "fire_intensity": 206.8830108642578,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7339.73577638964,
+        "burned_cells": 193,
+        "fire_intensity": 250.47227478027344,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4440.070761130502,
+        "burned_cells": 115,
+        "fire_intensity": 174.29869079589844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4466.595179998627,
+        "burned_cells": 113,
+        "fire_intensity": 188.94668579101562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8171.73415612181,
+        "burned_cells": 223,
+        "fire_intensity": 298.6341552734375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6664.3531099495785,
+        "burned_cells": 169,
+        "fire_intensity": 215.09458923339844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4676.6764703715835,
+        "burned_cells": 126,
+        "fire_intensity": 174.95823669433594,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8169.109512191266,
+        "burned_cells": 231,
+        "fire_intensity": 295.94134521484375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5997.710044211397,
+        "burned_cells": 180,
+        "fire_intensity": 258.6603698730469,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3216.4731268088026,
+        "burned_cells": 105,
+        "fire_intensity": 121.33180236816406,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8273.654673907906,
+        "burned_cells": 212,
+        "fire_intensity": 283.5713195800781,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2774.115880228579,
+        "burned_cells": 99,
+        "fire_intensity": 131.52085876464844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6376.685193512589,
+        "burned_cells": 165,
+        "fire_intensity": 217.29571533203125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6613.874305579811,
+        "burned_cells": 204,
+        "fire_intensity": 244.6701202392578,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8320.394756643722,
+        "burned_cells": 217,
+        "fire_intensity": 270.8295593261719,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5794.4043119127555,
+        "burned_cells": 171,
+        "fire_intensity": 223.70181274414062,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8461.971221625805,
         "burned_cells": 228,
-        "fire_intensity": 321.0473327636719
+        "fire_intensity": 294.09271240234375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36479.35341358185,
-        "burned_cells": 229,
-        "fire_intensity": 326.9241943359375
+        "episode_reward": -8104.372140528013,
+        "burned_cells": 214,
+        "fire_intensity": 285.3857116699219,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36245.688829422,
-        "burned_cells": 244,
-        "fire_intensity": 343.5133056640625
+        "episode_reward": -8516.922034899393,
+        "burned_cells": 203,
+        "fire_intensity": 282.6720886230469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -33739.69577503204,
-        "burned_cells": 233,
-        "fire_intensity": 328.0495300292969
+        "episode_reward": -7611.462776840975,
+        "burned_cells": 197,
+        "fire_intensity": 269.9899597167969,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38142.32988739014,
-        "burned_cells": 269,
-        "fire_intensity": 345.96307373046875
+        "episode_reward": -3986.769035432488,
+        "burned_cells": 108,
+        "fire_intensity": 169.11717224121094,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37420.94412899017,
-        "burned_cells": 243,
-        "fire_intensity": 329.4441833496094
+        "episode_reward": -5087.400947585702,
+        "burned_cells": 134,
+        "fire_intensity": 188.1688232421875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35250.111189842224,
-        "burned_cells": 259,
-        "fire_intensity": 345.57586669921875
+        "episode_reward": -5809.110290233046,
+        "burned_cells": 164,
+        "fire_intensity": 207.28079223632812,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38160.866393089294,
-        "burned_cells": 256,
-        "fire_intensity": 336.19537353515625
+        "episode_reward": -6543.542024622361,
+        "burned_cells": 221,
+        "fire_intensity": 275.82794189453125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35032.695353507996,
-        "burned_cells": 227,
-        "fire_intensity": 328.6123352050781
+        "episode_reward": -7973.610112419973,
+        "burned_cells": 221,
+        "fire_intensity": 283.9707336425781,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38118.77695655823,
-        "burned_cells": 278,
-        "fire_intensity": 354.0222473144531
+        "episode_reward": -2844.0792973451316,
+        "burned_cells": 94,
+        "fire_intensity": 126.16532897949219,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39833.645380973816,
-        "burned_cells": 250,
-        "fire_intensity": 350.0771179199219
+        "episode_reward": -7852.422888718545,
+        "burned_cells": 223,
+        "fire_intensity": 289.1681213378906,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36837.39835357666,
-        "burned_cells": 246,
-        "fire_intensity": 329.7412109375
+        "episode_reward": -8828.392992718766,
+        "burned_cells": 238,
+        "fire_intensity": 308.76239013671875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4473.455588181813,
+        "burned_cells": 146,
+        "fire_intensity": 190.59857177734375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -1599.6370658924181,
+        "burned_cells": 51,
+        "fire_intensity": 80.72837829589844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5354.622791806857,
+        "burned_cells": 140,
+        "fire_intensity": 167.11444091796875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3276.7980378468833,
+        "burned_cells": 93,
+        "fire_intensity": 130.1263885498047,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3482.7402101171515,
+        "burned_cells": 100,
+        "fire_intensity": 162.6949920654297,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6530.2765048742285,
+        "burned_cells": 168,
+        "fire_intensity": 216.3570098876953,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5496.440768917402,
+        "burned_cells": 156,
+        "fire_intensity": 189.10174560546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6611.905238915235,
+        "burned_cells": 167,
+        "fire_intensity": 235.47677612304688,
+        "containment_rate": 0.0
       }
     ]
   },
   "noop": {
     "summary": {
-      "episode_reward_mean": -38896.9157617569,
-      "episode_reward_std": 1472.297086502123,
-      "burned_cells_mean": 263.75,
-      "burned_cells_std": 12.193748398257199,
-      "fire_intensity_mean": 351.08973388671876,
-      "fire_intensity_std": 6.6379917022226875,
-      "n_episodes": 20,
+      "episode_reward_mean": -6554.2268667677545,
+      "episode_reward_std": 1846.6565970387705,
+      "burned_cells_mean": 182.82,
+      "burned_cells_std": 48.72727778154655,
+      "fire_intensity_mean": 237.31101501464843,
+      "fire_intensity_std": 55.119184213808374,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -40333.36911869049,
-        "burned_cells": 252,
-        "fire_intensity": 356.63128662109375
+        "episode_reward": -4673.613906332602,
+        "burned_cells": 148,
+        "fire_intensity": 187.99830627441406,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37625.85719490051,
-        "burned_cells": 291,
-        "fire_intensity": 357.4013671875
+        "episode_reward": -6846.022908487668,
+        "burned_cells": 218,
+        "fire_intensity": 264.159912109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37974.42246437073,
-        "burned_cells": 268,
-        "fire_intensity": 345.984130859375
+        "episode_reward": -6963.010177907845,
+        "burned_cells": 189,
+        "fire_intensity": 248.20082092285156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36343.95649719238,
-        "burned_cells": 241,
-        "fire_intensity": 339.78173828125
+        "episode_reward": -6749.5039902155595,
+        "burned_cells": 172,
+        "fire_intensity": 247.107421875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38701.92014503479,
+        "episode_reward": -6331.630854252726,
+        "burned_cells": 202,
+        "fire_intensity": 270.2042236328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7215.225129904846,
+        "burned_cells": 201,
+        "fire_intensity": 272.9228515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -10835.210455184182,
+        "burned_cells": 261,
+        "fire_intensity": 311.2366943359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2832.4428625442088,
+        "burned_cells": 71,
+        "fire_intensity": 121.15191650390625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6917.565453775227,
+        "burned_cells": 191,
+        "fire_intensity": 256.46392822265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8207.57911499714,
+        "burned_cells": 231,
+        "fire_intensity": 283.1484375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4930.178840665768,
+        "burned_cells": 123,
+        "fire_intensity": 172.22079467773438,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6948.771421314528,
+        "burned_cells": 192,
+        "fire_intensity": 222.09901428222656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4721.414172812055,
+        "burned_cells": 110,
+        "fire_intensity": 178.67758178710938,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7654.427459067354,
+        "burned_cells": 217,
+        "fire_intensity": 268.36566162109375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7105.461350740244,
+        "burned_cells": 202,
+        "fire_intensity": 263.7362365722656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7724.201515908043,
+        "burned_cells": 216,
+        "fire_intensity": 270.33697509765625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4573.099180698395,
+        "burned_cells": 127,
+        "fire_intensity": 186.23104858398438,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5883.092611317833,
+        "burned_cells": 144,
+        "fire_intensity": 232.38946533203125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9636.26019138222,
         "burned_cells": 265,
-        "fire_intensity": 347.63409423828125
+        "fire_intensity": 330.57696533203125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36775.64716243744,
-        "burned_cells": 263,
-        "fire_intensity": 354.1712951660156
+        "episode_reward": -7179.193566950658,
+        "burned_cells": 205,
+        "fire_intensity": 236.33836364746094,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38476.96260070801,
-        "burned_cells": 266,
-        "fire_intensity": 349.62469482421875
+        "episode_reward": -5415.074664215246,
+        "burned_cells": 154,
+        "fire_intensity": 199.642822265625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40014.91782093048,
-        "burned_cells": 267,
-        "fire_intensity": 350.22369384765625
+        "episode_reward": -8676.337876223028,
+        "burned_cells": 244,
+        "fire_intensity": 299.023193359375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38304.779156684875,
-        "burned_cells": 254,
-        "fire_intensity": 341.8638916015625
+        "episode_reward": -7794.810965454826,
+        "burned_cells": 245,
+        "fire_intensity": 310.39202880859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38745.919469833374,
-        "burned_cells": 253,
-        "fire_intensity": 346.8803405761719
+        "episode_reward": -3211.5200522169475,
+        "burned_cells": 105,
+        "fire_intensity": 121.33180236816406,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38465.13066768646,
-        "burned_cells": 252,
-        "fire_intensity": 350.4520263671875
+        "episode_reward": -8680.385881667336,
+        "burned_cells": 217,
+        "fire_intensity": 294.75982666015625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36285.04021835327,
-        "burned_cells": 251,
-        "fire_intensity": 341.4639892578125
+        "episode_reward": -4678.296055782586,
+        "burned_cells": 156,
+        "fire_intensity": 187.33908081054688,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40523.13481807709,
-        "burned_cells": 278,
-        "fire_intensity": 355.26483154296875
+        "episode_reward": -6529.242717566589,
+        "burned_cells": 174,
+        "fire_intensity": 228.78372192382812,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40290.92412853241,
-        "burned_cells": 264,
-        "fire_intensity": 351.9669189453125
+        "episode_reward": -6982.968611569455,
+        "burned_cells": 218,
+        "fire_intensity": 254.55699157714844,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39312.82993602753,
-        "burned_cells": 263,
-        "fire_intensity": 354.7364501953125
+        "episode_reward": -9450.456904946515,
+        "burned_cells": 240,
+        "fire_intensity": 292.0381774902344,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40287.59806346893,
-        "burned_cells": 268,
-        "fire_intensity": 353.1702575683594
+        "episode_reward": -6238.728304302941,
+        "burned_cells": 179,
+        "fire_intensity": 245.74855041503906,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38036.69611263275,
-        "burned_cells": 260,
-        "fire_intensity": 351.43902587890625
+        "episode_reward": -8632.339910849929,
+        "burned_cells": 250,
+        "fire_intensity": 312.1564025878906,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -41697.19149017334,
-        "burned_cells": 291,
-        "fire_intensity": 369.8897705078125
+        "episode_reward": -8782.5193008023,
+        "burned_cells": 238,
+        "fire_intensity": 307.83233642578125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40815.90937137604,
-        "burned_cells": 259,
-        "fire_intensity": 356.4353332519531
+        "episode_reward": -8201.609942381581,
+        "burned_cells": 196,
+        "fire_intensity": 269.48211669921875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38926.10879802704,
-        "burned_cells": 269,
-        "fire_intensity": 346.779541015625
+        "episode_reward": -7864.074139722934,
+        "burned_cells": 201,
+        "fire_intensity": 274.48590087890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4019.008807061861,
+        "burned_cells": 109,
+        "fire_intensity": 170.6154327392578,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5240.620090843489,
+        "burned_cells": 132,
+        "fire_intensity": 189.32022094726562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5942.1471682476495,
+        "burned_cells": 177,
+        "fire_intensity": 218.01617431640625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6414.471963892381,
+        "burned_cells": 215,
+        "fire_intensity": 275.2040100097656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7924.470490214726,
+        "burned_cells": 218,
+        "fire_intensity": 278.64990234375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7204.981225738922,
+        "burned_cells": 219,
+        "fire_intensity": 264.161376953125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7588.283069744706,
+        "burned_cells": 213,
+        "fire_intensity": 271.21820068359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8956.96823210145,
+        "burned_cells": 239,
+        "fire_intensity": 313.3504333496094,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4467.9961830712855,
+        "burned_cells": 146,
+        "fire_intensity": 188.88206481933594,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3080.2094915149114,
+        "burned_cells": 103,
+        "fire_intensity": 140.8043212890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5447.134543888271,
+        "burned_cells": 147,
+        "fire_intensity": 178.16156005859375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3193.200758791218,
+        "burned_cells": 93,
+        "fire_intensity": 125.2354736328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3660.1199233978987,
+        "burned_cells": 103,
+        "fire_intensity": 170.02145385742188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6464.28331104666,
+        "burned_cells": 167,
+        "fire_intensity": 211.5971221923828,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5125.954735202094,
+        "burned_cells": 144,
+        "fire_intensity": 172.7554931640625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7915.22285146887,
+        "burned_cells": 214,
+        "fire_intensity": 276.4179382324219,
+        "containment_rate": 0.0
+      }
+    ]
+  },
+  "nearest_fire": {
+    "summary": {
+      "episode_reward_mean": -43.7613870764027,
+      "episode_reward_std": 64.18861187204492,
+      "burned_cells_mean": 0.0,
+      "burned_cells_std": 0.0,
+      "fire_intensity_mean": 0.08040186338126659,
+      "fire_intensity_std": 0.024986293779877964,
+      "containment_rate_mean": 0.9731993788729112,
+      "containment_rate_std": 0.008328764593292655,
+      "n_episodes": 50,
+      "burned_threshold": 0.5
+    },
+    "episodes": [
+      {
+        "episode_reward": -16.05682150150339,
+        "burned_cells": 0,
+        "fire_intensity": 0.09891673922538757,
+        "containment_rate": 0.9670277535915375
+      },
+      {
+        "episode_reward": -168.9649163198968,
+        "burned_cells": 0,
+        "fire_intensity": 0.09306671470403671,
+        "containment_rate": 0.9689777617653211
+      },
+      {
+        "episode_reward": -15.873882566889124,
+        "burned_cells": 0,
+        "fire_intensity": 0.09964016079902649,
+        "containment_rate": 0.9667866130669912
+      },
+      {
+        "episode_reward": -19.01425277069211,
+        "burned_cells": 0,
+        "fire_intensity": 0.0426010824739933,
+        "containment_rate": 0.9857996391753355
+      },
+      {
+        "episode_reward": -32.60658578450481,
+        "burned_cells": 0,
+        "fire_intensity": 0.04774850234389305,
+        "containment_rate": 0.9840838325520357
+      },
+      {
+        "episode_reward": -39.46577296902736,
+        "burned_cells": 0,
+        "fire_intensity": 0.07454845309257507,
+        "containment_rate": 0.9751505156358083
+      },
+      {
+        "episode_reward": -412.8821089888612,
+        "burned_cells": 0,
+        "fire_intensity": 0.08831817656755447,
+        "containment_rate": 0.9705606078108152
+      },
+      {
+        "episode_reward": -29.140550495435797,
+        "burned_cells": 0,
+        "fire_intensity": 0.08744801580905914,
+        "containment_rate": 0.9708506613969803
+      },
+      {
+        "episode_reward": -44.730970380206905,
+        "burned_cells": 0,
+        "fire_intensity": 0.09800216555595398,
+        "containment_rate": 0.9673326114813486
+      },
+      {
+        "episode_reward": -7.071429582933584,
+        "burned_cells": 0,
+        "fire_intensity": 0.0966438576579094,
+        "containment_rate": 0.9677853807806969
+      },
+      {
+        "episode_reward": -21.9279544254144,
+        "burned_cells": 0,
+        "fire_intensity": 0.09703368693590164,
+        "containment_rate": 0.9676554376880327
+      },
+      {
+        "episode_reward": -15.90256206318736,
+        "burned_cells": 0,
+        "fire_intensity": 0.0993407741189003,
+        "containment_rate": 0.9668864086270332
+      },
+      {
+        "episode_reward": -13.228398337960243,
+        "burned_cells": 0,
+        "fire_intensity": 0.0,
+        "containment_rate": 1.0
+      },
+      {
+        "episode_reward": -60.481204662472,
+        "burned_cells": 0,
+        "fire_intensity": 0.09125785529613495,
+        "containment_rate": 0.9695807149012884
+      },
+      {
+        "episode_reward": 0.9362253968914348,
+        "burned_cells": 0,
+        "fire_intensity": 0.07834038883447647,
+        "containment_rate": 0.9738865370551745
+      },
+      {
+        "episode_reward": -41.32418595751127,
+        "burned_cells": 0,
+        "fire_intensity": 0.07834038883447647,
+        "containment_rate": 0.9738865370551745
+      },
+      {
+        "episode_reward": -9.889332745224237,
+        "burned_cells": 0,
+        "fire_intensity": 0.08140641450881958,
+        "containment_rate": 0.9728645284970602
+      },
+      {
+        "episode_reward": -6.947058349847794,
+        "burned_cells": 0,
+        "fire_intensity": 0.09764203429222107,
+        "containment_rate": 0.9674526552359263
+      },
+      {
+        "episode_reward": -63.82458347578844,
+        "burned_cells": 0,
+        "fire_intensity": 0.08491530269384384,
+        "containment_rate": 0.9716948991020521
+      },
+      {
+        "episode_reward": -53.08490391075611,
+        "burned_cells": 0,
+        "fire_intensity": 0.08610586822032928,
+        "containment_rate": 0.9712980439265569
+      },
+      {
+        "episode_reward": -0.4548165537416937,
+        "burned_cells": 0,
+        "fire_intensity": 0.08076328784227371,
+        "containment_rate": 0.9730789040525755
+      },
+      {
+        "episode_reward": -50.34984655554096,
+        "burned_cells": 0,
+        "fire_intensity": 0.09737842530012131,
+        "containment_rate": 0.9675405248999596
+      },
+      {
+        "episode_reward": -75.67882699519396,
+        "burned_cells": 0,
+        "fire_intensity": 0.09344658255577087,
+        "containment_rate": 0.9688511391480764
+      },
+      {
+        "episode_reward": 1.7889250852167609,
+        "burned_cells": 0,
+        "fire_intensity": 0.09949266910552979,
+        "containment_rate": 0.9668357769648234
+      },
+      {
+        "episode_reward": -56.775331231455006,
+        "burned_cells": 0,
+        "fire_intensity": 0.08849092572927475,
+        "containment_rate": 0.9705030247569084
+      },
+      {
+        "episode_reward": -17.96602462604642,
+        "burned_cells": 0,
+        "fire_intensity": 0.09834480285644531,
+        "containment_rate": 0.9672183990478516
+      },
+      {
+        "episode_reward": -31.865920469164852,
+        "burned_cells": 0,
+        "fire_intensity": 0.09505835175514221,
+        "containment_rate": 0.9683138827482859
+      },
+      {
+        "episode_reward": -90.64008910457292,
+        "burned_cells": 0,
+        "fire_intensity": 0.09988371282815933,
+        "containment_rate": 0.9667054290572802
+      },
+      {
+        "episode_reward": -7.389268430570762,
+        "burned_cells": 0,
+        "fire_intensity": 0.08386679738759995,
+        "containment_rate": 0.9720444008708
+      },
+      {
+        "episode_reward": -166.87045316522318,
+        "burned_cells": 0,
+        "fire_intensity": 0.09274590015411377,
+        "containment_rate": 0.9690846999486288
+      },
+      {
+        "episode_reward": -66.95415857061744,
+        "burned_cells": 0,
+        "fire_intensity": 0.09703908860683441,
+        "containment_rate": 0.9676536371310552
+      },
+      {
+        "episode_reward": -35.511954702436924,
+        "burned_cells": 0,
+        "fire_intensity": 0.09710873663425446,
+        "containment_rate": 0.9676304211219152
+      },
+      {
+        "episode_reward": -27.503853152195614,
+        "burned_cells": 0,
+        "fire_intensity": 0.09782072901725769,
+        "containment_rate": 0.9673930903275808
+      },
+      {
+        "episode_reward": -14.872149245192608,
+        "burned_cells": 0,
+        "fire_intensity": 0.09820511937141418,
+        "containment_rate": 0.9672649602095286
+      },
+      {
+        "episode_reward": -63.36066736777624,
+        "burned_cells": 0,
+        "fire_intensity": 0.08849092572927475,
+        "containment_rate": 0.9705030247569084
+      },
+      {
+        "episode_reward": -12.804763453702133,
+        "burned_cells": 0,
+        "fire_intensity": 0.0,
+        "containment_rate": 1.0
+      },
+      {
+        "episode_reward": -33.36480779697497,
+        "burned_cells": 0,
+        "fire_intensity": 0.03252098336815834,
+        "containment_rate": 0.9891596722106138
+      },
+      {
+        "episode_reward": -25.560426243891317,
+        "burned_cells": 0,
+        "fire_intensity": 0.093441441655159,
+        "containment_rate": 0.9688528527816137
+      },
+      {
+        "episode_reward": -84.97888858119647,
+        "burned_cells": 0,
+        "fire_intensity": 0.07930642366409302,
+        "containment_rate": 0.9735645254453024
+      },
+      {
+        "episode_reward": 5.43524539594849,
+        "burned_cells": 0,
+        "fire_intensity": 0.0969579666852951,
+        "containment_rate": 0.9676806777715683
+      },
+      {
+        "episode_reward": -61.9082475937903,
+        "burned_cells": 0,
+        "fire_intensity": 0.0979200080037117,
+        "containment_rate": 0.9673599973320961
+      },
+      {
+        "episode_reward": -70.46247612064083,
+        "burned_cells": 0,
+        "fire_intensity": 0.09755651652812958,
+        "containment_rate": 0.9674811611572901
+      },
+      {
+        "episode_reward": -63.554302431643,
+        "burned_cells": 0,
+        "fire_intensity": 0.0533033162355423,
+        "containment_rate": 0.9822322279214859
+      },
+      {
+        "episode_reward": -8.710162907838823,
+        "burned_cells": 0,
+        "fire_intensity": 0.03284630551934242,
+        "containment_rate": 0.9890512314935526
+      },
+      {
+        "episode_reward": -1.3959001774589228,
+        "burned_cells": 0,
+        "fire_intensity": 0.05480438098311424,
+        "containment_rate": 0.9817318730056286
+      },
+      {
+        "episode_reward": -5.140016241619986,
+        "burned_cells": 0,
+        "fire_intensity": 0.06935419142246246,
+        "containment_rate": 0.9768819361925125
+      },
+      {
+        "episode_reward": -32.57404156277577,
+        "burned_cells": 0,
+        "fire_intensity": 0.06276357918977737,
+        "containment_rate": 0.9790788069367409
+      },
+      {
+        "episode_reward": -2.3661268775661797,
+        "burned_cells": 0,
+        "fire_intensity": 0.088215671479702,
+        "containment_rate": 0.9705947761734327
+      },
+      {
+        "episode_reward": -2.0217538165549445,
+        "burned_cells": 0,
+        "fire_intensity": 0.03447791934013367,
+        "containment_rate": 0.9885073602199554
+      },
+      {
+        "episode_reward": -12.777000434696673,
+        "burned_cells": 0,
+        "fire_intensity": 0.0971718281507492,
+        "containment_rate": 0.9676093906164169
+      }
+    ]
+  },
+  "frontier": {
+    "summary": {
+      "episode_reward_mean": -43.7613870764027,
+      "episode_reward_std": 64.18861187204492,
+      "burned_cells_mean": 0.0,
+      "burned_cells_std": 0.0,
+      "fire_intensity_mean": 0.08040186338126659,
+      "fire_intensity_std": 0.024986293779877964,
+      "containment_rate_mean": 0.9731993788729112,
+      "containment_rate_std": 0.008328764593292655,
+      "n_episodes": 50,
+      "burned_threshold": 0.5
+    },
+    "episodes": [
+      {
+        "episode_reward": -16.05682150150339,
+        "burned_cells": 0,
+        "fire_intensity": 0.09891673922538757,
+        "containment_rate": 0.9670277535915375
+      },
+      {
+        "episode_reward": -168.9649163198968,
+        "burned_cells": 0,
+        "fire_intensity": 0.09306671470403671,
+        "containment_rate": 0.9689777617653211
+      },
+      {
+        "episode_reward": -15.873882566889124,
+        "burned_cells": 0,
+        "fire_intensity": 0.09964016079902649,
+        "containment_rate": 0.9667866130669912
+      },
+      {
+        "episode_reward": -19.01425277069211,
+        "burned_cells": 0,
+        "fire_intensity": 0.0426010824739933,
+        "containment_rate": 0.9857996391753355
+      },
+      {
+        "episode_reward": -32.60658578450481,
+        "burned_cells": 0,
+        "fire_intensity": 0.04774850234389305,
+        "containment_rate": 0.9840838325520357
+      },
+      {
+        "episode_reward": -39.46577296902736,
+        "burned_cells": 0,
+        "fire_intensity": 0.07454845309257507,
+        "containment_rate": 0.9751505156358083
+      },
+      {
+        "episode_reward": -412.8821089888612,
+        "burned_cells": 0,
+        "fire_intensity": 0.08831817656755447,
+        "containment_rate": 0.9705606078108152
+      },
+      {
+        "episode_reward": -29.140550495435797,
+        "burned_cells": 0,
+        "fire_intensity": 0.08744801580905914,
+        "containment_rate": 0.9708506613969803
+      },
+      {
+        "episode_reward": -44.730970380206905,
+        "burned_cells": 0,
+        "fire_intensity": 0.09800216555595398,
+        "containment_rate": 0.9673326114813486
+      },
+      {
+        "episode_reward": -7.071429582933584,
+        "burned_cells": 0,
+        "fire_intensity": 0.0966438576579094,
+        "containment_rate": 0.9677853807806969
+      },
+      {
+        "episode_reward": -21.9279544254144,
+        "burned_cells": 0,
+        "fire_intensity": 0.09703368693590164,
+        "containment_rate": 0.9676554376880327
+      },
+      {
+        "episode_reward": -15.90256206318736,
+        "burned_cells": 0,
+        "fire_intensity": 0.0993407741189003,
+        "containment_rate": 0.9668864086270332
+      },
+      {
+        "episode_reward": -13.228398337960243,
+        "burned_cells": 0,
+        "fire_intensity": 0.0,
+        "containment_rate": 1.0
+      },
+      {
+        "episode_reward": -60.481204662472,
+        "burned_cells": 0,
+        "fire_intensity": 0.09125785529613495,
+        "containment_rate": 0.9695807149012884
+      },
+      {
+        "episode_reward": 0.9362253968914348,
+        "burned_cells": 0,
+        "fire_intensity": 0.07834038883447647,
+        "containment_rate": 0.9738865370551745
+      },
+      {
+        "episode_reward": -41.32418595751127,
+        "burned_cells": 0,
+        "fire_intensity": 0.07834038883447647,
+        "containment_rate": 0.9738865370551745
+      },
+      {
+        "episode_reward": -9.889332745224237,
+        "burned_cells": 0,
+        "fire_intensity": 0.08140641450881958,
+        "containment_rate": 0.9728645284970602
+      },
+      {
+        "episode_reward": -6.947058349847794,
+        "burned_cells": 0,
+        "fire_intensity": 0.09764203429222107,
+        "containment_rate": 0.9674526552359263
+      },
+      {
+        "episode_reward": -63.82458347578844,
+        "burned_cells": 0,
+        "fire_intensity": 0.08491530269384384,
+        "containment_rate": 0.9716948991020521
+      },
+      {
+        "episode_reward": -53.08490391075611,
+        "burned_cells": 0,
+        "fire_intensity": 0.08610586822032928,
+        "containment_rate": 0.9712980439265569
+      },
+      {
+        "episode_reward": -0.4548165537416937,
+        "burned_cells": 0,
+        "fire_intensity": 0.08076328784227371,
+        "containment_rate": 0.9730789040525755
+      },
+      {
+        "episode_reward": -50.34984655554096,
+        "burned_cells": 0,
+        "fire_intensity": 0.09737842530012131,
+        "containment_rate": 0.9675405248999596
+      },
+      {
+        "episode_reward": -75.67882699519396,
+        "burned_cells": 0,
+        "fire_intensity": 0.09344658255577087,
+        "containment_rate": 0.9688511391480764
+      },
+      {
+        "episode_reward": 1.7889250852167609,
+        "burned_cells": 0,
+        "fire_intensity": 0.09949266910552979,
+        "containment_rate": 0.9668357769648234
+      },
+      {
+        "episode_reward": -56.775331231455006,
+        "burned_cells": 0,
+        "fire_intensity": 0.08849092572927475,
+        "containment_rate": 0.9705030247569084
+      },
+      {
+        "episode_reward": -17.96602462604642,
+        "burned_cells": 0,
+        "fire_intensity": 0.09834480285644531,
+        "containment_rate": 0.9672183990478516
+      },
+      {
+        "episode_reward": -31.865920469164852,
+        "burned_cells": 0,
+        "fire_intensity": 0.09505835175514221,
+        "containment_rate": 0.9683138827482859
+      },
+      {
+        "episode_reward": -90.64008910457292,
+        "burned_cells": 0,
+        "fire_intensity": 0.09988371282815933,
+        "containment_rate": 0.9667054290572802
+      },
+      {
+        "episode_reward": -7.389268430570762,
+        "burned_cells": 0,
+        "fire_intensity": 0.08386679738759995,
+        "containment_rate": 0.9720444008708
+      },
+      {
+        "episode_reward": -166.87045316522318,
+        "burned_cells": 0,
+        "fire_intensity": 0.09274590015411377,
+        "containment_rate": 0.9690846999486288
+      },
+      {
+        "episode_reward": -66.95415857061744,
+        "burned_cells": 0,
+        "fire_intensity": 0.09703908860683441,
+        "containment_rate": 0.9676536371310552
+      },
+      {
+        "episode_reward": -35.511954702436924,
+        "burned_cells": 0,
+        "fire_intensity": 0.09710873663425446,
+        "containment_rate": 0.9676304211219152
+      },
+      {
+        "episode_reward": -27.503853152195614,
+        "burned_cells": 0,
+        "fire_intensity": 0.09782072901725769,
+        "containment_rate": 0.9673930903275808
+      },
+      {
+        "episode_reward": -14.872149245192608,
+        "burned_cells": 0,
+        "fire_intensity": 0.09820511937141418,
+        "containment_rate": 0.9672649602095286
+      },
+      {
+        "episode_reward": -63.36066736777624,
+        "burned_cells": 0,
+        "fire_intensity": 0.08849092572927475,
+        "containment_rate": 0.9705030247569084
+      },
+      {
+        "episode_reward": -12.804763453702133,
+        "burned_cells": 0,
+        "fire_intensity": 0.0,
+        "containment_rate": 1.0
+      },
+      {
+        "episode_reward": -33.36480779697497,
+        "burned_cells": 0,
+        "fire_intensity": 0.03252098336815834,
+        "containment_rate": 0.9891596722106138
+      },
+      {
+        "episode_reward": -25.560426243891317,
+        "burned_cells": 0,
+        "fire_intensity": 0.093441441655159,
+        "containment_rate": 0.9688528527816137
+      },
+      {
+        "episode_reward": -84.97888858119647,
+        "burned_cells": 0,
+        "fire_intensity": 0.07930642366409302,
+        "containment_rate": 0.9735645254453024
+      },
+      {
+        "episode_reward": 5.43524539594849,
+        "burned_cells": 0,
+        "fire_intensity": 0.0969579666852951,
+        "containment_rate": 0.9676806777715683
+      },
+      {
+        "episode_reward": -61.9082475937903,
+        "burned_cells": 0,
+        "fire_intensity": 0.0979200080037117,
+        "containment_rate": 0.9673599973320961
+      },
+      {
+        "episode_reward": -70.46247612064083,
+        "burned_cells": 0,
+        "fire_intensity": 0.09755651652812958,
+        "containment_rate": 0.9674811611572901
+      },
+      {
+        "episode_reward": -63.554302431643,
+        "burned_cells": 0,
+        "fire_intensity": 0.0533033162355423,
+        "containment_rate": 0.9822322279214859
+      },
+      {
+        "episode_reward": -8.710162907838823,
+        "burned_cells": 0,
+        "fire_intensity": 0.03284630551934242,
+        "containment_rate": 0.9890512314935526
+      },
+      {
+        "episode_reward": -1.3959001774589228,
+        "burned_cells": 0,
+        "fire_intensity": 0.05480438098311424,
+        "containment_rate": 0.9817318730056286
+      },
+      {
+        "episode_reward": -5.140016241619986,
+        "burned_cells": 0,
+        "fire_intensity": 0.06935419142246246,
+        "containment_rate": 0.9768819361925125
+      },
+      {
+        "episode_reward": -32.57404156277577,
+        "burned_cells": 0,
+        "fire_intensity": 0.06276357918977737,
+        "containment_rate": 0.9790788069367409
+      },
+      {
+        "episode_reward": -2.3661268775661797,
+        "burned_cells": 0,
+        "fire_intensity": 0.088215671479702,
+        "containment_rate": 0.9705947761734327
+      },
+      {
+        "episode_reward": -2.0217538165549445,
+        "burned_cells": 0,
+        "fire_intensity": 0.03447791934013367,
+        "containment_rate": 0.9885073602199554
+      },
+      {
+        "episode_reward": -12.777000434696673,
+        "burned_cells": 0,
+        "fire_intensity": 0.0971718281507492,
+        "containment_rate": 0.9676093906164169
       }
     ]
   },
   "ppo_seed_0": {
     "summary": {
-      "episode_reward_mean": -38896.9157617569,
-      "episode_reward_std": 1472.297086502123,
-      "burned_cells_mean": 263.75,
-      "burned_cells_std": 12.193748398257199,
-      "fire_intensity_mean": 351.08973388671876,
-      "fire_intensity_std": 6.6379917022226875,
-      "n_episodes": 20,
+      "episode_reward_mean": -6554.2268667677545,
+      "episode_reward_std": 1846.6565970387705,
+      "burned_cells_mean": 182.82,
+      "burned_cells_std": 48.72727778154655,
+      "fire_intensity_mean": 237.31101501464843,
+      "fire_intensity_std": 55.119184213808374,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -40333.36911869049,
-        "burned_cells": 252,
-        "fire_intensity": 356.63128662109375
+        "episode_reward": -4673.613906332602,
+        "burned_cells": 148,
+        "fire_intensity": 187.99830627441406,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37625.85719490051,
-        "burned_cells": 291,
-        "fire_intensity": 357.4013671875
+        "episode_reward": -6846.022908487668,
+        "burned_cells": 218,
+        "fire_intensity": 264.159912109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37974.42246437073,
-        "burned_cells": 268,
-        "fire_intensity": 345.984130859375
+        "episode_reward": -6963.010177907845,
+        "burned_cells": 189,
+        "fire_intensity": 248.20082092285156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36343.95649719238,
-        "burned_cells": 241,
-        "fire_intensity": 339.78173828125
+        "episode_reward": -6749.5039902155595,
+        "burned_cells": 172,
+        "fire_intensity": 247.107421875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38701.92014503479,
+        "episode_reward": -6331.630854252726,
+        "burned_cells": 202,
+        "fire_intensity": 270.2042236328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7215.225129904846,
+        "burned_cells": 201,
+        "fire_intensity": 272.9228515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -10835.210455184182,
+        "burned_cells": 261,
+        "fire_intensity": 311.2366943359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2832.4428625442088,
+        "burned_cells": 71,
+        "fire_intensity": 121.15191650390625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6917.565453775227,
+        "burned_cells": 191,
+        "fire_intensity": 256.46392822265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8207.57911499714,
+        "burned_cells": 231,
+        "fire_intensity": 283.1484375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4930.178840665768,
+        "burned_cells": 123,
+        "fire_intensity": 172.22079467773438,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6948.771421314528,
+        "burned_cells": 192,
+        "fire_intensity": 222.09901428222656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4721.414172812055,
+        "burned_cells": 110,
+        "fire_intensity": 178.67758178710938,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7654.427459067354,
+        "burned_cells": 217,
+        "fire_intensity": 268.36566162109375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7105.461350740244,
+        "burned_cells": 202,
+        "fire_intensity": 263.7362365722656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7724.201515908043,
+        "burned_cells": 216,
+        "fire_intensity": 270.33697509765625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4573.099180698395,
+        "burned_cells": 127,
+        "fire_intensity": 186.23104858398438,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5883.092611317833,
+        "burned_cells": 144,
+        "fire_intensity": 232.38946533203125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9636.26019138222,
         "burned_cells": 265,
-        "fire_intensity": 347.63409423828125
+        "fire_intensity": 330.57696533203125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36775.64716243744,
-        "burned_cells": 263,
-        "fire_intensity": 354.1712951660156
+        "episode_reward": -7179.193566950658,
+        "burned_cells": 205,
+        "fire_intensity": 236.33836364746094,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38476.96260070801,
-        "burned_cells": 266,
-        "fire_intensity": 349.62469482421875
+        "episode_reward": -5415.074664215246,
+        "burned_cells": 154,
+        "fire_intensity": 199.642822265625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40014.91782093048,
-        "burned_cells": 267,
-        "fire_intensity": 350.22369384765625
+        "episode_reward": -8676.337876223028,
+        "burned_cells": 244,
+        "fire_intensity": 299.023193359375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38304.779156684875,
-        "burned_cells": 254,
-        "fire_intensity": 341.8638916015625
+        "episode_reward": -7794.810965454826,
+        "burned_cells": 245,
+        "fire_intensity": 310.39202880859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38745.919469833374,
-        "burned_cells": 253,
-        "fire_intensity": 346.8803405761719
+        "episode_reward": -3211.5200522169475,
+        "burned_cells": 105,
+        "fire_intensity": 121.33180236816406,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38465.13066768646,
-        "burned_cells": 252,
-        "fire_intensity": 350.4520263671875
+        "episode_reward": -8680.385881667336,
+        "burned_cells": 217,
+        "fire_intensity": 294.75982666015625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36285.04021835327,
-        "burned_cells": 251,
-        "fire_intensity": 341.4639892578125
+        "episode_reward": -4678.296055782586,
+        "burned_cells": 156,
+        "fire_intensity": 187.33908081054688,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40523.13481807709,
-        "burned_cells": 278,
-        "fire_intensity": 355.26483154296875
+        "episode_reward": -6529.242717566589,
+        "burned_cells": 174,
+        "fire_intensity": 228.78372192382812,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40290.92412853241,
-        "burned_cells": 264,
-        "fire_intensity": 351.9669189453125
+        "episode_reward": -6982.968611569455,
+        "burned_cells": 218,
+        "fire_intensity": 254.55699157714844,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39312.82993602753,
-        "burned_cells": 263,
-        "fire_intensity": 354.7364501953125
+        "episode_reward": -9450.456904946515,
+        "burned_cells": 240,
+        "fire_intensity": 292.0381774902344,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40287.59806346893,
-        "burned_cells": 268,
-        "fire_intensity": 353.1702575683594
+        "episode_reward": -6238.728304302941,
+        "burned_cells": 179,
+        "fire_intensity": 245.74855041503906,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38036.69611263275,
-        "burned_cells": 260,
-        "fire_intensity": 351.43902587890625
+        "episode_reward": -8632.339910849929,
+        "burned_cells": 250,
+        "fire_intensity": 312.1564025878906,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -41697.19149017334,
-        "burned_cells": 291,
-        "fire_intensity": 369.8897705078125
+        "episode_reward": -8782.5193008023,
+        "burned_cells": 238,
+        "fire_intensity": 307.83233642578125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40815.90937137604,
-        "burned_cells": 259,
-        "fire_intensity": 356.4353332519531
+        "episode_reward": -8201.609942381581,
+        "burned_cells": 196,
+        "fire_intensity": 269.48211669921875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38926.10879802704,
-        "burned_cells": 269,
-        "fire_intensity": 346.779541015625
+        "episode_reward": -7864.074139722934,
+        "burned_cells": 201,
+        "fire_intensity": 274.48590087890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4019.008807061861,
+        "burned_cells": 109,
+        "fire_intensity": 170.6154327392578,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5240.620090843489,
+        "burned_cells": 132,
+        "fire_intensity": 189.32022094726562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5942.1471682476495,
+        "burned_cells": 177,
+        "fire_intensity": 218.01617431640625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6414.471963892381,
+        "burned_cells": 215,
+        "fire_intensity": 275.2040100097656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7924.470490214726,
+        "burned_cells": 218,
+        "fire_intensity": 278.64990234375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7204.981225738922,
+        "burned_cells": 219,
+        "fire_intensity": 264.161376953125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7588.283069744706,
+        "burned_cells": 213,
+        "fire_intensity": 271.21820068359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8956.96823210145,
+        "burned_cells": 239,
+        "fire_intensity": 313.3504333496094,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4467.9961830712855,
+        "burned_cells": 146,
+        "fire_intensity": 188.88206481933594,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3080.2094915149114,
+        "burned_cells": 103,
+        "fire_intensity": 140.8043212890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5447.134543888271,
+        "burned_cells": 147,
+        "fire_intensity": 178.16156005859375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3193.200758791218,
+        "burned_cells": 93,
+        "fire_intensity": 125.2354736328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3660.1199233978987,
+        "burned_cells": 103,
+        "fire_intensity": 170.02145385742188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6464.28331104666,
+        "burned_cells": 167,
+        "fire_intensity": 211.5971221923828,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5125.954735202094,
+        "burned_cells": 144,
+        "fire_intensity": 172.7554931640625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7915.22285146887,
+        "burned_cells": 214,
+        "fire_intensity": 276.4179382324219,
+        "containment_rate": 0.0
       }
     ]
   },
   "ppo_seed_1": {
     "summary": {
-      "episode_reward_mean": -36797.358416461946,
-      "episode_reward_std": 1520.5490635659053,
-      "burned_cells_mean": 252.85,
-      "burned_cells_std": 15.020902103402443,
-      "fire_intensity_mean": 343.9777236938477,
-      "fire_intensity_std": 9.576572524934262,
-      "n_episodes": 20,
+      "episode_reward_mean": -6656.732659638574,
+      "episode_reward_std": 1937.1418724462828,
+      "burned_cells_mean": 187.54,
+      "burned_cells_std": 49.795666478118356,
+      "fire_intensity_mean": 241.9523247528076,
+      "fire_intensity_std": 55.83757698483482,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -37953.99403953552,
-        "burned_cells": 254,
-        "fire_intensity": 356.0002746582031
+        "episode_reward": -4682.54489549001,
+        "burned_cells": 148,
+        "fire_intensity": 189.2113037109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35373.69979476929,
-        "burned_cells": 283,
-        "fire_intensity": 354.26220703125
+        "episode_reward": -6859.754351218541,
+        "burned_cells": 218,
+        "fire_intensity": 266.4877014160156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35617.75450229645,
-        "burned_cells": 255,
-        "fire_intensity": 339.7625732421875
+        "episode_reward": -7086.602958758673,
+        "burned_cells": 193,
+        "fire_intensity": 253.25689697265625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36056.38137817383,
-        "burned_cells": 232,
-        "fire_intensity": 334.4635009765625
+        "episode_reward": -6881.078625331323,
+        "burned_cells": 177,
+        "fire_intensity": 251.01275634765625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37821.994188308716,
-        "burned_cells": 267,
-        "fire_intensity": 348.01123046875
+        "episode_reward": -6403.3874336915715,
+        "burned_cells": 204,
+        "fire_intensity": 273.7471923828125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35426.25284862518,
-        "burned_cells": 262,
-        "fire_intensity": 348.4471740722656
+        "episode_reward": -7457.942610621452,
+        "burned_cells": 207,
+        "fire_intensity": 277.8754577636719,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36761.062707901,
-        "burned_cells": 259,
-        "fire_intensity": 342.7572021484375
+        "episode_reward": -10955.250662326813,
+        "burned_cells": 264,
+        "fire_intensity": 315.0729675292969,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36652.26342201233,
-        "burned_cells": 255,
-        "fire_intensity": 345.96649169921875
+        "episode_reward": -2864.794332663218,
+        "burned_cells": 72,
+        "fire_intensity": 125.26469421386719,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36170.29280948639,
-        "burned_cells": 249,
-        "fire_intensity": 338.4230041503906
+        "episode_reward": -5764.964132117729,
+        "burned_cells": 184,
+        "fire_intensity": 236.69851684570312,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36336.17169189453,
-        "burned_cells": 230,
-        "fire_intensity": 329.6852722167969
-      },
-      {
-        "episode_reward": -35479.524371147156,
+        "episode_reward": -8758.808677911758,
         "burned_cells": 237,
-        "fire_intensity": 337.8667297363281
+        "fire_intensity": 289.7222595214844,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -34082.35482311249,
-        "burned_cells": 231,
-        "fire_intensity": 329.1289978027344
+        "episode_reward": -4975.656519670039,
+        "burned_cells": 125,
+        "fire_intensity": 175.480224609375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36051.339347839355,
-        "burned_cells": 251,
-        "fire_intensity": 333.850830078125
+        "episode_reward": -7013.503071943919,
+        "burned_cells": 194,
+        "fire_intensity": 226.16224670410156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37690.7318983078,
+        "episode_reward": -5284.701940377553,
+        "burned_cells": 126,
+        "fire_intensity": 202.64222717285156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7625.519714169204,
+        "burned_cells": 222,
+        "fire_intensity": 270.61572265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7314.585066715877,
+        "burned_cells": 205,
+        "fire_intensity": 267.971435546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7757.111225287119,
+        "burned_cells": 218,
+        "fire_intensity": 273.26715087890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5229.393375794093,
+        "burned_cells": 148,
+        "fire_intensity": 210.91229248046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6732.077132978787,
+        "burned_cells": 161,
+        "fire_intensity": 253.0669708251953,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9656.744672335686,
+        "burned_cells": 267,
+        "fire_intensity": 333.5046081542969,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7202.851267258326,
+        "burned_cells": 206,
+        "fire_intensity": 239.57952880859375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6011.23793018361,
+        "burned_cells": 177,
+        "fire_intensity": 225.65179443359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8723.495043634126,
+        "burned_cells": 245,
+        "fire_intensity": 300.5025329589844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5551.553771406411,
+        "burned_cells": 202,
+        "fire_intensity": 239.6042022705078,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8079.985098222891,
+        "burned_cells": 238,
+        "fire_intensity": 276.3822021484375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8645.452391204735,
+        "burned_cells": 218,
+        "fire_intensity": 296.16802978515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4824.30790344874,
+        "burned_cells": 163,
+        "fire_intensity": 199.57421875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4582.357682333638,
+        "burned_cells": 144,
+        "fire_intensity": 170.62039184570312,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7072.635264237722,
+        "burned_cells": 221,
+        "fire_intensity": 258.2890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9612.371176799139,
         "burned_cells": 244,
-        "fire_intensity": 344.010498046875
+        "fire_intensity": 296.279296875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37663.719754219055,
-        "burned_cells": 254,
-        "fire_intensity": 351.0867614746094
+        "episode_reward": -6302.716197948903,
+        "burned_cells": 180,
+        "fire_intensity": 251.59841918945312,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39300.81771564484,
-        "burned_cells": 261,
-        "fire_intensity": 349.9612121582031
+        "episode_reward": -8962.90002436315,
+        "burned_cells": 252,
+        "fire_intensity": 315.609130859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -35282.91948223114,
-        "burned_cells": 239,
-        "fire_intensity": 336.499755859375
+        "episode_reward": -8802.503479031226,
+        "burned_cells": 241,
+        "fire_intensity": 309.70452880859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40767.206864356995,
-        "burned_cells": 286,
-        "fire_intensity": 370.2779235839844
+        "episode_reward": -8516.922034899393,
+        "burned_cells": 203,
+        "fire_intensity": 282.6720886230469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37960.954661369324,
-        "burned_cells": 246,
-        "fire_intensity": 345.92547607421875
+        "episode_reward": -5775.8983002056675,
+        "burned_cells": 156,
+        "fire_intensity": 215.14743041992188,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37497.73202800751,
-        "burned_cells": 262,
-        "fire_intensity": 343.1673583984375
+        "episode_reward": -1330.8326925535996,
+        "burned_cells": 45,
+        "fire_intensity": 62.52633285522461,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5430.450231393178,
+        "burned_cells": 141,
+        "fire_intensity": 200.04823303222656,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5957.080396970114,
+        "burned_cells": 177,
+        "fire_intensity": 220.3578643798828,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6656.317054820557,
+        "burned_cells": 218,
+        "fire_intensity": 279.49700927734375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8007.648717164993,
+        "burned_cells": 223,
+        "fire_intensity": 285.09918212890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7481.982104460399,
+        "burned_cells": 222,
+        "fire_intensity": 267.442138671875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7889.891062418619,
+        "burned_cells": 223,
+        "fire_intensity": 289.08526611328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9187.894605398178,
+        "burned_cells": 243,
+        "fire_intensity": 317.7255554199219,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4473.455588181813,
+        "burned_cells": 146,
+        "fire_intensity": 190.59857177734375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3185.2664461930594,
+        "burned_cells": 107,
+        "fire_intensity": 145.13092041015625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8242.46579003334,
+        "burned_cells": 228,
+        "fire_intensity": 272.1048889160156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3276.7980378468833,
+        "burned_cells": 93,
+        "fire_intensity": 130.1263885498047,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3685.51333173116,
+        "burned_cells": 104,
+        "fire_intensity": 173.49215698242188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6533.30524222056,
+        "burned_cells": 168,
+        "fire_intensity": 216.60382080078125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5588.6456712087,
+        "burned_cells": 164,
+        "fire_intensity": 199.99554443359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7937.477044752489,
+        "burned_cells": 215,
+        "fire_intensity": 278.4268798828125,
+        "containment_rate": 0.0
       }
     ]
   },
   "ppo_seed_2": {
     "summary": {
-      "episode_reward_mean": -39295.876232004164,
-      "episode_reward_std": 1496.5421386604678,
-      "burned_cells_mean": 264.55,
-      "burned_cells_std": 12.355059692288012,
-      "fire_intensity_mean": 352.335693359375,
-      "fire_intensity_std": 6.886103080202009,
-      "n_episodes": 20,
+      "episode_reward_mean": -6656.732659638574,
+      "episode_reward_std": 1937.1418724462828,
+      "burned_cells_mean": 187.54,
+      "burned_cells_std": 49.795666478118356,
+      "fire_intensity_mean": 241.9523247528076,
+      "fire_intensity_std": 55.83757698483482,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -40777.02874660492,
-        "burned_cells": 256,
-        "fire_intensity": 358.33111572265625
+        "episode_reward": -4682.54489549001,
+        "burned_cells": 148,
+        "fire_intensity": 189.2113037109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38198.806752204895,
-        "burned_cells": 290,
-        "fire_intensity": 357.8752746582031
+        "episode_reward": -6859.754351218541,
+        "burned_cells": 218,
+        "fire_intensity": 266.4877014160156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38297.13014411926,
-        "burned_cells": 268,
-        "fire_intensity": 347.7196960449219
+        "episode_reward": -7086.602958758673,
+        "burned_cells": 193,
+        "fire_intensity": 253.25689697265625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36525.8991317749,
+        "episode_reward": -6881.078625331323,
+        "burned_cells": 177,
+        "fire_intensity": 251.01275634765625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6403.3874336915715,
+        "burned_cells": 204,
+        "fire_intensity": 273.7471923828125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7457.942610621452,
+        "burned_cells": 207,
+        "fire_intensity": 277.8754577636719,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -10955.250662326813,
+        "burned_cells": 264,
+        "fire_intensity": 315.0729675292969,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2864.794332663218,
+        "burned_cells": 72,
+        "fire_intensity": 125.26469421386719,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5764.964132117729,
+        "burned_cells": 184,
+        "fire_intensity": 236.69851684570312,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8758.808677911758,
+        "burned_cells": 237,
+        "fire_intensity": 289.7222595214844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4975.656519670039,
+        "burned_cells": 125,
+        "fire_intensity": 175.480224609375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7013.503071943919,
+        "burned_cells": 194,
+        "fire_intensity": 226.16224670410156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5284.701940377553,
+        "burned_cells": 126,
+        "fire_intensity": 202.64222717285156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7625.519714169204,
+        "burned_cells": 222,
+        "fire_intensity": 270.61572265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7314.585066715877,
+        "burned_cells": 205,
+        "fire_intensity": 267.971435546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7757.111225287119,
+        "burned_cells": 218,
+        "fire_intensity": 273.26715087890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5229.393375794093,
+        "burned_cells": 148,
+        "fire_intensity": 210.91229248046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6732.077132978787,
+        "burned_cells": 161,
+        "fire_intensity": 253.0669708251953,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9656.744672335686,
+        "burned_cells": 267,
+        "fire_intensity": 333.5046081542969,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7202.851267258326,
+        "burned_cells": 206,
+        "fire_intensity": 239.57952880859375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6011.23793018361,
+        "burned_cells": 177,
+        "fire_intensity": 225.65179443359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8723.495043634126,
+        "burned_cells": 245,
+        "fire_intensity": 300.5025329589844,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5551.553771406411,
+        "burned_cells": 202,
+        "fire_intensity": 239.6042022705078,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8079.985098222891,
+        "burned_cells": 238,
+        "fire_intensity": 276.3822021484375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8645.452391204735,
+        "burned_cells": 218,
+        "fire_intensity": 296.16802978515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4824.30790344874,
+        "burned_cells": 163,
+        "fire_intensity": 199.57421875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4582.357682333638,
+        "burned_cells": 144,
+        "fire_intensity": 170.62039184570312,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7072.635264237722,
+        "burned_cells": 221,
+        "fire_intensity": 258.2890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9612.371176799139,
         "burned_cells": 244,
-        "fire_intensity": 340.9359130859375
+        "fire_intensity": 296.279296875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39224.77896690369,
-        "burned_cells": 267,
-        "fire_intensity": 348.99029541015625
+        "episode_reward": -6302.716197948903,
+        "burned_cells": 180,
+        "fire_intensity": 251.59841918945312,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37194.15547657013,
-        "burned_cells": 266,
-        "fire_intensity": 356.2621765136719
+        "episode_reward": -8962.90002436315,
+        "burned_cells": 252,
+        "fire_intensity": 315.609130859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38826.161189079285,
-        "burned_cells": 265,
-        "fire_intensity": 350.83099365234375
+        "episode_reward": -8802.503479031226,
+        "burned_cells": 241,
+        "fire_intensity": 309.70452880859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40439.39417266846,
-        "burned_cells": 267,
-        "fire_intensity": 350.4097900390625
+        "episode_reward": -8516.922034899393,
+        "burned_cells": 203,
+        "fire_intensity": 282.6720886230469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38750.50760269165,
-        "burned_cells": 253,
-        "fire_intensity": 342.32025146484375
+        "episode_reward": -5775.8983002056675,
+        "burned_cells": 156,
+        "fire_intensity": 215.14743041992188,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39266.57350921631,
-        "burned_cells": 253,
-        "fire_intensity": 348.3614501953125
+        "episode_reward": -1330.8326925535996,
+        "burned_cells": 45,
+        "fire_intensity": 62.52633285522461,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38242.88858509064,
-        "burned_cells": 251,
-        "fire_intensity": 348.34033203125
+        "episode_reward": -5430.450231393178,
+        "burned_cells": 141,
+        "fire_intensity": 200.04823303222656,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36721.504799842834,
-        "burned_cells": 251,
-        "fire_intensity": 343.6666259765625
+        "episode_reward": -5957.080396970114,
+        "burned_cells": 177,
+        "fire_intensity": 220.3578643798828,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40698.69535446167,
-        "burned_cells": 280,
-        "fire_intensity": 357.16290283203125
+        "episode_reward": -6656.317054820557,
+        "burned_cells": 218,
+        "fire_intensity": 279.49700927734375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40767.54607963562,
-        "burned_cells": 265,
-        "fire_intensity": 353.7015686035156
+        "episode_reward": -8007.648717164993,
+        "burned_cells": 223,
+        "fire_intensity": 285.09918212890625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39711.61410140991,
-        "burned_cells": 262,
-        "fire_intensity": 354.9893798828125
+        "episode_reward": -7481.982104460399,
+        "burned_cells": 222,
+        "fire_intensity": 267.442138671875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40628.83762931824,
-        "burned_cells": 269,
-        "fire_intensity": 354.37530517578125
+        "episode_reward": -7889.891062418619,
+        "burned_cells": 223,
+        "fire_intensity": 289.08526611328125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38640.64471244812,
-        "burned_cells": 259,
-        "fire_intensity": 353.13812255859375
+        "episode_reward": -9187.894605398178,
+        "burned_cells": 243,
+        "fire_intensity": 317.7255554199219,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -42099.65005111694,
-        "burned_cells": 294,
-        "fire_intensity": 372.7847900390625
+        "episode_reward": -4473.455588181813,
+        "burned_cells": 146,
+        "fire_intensity": 190.59857177734375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -41371.85085773468,
-        "burned_cells": 259,
-        "fire_intensity": 357.36920166015625
+        "episode_reward": -3185.2664461930594,
+        "burned_cells": 107,
+        "fire_intensity": 145.13092041015625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39533.85677719116,
-        "burned_cells": 272,
-        "fire_intensity": 349.148681640625
+        "episode_reward": -8242.46579003334,
+        "burned_cells": 228,
+        "fire_intensity": 272.1048889160156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3276.7980378468833,
+        "burned_cells": 93,
+        "fire_intensity": 130.1263885498047,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3685.51333173116,
+        "burned_cells": 104,
+        "fire_intensity": 173.49215698242188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6533.30524222056,
+        "burned_cells": 168,
+        "fire_intensity": 216.60382080078125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5588.6456712087,
+        "burned_cells": 164,
+        "fire_intensity": 199.99554443359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7937.477044752489,
+        "burned_cells": 215,
+        "fire_intensity": 278.4268798828125,
+        "containment_rate": 0.0
       }
     ]
   },
   "ppo_seed_3": {
     "summary": {
-      "episode_reward_mean": -39295.876232004164,
-      "episode_reward_std": 1496.5421386604678,
-      "burned_cells_mean": 264.55,
-      "burned_cells_std": 12.355059692288012,
-      "fire_intensity_mean": 352.335693359375,
-      "fire_intensity_std": 6.886103080202009,
-      "n_episodes": 20,
+      "episode_reward_mean": -6524.719838979094,
+      "episode_reward_std": 1919.7664033699293,
+      "burned_cells_mean": 182.98,
+      "burned_cells_std": 50.29572148801526,
+      "fire_intensity_mean": 238.61178955078125,
+      "fire_intensity_std": 56.75250753626521,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -40777.02874660492,
-        "burned_cells": 256,
-        "fire_intensity": 358.33111572265625
+        "episode_reward": -4682.54489549001,
+        "burned_cells": 148,
+        "fire_intensity": 189.2113037109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38198.806752204895,
-        "burned_cells": 290,
-        "fire_intensity": 357.8752746582031
+        "episode_reward": -6859.754351218541,
+        "burned_cells": 218,
+        "fire_intensity": 266.4877014160156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38297.13014411926,
+        "episode_reward": -7086.602958758673,
+        "burned_cells": 193,
+        "fire_intensity": 253.25689697265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6953.106706062953,
+        "burned_cells": 178,
+        "fire_intensity": 254.06771850585938,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6416.89142592748,
+        "burned_cells": 204,
+        "fire_intensity": 274.62939453125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4088.5464389820895,
+        "burned_cells": 132,
+        "fire_intensity": 189.98117065429688,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -10955.250662326813,
+        "burned_cells": 264,
+        "fire_intensity": 315.0729675292969,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2864.794332663218,
+        "burned_cells": 72,
+        "fire_intensity": 125.26469421386719,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6932.81868259112,
+        "burned_cells": 191,
+        "fire_intensity": 258.0533447265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8400.573398256054,
+        "burned_cells": 236,
+        "fire_intensity": 284.64849853515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4981.373296737671,
+        "burned_cells": 125,
+        "fire_intensity": 176.4815673828125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7009.223385815819,
+        "burned_cells": 194,
+        "fire_intensity": 226.1619415283203,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5284.701940377553,
+        "burned_cells": 126,
+        "fire_intensity": 202.64222717285156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7794.444657723109,
+        "burned_cells": 223,
+        "fire_intensity": 273.6976318359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7314.585066715877,
+        "burned_cells": 205,
+        "fire_intensity": 267.971435546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7756.5709095994625,
+        "burned_cells": 218,
+        "fire_intensity": 273.16717529296875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5229.393375794093,
+        "burned_cells": 148,
+        "fire_intensity": 210.91229248046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6737.216074148814,
+        "burned_cells": 161,
+        "fire_intensity": 254.3916473388672,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9684.994085232416,
         "burned_cells": 268,
-        "fire_intensity": 347.7196960449219
+        "fire_intensity": 335.06500244140625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36525.8991317749,
+        "episode_reward": -7202.851267258326,
+        "burned_cells": 206,
+        "fire_intensity": 239.57952880859375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6006.572096242258,
+        "burned_cells": 177,
+        "fire_intensity": 226.5384063720703,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8782.13473039369,
+        "burned_cells": 245,
+        "fire_intensity": 302.728515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7933.939115524292,
+        "burned_cells": 247,
+        "fire_intensity": 314.01214599609375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3212.090881387393,
+        "burned_cells": 105,
+        "fire_intensity": 121.33180236816406,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8737.972608566284,
+        "burned_cells": 219,
+        "fire_intensity": 298.2808837890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4824.30790344874,
+        "burned_cells": 163,
+        "fire_intensity": 199.57421875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6636.942811736217,
+        "burned_cells": 178,
+        "fire_intensity": 232.94744873046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6972.709080626567,
+        "burned_cells": 215,
+        "fire_intensity": 253.48330688476562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9609.925990641119,
         "burned_cells": 244,
-        "fire_intensity": 340.9359130859375
+        "fire_intensity": 296.0558776855469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39224.77896690369,
-        "burned_cells": 267,
-        "fire_intensity": 348.99029541015625
+        "episode_reward": -6342.789848883946,
+        "burned_cells": 184,
+        "fire_intensity": 254.7920684814453,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37194.15547657013,
-        "burned_cells": 266,
-        "fire_intensity": 356.2621765136719
+        "episode_reward": -8968.114351193111,
+        "burned_cells": 252,
+        "fire_intensity": 316.0866394042969,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38826.161189079285,
-        "burned_cells": 265,
-        "fire_intensity": 350.83099365234375
+        "episode_reward": -7955.548145982126,
+        "burned_cells": 243,
+        "fire_intensity": 308.05328369140625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40439.39417266846,
-        "burned_cells": 267,
-        "fire_intensity": 350.4097900390625
+        "episode_reward": -8516.922034899393,
+        "burned_cells": 203,
+        "fire_intensity": 282.6720886230469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38750.50760269165,
-        "burned_cells": 253,
-        "fire_intensity": 342.32025146484375
+        "episode_reward": -8098.152357339859,
+        "burned_cells": 209,
+        "fire_intensity": 279.9266662597656,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39266.57350921631,
-        "burned_cells": 253,
-        "fire_intensity": 348.3614501953125
+        "episode_reward": -4091.1841123898826,
+        "burned_cells": 116,
+        "fire_intensity": 176.61758422851562,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38242.88858509064,
-        "burned_cells": 251,
-        "fire_intensity": 348.34033203125
+        "episode_reward": -5430.450231393178,
+        "burned_cells": 141,
+        "fire_intensity": 200.04823303222656,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36721.504799842834,
-        "burned_cells": 251,
-        "fire_intensity": 343.6666259765625
+        "episode_reward": -5957.080396970114,
+        "burned_cells": 177,
+        "fire_intensity": 220.3578643798828,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40698.69535446167,
-        "burned_cells": 280,
-        "fire_intensity": 357.16290283203125
+        "episode_reward": -6509.467587808767,
+        "burned_cells": 219,
+        "fire_intensity": 280.28314208984375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40767.54607963562,
-        "burned_cells": 265,
-        "fire_intensity": 353.7015686035156
+        "episode_reward": -8007.648717164993,
+        "burned_cells": 223,
+        "fire_intensity": 285.09918212890625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39711.61410140991,
-        "burned_cells": 262,
-        "fire_intensity": 354.9893798828125
+        "episode_reward": -7481.982104460399,
+        "burned_cells": 222,
+        "fire_intensity": 267.442138671875,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40628.83762931824,
-        "burned_cells": 269,
-        "fire_intensity": 354.37530517578125
+        "episode_reward": -7889.891062418619,
+        "burned_cells": 223,
+        "fire_intensity": 289.08526611328125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38640.64471244812,
-        "burned_cells": 259,
-        "fire_intensity": 353.13812255859375
+        "episode_reward": -9187.894605398178,
+        "burned_cells": 243,
+        "fire_intensity": 317.7255554199219,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -42099.65005111694,
-        "burned_cells": 294,
-        "fire_intensity": 372.7847900390625
+        "episode_reward": -4473.455588181813,
+        "burned_cells": 146,
+        "fire_intensity": 190.59857177734375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -41371.85085773468,
-        "burned_cells": 259,
-        "fire_intensity": 357.36920166015625
+        "episode_reward": -3185.2664461930594,
+        "burned_cells": 107,
+        "fire_intensity": 145.13092041015625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39533.85677719116,
-        "burned_cells": 272,
-        "fire_intensity": 349.148681640625
+        "episode_reward": -5637.1356634746,
+        "burned_cells": 156,
+        "fire_intensity": 187.41673278808594,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3098.950214629372,
+        "burned_cells": 92,
+        "fire_intensity": 126.28352355957031,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3685.51333173116,
+        "burned_cells": 104,
+        "fire_intensity": 173.49215698242188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6533.30524222056,
+        "burned_cells": 168,
+        "fire_intensity": 216.60382080078125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3856.576145675034,
+        "burned_cells": 118,
+        "fire_intensity": 140.8931884765625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4375.830630299945,
+        "burned_cells": 100,
+        "fire_intensity": 156.2841033935547,
+        "containment_rate": 0.0
       }
     ]
   },
   "ppo_seed_4": {
     "summary": {
-      "episode_reward_mean": -39076.025214719775,
-      "episode_reward_std": 1414.6527991584433,
-      "burned_cells_mean": 265.95,
-      "burned_cells_std": 13.317188141646119,
-      "fire_intensity_mean": 354.335514831543,
-      "fire_intensity_std": 7.184187205345179,
-      "n_episodes": 20,
+      "episode_reward_mean": -6524.719838979094,
+      "episode_reward_std": 1919.7664033699293,
+      "burned_cells_mean": 182.98,
+      "burned_cells_std": 50.29572148801526,
+      "fire_intensity_mean": 238.61178955078125,
+      "fire_intensity_std": 56.75250753626521,
+      "containment_rate_mean": 0.0,
+      "containment_rate_std": 0.0,
+      "n_episodes": 50,
       "burned_threshold": 0.5
     },
     "episodes": [
       {
-        "episode_reward": -40896.54057312012,
-        "burned_cells": 258,
-        "fire_intensity": 360.6770324707031
+        "episode_reward": -4682.54489549001,
+        "burned_cells": 148,
+        "fire_intensity": 189.2113037109375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38049.91072654724,
-        "burned_cells": 292,
-        "fire_intensity": 361.1766052246094
+        "episode_reward": -6859.754351218541,
+        "burned_cells": 218,
+        "fire_intensity": 266.4877014160156,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38072.078592300415,
-        "burned_cells": 273,
-        "fire_intensity": 350.48333740234375
+        "episode_reward": -7086.602958758673,
+        "burned_cells": 193,
+        "fire_intensity": 253.25689697265625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36891.24419593811,
-        "burned_cells": 241,
-        "fire_intensity": 342.6006774902344
+        "episode_reward": -6953.106706062953,
+        "burned_cells": 178,
+        "fire_intensity": 254.06771850585938,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38841.84991836548,
-        "burned_cells": 271,
-        "fire_intensity": 352.2279052734375
+        "episode_reward": -6416.89142592748,
+        "burned_cells": 204,
+        "fire_intensity": 274.62939453125,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37248.9943857193,
-        "burned_cells": 267,
-        "fire_intensity": 358.48193359375
+        "episode_reward": -4088.5464389820895,
+        "burned_cells": 132,
+        "fire_intensity": 189.98117065429688,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38894.341958999634,
+        "episode_reward": -10955.250662326813,
+        "burned_cells": 264,
+        "fire_intensity": 315.0729675292969,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -2864.794332663218,
+        "burned_cells": 72,
+        "fire_intensity": 125.26469421386719,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6932.81868259112,
+        "burned_cells": 191,
+        "fire_intensity": 258.0533447265625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8400.573398256054,
+        "burned_cells": 236,
+        "fire_intensity": 284.64849853515625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4981.373296737671,
+        "burned_cells": 125,
+        "fire_intensity": 176.4815673828125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7009.223385815819,
+        "burned_cells": 194,
+        "fire_intensity": 226.1619415283203,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5284.701940377553,
+        "burned_cells": 126,
+        "fire_intensity": 202.64222717285156,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7794.444657723109,
+        "burned_cells": 223,
+        "fire_intensity": 273.6976318359375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7314.585066715877,
+        "burned_cells": 205,
+        "fire_intensity": 267.971435546875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7756.5709095994625,
+        "burned_cells": 218,
+        "fire_intensity": 273.16717529296875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5229.393375794093,
+        "burned_cells": 148,
+        "fire_intensity": 210.91229248046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6737.216074148814,
+        "burned_cells": 161,
+        "fire_intensity": 254.3916473388672,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9684.994085232416,
         "burned_cells": 268,
-        "fire_intensity": 353.43023681640625
+        "fire_intensity": 335.06500244140625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40553.771876335144,
-        "burned_cells": 268,
-        "fire_intensity": 353.92144775390625
+        "episode_reward": -7202.851267258326,
+        "burned_cells": 206,
+        "fire_intensity": 239.57952880859375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -37952.68822479248,
-        "burned_cells": 249,
-        "fire_intensity": 342.5868835449219
+        "episode_reward": -6006.572096242258,
+        "burned_cells": 177,
+        "fire_intensity": 226.5384063720703,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38450.545952796936,
-        "burned_cells": 254,
-        "fire_intensity": 345.9897155761719
+        "episode_reward": -8782.13473039369,
+        "burned_cells": 245,
+        "fire_intensity": 302.728515625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38033.19302749634,
+        "episode_reward": -7933.939115524292,
+        "burned_cells": 247,
+        "fire_intensity": 314.01214599609375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3212.090881387393,
+        "burned_cells": 105,
+        "fire_intensity": 121.33180236816406,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8737.972608566284,
+        "burned_cells": 219,
+        "fire_intensity": 298.2808837890625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4824.30790344874,
+        "burned_cells": 163,
+        "fire_intensity": 199.57421875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6636.942811736217,
+        "burned_cells": 178,
+        "fire_intensity": 232.94744873046875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6972.709080626567,
+        "burned_cells": 215,
+        "fire_intensity": 253.48330688476562,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9609.925990641119,
+        "burned_cells": 244,
+        "fire_intensity": 296.0558776855469,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6342.789848883946,
+        "burned_cells": 184,
+        "fire_intensity": 254.7920684814453,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -8968.114351193111,
         "burned_cells": 252,
-        "fire_intensity": 352.13507080078125
+        "fire_intensity": 316.0866394042969,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -36604.57038593292,
-        "burned_cells": 252,
-        "fire_intensity": 345.31170654296875
+        "episode_reward": -7955.548145982126,
+        "burned_cells": 243,
+        "fire_intensity": 308.05328369140625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40579.30800533295,
-        "burned_cells": 279,
-        "fire_intensity": 358.0789794921875
+        "episode_reward": -8516.922034899393,
+        "burned_cells": 203,
+        "fire_intensity": 282.6720886230469,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40722.60291194916,
-        "burned_cells": 269,
-        "fire_intensity": 356.3271484375
+        "episode_reward": -8098.152357339859,
+        "burned_cells": 209,
+        "fire_intensity": 279.9266662597656,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39680.597294807434,
-        "burned_cells": 265,
-        "fire_intensity": 359.16845703125
+        "episode_reward": -4091.1841123898826,
+        "burned_cells": 116,
+        "fire_intensity": 176.61758422851562,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39565.74434661865,
-        "burned_cells": 267,
-        "fire_intensity": 353.6864013671875
+        "episode_reward": -5430.450231393178,
+        "burned_cells": 141,
+        "fire_intensity": 200.04823303222656,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -38667.27029132843,
-        "burned_cells": 260,
-        "fire_intensity": 355.4590148925781
+        "episode_reward": -5957.080396970114,
+        "burned_cells": 177,
+        "fire_intensity": 220.3578643798828,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -41637.361273765564,
-        "burned_cells": 297,
-        "fire_intensity": 374.3431701660156
+        "episode_reward": -6509.467587808767,
+        "burned_cells": 219,
+        "fire_intensity": 280.28314208984375,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -40817.717659950256,
-        "burned_cells": 262,
-        "fire_intensity": 359.2413330078125
+        "episode_reward": -8007.648717164993,
+        "burned_cells": 223,
+        "fire_intensity": 285.09918212890625,
+        "containment_rate": 0.0
       },
       {
-        "episode_reward": -39360.17269229889,
-        "burned_cells": 275,
-        "fire_intensity": 351.38323974609375
+        "episode_reward": -7481.982104460399,
+        "burned_cells": 222,
+        "fire_intensity": 267.442138671875,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -7889.891062418619,
+        "burned_cells": 223,
+        "fire_intensity": 289.08526611328125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -9187.894605398178,
+        "burned_cells": 243,
+        "fire_intensity": 317.7255554199219,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4473.455588181813,
+        "burned_cells": 146,
+        "fire_intensity": 190.59857177734375,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3185.2664461930594,
+        "burned_cells": 107,
+        "fire_intensity": 145.13092041015625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -5637.1356634746,
+        "burned_cells": 156,
+        "fire_intensity": 187.41673278808594,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3098.950214629372,
+        "burned_cells": 92,
+        "fire_intensity": 126.28352355957031,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3685.51333173116,
+        "burned_cells": 104,
+        "fire_intensity": 173.49215698242188,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -6533.30524222056,
+        "burned_cells": 168,
+        "fire_intensity": 216.60382080078125,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -3856.576145675034,
+        "burned_cells": 118,
+        "fire_intensity": 140.8931884765625,
+        "containment_rate": 0.0
+      },
+      {
+        "episode_reward": -4375.830630299945,
+        "burned_cells": 100,
+        "fire_intensity": 156.2841033935547,
+        "containment_rate": 0.0
       }
     ]
   }

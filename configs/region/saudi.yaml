@@ -4,3 +4,28 @@ region:
   name: saudi
   dir: saudi_eastern_province
   grid_size: 32
+
+# Saudi desert domain model (Phase 15): sparse fuel => less spread; more frequent, more
+# random ignitions; and a petroleum-asset criticality penalty. These are the CANONICAL Saudi
+# dynamics — mirrored into configs/experiment/multiseed.yaml for the reported retrain.
+env:
+  spread_scale: 0.7        # sparse desert fuel -> reduced spread (calibrated: noop ~35 burned
+                           # vs California ~223; 0.5 collapsed the fire to ~3 cells — too trivial)
+  ignition_rate: 0.05      # per-step prob. of a new stochastic ignition (more frequent)
+  n_ignition_points: 6     # more, more-random initial fires
+  ignition_intensity: 1.0
+  randomize_ignition: true
+  criticality_weight: 2.0
+  criticality_path: data/saudi_eastern_province/grids/32x32/criticality.npy
+
+  # Critical petroleum infrastructure (Phase 15B.1): asset-type/criticality/blast rasters, a
+  # value-weighted catastrophe penalty, cascading detonation, and an infrastructure observation
+  # channel. NOTE: `observe_infra: true` adds a 9th observation channel — the reported multiseed
+  # models (8-channel, Phase 9) do NOT enable it; the 15B hybrid/strategic experiments train fresh
+  # models against this canonical infrastructure config.
+  infra:
+    infra_dir: data/saudi_eastern_province/grids/32x32/infrastructure
+    observe_infra: true
+    catastrophe_weight: 5.0
+    cascade_prob: 0.15
+    blast_radius: 2

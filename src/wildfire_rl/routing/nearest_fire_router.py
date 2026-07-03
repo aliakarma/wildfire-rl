@@ -32,7 +32,7 @@ def get_nearest_fire_target(
     row_slice, col_slice = get_sector_bounds(sector_idx, grid_size)
     sector_mask = np.zeros_like(active_mask, dtype=bool)
     sector_mask[row_slice, col_slice] = True
-    
+
     sector_burning = np.argwhere(active_mask & sector_mask)
 
     # Fall back to global search if target sector has no fire
@@ -41,6 +41,6 @@ def get_nearest_fire_target(
     # Find closest target cell using Manhattan distance
     dists = np.abs(targets[:, 0] - ax) + np.abs(targets[:, 1] - ay)
     closest_idx = np.argmin(dists)
-    
+
     tx, ty = targets[closest_idx]
     return int(tx), int(ty)

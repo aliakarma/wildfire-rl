@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -52,12 +53,12 @@ class AdaptiveHybridMultiAgentWildfireEnv(DynamicMultiAgentWildfireEnv):
         """Return the sum of fire intensity in each of the 4 quadrant sectors."""
         fire = self.state[0]
         half = self.grid_size // 2
-        
+
         nw = float(fire[0:half, 0:half].sum())
-        ne = float(fire[0:half, half:self.grid_size].sum())
-        sw = float(fire[half:self.grid_size, 0:half].sum())
-        se = float(fire[half:self.grid_size, half:self.grid_size].sum())
-        
+        ne = float(fire[0:half, half : self.grid_size].sum())
+        sw = float(fire[half : self.grid_size, 0:half].sum())
+        se = float(fire[half : self.grid_size, half : self.grid_size].sum())
+
         return np.array([nw, ne, sw, se])
 
     def _get_agent_quadrant(self, ax: int, ay: int) -> int:
@@ -111,9 +112,7 @@ class AdaptiveHybridMultiAgentWildfireEnv(DynamicMultiAgentWildfireEnv):
             # 2. Path routing target coordinate calculations
             if ppo_action == 7:
                 # Target closest active frontier cell globally
-                tx, ty = get_frontier_target(
-                    fire_channel, ax, ay, 4, self.cfg.spread_threshold
-                )
+                tx, ty = get_frontier_target(fire_channel, ax, ay, 4, self.cfg.spread_threshold)
             else:
                 # Target closest active fire cell inside the resolved sector
                 tx, ty = get_nearest_fire_target(
@@ -140,7 +139,7 @@ class AdaptiveHybridMultiAgentWildfireEnv(DynamicMultiAgentWildfireEnv):
         # Apply suppression and environment dynamic events
         original_move = self._move
         self._move = lambda idx, act: None  # No-op during base step
-        
+
         try:
             # We call step on DynamicMultiAgentWildfireEnv which triggers wind/ignitions
             obs, reward, terminated, truncated, info = super().step(step_actions)

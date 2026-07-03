@@ -10,6 +10,7 @@ Subclass of :class:`HybridMultiAgentWildfireEnv` that injects:
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -50,9 +51,13 @@ class DynamicMultiAgentWildfireEnv(HybridMultiAgentWildfireEnv):
         # 1. Inject dynamic scenarios based on current step
         # Retrieve config flags (defaults if not in config)
         dynamic_cfg = getattr(self.cfg, "dynamic_scenarios", {})
-        
+
         # A. Moving Wind Fronts: shift wind vectors every 40 steps
-        if dynamic_cfg.get("moving_wind", True) and self.current_step > 0 and self.current_step % 40 == 0:
+        if (
+            dynamic_cfg.get("moving_wind", True)
+            and self.current_step > 0
+            and self.current_step % 40 == 0
+        ):
             angle = self.np_random.uniform(0, 2 * np.pi)
             magnitude = self.np_random.uniform(0.04, 0.18)
             self.state[2] = np.cos(angle) * magnitude
@@ -89,8 +94,8 @@ class DynamicMultiAgentWildfireEnv(HybridMultiAgentWildfireEnv):
                     for y in range(1, 15):
                         if nw_fire[x, y] > self.cfg.spread_threshold:
                             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                                if self.state[0, x+dx, y+dy] < 0.1:
-                                    self.state[0, x+dx, y+dy] += 0.12
+                                if self.state[0, x + dx, y + dy] < 0.1:
+                                    self.state[0, x + dx, y + dy] += 0.12
 
         # 2. Run standard hybrid navigation step
         obs, reward, terminated, truncated, info = super().step(actions)
