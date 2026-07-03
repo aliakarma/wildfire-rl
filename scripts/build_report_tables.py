@@ -84,6 +84,21 @@ TABLES = [
         ],
         "results/runs/train_*/manifest.json",
     ),
+    (
+        "transfer_hybrid.csv",
+        "Infrastructure-Aware Transfer (Phase 15B.4) — effective + hybrid families × region",
+        [
+            "policy_family",
+            "region",
+            "burned_cells_mean",
+            "isr_mean",
+            "cps_mean",
+            "rac_mean",
+            "wel_mean",
+            "reward_mode",
+        ],
+        "scripts/run_transfer_hybrid.py (deterministic, eval-only)",
+    ),
 ]
 
 

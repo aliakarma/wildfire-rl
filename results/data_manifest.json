@@ -11,6 +11,18 @@
     "sha256": "dc42eb8fa74fe2c7e79ec42e8cfce5f7c57aafa5ac2b4a4a8dc713cc811e3b9d",
     "bytes": 4224
   },
+  "california/grids/32x32/infrastructure/asset_type.npy": {
+    "sha256": "d7db9f40ad9ae318cdff4e526103fd77c65a9a08ea7f7bd3df0283def9c6135a",
+    "bytes": 4224
+  },
+  "california/grids/32x32/infrastructure/blast_radius.npy": {
+    "sha256": "950dc7ca2ee3e36cc9546d3c10c9ff3faa3d8e4dfd4cb56dedeec73cdcaea126",
+    "bytes": 4224
+  },
+  "california/grids/32x32/infrastructure/criticality.npy": {
+    "sha256": "dfbd471b3bef22834c22ee813368980d93a0705afa5cfd31a9928f9b630a47b2",
+    "bytes": 4224
+  },
   "california/grids/32x32/state_tensor.npy": {
     "sha256": "f7e2d933c359bbdfc93c33cce82f66a303a02fe61348b12d9b62ddc06d7cb415",
     "bytes": 28800

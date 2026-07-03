@@ -1483,3 +1483,164 @@ pytest ................... 81 passed (+9); black+ruff clean; gates still exit 0 
 controller · **15B.3** strategic + transfer metrics (ISR/WEL/CPS/RAC/PCA/TRS/CDGG) · **15B.4** symmetric
 infrastructure-aware transfer · **15B.5** strategic visualization · **15B.6** AAAI report framing ·
 **15B.7** compute scope · **15B.8** strategic ablations + canonical GIFs. No commits made, per owner.
+
+---
+
+## Phase 15B.3 — Strategic & Transfer Metrics
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~25 min · **Compute:** CPU only.
+
+### Objective
+Report outcomes the petroleum-critical domain actually cares about (asset survival, economic loss,
+catastrophe prevention), with exact formulas, and the transfer-degradation metrics.
+
+### Actions Taken
+1. **`eval/metrics.py`** — five per-episode strategic metrics: **ISR** (survival = assets with fire ≤
+   reach-threshold 0.1), **PCA** (absolute protected count), **WEL** (`Σ value[type]·fire`), **CPS**
+   (`1 − detonated/total` at detonation-threshold 0.5 — distinct from ISR by severity), **RAC**
+   (`1 − Σ crit·fire_final / Σ crit·fire_initial`). Neutral values when asset-free.
+2. **`eval/transfer.py`** — **TRS** (`transfer/native`, nan when native≈0), **CDGG**
+   (`native − transfer`), and `adaptation_asymmetry` (`|CDGG(A→B) − CDGG(B→A)|`).
+3. **`eval/evaluate.py`** — `_strategic_metrics()` threads ISR/WEL/CPS/RAC/PCA into every episode
+   record **only when the env carries infrastructure**, so non-infra evaluations are byte-unchanged
+   (captures the post-reset initial state for RAC).
+4. **`tests/test_metrics.py`** (+8) — each formula on synthetic assets, ISR-vs-CPS threshold split,
+   and the decisive test: *a policy that defends assets beats one that only minimizes burned cells on
+   ISR/WEL at equal burned-cell counts*.
+
+### Verification Evidence
+```
+ISR/PCA/WEL/CPS/RAC ... unit-tested on known assets; asset-free -> neutral        ✔
+defend-assets test .... equal burned_cells, but ISR higher + WEL lower when asset saved  ✔
+TRS/CDGG/asymmetry .... 0.6/0.8 -> TRS 0.75, CDGG 0.2, nan when native 0            ✔
+non-infra eval ........ unchanged (strategic keys emitted only with assets)        ✔
+pytest ................ metrics suite green
+```
+
+### Success Criteria (Gate)
+- [x] ISR, WEL, CPS, RAC, PCA implemented (per-episode) + unit-tested
+- [x] TRS/CDGG computed from native vs transfer; asymmetry helper
+- [x] Threaded into the eval summary (infra-only; non-infra unchanged)
+- [x] Asset-defending policy beats burned-cell-minimizing on ISR/WEL at equal burned cells
+
+---
+
+## Phase 15B.2 — Hierarchical / Hybrid Control Architecture
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~35 min · **Compute:** CPU only.
+
+### Objective
+Formalize the two-level controller the negative result motivates: a strategic high level (dispatch +
+prioritization) over a robust heuristic low level (routing + deterministic suppression).
+
+### Actions Taken
+1. **`coordination/strategic_controller.py` (new)** — `StrategicController`, an env-agnostic `Policy`
+   (drop-in for `evaluate_policy`). Reads env fire + `infra_criticality` + `agent_positions`, ranks
+   sectors (`routing_utils.get_sector_bounds`), assigns each agent to a top sector, and routes it with
+   the low-level router (`get_nearest_fire_target`/`get_frontier_target` + `compute_step_action`).
+   Variants share one contract: **greedy_risk** (argmax fire load), **risk_aware** (fire +
+   `infra_risk_weight`·fire-on-criticality → defends assets), **rl** (injected learned scorer;
+   greedy fallback). `make_strategic_controller(HierarchyConfig)` factory.
+2. **`config.py`** — `HierarchyConfig{high_level, low_level, num_sectors, infra_risk_weight}`.
+3. **`docs/architecture.md`** — infrastructure section + hierarchy diagram + observation/contract notes.
+4. **`tests/test_strategic.py` (new, 5)** — valid MultiDiscrete actions; invalid-variant guard;
+   **greedy vs risk_aware rank the top sector differently** when a small fire threatens a refinery vs a
+   large decoy fire; **end-to-end ISR: risk_aware ≥ greedy_risk** in the asset-threatening scenario;
+   factory wiring.
+
+### Verification Evidence
+```
+controller ............ valid actions; env-agnostic Policy; reused routing/ low level   ✔
+greedy vs risk_aware .. top sector differs (SE decoy vs NW refinery); no collapse        ✔
+strategic effect ...... risk_aware ISR >= greedy_risk over a rollout                     ✔
+pytest ................ 92 passed (+11 across 15B.2/15B.3); black + ruff clean           ✔
+```
+
+### Deviations / Scope Notes
+1. **`rl` variant is a documented stub** (injected scorer / greedy fallback) — training the high-level
+   RL over the small strategic action space is 15B.4/future; the *contract* (env-agnostic, drop-in
+   comparable) is what 15B.2 delivers.
+2. **`hybrid_multi_agent.py` left as-is** — the new standalone `StrategicController` is a cleaner,
+   testable realization of the two-level contract than entangling the experimental v3-hybrid env;
+   both coexist. Wiring the controller into `cli.cmd_evaluate` as `hierarchical-*` policy families is
+   done in 15B.4 (transfer), where policy families are enumerated.
+
+### Success Criteria (Gate)
+- [x] `StrategicController` with greedy_risk / risk_aware / rl variants + shared contract
+- [x] Low level reuses `routing/` unchanged (operational baseline)
+- [x] `HierarchyConfig` added
+- [x] Changing the high-level controller measurably changes infrastructure survival (test)
+- [x] Strategic action space small → simple high-level policies stable (no collapse)
+- [x] `docs/architecture.md` hierarchy diagram + contracts added
+
+**Proceed Rule:** 15B.2 + 15B.3 complete. Remaining 15B: **15B.4** symmetric infrastructure-aware
+transfer (wires `hierarchical-*` families + strategic metrics into the transfer matrix) · **15B.5**
+strategic visualization · **15B.6** AAAI report framing · **15B.7** compute scope · **15B.8** strategic
+ablations + canonical GIFs. No commits made, per owner instruction.
+
+---
+
+## Phase 15B.4 — Cross-Region Transfer (symmetric, infrastructure-aware)
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~40 min · **Compute:** CPU only
+(evaluation-only; real committed results).
+
+### Objective
+Measure how the *effective + hybrid* methods generalize across ecological regimes with
+infrastructure-aware metrics, in both directions.
+
+### Actions Taken
+1. **California infrastructure** — added California sites to `build_infrastructure.py` (generic
+   critical/urban "forest-value" assets) and built rasters for **both** regions, so the study is
+   infrastructure-aware in both directions.
+2. **`configs/experiment/transfer_hybrid.yaml` (new)** — regions (saudi/california dynamics + infra),
+   4 families, 5 seeds × 30 eps, disjoint offset, normalized reward.
+3. **`scripts/run_transfer_hybrid.py` (new)** — evaluates each deterministic family
+   (`nearest_fire`, `frontier`, `hierarchical_greedy`, `hierarchical_risk_aware`) on both regions with
+   the 15B.3 strategic metrics, bootstrap 95% CIs over 5 seed batches; writes
+   `results/transfer_hybrid.csv` (family × region) + `results/transfer_hybrid_generalization.csv`
+   (per-family/metric TRS + CDGG both directions).
+4. **`eval/transfer.py`** — TRS/CDGG/asymmetry (added in 15B.3) drive the generalization CSV.
+5. **`viz/figures.py` + `cli.cmd_make_figures`** — `plot_strategic_transfer` heatmaps (ISR/CPS/RAC by
+   family × region); wrote `transfer_hybrid_{isr,cps,rac}.png`.
+6. **`build_report_tables.py`** — added the `transfer_hybrid` table (5th table) with provenance.
+7. **`docs/paper/report.md` §16.5** — embedded the generated 15B.4 table + honest narrative.
+8. **`tests/test_strategic.py`** (+1) — transfer CSV structure (both regions × families, strategic cols).
+
+### Result (real, committed)
+```
+ISR (family × region):  nearest_fire/frontier  saudi 0.994 | california 1.000
+                        hierarchical_*         saudi 1.000 | california 1.000
+RAC (Saudi):  nearest_fire/frontier -17.6 (fire reaches critical cells)
+              hierarchical_greedy +0.42 · risk_aware +0.33  (strategic dispatch contains it)
+```
+Honest finding: the hierarchical/hybrid controller **improves infrastructure survival (ISR 1.0 vs
+0.994) and dramatically improves risk-adjusted containment (RAC positive vs strongly negative)** over
+plain heuristic routing on the Saudi petroleum region.
+
+### Deviations / Scope Notes
+1. **Region-agnostic framing (honest).** Heuristic/hybrid families have no per-region training, so the
+   transfer axis is the *fire regime* (desert↔forest) + asset layout, not policy specialization. The
+   CSV therefore covers **family × region** (both directions) rather than a train×test N×N whose
+   off-diagonal would be identical to the diagonal by construction. Documented in the script header and
+   §16.5. Region-*specialized* transfer (the trained-PPO negative baseline) is a separate heavier study.
+2. **Real committed data** — 5 seeds × 30 eps produced `transfer_hybrid*.csv`; hashed into the manifest.
+
+### Verification Evidence
+```
+run_transfer_hybrid ...... 8 cells + 20 generalization rows; ISR/RAC as above       ✔
+figures .................. transfer_hybrid_{isr,cps,rac}.png                          ✔
+report §16.5 ............. embeds generated table; report-consistency test green      ✔
+pytest ................... 93 passed (+1); black + ruff clean; gates still exit 0     ✔
+```
+
+### Success Criteria (Gate)
+- [x] Symmetric coverage incl. the California direction (both regions evaluated)
+- [x] Per-cell burned + RAC + ISR + WEL + CPS with bootstrap CIs (≥5 seed batches)
+- [x] TRS/CDGG per family per metric (generalization CSV)
+- [x] Transfer heatmaps per metric; report table + provenance
+- [x] Deterministic families → reproducible; effective-method framing preserved
+
+**Proceed Rule:** 15B.4 complete. Remaining 15B: **15B.5** strategic visualization · **15B.6** AAAI
+report framing · **15B.7** compute scope · **15B.8** strategic ablations + canonical GIFs. No commits
+made, per owner instruction.

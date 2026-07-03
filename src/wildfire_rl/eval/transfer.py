@@ -18,6 +18,27 @@ from wildfire_rl.config import MetricsConfig
 from wildfire_rl.eval.evaluate import Policy, evaluate_policy
 
 
+def transfer_robustness_score(native: float, transfer: float) -> float:
+    """TRS = transfer / native (Phase 15B.3). 1.0 = no degradation; <1 = the metric dropped under
+    transfer. For higher-is-better metrics (ISR/CPS/RAC). Returns ``nan`` when ``native`` is ~0."""
+    if native is None or transfer is None or abs(native) < 1e-12:
+        return float("nan")
+    return float(transfer) / float(native)
+
+
+def cross_domain_gap(native: float, transfer: float) -> float:
+    """CDGG = native − transfer (Phase 15B.3): absolute generalization loss (positive = worse under
+    transfer for higher-is-better metrics)."""
+    if native is None or transfer is None:
+        return float("nan")
+    return float(native) - float(transfer)
+
+
+def adaptation_asymmetry(cdgg_a_to_b: float, cdgg_b_to_a: float) -> float:
+    """|CDGG(A→B) − CDGG(B→A)|: how unequal the two transfer directions are (Phase 15B.4)."""
+    return abs(float(cdgg_a_to_b) - float(cdgg_b_to_a))
+
+
 def transfer_matrix(
     policies: dict[str, Policy],
     env_factories: dict[str, Callable[[], Any]],

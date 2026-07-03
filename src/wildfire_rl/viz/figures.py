@@ -181,6 +181,34 @@ def plot_ablation_bars(ablation_csv: str | Path, out_path: str | Path):
     return path
 
 
+def plot_strategic_transfer(transfer_hybrid_csv: str | Path, metric: str, out_path: str | Path):
+    """Heatmap of a strategic metric (rows=policy_family, cols=region) — Phase 15B.4.
+
+    Reads ``results/transfer_hybrid.csv`` (``<metric>_mean`` columns). Higher is better for
+    ISR/CPS/RAC; annotate each cell with its value.
+    """
+    import matplotlib.pyplot as plt
+
+    df = pd.read_csv(transfer_hybrid_csv)
+    col = f"{metric}_mean"
+    if col not in df.columns:
+        return None
+    pivot = df.pivot(index="policy_family", columns="region", values=col)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    im = ax.imshow(pivot.values, aspect="auto", cmap="viridis")
+    ax.set_xticks(range(len(pivot.columns)), pivot.columns)
+    ax.set_yticks(range(len(pivot.index)), pivot.index)
+    ax.set_xlabel("Region")
+    ax.set_title(f"Infrastructure-aware transfer: {metric.upper()}")
+    for i in range(pivot.shape[0]):
+        for j in range(pivot.shape[1]):
+            ax.text(j, i, f"{pivot.values[i, j]:.3f}", ha="center", va="center", color="w")
+    fig.colorbar(im, ax=ax)
+    path = _save(fig, out_path)
+    plt.close(fig)
+    return path
+
+
 def plot_marl_scaling(marl_csv: str | Path, out_path: str | Path):
     """Line plot: fire intensity vs number of agents, per region, with CI bands when present.
 

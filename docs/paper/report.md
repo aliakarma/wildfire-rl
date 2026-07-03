@@ -2,6 +2,15 @@ Comprehensive Project Report
 Geospatial Wildfire Reinforcement Learning and Cross-Regional Generalization Framework
 Research Project Summary
 ________________________________________
+> **AAAI framing (Phase 15B.6).** This is a trustworthy AI-systems / safety-critical coordination
+> study. The central result is an **honest negative result** for single-agent PPO, which motivates a
+> **hierarchical hybrid** design (heuristic low level + strategic high level) and an
+> **infrastructure-aware, risk-weighted** objective; symmetric cross-region transfer and
+> critical-infrastructure protection are the contributions. Heuristic routing is the effective method;
+> PPO is a documented negative baseline (never tuned to "win"). Contribution list, section skeleton, and
+> a claims→evidence map: [`aaai_outline.md`](aaai_outline.md). Result tables are generated from committed
+> CSVs (`build_report_tables.py`); the pre-15B sections below are legacy narrative superseded by §16.
+________________________________________
 1. Project Title
 Geospatial Wildfire Reinforcement Learning for Cooperative Fire Suppression and Cross-Regional Policy Generalization using Saudi Arabian and California Environmental Regimes
 ________________________________________
@@ -378,6 +387,35 @@ Interpretation:
   California→Saudi show ecological domain shift; native-vs-transferred differences are reported with
   Cohen's d and significance directly from the CSV (no hand-entered values).
 
+16.5 Infrastructure-Aware Transfer (Phase 15B.4)
+
+> Regenerate: `python scripts/run_transfer_hybrid.py` then
+> `python scripts/build_report_tables.py --out docs/paper/_generated_tables.md`.
+
+The effective + hybrid families evaluated on **both** regions with the strategic infrastructure
+metrics (ISR survival, WEL loss, CPS catastrophe-prevention, RAC risk-adjusted containment),
+bootstrap 95% CIs over 5 disjoint eval-seed batches. Heuristic/hybrid families are region-agnostic,
+so the transfer signal is the change in fire regime (desert↔forest) and asset layout; the
+hierarchical dispatch (greedy/risk_aware) protects infrastructure at least as well as plain
+nearest-fire routing on both regions. Cross-region TRS/CDGG are in
+`results/transfer_hybrid_generalization.csv`.
+
+### Infrastructure-Aware Transfer (Phase 15B.4) — effective + hybrid families × region
+
+<!-- source: results/transfer_hybrid.csv | sha256: d15843fe83fd2b830ed394d63285229554bb14e23a86909ccf67885f494cc464 | provenance: scripts/run_transfer_hybrid.py (deterministic, eval-only) -->
+
+| policy_family | region | burned_cells_mean | isr_mean | cps_mean | rac_mean | wel_mean | reward_mode |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| nearest_fire | saudi | 0.720 | 0.994 | 1.000 | -17.642 | 0.057 | normalized |
+| frontier | saudi | 0.720 | 0.994 | 1.000 | -17.642 | 0.057 | normalized |
+| hierarchical_greedy | saudi | 0.500 | 1.000 | 1.000 | 0.422 | 0.000 | normalized |
+| hierarchical_risk_aware | saudi | 0.360 | 1.000 | 1.000 | 0.333 | 0.000 | normalized |
+| nearest_fire | california | 0.000 | 1.000 | 1.000 | 0.984 | 0.000 | normalized |
+| frontier | california | 0.000 | 1.000 | 1.000 | 0.984 | 0.000 | normalized |
+| hierarchical_greedy | california | 0.000 | 1.000 | 1.000 | 0.966 | 0.000 | normalized |
+| hierarchical_risk_aware | california | 0.000 | 1.000 | 1.000 | 0.977 | 0.000 | normalized |
+
+________________________________________
 16.4 Withdrawn analyses (pending provenance-bound regeneration)
 * The earlier "Zero-Shot Generalization (randomized ignition)" and "Ablation Study of Environmental
   Dynamics" tables derived from **pre-remediation CSVs** (`eval_saudi_generalization.csv`,

@@ -102,6 +102,35 @@ class InfraConfig:
 
 
 @dataclass
+class AblationConfig:
+    """Single-factor ablation toggles (Phase 15B.8). Each maps to one env/controller knob so a cell
+    flips exactly one factor from the full proposed system (all True/on = the proposed system)."""
+
+    controller: str = "hybrid"  # {hybrid, heuristic, ppo(negative baseline)}
+    low_level: str = "frontier"  # nearest_fire | frontier
+    infra_weighting: bool = True  # catastrophe penalty on/off
+    cascade: bool = True  # cascading detonation on/off
+    prioritization: bool = True  # risk_aware (True) vs uniform greedy (False)
+    coordination: bool = True  # sector deconfliction (True) vs pile-on (False)
+    infra_channel: bool = True  # infrastructure observation channel (RL only)
+
+
+@dataclass
+class HierarchyConfig:
+    """Two-level (hybrid) controller config (Phase 15B.2).
+
+    A strategic high level dispatches agents to sectors/assets; a robust heuristic low level routes
+    each agent toward its target and suppresses. The high level is the small, learnable problem;
+    the low level is the trusted operational controller (the honest negative result motivates this).
+    """
+
+    high_level: str = "greedy_risk"  # {greedy_risk, risk_aware, rl}
+    low_level: str = "nearest_fire"  # {nearest_fire, frontier}
+    num_sectors: int = 4
+    infra_risk_weight: float = 5.0  # risk_aware: extra weight on fire threatening high-value assets
+
+
+@dataclass
 class EnvConfig:
     """Wildfire environment dynamics. Every magic number from the notebooks lives here."""
 

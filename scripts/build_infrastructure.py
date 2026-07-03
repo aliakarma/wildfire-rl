@@ -37,7 +37,9 @@ ASSET_VALUES: dict[int, float] = {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0}
 # Asset code -> cascade blast radius in cells (refineries/storage detonate wider).
 ASSET_BLAST: dict[int, int] = {1: 3, 2: 2, 3: 3, 4: 2}
 
-# Approximate public coordinates (lon, lat, asset_type) of major Eastern-Province petroleum assets.
+# Approximate public coordinates (lon, lat, asset_type) of critical assets per region.
+# Saudi = Eastern-Province petroleum facilities; California = generic critical/urban facilities
+# ("forest-value assets") so the transfer study is infrastructure-aware in both directions.
 DEFAULT_SITES: dict[str, list[tuple[float, float, int]]] = {
     "saudi_eastern_province": [
         (49.30, 25.40, 2),  # Ghawar / Uthmaniyah — world's largest oil field (gathering/pipeline)
@@ -47,6 +49,14 @@ DEFAULT_SITES: dict[str, list[tuple[float, float, int]]] = {
         (48.40, 25.10, 2),  # Khurais — major field (pipeline)
         (50.00, 26.55, 3),  # Qatif — field / storage
         (48.80, 28.00, 3),  # Safaniya — near-shore field / storage
+    ],
+    "california": [
+        (-121.49, 38.58, 4),  # Sacramento — urban/industrial
+        (-122.39, 40.59, 3),  # Redding — storage/critical facility
+        (-121.84, 39.73, 4),  # Chico — urban/industrial
+        (-124.16, 40.80, 3),  # Eureka — coastal critical facility
+        (-120.66, 40.42, 1),  # Susanville-area high-value facility
+        (-122.71, 38.44, 3),  # Santa Rosa — urban/storage
     ],
 }
 

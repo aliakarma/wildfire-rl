@@ -274,6 +274,7 @@ def cmd_make_figures(args) -> int:
         plot_generalization_comparison,
         plot_marl_scaling,
         plot_state_tensor_comparison,
+        plot_strategic_transfer,
         plot_transfer_heatmap,
     )
 
@@ -321,6 +322,13 @@ def cmd_make_figures(args) -> int:
     if marl_csv.exists():
         plot_marl_scaling(marl_csv, figs / "marl_scaling.png")
         logger.info("Wrote marl_scaling.png")
+
+    # Infrastructure-aware transfer (Phase 15B.4): strategic-metric heatmaps
+    hybrid_csv = res / "transfer_hybrid.csv"
+    if hybrid_csv.exists():
+        for metric in ("isr", "cps", "rac"):
+            if plot_strategic_transfer(hybrid_csv, metric, figs / f"transfer_hybrid_{metric}.png"):
+                logger.info("Wrote transfer_hybrid_%s.png", metric)
 
     # State tensor comparison
     saudi_tensor_path = region_tensor_path("saudi_eastern_province", 32)
