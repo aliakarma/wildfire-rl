@@ -99,6 +99,18 @@ TABLES = [
         ],
         "scripts/run_transfer_hybrid.py (deterministic, eval-only)",
     ),
+    (
+        "ablation/hybrid_vs_pure.csv",
+        "Ablation §15B.8 — Hybrid vs Pure Heuristic (PPO = negative baseline)",
+        ["cell", "isr_mean", "rac_mean", "ce_mean", "pa_mean", "wel_mean"],
+        "scripts/run_ablations.py --group hybrid_vs_pure",
+    ),
+    (
+        "ablation/strategic_components.csv",
+        "Ablation §15B.8 — Strategic Component Knockouts",
+        ["cell", "isr_mean", "rac_mean", "ce_mean", "pa_mean", "wel_mean"],
+        "scripts/run_ablations.py --group strategic_components",
+    ),
 ]
 
 

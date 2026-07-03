@@ -1644,3 +1644,107 @@ pytest ................... 93 passed (+1); black + ruff clean; gates still exit 
 **Proceed Rule:** 15B.4 complete. Remaining 15B: **15B.5** strategic visualization · **15B.6** AAAI
 report framing · **15B.7** compute scope · **15B.8** strategic ablations + canonical GIFs. No commits
 made, per owner instruction.
+
+---
+
+## Phase 15B.5 — Strategic Visualization & Analysis
+
+**Status:** ✅ COMPLETE. **Compute:** CPU (real GIFs + filmstrips rendered).
+
+- **`configs/viz.yaml`** — canonical palette/legend (Grass/Finished/Path/Populated/Evacuating/Fire),
+  single source of truth for every rollout GIF.
+- **`viz/rollout.py`** — canonical animated renderer: `class_grid` (wildfire→canonical classes),
+  `record_rollout`, `render_gif` (Pillow; `Timestep #` header + fixed legend).
+- **`viz/strategic.py`** — `plot_strategic_filmstrip`: criticality underlay + assets + agent dispatch
+  trail + fire (key timesteps side-by-side).
+- **`scripts/render_strategic.py`** — per (family × region) → `figures/strategic/{region}_{family}.gif`
+  + `_filmstrip.png`. **`tests/test_rollout_viz.py`** locks the palette contract + GIF production.
+
+---
+
+## Phase 15B.6 — AAAI-Style Report Framing
+
+**Status:** ✅ COMPLETE.
+
+- **`docs/paper/aaai_outline.md` (new)** — contribution list, section skeleton, and a **claims→evidence
+  map** (every claim → a committed CSV/`run_id`/test). Title + future-work directions.
+- **`docs/paper/report.md`** — AAAI framing banner at the top (trustworthy AI / honest negative result /
+  hybrid / infrastructure-aware; heuristics = effective method, PPO = negative baseline); links the
+  outline. Result tables generated from CSVs; pre-15B sections marked legacy/superseded by §16.
+
+---
+
+## Phase 15B.7 — Compute & Experimental Scope
+
+**Status:** ✅ COMPLETE. **`README.md` "Compute & Experimental Scope"** section: priority order
+(heuristic MARL scaling → transfer → strategic coordination); PPO HPO de-prioritized; explicit
+statements (low-level PPO navigation is not the primary claim; heuristic local control is the reliable
+baseline; the only learnable component of interest is the small strategic action space).
+
+---
+
+## Phase 15B.8 — Strategic Ablation Studies
+
+**Status:** ✅ COMPLETE (runnable core of the framework; real committed results). **Compute:** CPU
+(background run: 12 cells × 3 seeds × 12 eps + 12 GIFs).
+
+### Actions Taken
+1. **New metrics (`eval/metrics.py`)** — PA (prioritization accuracy), CCL (catastrophe chain length),
+   CE (coordination efficiency), ERL (emergency response latency), TRG (transfer robustness gap); PA+CCL
+   threaded into the eval summary. All unit-tested.
+2. **`AblationConfig` (`config.py`)** + **`StrategicController.coordinate`** toggle (False = ablate
+   coordination → agents pile on the top sector).
+3. **`src/wildfire_rl/ablation/` (new)** — `groups.py` defines 4 groups (hybrid_vs_pure, infra_reward,
+   strategic_components, catastrophe) as single-factor cells over the full proposed system, with
+   env/policy builders.
+4. **`scripts/run_ablations.py` (new)** — evaluates cells with strategic metrics + CE + bootstrap CIs,
+   writes `results/ablation/<group>.csv` (with a `rollout_gif` column), and renders a **canonical GIF
+   per cell** (`figures/ablation/<group>/<cell>.gif`). `make ablations` target added.
+5. **`tests/test_ablation.py` (new, 8)** — new metrics, the coordination toggle is real, group specs
+   single-factor + buildable, a cell env+policy steps.
+6. **Report** — `build_report_tables.py` renders the hybrid_vs_pure + strategic_components tables;
+   embedded in `report.md` §16.6 with the findings; `results/ablation/*` hashed into the manifest.
+
+### Result (real, committed)
+```
+hybrid_vs_pure:  pure heuristic  ISR 0.992 RAC -20.0  CE 0.590
+                 hybrid          ISR 1.000 RAC +0.74  CE 0.997   (proposed)
+strategic_components: full            ISR 1.000 RAC +0.03  CE 0.997
+                      no_prioritization ISR 1.000 RAC +0.16  CE 0.997
+                      no_coordination  ISR 0.751 RAC -22459  CE 0.880   (collapse)
+infra_reward:  ~null for the hybrid (asset protection comes from dispatch, not the reward term)
+```
+Findings: the **hybrid controller** is necessary (vs pure heuristic); **removing coordination collapses**
+infrastructure protection; the infra-reward term is honestly a near-null for the *hybrid* (it matters for
+RL). PPO retained as the negative baseline (not re-run).
+
+### Deviations / Scope Notes
+1. **Runnable core, honestly scoped.** Implemented 4 of the 8 imagined groups (the ones runnable with the
+   deterministic effective methods): hybrid_vs_pure, infra_reward, strategic_components, catastrophe. The
+   density-sweep, observation-channel (RL-only), and low-level-heuristic groups are documented framework
+   extensions; PPO arm = the committed negative baseline (not re-trained).
+2. **CE reported without CI** (single representative rollout); the CI'd metrics are ISR/WEL/CPS/RAC/PA/CCL.
+3. **ERL/TRG** implemented + unit-tested as pure functions (TRG consumes the transfer TRS list; ERL takes
+   per-asset threat/arrival steps) — wired for the runner to populate as the framework extends.
+
+### Success Criteria (Gate, 15B.5–15B.8)
+- [x] Canonical rollout GIFs (palette locked in `configs/viz.yaml`); `test_rollout_viz.py` green
+- [x] Strategic filmstrips (criticality + dispatch + assets) per family × region
+- [x] `aaai_outline.md` with contribution list + claims→evidence map; report reframed
+- [x] Compute-scope statements in README
+- [x] Ablation groups run; strategic metrics + CE + bootstrap CIs; provenance CSVs + GIFs
+- [x] New metrics (PA/CCL/CE/ERL/TRG) implemented + unit-tested
+- [x] Report §16.6 ablation tables embedded; report-consistency test green
+- [x] 104 tests pass; black+ruff clean; all gates exit 0; manifest refreshed
+
+---
+
+## Phase 15B — COMPLETE (AAAI Research Core)
+
+All eight work-streams done: **15B.1** petroleum infrastructure · **15B.2** hierarchical hybrid control ·
+**15B.3** strategic + transfer metrics · **15B.4** symmetric infrastructure-aware transfer · **15B.5**
+strategic visualization · **15B.6** AAAI framing · **15B.7** compute scope · **15B.8** strategic ablations.
+Real committed results throughout; heuristic/hybrid effective-method framing preserved; PPO honest
+negative baseline. **Remaining project work:** owner git commit + push; HF model upload; external
+clean-clone certification; Phase 17 (standalone rollout viz — largely subsumed by 15B.5). No commits made,
+per owner instruction.

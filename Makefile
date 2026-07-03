@@ -74,6 +74,14 @@ manifest:
 	$(PYTHON) scripts/validate_tensors.py
 	$(PYTHON) scripts/make_manifest.py
 
+ablations:
+	$(PYTHON) scripts/run_ablations.py --group all --render-figures
+	$(PYTHON) scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+
+strategic-figures:
+	$(PYTHON) scripts/run_transfer_hybrid.py
+	$(PYTHON) scripts/render_strategic.py
+
 strip-notebooks:
 	$(PYTHON) scripts/strip_notebooks.py notebooks
 

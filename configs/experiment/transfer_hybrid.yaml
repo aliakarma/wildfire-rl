@@ -1,0 +1,27 @@
+# Phase 15B.4 — symmetric, infrastructure-aware cross-region transfer.
+# Evaluation-only (heuristic + hybrid families are deterministic; no training) — aligns with the
+# 15B.7 compute priorities. Strategic metrics (ISR/WEL/CPS/RAC) + bootstrap CIs + TRS/CDGG.
+num_agents: 5
+seeds: [0, 1, 2, 3, 4]
+n_episodes: 30
+scenario_seed_offset: 100000
+reward_mode: normalized
+families: [nearest_fire, frontier, hierarchical_greedy, hierarchical_risk_aware]
+
+regions:
+  saudi:
+    dir: saudi_eastern_province
+    infra_dir: data/saudi_eastern_province/grids/32x32/infrastructure
+    spread_scale: 0.7
+    ignition_rate: 0.05
+    n_ignition_points: 6
+    catastrophe_weight: 5.0
+    cascade_prob: 0.15
+  california:
+    dir: california
+    infra_dir: data/california/grids/32x32/infrastructure
+    spread_scale: 1.0
+    ignition_rate: 0.0
+    n_ignition_points: 3
+    catastrophe_weight: 5.0
+    cascade_prob: 0.15

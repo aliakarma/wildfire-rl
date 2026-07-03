@@ -64,3 +64,39 @@
 | california | california | -39589.392 | 265.700 | 354.564 | raw | nan | nan |
 | random_california | california | -36787.772 | 247.550 | 338.268 | raw | nan | nan |
 | noop_california | california | -39589.392 | 265.700 | 354.564 | raw | nan | nan |
+
+### Infrastructure-Aware Transfer (Phase 15B.4) — effective + hybrid families × region
+
+<!-- source: results/transfer_hybrid.csv | sha256: d15843fe83fd2b830ed394d63285229554bb14e23a86909ccf67885f494cc464 | provenance: scripts/run_transfer_hybrid.py (deterministic, eval-only) -->
+
+| policy_family | region | burned_cells_mean | isr_mean | cps_mean | rac_mean | wel_mean | reward_mode |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| nearest_fire | saudi | 0.720 | 0.994 | 1.000 | -17.642 | 0.057 | normalized |
+| frontier | saudi | 0.720 | 0.994 | 1.000 | -17.642 | 0.057 | normalized |
+| hierarchical_greedy | saudi | 0.500 | 1.000 | 1.000 | 0.422 | 0.000 | normalized |
+| hierarchical_risk_aware | saudi | 0.360 | 1.000 | 1.000 | 0.333 | 0.000 | normalized |
+| nearest_fire | california | 0.000 | 1.000 | 1.000 | 0.984 | 0.000 | normalized |
+| frontier | california | 0.000 | 1.000 | 1.000 | 0.984 | 0.000 | normalized |
+| hierarchical_greedy | california | 0.000 | 1.000 | 1.000 | 0.966 | 0.000 | normalized |
+| hierarchical_risk_aware | california | 0.000 | 1.000 | 1.000 | 0.977 | 0.000 | normalized |
+
+### Ablation §15B.8 — Hybrid vs Pure Heuristic (PPO = negative baseline)
+
+<!-- source: results/ablation/hybrid_vs_pure.csv | sha256: 5d15fef5a421dc0e5d947166aec4527320d5dea68c7d079042b3978bc2b594ce | provenance: scripts/run_ablations.py --group hybrid_vs_pure -->
+
+| cell | isr_mean | rac_mean | ce_mean | pa_mean | wel_mean |
+| --- | --- | --- | --- | --- | --- |
+| pure_heuristic_frontier | 0.992 | -20.035 | 0.590 | 0.992 | 0.079 |
+| pure_heuristic_nearest | 0.992 | -20.035 | 0.590 | 0.992 | 0.079 |
+| hybrid_greedy | 1.000 | 0.740 | 0.997 | 1.000 | 0.000 |
+| hybrid_risk_aware | 1.000 | 0.638 | 0.997 | 1.000 | 0.000 |
+
+### Ablation §15B.8 — Strategic Component Knockouts
+
+<!-- source: results/ablation/strategic_components.csv | sha256: 7428ef9f27a3613890e31243fa71f4d4fc9032fc7a369bc20f92473720666bb7 | provenance: scripts/run_ablations.py --group strategic_components -->
+
+| cell | isr_mean | rac_mean | ce_mean | pa_mean | wel_mean |
+| --- | --- | --- | --- | --- | --- |
+| full | 1.000 | 0.638 | 0.997 | 1.000 | 0.000 |
+| no_prioritization | 1.000 | 0.740 | 0.997 | 1.000 | 0.000 |
+| no_coordination | 0.690 | -111.557 | 0.880 | 0.698 | 5.282 |
