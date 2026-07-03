@@ -49,7 +49,18 @@ class WildfireEnv(gym.Env):
         self.grid_size = h
 
         self.action_space = spaces.Discrete(N_ACTIONS)
-        self._obs_channels = c + (1 if self.cfg.include_agent_channel else 0)
+
+        # Critical-infrastructure layers (Phase 15B.1): asset-type grid + criticality raster.
+        self.infra_asset_type, self.infra_criticality = dynamics.load_infrastructure(
+            self.cfg, self.grid_size
+        )
+        self._observe_infra = bool(
+            self.cfg.infra.observe_infra and self.infra_criticality is not None
+        )
+
+        self._obs_channels = (
+            c + (1 if self.cfg.include_agent_channel else 0) + (1 if self._observe_infra else 0)
+        )
         self.observation_space = spaces.Box(
             low=0.0, high=1.0, shape=(self._obs_channels, h, w), dtype=np.float32
         )
@@ -59,6 +70,7 @@ class WildfireEnv(gym.Env):
         self.current_step = 0
         self._initial_fire_total = float(self.initial_tensor[0].sum()) or 1.0
         self.criticality = dynamics.load_criticality(self.cfg, self.grid_size)
+        self._cascade_ignited_total = 0
 
     # -------------------------------------------------------------- observation
     def _obs(self) -> np.ndarray:
@@ -68,12 +80,18 @@ class WildfireEnv(gym.Env):
         movement policy — the raw ``self.state`` alone does not encode where the
         agent is, so without this the policy cannot learn to navigate to the fire.
         """
-        if not self.cfg.include_agent_channel:
+        layers = [self.state]
+        if self.cfg.include_agent_channel:
+            pos = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
+            x, y = self.agent_pos
+            pos[0, x, y] = 1.0
+            layers.append(pos)
+        # Infrastructure-criticality channel (Phase 15B.1): strategic situational awareness.
+        if self._observe_infra:
+            layers.append(self.infra_criticality[None, :, :])
+        if len(layers) == 1:
             return self.state.astype(np.float32)
-        pos = np.zeros((1, self.grid_size, self.grid_size), dtype=np.float32)
-        x, y = self.agent_pos
-        pos[0, x, y] = 1.0
-        return np.concatenate([self.state, pos], axis=0).astype(np.float32)
+        return np.concatenate(layers, axis=0).astype(np.float32)
 
     # ------------------------------------------------------------------ reset
     def reset(
@@ -87,6 +105,7 @@ class WildfireEnv(gym.Env):
         self._initial_fire_total = float(self.state[0].sum()) or 1.0
         self.agent_pos = [self.grid_size // 2, self.grid_size // 2]
         self.current_step = 0
+        self._cascade_ignited_total = 0
         return self._obs(), {}
 
     # ------------------------------------------------------------------- step
@@ -113,12 +132,20 @@ class WildfireEnv(gym.Env):
         self.state[0] = dynamics.spread_fire(self.state, self.cfg, self.np_random)
         dynamics.decay_and_deplete(self.state, self.cfg)
         dynamics.maybe_reignite(self.state, self.cfg, self.np_random)
+        # Cascading petroleum detonation (Phase 15B.1): burning assets ignite their blast radius.
+        self._cascade_ignited_total += dynamics.cascade_explosion(
+            self.state, self.infra_asset_type, self.cfg.infra, self.np_random
+        )
 
         reward = self._reward(agent_removed)
         total_fire = float(self.state[0].sum())
         terminated = total_fire < self.cfg.termination_fire_threshold
         truncated = self.current_step >= self.cfg.max_steps
-        info = {"total_fire": total_fire, "step": self.current_step}
+        info = {
+            "total_fire": total_fire,
+            "step": self.current_step,
+            "cascade_ignited": self._cascade_ignited_total,
+        }
         return self._obs(), reward, terminated, truncated, info
 
     def _reward(self, agent_removed: float = 0.0) -> float:
@@ -131,6 +158,14 @@ class WildfireEnv(gym.Env):
         )
         penalty = dynamics.asset_penalty(
             self.criticality, self.state[0], self.cfg.criticality_weight
+        )
+        # Catastrophe penalty (Phase 15B.1): value-weighted cost of fire reaching infrastructure,
+        # so the agent defends high-value assets (refineries) rather than only minimizing burned area.
+        penalty += dynamics.catastrophe_penalty(
+            self.infra_asset_type,
+            self.state[0],
+            self.cfg.infra.asset_values,
+            self.cfg.infra.catastrophe_weight,
         )
         # Agent-attributable suppression credit: fire the agent actually removed this step,
         # normalized by initial fire — a learnable signal tied to the agent's own actions.

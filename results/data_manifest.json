@@ -83,6 +83,18 @@
     "sha256": "a28da86d4eb1df2df6b10d80730ccc745402ee96bc22c66b63a441121e2cf492",
     "bytes": 4224
   },
+  "saudi_eastern_province/grids/32x32/infrastructure/asset_type.npy": {
+    "sha256": "73f8165e1affbb27b51106e8ad2d41662273d2af258eec6c433ccee036199262",
+    "bytes": 4224
+  },
+  "saudi_eastern_province/grids/32x32/infrastructure/blast_radius.npy": {
+    "sha256": "68ae5bdab990b355a0e2d318a81d3cac5e987d98d6d1065dbfde24a71dc081a8",
+    "bytes": 4224
+  },
+  "saudi_eastern_province/grids/32x32/infrastructure/criticality.npy": {
+    "sha256": "d3470329f4829eefe544c2564bb6aa6e40c6827ef07f7ba21cfd36dae91797ed",
+    "bytes": 4224
+  },
   "saudi_eastern_province/grids/32x32/state_tensor.npy": {
     "sha256": "57ee7d48e52f6275891e704c25a7dddbfb512f35785e0dfbe648a13c81598770",
     "bytes": 28800

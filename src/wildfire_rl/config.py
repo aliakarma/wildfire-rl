@@ -81,6 +81,27 @@ class RewardV3Config:
 
 
 @dataclass
+class InfraConfig:
+    """Critical / petroleum-infrastructure modeling (Phase 15B.1).
+
+    Assets are high-value cells whose loss is *catastrophic* and can *cascade* (explode) to nearby
+    cells. Rasters live under ``infra_dir`` (``asset_type.npy``, ``criticality.npy``,
+    ``blast_radius.npy``) and are built by ``scripts/build_infrastructure.py``. Every default is a
+    no-op, so non-infrastructure regions and existing tests are unaffected.
+    """
+
+    infra_dir: str | None = None  # dir with asset_type/criticality/blast_radius .npy
+    observe_infra: bool = False  # add a normalized infrastructure-criticality observation channel
+    catastrophe_weight: float = 0.0  # reward penalty scale for fire on an asset (× asset value)
+    cascade_prob: float = 0.0  # per-neighbor ignition prob when an asset cell burns
+    blast_radius: int = 2  # cascade radius in cells (fallback when no per-cell raster)
+    # asset_type code -> economic value: 1=refinery, 2=pipeline, 3=storage, 4=industrial
+    asset_values: dict[int, float] = field(
+        default_factory=lambda: {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0}
+    )
+
+
+@dataclass
 class EnvConfig:
     """Wildfire environment dynamics. Every magic number from the notebooks lives here."""
 
@@ -151,6 +172,9 @@ class EnvConfig:
 
     # --- V3 reward shaping (leakage-free coordination) ---
     reward_v3: RewardV3Config = field(default_factory=RewardV3Config)
+
+    # --- critical / petroleum infrastructure (Phase 15B.1) ---
+    infra: InfraConfig = field(default_factory=InfraConfig)
 
     # --- Routing strategy for hybrid environment ---
     # "nearest_fire" | "frontier"

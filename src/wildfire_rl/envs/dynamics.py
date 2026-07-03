@@ -155,3 +155,98 @@ def load_criticality(cfg: EnvConfig, grid_size: int) -> np.ndarray | None:
     if crit.shape != (grid_size, grid_size):
         raise ValueError(f"criticality shape {crit.shape} != grid ({grid_size}, {grid_size})")
     return crit
+
+
+# --------------------------------------------------------------------------------------------------
+# Critical / petroleum infrastructure (Phase 15B.1)
+# --------------------------------------------------------------------------------------------------
+
+# Fire above this level counts an asset cell as "burning" (matches the heuristic policies' threshold).
+ASSET_BURNING_THRESHOLD = 0.1
+
+
+def load_infrastructure(
+    cfg: EnvConfig, grid_size: int
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """Load ``(asset_type, criticality)`` rasters from ``cfg.infra.infra_dir``.
+
+    ``asset_type`` is an int grid of codes (0=none, 1=refinery, 2=pipeline, 3=storage, 4=industrial);
+    ``criticality`` is a [0, 1] value map (may be ``None`` if not present). Returns ``(None, None)``
+    when no infra dir is configured. Raises on shape mismatch.
+    """
+    infra = cfg.infra
+    if not infra.infra_dir:
+        return None, None
+    from pathlib import Path
+
+    d = Path(infra.infra_dir)
+    asset_type = np.load(d / "asset_type.npy").astype(np.int32)
+    if asset_type.shape != (grid_size, grid_size):
+        raise ValueError(f"asset_type shape {asset_type.shape} != grid ({grid_size}, {grid_size})")
+    crit_path = d / "criticality.npy"
+    criticality = None
+    if crit_path.exists():
+        criticality = np.load(crit_path).astype(np.float32)
+        if criticality.shape != (grid_size, grid_size):
+            raise ValueError(
+                f"infra criticality shape {criticality.shape} != grid ({grid_size}, {grid_size})"
+            )
+    return asset_type, criticality
+
+
+def cascade_explosion(
+    state: np.ndarray,
+    asset_type: np.ndarray | None,
+    infra,  # InfraConfig (avoid a circular import annotation)
+    rng: np.random.Generator,
+) -> int:
+    """Cascading petroleum detonation: a burning asset cell ignites cells within ``blast_radius``.
+
+    Each cell inside the (circular) blast radius of a burning asset is ignited with probability
+    ``cascade_prob``. Applied in place after fire spread; returns the number of cells newly ignited.
+    No-op when ``cascade_prob <= 0`` or there are no assets, so other regions are unaffected. Uses
+    the passed-in ``rng`` for reproducibility.
+    """
+    if asset_type is None or infra.cascade_prob <= 0.0:
+        return 0
+    fire = state[0]
+    h, w = fire.shape
+    r = int(infra.blast_radius)
+    burning_assets = np.argwhere((asset_type > 0) & (fire > ASSET_BURNING_THRESHOLD))
+    n_new = 0
+    for ax, ay in burning_assets:
+        for dx in range(-r, r + 1):
+            for dy in range(-r, r + 1):
+                if (dx == 0 and dy == 0) or (dx * dx + dy * dy > r * r):
+                    continue
+                nx, ny = int(ax) + dx, int(ay) + dy
+                if (
+                    0 <= nx < h
+                    and 0 <= ny < w
+                    and fire[nx, ny] <= ASSET_BURNING_THRESHOLD
+                    and rng.random() < infra.cascade_prob
+                ):
+                    fire[nx, ny] = 1.0  # detonation ignites at full intensity
+                    n_new += 1
+    return n_new
+
+
+def catastrophe_penalty(
+    asset_type: np.ndarray | None,
+    fire_channel: np.ndarray,
+    asset_values: dict[int, float],
+    weight: float,
+) -> float:
+    """Risk-weighted cost of fire reaching assets: ``weight * Σ_cells value[type] · fire``.
+
+    Higher-value assets (refineries) dominate, so the agent is driven to defend them preferentially
+    rather than merely minimize total burned cells. Returns 0.0 when disabled or asset-free.
+    """
+    if asset_type is None or weight <= 0.0:
+        return 0.0
+    total = 0.0
+    for code, val in asset_values.items():
+        mask = asset_type == int(code)
+        if mask.any():
+            total += float(val) * float(fire_channel[mask].sum())
+    return float(weight * total)

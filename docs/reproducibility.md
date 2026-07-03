@@ -3,6 +3,37 @@
 This project targets artifact-evaluation-grade reproducibility. This document is the
 protocol a reviewer should follow, and the honest list of current limitations.
 
+## Certification status (Phase 14)
+
+**Local certification — PASS.** On the current tree every gate is green and every committed artifact
+hash-verifies against its manifest:
+
+| Check | Result |
+|---|---|
+| Artifact integrity (`models_manifest.json`) | 162/162 verified, 0 changed/missing |
+| Artifact integrity (`data_manifest.json`) | 40/40 verified, 0 changed/missing |
+| `validate_tensors.py` | exit 0 (shape `(7,H,W)`, all channels `[0,1]`) |
+| `check_seed_integrity.py` | exit 0 (34 distinct checkpoints; California collapse is the honest negative result, not fraud) |
+| `validate_learning_gate.py` | exit 0 (effective-method gate: heuristic ≪ no-op; PPO negative result) |
+| Report ↔ CSV | `build_report_tables.py` idempotent; §16 tables carry `source:` + SHA-256 |
+| Provenance | 10 run manifests + 10 training curves; 25 figures regenerated from CSVs |
+| Tests / lint | `pytest` 72 passed; `black`+`ruff` clean; CI `validate` job blocking |
+
+Expected reference hashes (SHA-256, first 16 hex): `data_manifest.json` `bcfaa5df4236ecd5`,
+`models_manifest.json` `9f8970c0195dab1a`, `ppo_saudi_32_seed_0.zip` `4a2e7237b3d0aca0`,
+`ppo_california_32_seed_0.zip` `3a576f47627ca5e2`, `saudi/.../state_tensor.npy` `57ee7d48e52f6275`.
+Full transcript: `results/runs/CERTIFICATION_*.log`.
+
+> **`make reproduce` is not re-run for certification.** It retrains every model from scratch; on CPU
+> that is ~10 h of undertrained runs that would overwrite the authoritative Colab-T4 checkpoints. The
+> checkpoints are the authoritative artifacts, and the downstream `evaluate → figures → tables → gates`
+> path reproduces deterministically **from** them.
+
+**External (third-party) clean-clone certification — PENDING owner action:** (1) commit + push this
+tree; (2) upload `models/*.zip` to the Hub repo referenced by `scripts/fetch_models.py`; (3) on a clean
+clone run `pip install -r requirements.lock.txt`, `fetch_models.py --verify results/models_manifest.json`,
+`validate_tensors.py`, `check_seed_integrity.py`, `validate_learning_gate.py`, `pytest -q`.
+
 ## One-command reproduction
 
 ```bash

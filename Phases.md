@@ -1321,3 +1321,165 @@ pytest .................. 72 passed (was 70; +2 report-consistency)             
 
 **Proceed Rule:** ALL items `[x]` → **cleared to proceed to Phase 14** (Final Reproducibility
 Certification). No commits made, per owner instruction.
+
+---
+
+## Phase 14 — Final Reproducibility Certification
+
+**Status:** ✅ COMPLETE (LOCAL certification). External clean-clone-from-remote is PENDING owner
+push/upload. **Actual time:** ~30 min · **Compute:** CPU only (no retrain).
+
+### Objective
+Certify the repository: verify every artifact hash against its manifest, confirm all gates, and record
+the certification transcript — without destroying the authoritative artifacts.
+
+### Key decision (why `make reproduce` was NOT re-run)
+`make reproduce` retrains every model from scratch. On local CPU that is ~10 h of undertrained runs and
+would **overwrite the authoritative Colab-T4 checkpoints** being certified. The checkpoints are the
+authoritative artifacts; the downstream `evaluate → figures → tables → gates` path reproduces
+deterministically **from** them (verified). A literal clean-clone-from-remote + HF `fetch_models` also
+requires a push + Hub upload the owner has not done, so the external certification is documented as
+pending rather than faked.
+
+### Actions Taken
+1. **Artifact integrity** — verified every manifest entry against on-disk SHA-256:
+   `models_manifest.json` **162/162**, `data_manifest.json` **40/40** (0 changed, 0 missing).
+2. **Gates** — `validate_tensors.py` exit 0, `check_seed_integrity.py` exit 0 (34 distinct checkpoints;
+   California collapse = honest WARN), `validate_learning_gate.py` exit 0 (effective-method gate PASS).
+3. **Provenance** — `build_report_tables.py` regenerates byte-identically; report §16 tables carry
+   `source:` + SHA-256; 10 run manifests + 10 training curves; 25 figures from CSVs.
+4. **Tests / lint** — `pytest` 72 passed; `black --check` + `ruff` clean (76 files); CI `validate`
+   job blocking.
+5. **Certification log** — `results/runs/CERTIFICATION_20260703_164252.log` (hashes + gate results +
+   pending-items).
+6. **`docs/reproducibility.md`** — added a "Certification status (Phase 14)" section (result table,
+   reference hashes, the make-reproduce caveat, and the external-certification steps).
+7. **`REMEDIATION_PLAN.md`** — Phase 14 checklist marked honestly (`[x]` verified; two external-only
+   items `[ ]` with notes); added a certification-result banner. Did **not** blanket-flip other phases'
+   boxes (extension phases 15B/15B.8/17 are unexecuted and must not read as done).
+
+### Verification Evidence
+```
+artifact hashes ..... models 162/162, data 40/40 verified                       ✔
+gates ............... validate_tensors=0, seed_integrity=0, learning_gate=0      ✔
+report<->CSV ........ build_report_tables idempotent (byte-identical)            ✔
+provenance .......... 10 manifests + 10 curves; 25 figures                       ✔
+tests / lint ........ pytest 72 passed; black+ruff clean                         ✔
+```
+
+### Success Criteria (Gate)
+- Technical verification
+  - [ ] Clean-clone build + fetch + validate — **PENDING owner push + HF upload** (local hashes 202/202 stand-in)
+  - [ ] `make reproduce` end-to-end — **not re-run by design** (preserves authoritative checkpoints)
+  - [x] `pytest -q` green (72 passed)
+- Reproducibility
+  - [x] All artifact hashes verified against manifests (202/202)
+  - [x] Certification log written (git-commit pending owner)
+- Scientific validity
+  - [x] Seed integrity OK; effective-method gate exit 0
+  - [x] Every report number traces to a CSV + run_id
+- Logging/monitoring
+  - [x] Run manifests + curves present for all reported runs
+- README completeness
+  - [x] Phase README sections merged/consistent; badges/claims reflect certified state
+
+**Proceed Rule:** Core remediation **Phases 1–14 are certified reproducible locally**. Remaining:
+(a) owner git commit + push of the remediated tree; (b) HF upload of `models/*.zip`; (c) the external
+third-party clean-clone certification; (d) extension phases 15B / 15B.8 / 17 (future work). No commits
+made, per owner instruction.
+
+---
+
+## Remediation Summary — Phases 1–14 Complete
+
+| Phase | Title | Status |
+|---|---|---|
+| 1 | Repository Cleanup | ✅ |
+| 2 | Dependency/Environment | ✅ |
+| 3 | Markov Observation Fix | ✅ |
+| 4 | Data Leakage Elimination | ✅ |
+| 15 | Saudi Context Enrichment | ✅ |
+| 5 | Determinism & Seed Control | ✅ |
+| 6 | Pipeline Reconnection | ✅ |
+| 7 | Metric Verification | ✅ |
+| 8 | Experiment Tracking | ✅ |
+| 9 | Authoritative Regeneration (Phase 9-Core) | ✅ |
+| 16 | Policy Strengthening → Honest Negative Result | ✅ |
+| 10 | Baseline Reimplementation | ✅ |
+| 11 | Dataset Validation & Provenance | ✅ |
+| 12 | README & Documentation Reconstruction | ✅ |
+| 13 | CI/CD & Automated Validation | ✅ |
+| 14 | Final Reproducibility Certification (local) | ✅ |
+
+**Outstanding (owner / future):** git commit + push; HF model upload; external clean-clone
+certification; extension phases 15B (infrastructure/hybrid/transfer), 15B.8 (strategic ablations +
+canonical GIFs), 17 (rollout visualization). The scientific headline is settled and honest: **heuristic
+routing is the effective method; single-agent PPO is a rigorous negative result.**
+
+---
+
+# Extension Phases (15B — AAAI Research Core)
+
+## Phase 15B.1 — Petroleum Infrastructure Modeling
+
+**Status:** ✅ COMPLETE — all success criteria pass. **Actual time:** ~40 min · **Compute:** CPU only.
+
+### Objective
+Model Eastern-Province petroleum infrastructure as high-value, high-risk assets whose loss is
+catastrophic and cascading, so the environment optimizes *risk-weighted strategic damage*, not raw
+burned cells.
+
+### Actions Taken
+1. **`InfraConfig` (`config.py`)** — nested on `EnvConfig` (like `reward_v2/v3`): `infra_dir`,
+   `observe_infra`, `catastrophe_weight`, `cascade_prob`, `blast_radius`, `asset_values`
+   (1=refinery 10, 2=pipeline 4, 3=storage 6, 4=industrial 3). All defaults no-op → backward-compatible.
+2. **Dynamics (`envs/dynamics.py`)** — `load_infrastructure()` (asset_type + criticality rasters,
+   shape-validated), `cascade_explosion()` (burning asset ignites cells within a circular blast radius
+   with prob `cascade_prob`; reproducible via the env RNG; returns #ignited), `catastrophe_penalty()`
+   (value-weighted `Σ value[type]·fire`).
+3. **Builder (`scripts/build_infrastructure.py`, new)** — emits `asset_type.npy` / `criticality.npy` /
+   `blast_radius.npy` under `data/<region>/grids/32x32/infrastructure/`; 7 typed Saudi petroleum sites.
+4. **Env integration (`envs/base.py`, `multi_agent.py`)** — optional infrastructure **observation
+   channel** (stacked after the agent channel → `(C+2,H,W)` when on), cascade applied in `step()` after
+   spread (with `cascade_ignited` in `info`), and the catastrophe penalty added to the reward. Both
+   single- and multi-agent envs.
+5. **Config (`configs/region/saudi.yaml`)** — canonical Saudi infrastructure block (`observe_infra: true`,
+   `catastrophe_weight: 5.0`, `cascade_prob: 0.15`). **The reported `multiseed*.yaml` configs are left
+   untouched** — enabling `observe_infra` would add a 9th channel and invalidate the 8-channel Phase-9
+   authoritative models; the 15B hybrid/strategic experiments train fresh models against this config.
+6. **Tests (`tests/test_infrastructure.py`, new, 9 tests)** — config no-op defaults, obs unchanged
+   without infra, cascade ignites within/not-outside radius, cascade disabled → 0, catastrophe penalty
+   orders by asset value, load shape validation, infra obs channel (single + MARL), catastrophe reward
+   ordering.
+7. **Provenance** — infra rasters hashed into `results/data_manifest.json`; `validate_tensors.py`
+   passes (infra criticality ∈ [0,1]). **README** "Critical petroleum infrastructure" subsection added.
+
+### Verification Evidence
+```
+build_infrastructure ..... 7 assets, types [1,2,3,4], crit [0,1]                       ✔
+obs channels ............. 8 (no infra) -> 9 (observe_infra) single + MARL             ✔
+cascade .................. burning refinery ignited 13 neighbors within blast radius   ✔
+catastrophe reward ....... fire-on-refinery (-49) << fire-on-empty (+1)                ✔
+config loader ............ nested env.infra maps from YAML; multiseed observe=False    ✔
+manifest ................. asset_type/criticality/blast_radius hashed                  ✔
+pytest ................... 81 passed (+9); black+ruff clean; gates still exit 0        ✔
+```
+
+### Success Criteria (Gate)
+- Technical verification
+  - [x] `InfraConfig` present and defaulted (backward-compatible); obs unchanged when off
+  - [x] Infrastructure rasters built (asset_type/criticality/blast_radius), shape-aligned, crit ∈ [0,1]
+  - [x] Cascade ignites within blast radius; catastrophe penalty value-weighted (unit-tested)
+  - [x] Infrastructure observation channel added; CNN tracks channel count dynamically
+- Reproducibility
+  - [x] Infra rasters hashed into the data manifest; `validate_tensors.py` green
+- Scientific validity
+  - [x] Reward strictly penalizes fire on high-value assets (refinery ≫ pipeline ≫ empty)
+  - [x] Authoritative 8-channel models preserved (reported configs untouched)
+- README completeness
+  - [x] "Critical petroleum infrastructure" subsection added
+
+**Proceed Rule:** ALL items `[x]` → 15B.1 complete. Remaining 15B work: **15B.2** hierarchical/hybrid
+controller · **15B.3** strategic + transfer metrics (ISR/WEL/CPS/RAC/PCA/TRS/CDGG) · **15B.4** symmetric
+infrastructure-aware transfer · **15B.5** strategic visualization · **15B.6** AAAI report framing ·
+**15B.7** compute scope · **15B.8** strategic ablations + canonical GIFs. No commits made, per owner.

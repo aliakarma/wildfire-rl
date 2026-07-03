@@ -17,3 +17,15 @@ env:
   randomize_ignition: true
   criticality_weight: 2.0
   criticality_path: data/saudi_eastern_province/grids/32x32/criticality.npy
+
+  # Critical petroleum infrastructure (Phase 15B.1): asset-type/criticality/blast rasters, a
+  # value-weighted catastrophe penalty, cascading detonation, and an infrastructure observation
+  # channel. NOTE: `observe_infra: true` adds a 9th observation channel — the reported multiseed
+  # models (8-channel, Phase 9) do NOT enable it; the 15B hybrid/strategic experiments train fresh
+  # models against this canonical infrastructure config.
+  infra:
+    infra_dir: data/saudi_eastern_province/grids/32x32/infrastructure
+    observe_infra: true
+    catastrophe_weight: 5.0
+    cascade_prob: 0.15
+    blast_radius: 2

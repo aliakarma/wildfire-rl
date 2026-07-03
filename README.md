@@ -70,6 +70,21 @@ baseline dynamics (`spread_scale: 1.0`, no criticality), so the two regions diff
 just their state tensors. Canonical dynamics live in `configs/region/*.yaml` and are mirrored into
 `configs/experiment/multiseed*.yaml` for the reported runs.
 
+#### Critical petroleum infrastructure (Phase 15B.1)
+
+The Saudi region additionally models **petroleum infrastructure** as high-value, high-risk assets
+(`EnvConfig.infra`): asset-type/criticality/blast rasters (`build_infrastructure.py`), a
+**value-weighted catastrophe penalty** (fire on a refinery costs far more than an empty cell),
+**cascading detonation** (a burning asset ignites cells within its blast radius), and an optional
+**infrastructure observation channel** (`observe_infra`). All infra features default to no-op, so
+other regions and the 8-channel authoritative models (Phase 9) are unaffected; enabling
+`observe_infra` adds a 9th channel and is used only by the 15B hybrid/strategic experiments, which
+train fresh models.
+
+```bash
+python scripts/build_infrastructure.py --region saudi_eastern_province --grid 32
+```
+
 ---
 
 ## Installation
