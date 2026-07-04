@@ -16,10 +16,15 @@ from wildfire_marl.reproducibility.manifest import write_manifest
 logger = get_logger("make_manifest")
 
 
+# Phase 2: also hash Cell2Fire landscape files (.asc grids, .dat, and the JSON
+# candidate/report records) alongside the V1 tensor/raster patterns.
+DATA_PATTERNS = ("*.npy", "*.zip", "*.tif", "*.nc", "*.csv", "*.asc", "*.dat", "*.json")
+
+
 def main() -> int:
     res = ensure_dir(results_dir())
     if data_dir().exists():
-        out = write_manifest(data_dir(), res / "data_manifest.json")
+        out = write_manifest(data_dir(), res / "data_manifest.json", patterns=DATA_PATTERNS)
         logger.info("Wrote %s", out)
     if models_dir().exists():
         out = write_manifest(models_dir(), res / "models_manifest.json")

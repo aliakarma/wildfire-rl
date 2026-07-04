@@ -61,6 +61,7 @@ geo = [
     "netCDF4>=1.6",
     "cdsapi>=0.6",
     "scikit-image>=0.21",
+    "tifffile>=2023.1",
 ]
 # Experiment tracking / model hosting (optional).
 track = ["wandb>=0.16", "huggingface-hub>=0.20"]

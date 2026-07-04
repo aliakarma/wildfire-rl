@@ -1,30 +1,32 @@
 {
-  "timestamp_utc": "2026-07-04T11:13:38.589490+00:00",
-  "git_sha": "a48533f",
+  "timestamp_utc": "2026-07-04T16:16:24.987276+00:00",
+  "git_sha": "7705bca",
   "seed": null,
   "libraries": {
     "python": "3.12.3",
     "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
-    "numpy": "1.26.4",
+    "numpy": "2.5.0",
     "torch": "n/a",
     "gymnasium": "1.0.0",
     "pettingzoo": "1.26.1",
     "stable_baselines3": "n/a",
     "pandas": "2.3.3"
   },
-  "config_hash": "182b11e8f0bf",
+  "config_hash": "9b491a2c1dc3",
   "config": {
-    "fire_map": null,
-    "grid": 32,
-    "episodes": 5,
-    "steps": 50,
-    "steps_before_sim": 20,
+    "fire_map": "Saudi",
+    "grid": null,
+    "data_dir": "data/cell2fire",
+    "episodes": 3,
+    "steps": 40,
+    "steps_before_sim": 60,
+    "steps_per_action": 60,
     "train_steps_per_seed": 1000000,
     "eval_episodes": 100,
     "seeds": 5,
-    "out": "results/profile_env.csv"
+    "out": "results/profile_env_region.csv"
   },
   "artifacts": {
-    "profile_csv": "53e4c3ced621199a375e90f0a064ef8b5004236e676248143a59bd324669590f"
+    "profile_csv": "8e5b11a8bf842e8985d84ab796d5e92ef099c3dd7a31d1385f93f6edcdb4c3a7"
   }
 }

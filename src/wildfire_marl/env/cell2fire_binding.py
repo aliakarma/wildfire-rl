@@ -34,9 +34,7 @@ from pathlib import Path
 from wildfire_marl.paths import repo_root
 
 #: Default location of the interactive (Firehose-patched) binary.
-DEFAULT_BINARY = (
-    repo_root() / "third_party" / "firehose" / "cell2fire" / "Cell2FireC" / "Cell2Fire"
-)
+DEFAULT_BINARY = repo_root() / "third_party" / "firehose" / "cell2fire" / "Cell2FireC" / "Cell2Fire"
 #: Default location of the stock benchmark maps (vendored Firehose data).
 DEFAULT_DATA_DIR = repo_root() / "third_party" / "firehose" / "data"
 
@@ -57,25 +55,40 @@ def _build_command(
     """Command line for the interactive binary (flag set modeled on Firehose)."""
     return [
         str(binary),
-        "--input-instance-folder", f"{input_folder}{os.sep}",
-        "--output-folder", f"{output_folder}{os.sep}",
+        "--input-instance-folder",
+        f"{input_folder}{os.sep}",
+        "--output-folder",
+        f"{output_folder}{os.sep}",
         "--ignitions",
-        "--sim-years", "1",
-        "--nsims", "1",
+        "--sim-years",
+        "1",
+        "--nsims",
+        "1",
         "--grids",
         "--final-grid",
-        "--Fire-Period-Length", "1.0",
+        "--Fire-Period-Length",
+        "1.0",
         "--output-messages",
-        "--weather", "rows",
-        "--nweathers", "1",
-        "--ROS-CV", str(ros_cv),
-        "--IgnitionRad", str(ignition_radius),
-        "--seed", str(seed),
-        "--nthreads", "1",
-        "--ROS-Threshold", "0.1",
-        "--HFI-Threshold", "0.1",
-        "--steps-action", str(steps_per_action),
-        "--steps-before", str(steps_before_sim),
+        "--weather",
+        "rows",
+        "--nweathers",
+        "1",
+        "--ROS-CV",
+        str(ros_cv),
+        "--IgnitionRad",
+        str(ignition_radius),
+        "--seed",
+        str(seed),
+        "--nthreads",
+        "1",
+        "--ROS-Threshold",
+        "0.1",
+        "--HFI-Threshold",
+        "0.1",
+        "--steps-action",
+        str(steps_per_action),
+        "--steps-before",
+        str(steps_before_sim),
         "--HarvestPlan",
     ]
 
@@ -217,10 +230,10 @@ class Cell2FireBinding:
         shutil.rmtree(self._workdir, ignore_errors=True)
 
     def __del__(self):  # best-effort cleanup
-        try:
+        import contextlib
+
+        with contextlib.suppress(Exception):
             self.close()
-        except Exception:
-            pass
 
 
 def read_grid_csv(path: str | Path, timeout_s: float = 5.0):

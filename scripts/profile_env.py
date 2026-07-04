@@ -38,9 +38,16 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--map", dest="fire_map", default=None, help="Instance name (e.g. Sub40x40)")
     ap.add_argument("--grid", type=int, default=None, help="Grid size -> nearest stock map")
+    ap.add_argument("--data-dir", default=None, help="Instance root (e.g. data/cell2fire)")
     ap.add_argument("--episodes", type=int, default=5)
     ap.add_argument("--steps", type=int, default=50, help="Max agent steps per episode")
     ap.add_argument("--steps-before-sim", type=int, default=20)
+    ap.add_argument(
+        "--steps-per-action",
+        type=int,
+        default=1,
+        help="Fire periods (sim-minutes) per agent step; 60 = hourly cadence",
+    )
     ap.add_argument(
         "--train-steps-per-seed",
         type=int,
@@ -61,7 +68,14 @@ def main() -> int:
     from wildfire_marl.reproducibility.logging_utils import write_run_metadata
 
     fire_map = args.fire_map or pick_map(args.grid or 40)
-    env = FireSuppressionEnv(fire_map=fire_map, steps_before_sim=args.steps_before_sim)
+    env_kwargs = {
+        "fire_map": fire_map,
+        "steps_before_sim": args.steps_before_sim,
+        "steps_per_action": args.steps_per_action,
+    }
+    if args.data_dir:
+        env_kwargs["data_dir"] = args.data_dir
+    env = FireSuppressionEnv(**env_kwargs)
 
     rows: list[dict] = []
     reset_times: list[float] = []

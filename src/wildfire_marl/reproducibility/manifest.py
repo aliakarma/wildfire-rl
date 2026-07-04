@@ -36,10 +36,14 @@ def build_manifest(
     return manifest
 
 
-def write_manifest(root: str | Path, out_path: str | Path) -> Path:
+def write_manifest(
+    root: str | Path,
+    out_path: str | Path,
+    patterns: Iterable[str] = ("*.npy", "*.zip", "*.tif", "*.nc", "*.csv"),
+) -> Path:
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(build_manifest(root), indent=2))
+    out_path.write_text(json.dumps(build_manifest(root, patterns=patterns), indent=2))
     return out_path
 
 

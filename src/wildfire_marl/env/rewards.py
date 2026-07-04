@@ -22,7 +22,7 @@ if TYPE_CHECKING:  # pragma: no cover - typing only
 class Reward(ABC):
     """A reward function over the env's current state (the env updates state first)."""
 
-    def __init__(self, env: "FireSuppressionEnv"):
+    def __init__(self, env: FireSuppressionEnv):
         self.env = env
 
     @classmethod
@@ -38,7 +38,7 @@ class Reward(ABC):
 class FireSizeReward(Reward):
     """-(cells on fire) / (total cells) * scale — the Firehose benchmark objective."""
 
-    def __init__(self, env: "FireSuppressionEnv", scale: float = 10.0):
+    def __init__(self, env: FireSuppressionEnv, scale: float = 10.0):
         super().__init__(env)
         self.scale = scale
 

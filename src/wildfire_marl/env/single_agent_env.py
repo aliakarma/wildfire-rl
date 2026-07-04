@@ -48,16 +48,18 @@ def _read_asc_grid(path: Path) -> np.ndarray:
 def _read_fbp_nonfuel_codes(lookup_csv: Path) -> set[int]:
     """Fuel-type codes that are non-fuel (cannot burn / cannot ignite).
 
-    The FBP lookup CSV maps grid codes to fuel-type names; non-fuel rows are named ``NF*``
-    (Firehose matches the name ``NFnfuel``). Minimal parser — no dependency on the vendored
-    Firehose python package.
+    The lookup CSV columns are ``grid_value, export_value, descriptive_name, fuel_type, ...``;
+    non-fuel rows (Non-fuel / Water / Unknown, grid codes 101/102/103) carry the *fuel_type*
+    string ``Non-fuel``. Minimal parser — no dependency on the vendored Firehose package.
+    (Phase-2 fix: the Phase-1 version matched a ``NF`` prefix against the descriptive-name
+    column, which never matches — codes 101/102/103 were not excluded from the fuel mask.)
     """
     nonfuel: set[int] = {_NODATA}
     for line in lookup_csv.read_text().splitlines()[1:]:
         parts = [p.strip() for p in line.split(",")]
-        if len(parts) >= 3 and parts[0].lstrip("-").isdigit():
-            code, fuel_name = int(parts[0]), parts[2]
-            if fuel_name.lower().startswith("nf"):
+        if len(parts) >= 4 and parts[0].lstrip("-").isdigit():
+            code, fuel_type = int(parts[0]), parts[3]
+            if fuel_type.lower() in ("non-fuel", "nonfuel", "nf"):
                 nonfuel.add(code)
     return nonfuel
 
@@ -90,7 +92,11 @@ class FireSuppressionEnv(gym.Env):
             binary: interactive Cell2Fire binary (Firehose-patched; physics unmodified).
             max_steps: truncation horizon (agent steps).
             steps_before_sim: fire periods simulated before the first action (fire head start).
-            steps_per_action: fire periods advanced per agent action.
+                One fire period = 1 simulated MINUTE (``--Fire-Period-Length 1.0``; weather
+                rows are hourly and advance every 60 periods).
+            steps_per_action: fire periods advanced per agent action. 1 = Firehose-style
+                minute-level control; 60 = one action per simulated hour (the region-episode
+                default in configs — meaningful fire evolution between actions).
             action_diameter: 1 or 2 — treated patch size (1x1 or 2x2), as in Firehose.
             reward_cls: ``Reward`` subclass; instantiated with this env.
             ignition_cell: fixed 0-indexed ignition cell, or ``None`` to sample a random fuel
@@ -206,9 +212,7 @@ class FireSuppressionEnv(gym.Env):
         self.fire_state = np.zeros((self.height, self.width), dtype=np.int8)
 
         ignition = options.get("ignition_cell", self.fixed_ignition_cell)
-        self.ignition_cell = (
-            int(ignition) if ignition is not None else self._sample_ignition_cell()
-        )
+        self.ignition_cell = int(ignition) if ignition is not None else self._sample_ignition_cell()
         self._write_ignition_csv(self.ignition_cell)
 
         # Simulator RNG seed: derive from the env seed stream so reset(seed=k) is total.

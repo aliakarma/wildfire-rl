@@ -164,4 +164,9 @@ legacy_v1/figures/*.pdf
 !data/sample/
 !data/sample/**
 
+# ---- Keep generated Cell2Fire landscapes (small, deterministic, manifest-hashed;
+#      Phase 2) — committed so CI and reviewers can run the simulator directly ----
+!data/cell2fire/
+!data/cell2fire/**
+
 /AAAI Template

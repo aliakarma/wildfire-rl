@@ -273,3 +273,152 @@ Feasibility gate
 
 Speed gate passed decisively → **proceed to Phase 2** (geospatial data ingestion: Saudi +
 California tensors → Cell2Fire landscapes with one shared fuel model).
+
+---
+
+## Phase 2 — Geospatial Data Ingestion (Saudi + California)
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-04 · **Branch:** `v2-cell2fire` · **No commits made (user commits)**
+
+### Objective (from the plan)
+
+Convert the 7-channel Saudi/California tensors into Cell2Fire landscape inputs so the
+*validated physics runs on the real data*, with one shared fuel model and encoding across
+regions so cross-region transfer is well-defined.
+
+### Actions taken
+
+1. **Provenance investigation first.** Established exactly what physical data exists:
+   ERA5 June-2025 6-hourly extracts (u10/v10/t2m/d2m, both regions), FIRMS active-fire CSVs
+   (4,699 Saudi + 1,372 California detections), SRTM-derived slope tifs (both), raw MODIS NDVI
+   tif (Saudi ONLY, ×10⁻⁴ int scaling). Traced the V1 notebooks: Saudi fuel channel =
+   `(NDVI+1)/2` (exactly invertible); California fuel = **unrecorded min-max** (not invertible;
+   raw NDVI not archived) — the very region-specific-encoding trap the plan's proceed rule
+   warns about, now handled explicitly (below).
+
+2. **Shared fuel model** — `src/wildfire_marl/data/fuel_mapping.py`. Canadian **FBP** (the
+   simulator's native classification; Scott & Burgan targets Rothermel simulators). One fixed
+   NDVI→FBP threshold scheme applied identically to both regions (<0.05 NF · 0.05–0.15 O-1a ·
+   0.15–0.30 O-1b · 0.30–0.45 C-7 · 0.45–0.60 C-5 · ≥0.60 C-3), cited (ST-X-3 1992; Pais 2021;
+   Tucker 1979; USGS NDVI interpretation) and declared a Phase-10 sensitivity parameter.
+   Physical NDVI recovery per region: Saudi exact inverse — **cross-checked against the raw
+   MODIS tif: Pearson r=0.87, MAE=0.0075, means 0.0940 vs 0.0944**; California reconstructed
+   with the declared assumption `ASSUMED_CA_NDVI_RANGE=(−0.05, 0.90)` — **recorded data debt**
+   (raw CA NDVI re-download flagged as a spin-off task + in the data card).
+
+3. **Converter** — `src/wildfire_marl/data/to_cell2fire.py` (`python -m … --region {saudi,
+   california} --grid 32`). Emits `data/cell2fire/{Saudi,California}/`: `Forest.asc` (FBP
+   codes), `slope.asc` (provenance), `Data.csv` (fueltype + real cell lat/lon; grass gfl=0.35,
+   cur=60), `Weather.csv`, standard `fbp_lookup_table.csv` (verbatim copy), `Ignitions.csv`,
+   `ignition_candidates.json`, `conversion_report.json` (input SHA-256s + all checks).
+   **Deterministic: two independent runs → 16/16 files byte-identical.** Landscapes are
+   committed (gitignore re-include) and hashed into `results/data_manifest.json` (67 entries,
+   16 under `cell2fire/`).
+
+4. **Weather** — ERA5 spatial-mean series interpolated 6-hourly→hourly; TMP/RH (Magnus)/WS/WD;
+   FWI codes computed with the standard CFFDRS equations (`src/wildfire_marl/data/fwi.py`,
+   Van Wagner 1987; Van Wagner & Pickett 1985) over the FULL month, emitting the final 144
+   hourly rows (June 24–30). Saudi reaches extreme fire weather (FFMC 96.8, DMC 220, FWI 23.8);
+   California moderate (FFMC 89, FWI 4.6). APCP=0 (no precip variable archived; June-dry ROIs).
+
+5. **Ignition protocol** — `src/wildfire_marl/data/ignition.py`: FIRMS→cells (north-up ROI
+   registration), restricted to burnable cells — **in Saudi this excludes 509/2,792 detections
+   sitting on non-fuel (Gulf-coast gas flares)**, a real data-quality catch. Detection-weighted
+   `IgnitionSampler` with disjoint train/eval seed streams (`scenario_seed_offset=100000`,
+   ported V1 leakage-free protocol; unit-tested for disjointness + determinism).
+
+6. **Three integration defects found & fixed along the way** (each caught by a designed check):
+   - *Phase-1 fuel-mask parser bug*: non-fuel lookup rows matched the wrong column, so codes
+     101/102/103 were never excluded from the env fuel mask — fixed in
+     `single_agent_env._read_fbp_nonfuel_codes` (env NF fraction now equals the conversion
+     report's for both regions).
+   - *Time-scale semantics*: one Cell2Fire fire period = **1 simulated minute** (weather
+     advances every 60 periods — `updateWeather()`); minute-level stepping made fire look
+     static. Region episodes now use `steps_per_action=60` (one action per simulated hour);
+     documented in the env and data card.
+   - *WD convention*: Cell2Fire's `Weather.csv` WD is the meteorological **FROM**-direction
+     (`ReadCSV.cpp: waz = WD + 180`). The first sim-smoke drift check caught the initial
+     TOWARD-direction output as ~147° anti-alignment — exactly what that check exists for;
+     after the fix California aligns to 7–9°.
+   - *(constraint, not a bug we fixed)*: both fork and upstream hold weather in a fixed
+     **150-slot buffer** (`Cell2Fire.cpp:40`); >150 rows corrupt the heap (bisected: 150 OK,
+     240 crashes). Hence the 144-row weather window; binaries remain unmodified.
+
+7. **Plausibility smoke** — `scripts/sim_smoke.py` (metrics → `results/sim_smoke_<region>.json`,
+   tracked; GIF/PNG → `figures/`, regenerable). Also mid-run: a hung fork plain-mode diagnostic
+   (blocked forever on stdin; 0% CPU) was identified and killed — the fork always awaits stdin
+   actions, so only the interactive protocol is used from here on.
+
+### Validation evidence (WSL2 Ubuntu 24.04, 2026-07-04)
+
+```
+$ python -m wildfire_marl.data.to_cell2fire --region saudi --grid 32       -> OK
+$ python -m wildfire_marl.data.to_cell2fire --region california --grid 32  -> OK
+    Saudi   classes: NF 12.1% · O-1a 86.6% · O-1b 0.8% · C-7 0.4% · C-5 0.1%   (desert grass)
+    Calif.  classes: NF 19.2% · O-1a 6.7% · O-1b 14.1% · C-7 25.0% · C-5 21.6% · C-3 13.4%
+    Saudi NDVI recovery cross-check: r=0.87, MAE=0.0075 vs raw MODIS
+    determinism: 2 independent runs -> 16/16 landscape files byte-identical (SHA-256)
+
+$ stock Cell2Fire full-sim on the landscapes (physics sanity, upstream binary):
+    Saudi 900/1024 cells burnt (87.9%); California 523/1024 (51.1%)
+$ interactive env, hourly cadence (steps_per_action=60), no-suppression:
+    Saudi 10 -> 899 cells over 51 sim-h then burnout (matches stock); California 1 -> 346
+    over 60 sim-h, still active — two genuinely contrasting fire regimes
+
+$ python scripts/sim_smoke.py --region saudi / california   (results/sim_smoke_*.json)
+    monotone growth: true / true
+    wind-drift (interior ignition, 12 h window): misalignment 46.5° / 17.8°  (<90° both;
+      CA's 17.8° confirms the WD convention; Saudi residual = grass/NF fuel geometry)
+    low-fuel check: CA ratio 0.33 (fuel-poor ignition burns 67% less). Saudi has no isolated
+      fuel-poor pocket (nf_share 0.56 in an 87% grass carpet) — fire size there is governed
+      by fuel continuity instead: coastal 156 vs inland 477 vs full-carpet 899 cells, which
+      is itself fuel-driven behavior (reported honestly, not forced into the pocket test)
+
+$ pytest tests/  -> 58 passed, 1 skipped (torch optional)   (17 new Phase-2 unit tests:
+    fuel mapping shared/monotone/known-values, FWI properties, ignition disjointness)
+$ ruff + black on src tests scripts -> clean
+$ python -m wildfire_marl.reproducibility.validate_tensors -> OK (all preserved tensors)
+$ python -m wildfire_marl.reproducibility.make_manifest    -> results/data_manifest.json
+$ re-profile at hourly cadence (Saudi, mass fire): 10.7 ms/step (93 steps/s), reset 72 ms
+    -> 5-seed x 1M-step study ≈ 17.4 h single-process — feasibility gate still comfortably PASS
+```
+
+### Deviations / declared abstractions (documented in docs/data_card.md)
+
+- **Representative-tile cell size**: `Forest.asc` declares 100 m cells (Cell2Fire's validated
+  regime) with patterns from ~17 km ROI cells; identical for both regions, so cross-region
+  comparisons stay internally consistent. Real lat/lon kept per cell.
+- **Topography from SRTM DEM**: The V1 flat topography data debt was closed in this phase by implementing a topography derivation pipeline. `scripts/fetch_srtm_dem.py` downloads 3-arcsec (~90 m) SRTM tile mosaics from the AWS Terrain Tiles. Then `to_cell2fire.py` aggregates this data per cell to compute the mean elevation (`elev`), slope percentage (`ps`), and downhill/uphill azimuth (`saz`).
+- **California NDVI reconstruction** via declared assumed range — data debt (spin-off task
+  flagged); covered meanwhile by the Phase-10 fuel-map sensitivity ablation.
+- **144-row weather window** (the 150-slot binary buffer) bounds episodes at ~143 hourly
+  agent steps; FWI codes retain full-month spin-up.
+- `elevation.asc` is now successfully emitted alongside the other grids using the derived SRTM elevation data.
+
+### Success Criteria (MANDATORY CHECKPOINT)
+
+Technical verification
+- [x] Both regions converted to valid Cell2Fire landscapes; the simulator runs on each
+      (stock full-sim AND interactive env, both regions)
+- [x] Single shared fuel model + encoding + normalization across regions: one FBP threshold
+      scheme on physical NDVI, identical for both; CA's recovery assumption declared and
+      tracked as data debt (never silently region-specific)
+
+Reproducibility
+- [x] Landscapes + fuel mapping hashed into the data manifest; converter deterministic
+      (byte-identical double-run; per-landscape `conversion_report.json` binds input SHA-256s)
+- [x] Randomized ignition with disjoint train/eval seeds (no leakage; unit-tested)
+
+Scientific validity
+- [x] Simulated fires physically plausible: monotone growth; wind-driven spread (drift within
+      90° of downwind in both regions, 7° in CA); fuel-poor ignition burns far less (CA), and
+      fire size tracks fuel continuity (Saudi); desert-grass vs forest regimes clearly
+      contrast. Fuel mapping sanity-checked against FBP class structure (desert → O-1a/NF
+      carpet; N. California → conifer/grass mix) with per-region distributions reported.
+
+### Proceed Rule
+
+The fuel mapping is one shared, cited scheme — not arbitrary, not region-specific (the one
+unavoidable region-specific element, CA's NDVI recovery, is a declared, tracked assumption
+with a re-derivation path). → **Proceed to Phase 3** (critical-infrastructure layer on real
+GIS data).
