@@ -1,10 +1,10 @@
-"""Metric tests — verify the single canonical threshold behavior (ported from V1)."""
+"""Metric tests — verify the single canonical threshold behavior."""
 
 from __future__ import annotations
 
 import numpy as np
 
-from wildfire_marl.eval.metrics import (
+from wildfire_rl.eval.metrics import (
     burned_cells,
     catastrophe_prevention_score,
     containment_rate,
@@ -16,7 +16,7 @@ from wildfire_marl.eval.metrics import (
     summarize,
     weighted_economic_loss,
 )
-from wildfire_marl.eval.transfer import (
+from wildfire_rl.eval.transfer import (
     adaptation_asymmetry,
     cross_domain_gap,
     transfer_robustness_score,

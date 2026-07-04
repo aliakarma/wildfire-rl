@@ -1,5 +1,15 @@
 # Data Card
 
+> **V2 migration note (2026-07-04, Phase 0 of `REMEDIATION_PLAN_V2.md`).** The region
+> rasters and 7-channel tensors under `data/` are preserved **unchanged** by the V1->V2
+> migration and feed the Phase-2 conversion into Cell2Fire landscape inputs
+> (`Forest.asc`, `elevation.asc`, `Weather.csv`, ignition lists). The V1 preprocessing
+> code referenced below is frozen under `legacy_v1/` (e.g.
+> `legacy_v1/scripts/download_data.py`, `legacy_v1/src/wildfire_rl/data/normalize.py`);
+> the frozen channel contract now lives in `wildfire_marl.data.CHANNEL_ORDER`.
+> Fuel-model choice, CRS handling, shared normalization, and the ignition protocol will
+> be re-documented here in Phase 2.
+
 ## Summary
 
 Wildfire-RL builds a 7-channel geospatial **state tensor** per region from four public

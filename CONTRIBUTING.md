@@ -31,7 +31,7 @@ pre-commit install          # runs ruff/black/nbstripout/large-file checks on co
 - **Single source of truth.** There is exactly one environment (`envs/base.py`,
   `envs/multi_agent.py`), one CNN (`models/cnn.py`), one metrics module (`eval/metrics.py`),
   one training loop (`train/ppo.py`). Do **not** reintroduce per-region/per-notebook copies.
-- **No hardcoded paths or magic numbers.** Use `wildfire_rl.paths` and `configs/`.
+- **No hardcoded paths or magic numbers.** Use `wildfire_marl.paths` and `configs/`.
 - **Determinism.** New stochastic code must use the env's `self.np_random` (single-agent /
   MARL) or an explicit `numpy.random.Generator` — never the global `np.random`.
 - **Metrics.** Use `eval/metrics.py`; don't invent new thresholds inline.

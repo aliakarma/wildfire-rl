@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, v2-cell2fire]
   pull_request:
     branches: [main]
 
@@ -20,9 +20,9 @@ jobs:
           python-version: "3.10"
       - run: pip install ruff==0.4.9 black==24.4.2
       - name: Ruff
-        run: ruff check src tests scripts
+        run: ruff check src tests
       - name: Black (check)
-        run: black --check src tests scripts
+        run: black --check src tests
 
   test:
     runs-on: ubuntu-latest
@@ -39,9 +39,7 @@ jobs:
       - name: Install package + dev deps
         run: pip install -e ".[dev]"
       - name: Run tests
-        run: pytest -q --cov=wildfire_rl --cov-report=term-missing
-      - name: CLI smoke
-        run: wildfire-rl info --set seed=1
+        run: pytest -q --cov=wildfire_marl --cov-report=term-missing
 
   install-check:
     runs-on: ubuntu-latest
@@ -53,7 +51,7 @@ jobs:
       - name: Clean install from pyproject
         run: |
           pip install .
-          python -c "import wildfire_rl; print('version', wildfire_rl.__version__)"
+          python -c "import wildfire_marl; print('version', wildfire_marl.__version__)"
 
   large-files:
     runs-on: ubuntu-latest
@@ -68,8 +66,10 @@ jobs:
           echo "OK: no file exceeds 50MB."
 
   validate:
-    # Scientific-integrity gates: determinism, seed integrity, tensor validity,
-    # the effective-method gate, and report<->CSV consistency. A red job blocks merge.
+    # Scientific-integrity gates on the ported V2 core: determinism, tensor validity,
+    # seed integrity, and the significance test surface. A red job blocks merge.
+    # Later phases extend this job (landscape validity, effective-method gate,
+    # report<->CSV consistency, CI-sized MARL smoke) per REMEDIATION_PLAN_V2.md.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -81,21 +81,10 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Determinism (seeding reproducible)
         run: |
-          python -c "from wildfire_rl.seeding import set_global_seed; import numpy as np; set_global_seed(0); a=np.random.rand(5); set_global_seed(0); b=np.random.rand(5); assert (a==b).all(), 'seeding not reproducible'; print('determinism OK')"
+          python -c "from wildfire_marl.reproducibility.seeding import set_global_seed; import numpy as np; set_global_seed(0); a=np.random.rand(5); set_global_seed(0); b=np.random.rand(5); assert (a==b).all(), 'seeding not reproducible'; print('determinism OK')"
       - name: Tensor validity (committed sample tensor)
-        run: python scripts/validate_tensors.py
-      - name: Seed integrity (checkpoints/manifest + committed CSVs)
-        run: python scripts/check_seed_integrity.py
-      - name: Effective-method gate (committed eval CSVs)
-        run: python scripts/validate_learning_gate.py
-      - name: Report <-> CSV consistency + significance artifacts
-        run: pytest tests/test_report_consistency.py tests/test_significance.py -q
-      - name: CI-sized learning smoke (best-effort; region data not committed to CI)
-        continue-on-error: true
-        run: |
-          if [ -f data/saudi_eastern_province/grids/32x32/state_tensor.npy ]; then
-            python scripts/train.py --set ppo.total_timesteps=2000 seeds=[0,1] region.dir=saudi_eastern_province region.name=saudi
-            python scripts/check_seed_integrity.py
-          else
-            echo "region tensor absent in CI checkout - skipping learning smoke (see docs/reproducibility.md)"
-          fi
+        run: python -m wildfire_marl.reproducibility.validate_tensors
+      - name: Seed integrity (checkpoints/manifest + registered eval CSVs)
+        run: python -m wildfire_marl.reproducibility.check_seed_integrity
+      - name: Significance artifacts (ported statistical core)
+        run: pytest tests/test_significance.py tests/test_metrics.py -q

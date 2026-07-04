@@ -1,12 +1,10 @@
-"""Seeding utility tests (ported from V1; torch/SB3 are optional in V2, so the torch
-determinism test skips cleanly when torch is not installed)."""
+"""Seeding utility tests."""
 
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
-from wildfire_marl.reproducibility.seeding import make_rng, set_global_seed
+from wildfire_rl.seeding import make_rng, set_global_seed
 
 
 def test_set_global_seed_returns_seed():
@@ -29,7 +27,7 @@ def test_make_rng_reproducible():
 
 
 def test_set_global_seed_sets_determinism_env():
-    """The hardened seeder must export the deterministic-CUDA + hash env vars."""
+    """Phase 5: the hardened seeder must export the deterministic-CUDA + hash env vars."""
     import os
 
     set_global_seed(0)
@@ -39,7 +37,7 @@ def test_set_global_seed_sets_determinism_env():
 
 def test_set_global_seed_makes_torch_reproducible():
     """Same seed => identical torch draws (the RL training RNG)."""
-    torch = pytest.importorskip("torch")
+    torch = __import__("torch")
     set_global_seed(3)
     a = torch.rand(5)
     set_global_seed(3)

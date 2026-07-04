@@ -1,0 +1,62 @@
+"""Reproducibility / deterministic RNG utilities.
+
+The original notebooks seeded ``random``/``numpy``/``torch`` inconsistently (only one
+notebook defined a ``set_seed``), and — critically — the environment dynamics used the
+*global* ``np.random`` instead of a per-env generator, so per-episode seeds had no effect.
+This module centralizes global seeding; environments must use their own per-env
+generators (the Phase-1 Gymnasium binding follows this rule) so dynamics are
+actually reproducible.
+
+Ported unchanged from V1 (``legacy_v1/src/wildfire_rl/seeding.py``).
+"""
+
+from __future__ import annotations
+
+import os
+import random
+
+import numpy as np
+
+
+def set_global_seed(seed: int, deterministic_torch: bool = True) -> int:
+    """Seed all global RNGs (Python, NumPy, PyTorch, SB3) and return the seed.
+
+    ``deterministic_torch`` additionally requests deterministic cuDNN kernels. This
+    can slow training slightly but removes a major source of run-to-run variation.
+    Torch / SB3 are imported lazily so this works in lightweight (CPU/test)
+    environments without those packages installed.
+    """
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    # Required for deterministic CUDA GEMM under torch.use_deterministic_algorithms.
+    # setdefault so an explicit user setting is respected.
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    random.seed(seed)
+    np.random.seed(seed)
+
+    try:
+        import torch
+
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        if deterministic_torch:
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+            # warn_only: fall back (with a warning) for ops lacking a deterministic
+            # kernel rather than hard-crashing training.
+            torch.use_deterministic_algorithms(True, warn_only=True)
+    except ImportError:
+        pass
+
+    try:
+        from stable_baselines3.common.utils import set_random_seed
+
+        set_random_seed(seed)
+    except ImportError:
+        pass
+
+    return seed
+
+
+def make_rng(seed: int | None) -> np.random.Generator:
+    """Return an isolated NumPy ``Generator`` (preferred over global ``np.random``)."""
+    return np.random.default_rng(seed)
