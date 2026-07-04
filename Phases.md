@@ -473,6 +473,78 @@ Scientific validity
 - [x] No headline result depends on a single hand-picked asset value (sensitivity range documented in `infra_card.md` and deferred to Phase 8)
 - [x] Strategic metrics (ISR/WEL/CPS/RAC/PA/CCL) compute on Cell2Fire final state
 
+Real asset values and locations are fully sourced, licensed, and documented in `docs/infra_card.md` — not invented — satisfying the proceed rule. → **Proceed to Phase 4** (Single-agent baselines & de-confounded heuristics).
+
+---
+
+## Phase 4 — Single-Agent Baselines & Heuristics
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-04 · **Branch:** `v2-cell2fire` · **No commits made (user commits)**
+
+### Objective (from the plan)
+
+Establish information-matched baselines on the new environment: heuristic cell-treatment policies (no oracle privilege), a CNN-based Maskable-PPO baseline agent (stable-baselines3 / sb3-contrib), and robust evaluation loops comparing them on both regions with bootstrap confidence intervals (CIs) and Welch's t-tests.
+
+### Actions taken
+
+1. **Implemented Heuristic Policies.**
+   - Created `src/wildfire_marl/agents/heuristics.py` defining five information-matched baselines:
+     - `NoOpPolicy`: Selects a non-fuel or treated cell (acts as a no-op).
+     - `RandomPolicy`: Treats a random fuel cell.
+     - `NearestFrontierPolicy` (Frontier Heuristic): Isolates treatable cells adjacent to the active fire border using binary dilation and treats the cell closest to the fire centroid.
+     - `GreatestRiskFirstPolicy`: Prioritizes frontier cells based on their active burning neighbor count.
+     - `ValueWeightedFirstPolicy`: Prioritizes frontier cells with the highest economic asset criticality value.
+
+2. **Created learned Maskable-PPO baseline.**
+   - Created `src/wildfire_marl/agents/ppo_baseline.py` integrating `sb3-contrib` and `stable-baselines3`.
+   - Coded a custom CNN features extractor (`CustomSmallCNN`) to handle smaller 32x32 grids safely without dimensionality crashes.
+   - Wrapped the environment with `ActionMasker` to enforce the action mask, preventing the agent from trying to treat non-fuel or already treated cells.
+
+3. **Ported evaluation core.**
+   - Wrote `src/wildfire_marl/eval/evaluate.py` to run evaluation loops over a set of episodes. reset seeds are offset by `100,000` to guarantee evaluation scenarios are completely disjoint from training seeds (zero leakage).
+   - Strategic metrics are calculated on the final fire grid state.
+
+4. **Created benchmark execution script.**
+   - Created `scripts/run_baselines.py` to orchestrate PPO training and baseline evaluations on both regions, outputting bootstrap 95% confidence intervals, Welch's t-tests, and Cohen's d effect sizes.
+   - Runs can load existing trained model files if `--train-timesteps 0` is set, making re-evaluation instantaneous.
+
+5. **Validated and ran benchmarks.**
+   - Added unit tests in `tests/test_baselines.py` verifying heuristic prediction ranges, ActionMasker wrapping, and evaluation loop keys. All tests passed.
+   - Ran `pytest` globally in WSL and all **64 tests passed**.
+   - Executed the benchmark runner (`run_baselines.py`) over 20 episodes. Results are stored in `results/runs/baselines_summary.csv`.
+
+### Benchmark Results (20 episodes)
+
+#### Saudi Arabia (Eastern-Province Petroleum)
+* **No-Op:** Reward `-5187.24 [-5928.70, -4388.93]` | Burned `886.0 [866.1, 897.6]`
+* **Frontier Heuristic:** Reward `-4522.35 [-5246.26, -3791.63]` | Burned `774.3 [744.9, 799.4]` (Cohen's d = 0.38, n.s.)
+* **Greatest Risk:** Reward `-4553.91 [-5309.68, -3774.91]` | Burned `774.5 [744.9, 799.6]` (Cohen's d = 0.35, n.s.)
+* **Value-Weighted Frontier:** Reward `-2357.46 [-3007.86, -1727.46]` | Burned `774.5 [745.0, 799.6]` (Cohen's d = 1.71, ***)
+* **Maskable-PPO (10k steps):** Reward `-3459.38 [-3929.39, -2958.60]` | Burned `774.3 [747.3, 798.0]` (Cohen's d = 1.14, **)
+
+#### California (Forest/WUI Zones)
+* **No-Op:** Reward `-2467.16 [-3020.24, -1932.56]` | Burned `661.2 [605.9, 718.0]`
+* **Frontier Heuristic:** Reward `-1928.88 [-2412.22, -1445.98]` | Burned `523.0 [455.6, 593.5]` (Cohen's d = 0.45, n.s.)
+* **Greatest Risk:** Reward `-1840.12 [-2380.49, -1313.06]` | Burned `522.0 [454.4, 593.0]` (Cohen's d = 0.50, n.s.)
+* **Value-Weighted Frontier:** Reward `-1063.39 [-1420.51, -725.55]` | Burned `528.9 [463.8, 596.9]` (Cohen's d = 1.32, ***)
+* **Maskable-PPO (10k steps):** Reward `-1554.12 [-2019.56, -1115.18]` | Burned `541.6 [483.4, 603.6]` (Cohen's d = 0.78, *)
+
+---
+
+### Success Criteria (MANDATORY CHECKPOINT)
+
+Technical verification
+- [x] Information-matched heuristics built using **only the observation**
+- [x] Maskable-PPO + CNN baseline runs without dimension crash
+- [x] Evaluation loop threads strategic metrics + disjoint eval seeds
+
+Reproducibility
+- [x] Results reported with bootstrap 95% CIs and effect sizes
+- [x] All code tested and all 64 tests pass
+
+Scientific validity
+- [x] Effective-method gate: Value-Weighted Frontier Heuristic and Maskable-PPO beat the No-Op baseline significantly (p < 0.05, Cohen's d > 0.5) in both regions.
+
 ### Proceed Rule
 
-Real asset values and locations are fully sourced, licensed, and documented in `docs/infra_card.md` — not invented — satisfying the proceed rule. → **Proceed to Phase 4** (Single-agent baselines & de-confounded heuristics).
+The best reported method beats No-Op significantly (Welch's t-test p < 0.05, effect size d > 0.5). → **Proceed to Phase 5** (Multi-agent PettingZoo wrapper & coordination baselines).
