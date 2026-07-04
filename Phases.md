@@ -149,3 +149,127 @@ Platform
 ALL boxes `[x]` → **proceed to Phase 1** (Cell2Fire + Firehose integration). Standing rule for
 the whole V2 plan, now in force: **nothing from `legacy_v1/` is ever cited as a result** — it
 is prior art / motivation only.
+
+---
+
+## Phase 1 — Cell2Fire + Firehose Integration & Modernization
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-04 · **Branch:** `v2-cell2fire` · **No commits made (user commits)**
+
+### Objective (from the plan)
+
+Build Cell2Fire, get a Firehose-style single-agent suppression episode stepping end-to-end on
+stock maps, modernize the interface to Gymnasium, and profile per-step speed to size the project.
+
+### Actions taken
+
+1. **Simulator sources.**
+   - `third_party/Cell2Fire/` — upstream Cell2Fire added as a **git submodule**
+     (https://github.com/cell2fire/Cell2Fire, HEAD `b860bcc`); `.gitmodules` sets
+     `ignore = untracked` so in-tree build artifacts don't dirty the submodule.
+   - `third_party/firehose/` — Firehose **vendored** (https://github.com/aidan-curtis/firehose,
+     commit `e49a52a`, 2022-05-12), pruned 193 MB → ~7 MB (dropped `.git`, `pretrained_models/`,
+     `figs/`, `scratch/`, all maps except `Sub20x20`/`Sub40x40`/`Harvest40x40`). Provenance +
+     pruning record in `third_party/firehose/VENDORED.md`; roles + rules in `third_party/README.md`.
+
+2. **Physics-integrity audit (the "unmodified physics" evidence).** Diffed the Firehose C++
+   fork against upstream at fork-base commit `336119d`:
+   - byte-identical: `FBPfunc5_NoDebug.c`, `FBP5.0.h` (FBP fire-behavior equations),
+     `SpottingFBP.cpp`, `Ellipse.cpp`, `Forest.cpp`, `Lightning.cpp`, `ReadCSV.cpp`, `WriteCSV.cpp`;
+   - `CellsFBP.cpp`: 45 substantive changed lines, **all** `if (args->verbose)` →
+     `if (should_print && args->verbose)` logging guards — zero fire-behavior changes;
+   - `Cell2Fire.cpp` / `ReadArgs.*`: the interactive-control patch (`--steps-action`,
+     `--steps-before`, `--HarvestPlan`, stdin protocol) — loop control + I/O only.
+   Conclusion: the interactive binary's fire physics **is** unmodified Cell2Fire.
+
+3. **Builds (WSL2 Ubuntu 24.04).** Installed `libboost-dev` (Cell2Fire includes
+   `boost/algorithm/string.hpp`; Eigen alone is not enough — `environment-linux.yml` updated).
+   Built **both** binaries with no source edits (`EIGENDIR` passed on the make command line):
+   upstream `Cell2Fire` (stock) and the Firehose-fork `Cell2Fire` (interactive).
+
+4. **Stock example.** Upstream binary on `Sub40x40`: exit 0, 1600-cell forest, 263 cells burnt
+   (16.4 %), 8 per-period `ForestGrid*.csv` fire grids + final grid emitted.
+
+5. **New wrapper code (all suppression/agent logic in the wrapper, simulator untouched):**
+   - `src/wildfire_marl/env/cell2fire_binding.py` — `Cell2FireBinding`: spawns the interactive
+     binary, waits for the `Input action` marker, writes 1-indexed harvest cells to stdin,
+     collects `ForestGrid*.csv` paths, detects `Total Harvested Cells` (episode end). Improvements
+     over Firehose's wrapper: seed is a parameter (Firehose hardcodes `--seed 123`), `--ROS-CV`
+     defaults to 0.0 (deterministic spread; Firehose used 0.5), readline timeout guards, scratch
+     I/O in `tempfile` dirs instead of the source tree.
+   - `src/wildfire_marl/env/single_agent_env.py` — **Gymnasium** `FireSuppressionEnv`:
+     obs `Box(0,1,(3,H,W))` (fire / harvested / fuel-mask channels), action `Discrete(num_cells)`
+     with `action_diameter` 1|2 patches, `action_masks()` for Maskable-PPO (Phase 4), pluggable
+     reward, seeded ignition sampling from `self.np_random`, `rgb_array` render, full
+     reset/step/terminated/truncated semantics.
+   - `src/wildfire_marl/env/rewards.py` — `Reward` ABC + `FireSizeReward` (ported Firehose
+     objective: −cells-on-fire/total × 10) + declared `InfrastructureWeightedReward` hook that
+     raises until Phase 3 lands (explicit error, not silent zero).
+   - `scripts/profile_env.py` — the feasibility-gate profiler (see below).
+   - `tests/test_env_smoke.py` — 3 integration tests (end-to-end step, harvest-registers-in-obs,
+     seeded determinism); skip cleanly when the binary isn't built (CI-safe).
+
+6. **`.gitignore` bug found & fixed.** The V1 virtualenv rules (`env/`, `ENV/`) matched *any*
+   directory named `env` — silently ignoring the whole `src/wildfire_marl/env/` package
+   (`env/__init__.py` was consequently **missing from the Phase-0 commit** `2f17a4c`). Rules are
+   now root-anchored (`/env/`, `/ENV/`, `/venv/`, `/.venv/`); the four env-package files show as
+   untracked and land in the next commit. An audit found no other silently-ignored live files.
+
+### Deviations from the plan (documented)
+
+- **Firehose's own Python was read, not executed.** Its `gym_env.py`/`evaluate_model.py` target
+  dead `gym` 0.21 (incompatible with the Python 3.12 stack); the plan's own step 3 anticipates
+  this rot and calls for a fresh Gymnasium binding. The stdin/stdout protocol was instead
+  verified live through `Cell2FireBinding` (burn-in grids parsed; harvested cells confirmed in
+  the state grid).
+- **The interactive binary is the Firehose-fork build** — stock Cell2Fire cannot pause
+  per-period for actions. Physics unchanged per the audit in item 2 (this is exactly the
+  arrangement the plan's "modeled on Firehose `progress_to_next_state`" line implies).
+- `--grid 32` in the profiler maps to the nearest stock map (`Sub40x40`); 32×32 instances are
+  produced from region data in Phase 2.
+- `libboost-dev` added to the toolchain (the plan listed only Eigen).
+
+### Validation evidence (WSL2 Ubuntu 24.04, 2026-07-04)
+
+```
+$ ./Cell2Fire (stock, Sub40x40)         -> exit 0; 263/1600 cells burnt; 8 fire-grid CSVs
+$ binding smoke                          -> burn-in 7 grids; state (40,40); no-op steps advance
+                                            fire; harvest of 4 cells registers as -1 in grid
+$ python -c "...FireSuppressionEnv...e.step(...)"   -> "env steps OK"   (plan's exact one-liner)
+$ env validation                         -> reset obs (3,40,40) in space; 10 random steps,
+                                            reward accumulates (-0.131); render() (40,40,3) uint8
+$ determinism                            -> seed 7 twice + fixed 8-action script: identical
+                                            ignition (1511), identical obs trajectories,
+                                            identical rewards; seed 8 -> different ignition
+$ pytest tests/                          -> 41 passed, 1 skipped (torch optional)
+                                            (38 core + 3 new env integration tests)
+$ ruff / black on src tests scripts      -> clean
+
+$ python scripts/profile_env.py --grid 32 --episodes 5     (results/profile_env.csv + meta)
+    mean step:  0.4 ms  (~2,375 steps/s)      mean reset (respawn): 0.033 s
+    5 seeds x (1,000,000 train steps + 100 eval episodes) ~= 1.5 h single-process (~0.3 h/seed)
+```
+
+### Success Criteria (MANDATORY CHECKPOINT)
+
+Technical verification
+- [x] Cell2Fire builds and runs the stock example on Linux
+- [x] Modern **Gymnasium** single-agent env steps end-to-end (reset/step/reward/render)
+- [x] Cell2Fire physics **unmodified** — audited diff: FBP core byte-identical; fork changes are
+      logging guards + IPC only; all suppression logic lives in the wrapper
+
+Reproducibility
+- [x] Deterministic given a seed (fixed ignition + fixed action sequence → identical trajectory;
+      verified twice at seed 7, plus in `tests/test_env_smoke.py`)
+
+Feasibility gate
+- [x] Per-step / per-episode time measured and recorded (`results/profile_env.csv` +
+      provenance meta): **0.4 ms/step, 33 ms/reset on Sub40x40** → a 5-seed study is ~1.5 h
+      single-process. **Gate: PASS — no mitigation needed.** Caveat recorded: measured on 40×40
+      with random actions and `/tmp` scratch I/O; re-profile after Phase-2 region landscapes
+      (64×64) and before the Phase-5 MARL study.
+
+### Proceed Rule
+
+Speed gate passed decisively → **proceed to Phase 2** (geospatial data ingestion: Saudi +
+California tensors → Cell2Fire landscapes with one shared fuel model).

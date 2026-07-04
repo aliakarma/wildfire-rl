@@ -1,0 +1,30 @@
+{
+  "timestamp_utc": "2026-07-04T11:13:38.589490+00:00",
+  "git_sha": "a48533f",
+  "seed": null,
+  "libraries": {
+    "python": "3.12.3",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "numpy": "1.26.4",
+    "torch": "n/a",
+    "gymnasium": "1.0.0",
+    "pettingzoo": "1.26.1",
+    "stable_baselines3": "n/a",
+    "pandas": "2.3.3"
+  },
+  "config_hash": "182b11e8f0bf",
+  "config": {
+    "fire_map": null,
+    "grid": 32,
+    "episodes": 5,
+    "steps": 50,
+    "steps_before_sim": 20,
+    "train_steps_per_seed": 1000000,
+    "eval_episodes": 100,
+    "seeds": 5,
+    "out": "results/profile_env.csv"
+  },
+  "artifacts": {
+    "profile_csv": "53e4c3ced621199a375e90f0a064ef8b5004236e676248143a59bd324669590f"
+  }
+}

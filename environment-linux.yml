@@ -17,6 +17,7 @@ dependencies:
   - make
   - cmake
   - eigen
+  - libboost-headers  # Cell2Fire uses boost/algorithm/string.hpp (header-only)
   # --- scientific core ---
   - numpy<2.0
   - pandas>=2.0

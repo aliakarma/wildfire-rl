@@ -20,9 +20,9 @@ jobs:
           python-version: "3.10"
       - run: pip install ruff==0.4.9 black==24.4.2
       - name: Ruff
-        run: ruff check src tests
+        run: ruff check src tests scripts
       - name: Black (check)
-        run: black --check src tests
+        run: black --check src tests scripts
 
   test:
     runs-on: ubuntu-latest

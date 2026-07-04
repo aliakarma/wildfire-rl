@@ -1,0 +1,4 @@
+[submodule "third_party/Cell2Fire"]
+	path = third_party/Cell2Fire
+	url = https://github.com/cell2fire/Cell2Fire.git
+	ignore = untracked

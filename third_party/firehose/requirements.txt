@@ -1,0 +1,16 @@
+numpy
+pandas
+matplotlib
+seaborn
+opencv-python
+imread
+tqdm
+deap
+
+# Additional dependencies for our RL stuff
+gym
+stable-baselines3
+tensorboard
+
+# Our version of sb3 contrib
+git+https://github.com/williamshen-nz/stable-baselines3-contrib

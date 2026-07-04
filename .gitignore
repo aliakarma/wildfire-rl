@@ -82,11 +82,12 @@ wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# ---- Virtual environments ---------------------------------------------------
-.venv/
-venv/
-env/
-ENV/
+# ---- Virtual environments (root-anchored! bare `env/` would also ignore the
+# wildfire_marl.env PACKAGE — that bug silently dropped src/wildfire_marl/env/) --
+/.venv/
+/venv/
+/env/
+/ENV/
 .conda/
 conda-meta/
 

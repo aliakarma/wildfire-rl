@@ -96,7 +96,7 @@ extend-exclude = "legacy_v1/"
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-src = ["src", "tests"]
+src = ["src", "tests", "scripts"]
 extend-exclude = ["legacy_v1"]
 
 [tool.ruff.lint]
