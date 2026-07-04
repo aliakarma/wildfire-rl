@@ -422,3 +422,57 @@ The fuel mapping is one shared, cited scheme — not arbitrary, not region-speci
 unavoidable region-specific element, CA's NDVI recovery, is a declared, tracked assumption
 with a re-derivation path). → **Proceed to Phase 3** (critical-infrastructure layer on real
 GIS data).
+
+---
+
+## Phase 3 — Critical Infrastructure Layer (Petroleum, real-data-grounded)
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-04 · **Branch:** `v2-cell2fire` · **No commits made (user commits)**
+
+### Objective (from the plan)
+
+Introduce critical infrastructure that must be preserved with priority — petroleum sites (Saudi) and critical facilities/WUI (California) — grounded in real GIS data, as a value-weighted reward + an observation channel, with catastrophe/cascade modeled in the wrapper, never in Cell2Fire's physics.
+
+### Actions taken
+
+1. **Documented Infrastructure Card.**
+   - Wrote `docs/infra_card.md` to document coordinates, type classification (Refinery=1, Pipeline=2, Storage=3, Industrial=4), economic values, circular/Chebyshev blast radii, and the CC-BY-4.0 / Public Domain / OSM ODbL licensing and provenance of the public GIS coordinates.
+
+2. **Implemented Raster Builder.**
+   - Created `src/wildfire_marl/infra/build_infrastructure.py` which takes coordinates of assets and maps them onto the `(grid, grid)` grid using standard cell binning. It computes the normalized continuous criticality heatmap via a Gaussian falloff around each asset cell, weighted by its default asset value.
+   - Built the grids `asset_type`, `criticality`, and `blast_radius` for both `saudi` and `california` regions and wrote them as `.asc` and `.npy` files directly into `data/cell2fire/Saudi` and `data/cell2fire/California`.
+
+3. **Wrapper-level post-spread cascade logic.**
+   - Created `src/wildfire_marl/infra/cascade.py` implementing post-spread detonation propagation. If an asset cell catches fire (`intensity > 0.1`) and has not detonated yet:
+     - It detonates (marked in `previously_detonated`).
+     - A secondary ignition is triggered on all burnable cells within its circular `blast_radius` with probability `cascade_prob`.
+     - The detonated count and newly ignited cells (Critical Cascade Loss) are tracked.
+
+4. **Value-weighted rewards.**
+   - Implemented `InfrastructureWeightedReward` in `src/wildfire_marl/env/rewards.py` which computes the default `FireSizeReward` penalty and adds the value-weighted catastrophe penalty: `- catastrophe_weight * sum(value[asset] * cell_on_fire)`.
+
+5. **Wired environment wrapper.**
+   - Modified `src/wildfire_marl/env/single_agent_env.py` to support loading the new infrastructure layers (`asset_type.npy`, `criticality.npy`, `blast_radius.npy`) from the map directory.
+   - Observation channel: Added `observe_infra` parameter. If True, observation space shape changes from `(3, H, W)` to `(4, H, W)`, appending the static criticality raster as channel index 3.
+   - Steps: Wired `cascade_step` and tracked newly detonated/ignited assets. Step `info` exposes `assets_reached`, `assets_detonated`, and `cascade_ignited` metrics.
+
+6. **Unit & Integration Tests.**
+   - Added `tests/test_infra.py` to test shapes, bounds, normalization, cascade detonation logic, and reward calculations. All tests passed.
+
+### Success Criteria (MANDATORY CHECKPOINT)
+
+Technical verification
+- [x] Real asset rasters built for both regions; criticality observation channel added
+- [x] `InfrastructureWeightedReward` value-weights correctly (unit-tested: Refinery penalty > Pipeline penalty > Empty)
+- [x] Cascade lives in the wrapper; **Cell2Fire physics unmodified**
+
+Reproducibility
+- [x] Asset locations/values sourced, licensed, and provenance-documented (`infra_card.md`); hashed into the data manifest
+
+Scientific validity
+- [x] No headline result depends on a single hand-picked asset value (sensitivity range documented in `infra_card.md` and deferred to Phase 8)
+- [x] Strategic metrics (ISR/WEL/CPS/RAC/PA/CCL) compute on Cell2Fire final state
+
+### Proceed Rule
+
+Real asset values and locations are fully sourced, licensed, and documented in `docs/infra_card.md` — not invented — satisfying the proceed rule. → **Proceed to Phase 4** (Single-agent baselines & de-confounded heuristics).

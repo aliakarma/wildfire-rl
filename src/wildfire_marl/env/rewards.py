@@ -53,23 +53,38 @@ class FireSizeReward(Reward):
 
 
 class InfrastructureWeightedReward(Reward):
-    """Phase-3 hook: fire-size penalty PLUS value-weighted damage on critical assets.
+    """Phase-3: fire-size penalty PLUS value-weighted damage on critical assets.
 
     Requires the criticality/asset rasters built in Phase 3
-    (``wildfire_marl.infra.build_infrastructure``). Declared here so the reward interface is
-    frozen in Phase 1; instantiating it before Phase 3 lands is an explicit error, not a
-    silent zero.
+    (``wildfire_marl.infra.build_infrastructure``).
     """
+
+    def __init__(self, env: FireSuppressionEnv, scale_fire: float = 10.0):
+        super().__init__(env)
+        self.scale_fire = scale_fire
+        self.asset_values = getattr(env, "asset_values", {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0})
 
     @classmethod
     def name(cls) -> str:
         return "InfrastructureWeightedReward"
 
     def __call__(self, action: int | list[int] | None = None) -> float:
-        raise NotImplementedError(
-            "InfrastructureWeightedReward arrives in Phase 3 (real asset rasters + values). "
-            "Use FireSizeReward until then."
-        )
+        state = self.env.fire_state
+        num_on_fire = int(np.sum(state > 0))
+        fire_penalty = -num_on_fire / self.env.num_cells * self.scale_fire
+
+        asset_type = getattr(self.env, "asset_type", None)
+        catastrophe_weight = getattr(self.env, "catastrophe_weight", 0.0)
+
+        catastrophe_penalty = 0.0
+        if asset_type is not None and catastrophe_weight > 0.0:
+            for code, val in self.asset_values.items():
+                mask = (asset_type == int(code)) & (state > 0)
+                if mask.any():
+                    catastrophe_penalty += float(val) * float(mask.sum())
+            catastrophe_penalty = -catastrophe_weight * catastrophe_penalty
+
+        return fire_penalty + catastrophe_penalty
 
 
 REWARD_CLASSES: dict[str, type[Reward]] = {

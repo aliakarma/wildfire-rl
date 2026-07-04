@@ -83,6 +83,11 @@ class FireSuppressionEnv(gym.Env):
         ros_cv: float = 0.0,
         render_mode: str | None = None,
         verbose: bool = False,
+        observe_infra: bool = False,
+        catastrophe_weight: float = 0.0,
+        cascade_prob: float = 0.0,
+        infra_dir: str | Path | None = None,
+        asset_values: dict[int, float] | None = None,
     ):
         """
         Args:
@@ -103,6 +108,11 @@ class FireSuppressionEnv(gym.Env):
                 cell per episode from ``self.np_random`` (seeded via ``reset(seed=...)``).
             ros_cv: Cell2Fire rate-of-spread coefficient of variation (0.0 = deterministic).
             verbose: log the subprocess protocol.
+            observe_infra: add a normalized infrastructure-criticality observation channel.
+            catastrophe_weight: reward penalty scale for fire on an asset (x asset value).
+            cascade_prob: per-neighbor ignition prob when an asset cell burns.
+            infra_dir: directory containing asset_type/criticality/blast_radius .npy files.
+            asset_values: dict mapping asset codes to value multipliers.
         """
         super().__init__()
         self.map_dir = Path(data_dir) / fire_map
@@ -124,10 +134,41 @@ class FireSuppressionEnv(gym.Env):
         nonfuel_codes = _read_fbp_nonfuel_codes(self.map_dir / "fbp_lookup_table.csv")
         self.fuel_mask = (~np.isin(self.forest, sorted(nonfuel_codes))).astype(np.float32)
 
+        # --- infrastructure layers (Phase 3) -------------------------------------------
+        self.observe_infra = observe_infra
+        self.catastrophe_weight = float(catastrophe_weight)
+        self.cascade_prob = float(cascade_prob)
+        self.asset_values = asset_values or {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0}
+
+        infra_path = Path(infra_dir) if infra_dir is not None else self.map_dir
+        asset_type_path = infra_path / "asset_type.npy"
+        criticality_path = infra_path / "criticality.npy"
+        blast_radius_path = infra_path / "blast_radius.npy"
+
+        if asset_type_path.exists():
+            self.asset_type = np.load(asset_type_path).astype(np.int32)
+        else:
+            self.asset_type = None
+
+        if criticality_path.exists():
+            self.criticality = np.load(criticality_path).astype(np.float32)
+        else:
+            self.criticality = None
+
+        if blast_radius_path.exists():
+            self.blast_radius = np.load(blast_radius_path).astype(np.int32)
+        else:
+            self.blast_radius = None
+
         # --- spaces ---------------------------------------------------------------------
         self.action_space = spaces.Discrete(self.num_cells)
+        obs_channels = 3
+        self._active_observe_infra = self.observe_infra and self.criticality is not None
+        if self._active_observe_infra:
+            obs_channels = 4
+
         self.observation_space = spaces.Box(
-            low=0.0, high=1.0, shape=(3, self.height, self.width), dtype=np.float32
+            low=0.0, high=1.0, shape=(obs_channels, self.height, self.width), dtype=np.float32
         )
 
         # --- per-instance scratch input folder (Ignitions.csv rewritten per episode) ----
@@ -181,19 +222,31 @@ class FireSuppressionEnv(gym.Env):
             self.fire_state = read_grid_csv(csv_paths[-1]).astype(np.int8)
 
     def _obs(self) -> np.ndarray:
-        obs = np.zeros((3, self.height, self.width), dtype=np.float32)
+        channels = 4 if self._active_observe_infra else 3
+        obs = np.zeros((channels, self.height, self.width), dtype=np.float32)
         obs[0] = self.fire_state > 0  # fire
         obs[1] = self.fire_state < 0  # harvested
         obs[2] = self.fuel_mask  # static fuel availability
+        if self._active_observe_infra:
+            obs[3] = self.criticality
         return obs
 
     def _info(self) -> dict[str, Any]:
-        return {
+        info = {
             "cells_on_fire": int(np.sum(self.fire_state > 0)),
             "cells_harvested": int(np.sum(self.fire_state < 0)),
             "ignition_cell": self.ignition_cell,
             "sim_finished": self.binding.finished,
         }
+        if self.asset_type is not None:
+            info["assets_reached"] = int(np.sum((self.asset_type > 0) & (self.fire_state > 0.1)))
+            info["assets_detonated"] = len(self.previously_detonated)
+            info["cascade_ignited"] = self.cascade_ignited_count
+        else:
+            info["assets_reached"] = 0
+            info["assets_detonated"] = 0
+            info["cascade_ignited"] = 0
+        return info
 
     def action_masks(self) -> np.ndarray:
         """True where the action is still useful: fuel cell, not yet treated (for MaskablePPO)."""
@@ -210,6 +263,8 @@ class FireSuppressionEnv(gym.Env):
         self.iter = 0
         self.prev_actions = set()
         self.fire_state = np.zeros((self.height, self.width), dtype=np.int8)
+        self.previously_detonated = set()
+        self.cascade_ignited_count = 0
 
         ignition = options.get("ignition_cell", self.fixed_ignition_cell)
         self.ignition_cell = int(ignition) if ignition is not None else self._sample_ignition_cell()
@@ -231,6 +286,21 @@ class FireSuppressionEnv(gym.Env):
         self.prev_actions.update(patch)
         csvs = self.binding.progress_to_next_state()
         self._refresh_state(csvs)
+
+        # Post-spread wrapper cascade logic
+        if self.cascade_prob > 0.0 and self.asset_type is not None:
+            from wildfire_marl.infra.cascade import cascade_step
+            self.fire_state, newly_det, newly_ign = cascade_step(
+                fire_state=self.fire_state,
+                asset_type=self.asset_type,
+                blast_radius=self.blast_radius,
+                fuel_mask=self.fuel_mask,
+                previously_detonated=self.previously_detonated,
+                cascade_prob=self.cascade_prob,
+                rng=self.np_random,
+            )
+            self.previously_detonated.update(newly_det)
+            self.cascade_ignited_count += newly_ign
 
         reward = float(self.reward_func(action=patch))
         self.iter += 1
