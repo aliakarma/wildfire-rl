@@ -1,0 +1,10 @@
+{
+  "region": "california",
+  "base_seed": 42,
+  "hierarchical_checkpoint": "results/runs/checkpoint_hierarchical_california.pt",
+  "flat_marl_checkpoint": "results/runs/checkpoint_mappo_california.pt",
+  "reproducibility_hashes": {
+    "checkpoint_hierarchical_california.pt": "d7c918dbff61b450402dd6ed99103d12bbfba27cb104b5dc58d6251959580870",
+    "checkpoint_mappo_california.pt": "119a68beafb1dffdde384efffb37e9373d3d6539e1d4f69074eac7aaf80f71de"
+  }
+}

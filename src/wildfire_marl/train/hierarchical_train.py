@@ -129,6 +129,32 @@ def get_value_first_sectors_action(env: MultiAgentFireEnv) -> list[int]:
     return actions
 
 
+def run_low_level_step(
+    env: MultiAgentFireEnv,
+    low_level_actor: MAPPOActor,
+    obs_dict: dict,
+    info_dict: dict,
+    device: torch.device,
+) -> tuple[dict, dict, dict, dict, dict]:
+    """Run one step of frozen low-level agents."""
+    actions_dict = {}
+    for agent in env.agents:
+        mask = info_dict[agent]["action_mask"]
+        with torch.no_grad():
+            obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+            mask_t = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
+            logits = low_level_actor(obs_t, mask_t).squeeze(0)
+            prob = torch.softmax(logits, dim=-1)
+            m = torch.tensor(mask, device=device)
+            prob = prob * m.float()
+            if prob.sum() > 0:
+                actions_dict[agent] = int(torch.argmax(prob).item())
+            else:
+                actions_dict[agent] = 0
+
+    return env.step(actions_dict)
+
+
 def pretrain_commander(
     env: MultiAgentFireEnv,
     commander: StrategicController,
@@ -254,19 +280,26 @@ def train_hierarchical(
         curr_targets = {agent: env.agent_positions[agent] for agent in env.agents}
         prev_wel, prev_isr = get_infra_metrics(env)
         pending_dispatch = False
+        accumulated_raw_reward = 0.0
 
         while not done:
             if step_count % high_level_interval == 0:
                 # Collect infrastructure reward for previous dispatch window
                 if pending_dispatch:
-                    curr_wel, curr_isr = get_infra_metrics(env)
-                    well_delta = curr_wel - prev_wel
-                    isr_delta = curr_isr - prev_isr
-                    infra_rew = -well_delta + isr_weight * isr_delta
+                    if cfg.get("use_raw_reward", False):
+                        infra_rew = accumulated_raw_reward
+                    else:
+                        curr_wel, curr_isr = get_infra_metrics(env)
+                        well_delta = curr_wel - prev_wel
+                        isr_delta = curr_isr - prev_isr
+                        infra_rew = -well_delta + isr_weight * isr_delta
                     infra_rewards_buf.append(infra_rew)
-                    prev_wel, prev_isr = curr_wel, curr_isr
+                    accumulated_raw_reward = 0.0
+                    if not cfg.get("use_raw_reward", False):
+                        prev_wel, prev_isr = curr_wel, curr_isr
                 else:
-                    prev_wel, prev_isr = get_infra_metrics(env)
+                    if not cfg.get("use_raw_reward", False):
+                        prev_wel, prev_isr = get_infra_metrics(env)
 
                 # Commander dispatch
                 commander.train()
@@ -306,20 +339,30 @@ def train_hierarchical(
 
             env.strategic_targets = curr_targets
 
-            # TARGET-SEEKING low-level execution (same as all heuristics in eval)
-            actions_dict = {
-                agent: target_seeking_action(env, agent, info_dict[agent]["action_mask"])
-                for agent in env.agents
-            }
-            next_obs, _, terminations_dict, truncations_dict, next_info = env.step(actions_dict)
+            # Tactical layer low-level selection (ablated vs standard)
+            if cfg.get("use_mappo_tactical", False):
+                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = run_low_level_step(
+                    env, low_level_actor, obs_dict, info_dict, device
+                )
+            else:
+                actions_dict = {
+                    agent: target_seeking_action(env, agent, info_dict[agent]["action_mask"])
+                    for agent in env.agents
+                }
+                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = env.step(actions_dict)
+
+            accumulated_raw_reward += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
             obs_dict, info_dict = next_obs, next_info
             step_count += 1
 
         # Collect final infrastructure reward
         if pending_dispatch:
-            curr_wel, curr_isr = get_infra_metrics(env)
-            infra_rew = -(curr_wel - prev_wel) + isr_weight * (curr_isr - prev_isr)
+            if cfg.get("use_raw_reward", False):
+                infra_rew = accumulated_raw_reward
+            else:
+                curr_wel, curr_isr = get_infra_metrics(env)
+                infra_rew = -(curr_wel - prev_wel) + isr_weight * (curr_isr - prev_isr)
             infra_rewards_buf.append(infra_rew)
 
         # Align buffers
