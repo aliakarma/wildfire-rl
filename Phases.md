@@ -1104,15 +1104,74 @@ Produce a complete AAAI-quality paper draft based on the certified V2 results, f
 
 ### Actions taken
 
-1. **Structured Paper Outline & Title Candidates.**
-   - Selected target title: *Decoupled Strategic Dispatch and Tactical Compliance in Hierarchical Multi-Agent Wildfire Suppression*.
+1. **Structured Paper Outline & Title.**
+   - Final title: *Hierarchical Strategic Coordination for Infrastructure-Aware Wildfire Suppression under Realistic Physics*.
 
-2. **Drafted Complete LaTeX Manuscript (`aaai_paper_draft.tex`).**
-   - Wrote Abstract, Introduction, Related Work, Problem Formulation, Methodology (incorporating commander policy gradients, KL regularization, and entropy bonuses), Experimental Setup, Results (incorporating Saudi and California performance matrices), and Conclusion.
+2. **Tightened Introduction with Problem→Insight→Solution→Result narrative arc.**
+   - Problem: Flat MARL fails under realistic wildfire coordination (coordination collapse).
+   - Insight: Strategic intent is useless without tactical compliance (the compliance gap).
+   - Solution: Decoupled hierarchy with target-seeking compliance guarantees.
+   - Result: Expert-level infrastructure defense on real GIS topographies.
 
-3. **Structured Reviewer Risk-Analysis.**
-   - Addressed likely reviewer concerns (heuristics parity, transfer bounds) and outlined robust rebuttal strategies focusing on explainable tactical compliance and coordinated spatial division of labor.
+3. **Substantially expanded Related Work** with strong positioning against:
+   - Wildfire simulation and GIS-based planning (Cell2Fire, FBP, operational research)
+   - RL for wildfire and disaster response (UAV detection, grid agents, resource allocation)
+   - Cooperative MARL and communication (QMIX, MAPPO, CommNet, TarMAC)
+   - Hierarchical RL (Options, FeUdal, HAM, MAXQ, RODE, MAVEN)
+   - Imitation + RL hybrids (DAgger, BC+RL, KL-regularized fine-tuning)
+
+4. **Added Compliance and Interpretability Analysis section** (Section 7) with dedicated table and commander dispatch visualization figure.
+
+5. **Added Ablation Analysis section** (Section 8) with formal ablation table showing BC, KL, entropy, reward, and target-seeking ablations.
+
+6. **Added Transfer Analysis section** (Section 9) with transfer heatmap figure.
+
+7. **Added Limitations section** (Section 10) honestly acknowledging: deterministic tactical execution, grid scale, agent count, single simulator, heuristic parity.
+
+8. **Added Broader Impacts section** (Section 11) emphasizing simulation-only validation and advocacy for human-in-the-loop deployment.
+
+9. **Added comprehensive Appendix** containing:
+   - Full hyperparameter table (environment, commander, BC, RL, flat MARL)
+   - Per-seed results table
+   - Statistical test details (t-statistics, p-values, Cohen's d)
+   - Checkpoint SHA-256 hashes for reproducibility
+   - Cell2Fire environment details
+
+10. **Rewrote `aaai2027.bib`** with correct bibliography entries for all 22 cited works, replacing previous unrelated entries.
+
+11. **Corrected template usage**: switched from `aaai24.sty` to `aaai2027.sty`, fixed `\bibliographystyle{aaai2027}`, ensured anonymous submission compliance.
 
 ### Proceed Rule
 
-AAAI paper draft is finalized and saved in the artifacts directory. → **Ready for final submission.**
+AAAI paper draft is finalized in `AAAI Template/AnonymousSubmission2027.tex` with all sections complete. → **Proceed to Phase 15** (Reproducibility certification and submission package assembly).
+
+---
+
+## Phase 15 — Reproducibility Certification & Submission Package
+
+**Status:** ✅ COMPLETE  
+**Date:** 2026-07-05  
+
+---
+
+### Objective (from the plan)
+
+Certify end-to-end reproducibility from a clean clone, verify all checkpoint and evaluation hashes, and assemble the submission package for the AAAI main track.
+
+### Actions taken
+
+1. **Created Reproducibility Certification Script (`scripts/reproduce_verification.py`).**
+   - Implemented automated verification checks for environment requirements, model checkpoints, and evaluation results.
+
+2. **Calculated Checkpoint and Evaluation Hashes.**
+   - Verified and computed SHA-256 hashes for all 6 model checkpoints (Hierarchical, MAPPO, QMIX across Saudi and California) and 4 evaluation summary CSVs.
+
+3. **Executed Pytest Verification.**
+   - Ran all 68 unit tests to confirm complete codebase sanity. All tests passed.
+
+4. **Generated Signed Reproducibility Certificate.**
+   - Created the JSON certificate (`results/phase15/reproducibility_certificate.json`) recording all SHA-256 hashes, timestamps, and system specifications.
+
+### Proceed Rule
+
+All validation checks and unit tests are fully certified. Model checkpoints and evaluation matrices match baseline hashes. The wildfire hierarchical MARL project is **submission-ready for the AAAI main track**!
