@@ -1,11 +1,9 @@
-"""Consolidated literature benchmarking script comparing our methods against baselines.
-"""
+"""Consolidated literature benchmarking script comparing our methods against baselines."""
 
 from __future__ import annotations
 
 import argparse
 import subprocess
-from pathlib import Path
 
 
 def main():
@@ -17,19 +15,31 @@ def main():
 
     # Run hierarchical evaluation for Saudi
     print("\n--- Running Saudi benchmarks ---")
-    subprocess.run([
-        "python", "scripts/eval_hierarchical.py",
-        "--region", "saudi",
-        "--episodes", str(args.episodes)
-    ], check=True)
+    subprocess.run(
+        [
+            "python",
+            "scripts/eval_hierarchical.py",
+            "--region",
+            "saudi",
+            "--episodes",
+            str(args.episodes),
+        ],
+        check=True,
+    )
 
     # Run hierarchical evaluation for California
     print("\n--- Running California benchmarks ---")
-    subprocess.run([
-        "python", "scripts/eval_hierarchical.py",
-        "--region", "california",
-        "--episodes", str(args.episodes)
-    ], check=True)
+    subprocess.run(
+        [
+            "python",
+            "scripts/eval_hierarchical.py",
+            "--region",
+            "california",
+            "--episodes",
+            str(args.episodes),
+        ],
+        check=True,
+    )
 
     print("\nLiterature benchmarking completed successfully.")
 

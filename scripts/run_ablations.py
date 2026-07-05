@@ -1,9 +1,9 @@
-"""Script to run/compile ablation studies and build report tables.
-"""
+"""Script to run/compile ablation studies and build report tables."""
 
 from __future__ import annotations
 
 from pathlib import Path
+
 import pandas as pd
 
 from wildfire_marl.ablation.groups import get_ablation_records
@@ -23,7 +23,7 @@ def main():
     print("\n" + "=" * 65)
     print("AAAI ABLATION STUDY COMPARISONS")
     print("=" * 65)
-    
+
     # 1. Architecture Ablation Table
     print("\nArchitecture Ablation (Saudi Region):")
     df_arch_s = df[(df["Region"] == "Saudi") & (df["Ablation Group"] == "Architecture")]

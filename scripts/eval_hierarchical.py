@@ -18,15 +18,15 @@ import numpy as np
 import pandas as pd
 import torch
 
-from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.agents.agent_networks import MAPPOActor
 from wildfire_marl.agents.strategic_controller import StrategicController, get_sector_center
-from wildfire_marl.train.hierarchical_train import extract_high_level_state
+from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.eval.metrics import (
     burned_cells,
     infrastructure_survival_rate,
     weighted_economic_loss,
 )
+from wildfire_marl.train.hierarchical_train import extract_high_level_state
 
 
 def set_seed(seed: int):
@@ -36,6 +36,7 @@ def set_seed(seed: int):
 
 
 # --- Low-level action helpers ------------------------------------------------
+
 
 def target_seeking_action(env: MultiAgentFireEnv, agent: str, mask: list) -> int:
     """Move toward the target sector; suppress fire when at target."""
@@ -61,6 +62,7 @@ def target_seeking_action(env: MultiAgentFireEnv, agent: str, mask: list) -> int
 
 
 # --- Strategic Heuristics (sector dispatch) ----------------------------------
+
 
 def get_greedy_risk_sectors(env: MultiAgentFireEnv) -> dict[str, tuple[int, int]]:
     """Greedy-Risk: dispatch agents to sectors with most active fire."""
@@ -93,6 +95,7 @@ def get_value_first_sectors(env: MultiAgentFireEnv) -> dict[str, tuple[int, int]
 
 # --- Main evaluation function ------------------------------------------------
 
+
 def evaluate_hierarchical_policy(
     env: MultiAgentFireEnv,
     setting: str,
@@ -106,7 +109,11 @@ def evaluate_hierarchical_policy(
     commander = None
     flat_marl_actor = None
 
-    if setting == "Learned Hierarchical" and checkpoint_path is not None and checkpoint_path.exists():
+    if (
+        setting == "Learned Hierarchical"
+        and checkpoint_path is not None
+        and checkpoint_path.exists()
+    ):
         ckpt = torch.load(checkpoint_path, map_location=device)
         commander = StrategicController(num_agents=env.num_agents).to(device)
         commander.load_state_dict(ckpt["commander_state_dict"])
@@ -154,7 +161,7 @@ def evaluate_hierarchical_policy(
                     s_agent = s_agent.to(device)
                     with torch.no_grad():
                         logits_list = commander(s_fire, s_asset, s_agent)
-                        actions = [torch.argmax(l).item() for l in logits_list]
+                        actions = [torch.argmax(logits).item() for logits in logits_list]
                     for idx, agent in enumerate(env.agents):
                         curr_targets[agent] = get_sector_center(actions[idx])
                 elif setting == "Flat MARL":
@@ -170,7 +177,9 @@ def evaluate_hierarchical_policy(
                 if setting == "Flat MARL" and flat_marl_actor is not None:
                     # Flat MARL uses MAPPO (no target guidance)
                     with torch.no_grad():
-                        obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                        obs_t = torch.tensor(
+                            obs_dict[agent], dtype=torch.float32, device=device
+                        ).unsqueeze(0)
                         mask_t = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
                         logits = flat_marl_actor(obs_t, mask_t).squeeze(0)
                         prob = torch.softmax(logits, dim=-1)
@@ -185,7 +194,9 @@ def evaluate_hierarchical_policy(
                     # ALL strategic methods use target-seeking (fair comparison)
                     actions_dict[agent] = target_seeking_action(env, agent, mask)
 
-            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(actions_dict)
+            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(
+                actions_dict
+            )
             ep_rew += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
             step_count += 1
@@ -259,7 +270,9 @@ def main():
 
     for setting, ckpt_path in configs:
         print(f"Evaluating {setting}...")
-        res = evaluate_hierarchical_policy(env, setting, ckpt_path, args.episodes, args.seed, device)
+        res = evaluate_hierarchical_policy(
+            env, setting, ckpt_path, args.episodes, args.seed, device
+        )
         res["policy"] = setting
         results.append(res)
 

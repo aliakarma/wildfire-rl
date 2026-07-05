@@ -1,19 +1,19 @@
-"""Coordination study script comparing Shared vs Selfish rewards and plotting trajectories.
-"""
+"""Coordination study script comparing Shared vs Selfish rewards and plotting trajectories."""
 
 from __future__ import annotations
 
 import argparse
 import random
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
 
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.eval.coordination import redundant_treatment_rate, spatial_division_of_labor
+from wildfire_marl.eval.metrics import burned_cells
 from wildfire_marl.train.marl_train import train_mappo
-from wildfire_marl.eval.metrics import burned_cells, coordination_efficiency
-from wildfire_marl.eval.coordination import spatial_division_of_labor, redundant_treatment_rate
 from wildfire_marl.viz.coordination import plot_agent_trajectories
 
 
@@ -62,7 +62,9 @@ def run_eval_with_trajectory(
             for agent in env.agents:
                 mask = info_dict[agent]["action_mask"]
                 with torch.no_grad():
-                    obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                    obs_t = torch.tensor(
+                        obs_dict[agent], dtype=torch.float32, device=device
+                    ).unsqueeze(0)
                     mask_t = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
                     logits = actor(obs_t, mask_t).squeeze(0)
                     prob = torch.softmax(logits, dim=-1)
@@ -75,7 +77,7 @@ def run_eval_with_trajectory(
             # Compute treatment metrics at current step
             unique_treatments = set()
             for agent, action in actions_dict.items():
-                if action == 5: # Treat
+                if action == 5:  # Treat
                     total_treatments += 1
                     pos = env.agent_positions[agent]
                     if pos in unique_treatments:
@@ -83,7 +85,9 @@ def run_eval_with_trajectory(
                     else:
                         unique_treatments.add(pos)
 
-            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(actions_dict)
+            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(
+                actions_dict
+            )
             ep_rew += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
 
@@ -100,13 +104,17 @@ def run_eval_with_trajectory(
             viz_agent_paths = agent_paths
             viz_fire_state = env.env.fire_state
 
-    return {
-        "reward_mean": float(np.mean(ep_rewards)),
-        "burned_mean": float(np.mean(ep_burned)),
-        "ce_mean": float(np.mean(ep_ce)),
-        "dol_mean": float(np.mean(ep_dol)),
-        "rtr_mean": float(np.mean(ep_rtr)),
-    }, viz_agent_paths, viz_fire_state
+    return (
+        {
+            "reward_mean": float(np.mean(ep_rewards)),
+            "burned_mean": float(np.mean(ep_burned)),
+            "ce_mean": float(np.mean(ep_ce)),
+            "dol_mean": float(np.mean(ep_dol)),
+            "rtr_mean": float(np.mean(ep_rtr)),
+        },
+        viz_agent_paths,
+        viz_fire_state,
+    )
 
 
 def main():
@@ -133,7 +141,7 @@ def main():
         env_selfish = MultiAgentFireEnv(
             num_agents=3,
             crop_size=9,
-            coordination_penalty=0.0, # Selfish reward
+            coordination_penalty=0.0,  # Selfish reward
             fire_map=map_name,
             data_dir=data_dir,
             max_steps=150,
@@ -160,22 +168,25 @@ def main():
         }
 
         actor_s, critic_s = train_mappo(env_selfish, cfg_selfish, device)
-        torch.save({
-            "actor_state_dict": actor_s.state_dict(),
-            "critic_state_dict": critic_s.state_dict(),
-            "config": cfg_selfish,
-        }, selfish_ckpt)
+        torch.save(
+            {
+                "actor_state_dict": actor_s.state_dict(),
+                "critic_state_dict": critic_s.state_dict(),
+                "config": cfg_selfish,
+            },
+            selfish_ckpt,
+        )
         env_selfish.close()
         print("Selfish MAPPO policy saved successfully.")
 
     # 2. Evaluate Shared vs Selfish Policies
     print("\n--- Evaluating Policies ---")
-    
+
     # Shared Env
     env_eval = MultiAgentFireEnv(
         num_agents=3,
         crop_size=9,
-        coordination_penalty=0.1, # Evaluation penalty standard
+        coordination_penalty=0.1,  # Evaluation penalty standard
         fire_map=map_name,
         data_dir=data_dir,
         max_steps=150,
@@ -188,9 +199,11 @@ def main():
 
     # Eval Shared
     shared_res, shared_paths, shared_fire = run_eval_with_trajectory(env_eval, shared_ckpt, device)
-    
+
     # Eval Selfish
-    selfish_res, selfish_paths, selfish_fire = run_eval_with_trajectory(env_eval, selfish_ckpt, device)
+    selfish_res, selfish_paths, selfish_fire = run_eval_with_trajectory(
+        env_eval, selfish_ckpt, device
+    )
 
     env_eval.close()
 
@@ -218,11 +231,13 @@ def main():
     print("COORDINATION ABLATION STUDY RESULTS")
     print("=" * 60)
     for _, row in df.iterrows():
-        print(f"  {row['Setting']:<30}: Return {row['reward_mean']:8.2f} | "
-              f"Burned {row['burned_mean']:6.1f} | "
-              f"CE {row['ce_mean']:.2f} | "
-              f"DoL {row['dol_mean']:.2f} | "
-              f"RTR {row['rtr_mean']:.2%}")
+        print(
+            f"  {row['Setting']:<30}: Return {row['reward_mean']:8.2f} | "
+            f"Burned {row['burned_mean']:6.1f} | "
+            f"CE {row['ce_mean']:.2f} | "
+            f"DoL {row['dol_mean']:.2f} | "
+            f"RTR {row['rtr_mean']:.2%}"
+        )
     print("=" * 60)
 
 

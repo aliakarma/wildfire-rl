@@ -1,9 +1,9 @@
-"""Visualization tools for cross-domain transfer heatmaps.
-"""
+"""Visualization tools for cross-domain transfer heatmaps."""
 
 from __future__ import annotations
 
 from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -17,7 +17,7 @@ def plot_transfer_heatmap(
 ):
     """Plot a 2x2 Transfer Robustness Score (TRS) heatmap."""
     fig, ax = plt.subplots(figsize=(5, 4))
-    im = ax.imshow(matrix_2x2, cmap="YlGn", vmin=0.0, vmax=1.0)
+    ax.imshow(matrix_2x2, cmap="YlGn", vmin=0.0, vmax=1.0)
 
     # Show all ticks and label them with the respective list entries
     ax.set_xticks(np.arange(len(col_labels)))
@@ -31,7 +31,7 @@ def plot_transfer_heatmap(
     # Loop over data dimensions and create text annotations.
     for i in range(len(row_labels)):
         for j in range(len(col_labels)):
-            text = ax.text(
+            ax.text(
                 j,
                 i,
                 f"{matrix_2x2[i, j]:.2f}",
@@ -45,7 +45,7 @@ def plot_transfer_heatmap(
     ax.set_xlabel("Target Evaluation Region")
     ax.set_ylabel("Source Training Region")
     fig.tight_layout()
-    
+
     Path(save_path).parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(save_path, dpi=150)
     plt.close()

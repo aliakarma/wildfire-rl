@@ -8,15 +8,13 @@ from __future__ import annotations
 import argparse
 import random
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
 import torch
 
-from wildfire_marl.env.marl_env import MultiAgentFireEnv
-from wildfire_marl.env.rewards import InfrastructureWeightedReward
 from wildfire_marl.agents.agent_networks import MAPPOActor, QMIXAgent
+from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.eval.metrics import (
     burned_cells,
     infrastructure_survival_rate,
@@ -38,8 +36,6 @@ def evaluate_policy(
     base_seed: int,
     device: torch.device,
 ) -> dict[str, float]:
-    num_agents = env.num_agents
-    crop_size = env.crop_size
 
     # Load neural network models if checkpoint is provided
     actor = None
@@ -82,7 +78,9 @@ def evaluate_policy(
                 if actor is not None:
                     # MAPPO greedy action
                     with torch.no_grad():
-                        obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                        obs_t = torch.tensor(
+                            obs_dict[agent], dtype=torch.float32, device=device
+                        ).unsqueeze(0)
                         mask_t = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
                         logits = actor(obs_t, mask_t).squeeze(0)
                         prob = torch.softmax(logits, dim=-1)
@@ -95,7 +93,9 @@ def evaluate_policy(
                 elif q_agent is not None:
                     # QMIX greedy action
                     with torch.no_grad():
-                        obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                        obs_t = torch.tensor(
+                            obs_dict[agent], dtype=torch.float32, device=device
+                        ).unsqueeze(0)
                         q_vals = q_agent(obs_t).squeeze(0).cpu().numpy()
                     q_vals[~mask] = -1e9
                     actions_dict[agent] = int(np.argmax(q_vals))
@@ -105,13 +105,15 @@ def evaluate_policy(
                     y, x = env.agent_positions[agent]
                     # We can use simple rule: if can treat, treat!
                     if mask[5]:
-                        actions_dict[agent] = 5 # Treat
+                        actions_dict[agent] = 5  # Treat
                     else:
                         # Otherwise move random direction
                         valid_movements = [0, 1, 2, 3, 4]
                         actions_dict[agent] = random.choice(valid_movements)
 
-            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(actions_dict)
+            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(
+                actions_dict
+            )
             ep_rew += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
 
@@ -119,7 +121,7 @@ def evaluate_policy(
         episode_rewards.append(ep_rew)
         final_state = env.env.fire_state
         episode_burned.append(burned_cells(final_state))
-        
+
         # Calculate strategic economic values
         wel = weighted_economic_loss(
             asset_type=env.env.asset_type,
@@ -148,7 +150,13 @@ def evaluate_policy(
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate trained cooperating MARL policies.")
-    parser.add_argument("--region", type=str, required=True, choices=["saudi", "california"], help="saudi or california")
+    parser.add_argument(
+        "--region",
+        type=str,
+        required=True,
+        choices=["saudi", "california"],
+        help="saudi or california",
+    )
     parser.add_argument("--episodes", type=int, default=20, help="Number of evaluation episodes")
     parser.add_argument("--seed", type=int, default=42, help="Random base seed")
     args = parser.parse_args()

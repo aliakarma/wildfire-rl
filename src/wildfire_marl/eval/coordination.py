@@ -1,5 +1,4 @@
-"""Emergent coordination and division-of-labor evaluation metrics.
-"""
+"""Emergent coordination and division-of-labor evaluation metrics."""
 
 from __future__ import annotations
 

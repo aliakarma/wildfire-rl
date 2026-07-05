@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
 from wildfire_marl.agents.heuristics import (
+    GreatestRiskFirstPolicy,
+    NearestFrontierPolicy,
     NoOpPolicy,
     RandomPolicy,
-    NearestFrontierPolicy,
-    GreatestRiskFirstPolicy,
     ValueWeightedFirstPolicy,
 )
 from wildfire_marl.eval.evaluate import evaluate_policy
@@ -20,13 +19,13 @@ def test_heuristics_predictions():
     h, w = 8, 8
     # 4-channel obs (with criticality channel)
     obs = np.zeros((4, h, w), dtype=np.float32)
-    
+
     # Setup fuel mask (channel 2)
     obs[2] = 1.0  # all cells are fuel
-    
+
     # Place fire (channel 0) on cell (3, 3)
     obs[0, 3, 3] = 1.0
-    
+
     # Set criticality (channel 3) with a peak at (3, 5)
     obs[3, 3, 5] = 1.0
 
@@ -47,6 +46,7 @@ def test_heuristics_predictions():
 
 class DummyPolicy:
     """Mock policy that returns 0 action."""
+
     def predict(
         self, obs: np.ndarray, action_masks: np.ndarray | None = None, deterministic: bool = True
     ) -> tuple[int, None]:
@@ -55,6 +55,7 @@ class DummyPolicy:
 
 class DummyEnv:
     """Mock environment that mimics FireSuppressionEnv without spawning Cell2Fire."""
+
     def __init__(self):
         self.height = 8
         self.width = 8
@@ -100,20 +101,23 @@ class DummyEnv:
 
 def test_evaluate_policy_loop():
     """Verify that evaluate_policy loop works end-to-end and returns correct metrics."""
-    env_factory = lambda: DummyEnv()
+
+    def env_factory():
+        return DummyEnv()
+
     policy = DummyPolicy()
-    
+
     res = evaluate_policy(
         policy=policy,
         env_factory=env_factory,
         n_episodes=2,
         scenario_seed_offset=0,
     )
-    
+
     assert "summary" in res
     assert "episodes" in res
     assert len(res["episodes"]) == 2
-    
+
     # Check metric keys
     ep_keys = res["episodes"][0].keys()
     assert "episode_reward" in ep_keys
@@ -124,7 +128,7 @@ def test_evaluate_policy_loop():
     assert "pca" in ep_keys
     assert "wel" in ep_keys
     assert "cps" in ep_keys
-    
+
     summary_keys = res["summary"].keys()
     assert "episode_reward_mean" in summary_keys
     assert "episode_reward_std" in summary_keys

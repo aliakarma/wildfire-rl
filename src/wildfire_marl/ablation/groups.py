@@ -1,5 +1,4 @@
-"""Ablation group definitions compiling results from multi-agent fire suppression runs.
-"""
+"""Ablation group definitions compiling results from multi-agent fire suppression runs."""
 
 from __future__ import annotations
 
@@ -69,7 +68,6 @@ def get_ablation_records() -> list[dict[str, str | float]]:
             "WEL": 27.0,
             "CE": 0.76,
         },
-        
         # --- California Region ---
         {
             "Region": "California",

@@ -23,16 +23,18 @@ class Policy(Protocol):
     ) -> tuple[Any, Any]: ...
 
 
-def _strategic_metrics(env: Any, initial_state: np.ndarray, final_state: np.ndarray) -> dict[str, float]:
+def _strategic_metrics(
+    env: Any, initial_state: np.ndarray, final_state: np.ndarray
+) -> dict[str, float]:
     """Calculate per-episode infrastructure metrics if the env has assets."""
     asset_type = getattr(env, "asset_type", None)
     criticality = getattr(env, "criticality", None)
     if asset_type is None:
         return {}
-        
+
     asset_values = getattr(env, "asset_values", {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0})
     cascade = int(getattr(env, "cascade_ignited_count", 0))
-    
+
     return {
         "isr": metrics.infrastructure_survival_rate(asset_type, final_state),
         "pca": float(metrics.protected_critical_assets(asset_type, final_state)),
@@ -74,34 +76,36 @@ def evaluate_policy(
         # Seed logic: base_seed + offset + ep
         seed = base_seed + scenario_seed_offset + ep
         obs, _ = env.reset(seed=seed)
-        
+
         initial_state = env.fire_state.copy()
         initial_fire_total = float(np.sum(initial_state > 0)) or 1.0
-        
+
         done = False
         rewards: list[float] = []
-        
+
         while not done:
             # Check for action masks (required for MaskablePPO)
             action_masks = None
             if hasattr(env, "action_masks"):
                 action_masks = env.action_masks()
-                
+
             if action_masks is not None:
                 # Try passing action_masks parameter
                 try:
-                    action, _ = policy.predict(obs, action_masks=action_masks, deterministic=deterministic)
+                    action, _ = policy.predict(
+                        obs, action_masks=action_masks, deterministic=deterministic
+                    )
                 except TypeError:
                     action, _ = policy.predict(obs, deterministic=deterministic)
             else:
                 action, _ = policy.predict(obs, deterministic=deterministic)
-                
+
             obs, reward, terminated, truncated, _ = env.step(action)
             rewards.append(float(reward))
             done = bool(terminated or truncated)
 
         final_state = env.fire_state.copy()
-        
+
         # Build standard metrics record
         record = {
             "episode_reward": metrics.episode_return(rewards),
@@ -109,15 +113,15 @@ def evaluate_policy(
             "fire_intensity": metrics.fire_intensity(final_state),
             "containment_rate": metrics.containment_rate(initial_fire_total, final_state),
         }
-        
+
         # Add strategic infrastructure metrics if present
         record.update(_strategic_metrics(env, initial_state, final_state))
-        
+
         per_episode.append(record)
         env.close()
 
     summary = metrics.summarize(per_episode)
     summary["n_episodes"] = float(n_episodes)
     summary["burned_threshold"] = burned_threshold
-    
+
     return {"summary": summary, "episodes": per_episode}

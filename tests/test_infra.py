@@ -3,31 +3,30 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
+from wildfire_marl.env.rewards import InfrastructureWeightedReward
 from wildfire_marl.infra.build_infrastructure import build_infrastructure
 from wildfire_marl.infra.cascade import cascade_step
-from wildfire_marl.env.rewards import InfrastructureWeightedReward, FireSizeReward
 
 
 def test_build_infrastructure_shapes_and_values():
     """Verify built infrastructure rasters have correct shapes, bounds, and order."""
     for region in ["saudi", "california"]:
         asset_type, criticality, blast_radius = build_infrastructure(region, grid=32)
-        
+
         # Check shapes
         assert asset_type.shape == (32, 32)
         assert criticality.shape == (32, 32)
         assert blast_radius.shape == (32, 32)
-        
+
         # Check types
         assert asset_type.dtype == np.int32
         assert criticality.dtype == np.float32
         assert blast_radius.dtype == np.int32
-        
+
         # Check criticality range [0, 1]
         assert 0.0 <= criticality.min() <= criticality.max() <= 1.0
-        
+
         # Verify that assets have correct default values and blast radii
         # Refinery = 1, Pipeline = 2, Storage = 3, Industrial = 4
         # Default blast: Refineries/Storage = 3, Pipelines/Industrial = 2
@@ -83,7 +82,7 @@ def test_cascade_detonation_logic():
     )
     assert len(newly_det) == 1
     assert (3 * grid + 3) in newly_det
-    
+
     # Radius = 2: all cells within circular/Euclidean distance 2 of (3,3) should ignite
     # dx^2 + dy^2 <= 4
     # Check that (3, 3) itself is unaffected (already ignited), but (3, 1), (3, 2), (3, 4), (3, 5), (1, 3), (2, 3), (4, 3), (5, 3), and diagonals (2, 2), (2, 4), (4, 2), (4, 4) are ignited
@@ -115,6 +114,7 @@ def test_cascade_detonation_logic():
 
 class DummyEnv:
     """Mock environment for testing InfrastructureWeightedReward."""
+
     def __init__(self, fire_state, asset_type, catastrophe_weight):
         self.fire_state = fire_state
         self.num_cells = fire_state.size
@@ -128,7 +128,7 @@ def test_infrastructure_weighted_reward():
     grid = 8
     fire_state = np.zeros((grid, grid), dtype=np.int8)
     asset_type = np.zeros((grid, grid), dtype=np.int32)
-    
+
     # 1. Setup mock env with a Refinery (1) and a Pipeline (2)
     asset_type[1, 1] = 1  # Refinery
     asset_type[2, 2] = 2  # Pipeline

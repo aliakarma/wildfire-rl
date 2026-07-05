@@ -26,10 +26,10 @@ import torch.nn.functional as F
 import torch.optim as optim
 import yaml
 
-from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.agents.agent_networks import MAPPOActor
 from wildfire_marl.agents.strategic_controller import StrategicController, get_sector_center
-from wildfire_marl.eval.metrics import weighted_economic_loss, infrastructure_survival_rate
+from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.eval.metrics import infrastructure_survival_rate, weighted_economic_loss
 
 
 def set_seed(seed: int):
@@ -40,10 +40,16 @@ def set_seed(seed: int):
         torch.cuda.manual_seed_all(seed)
 
 
-def extract_high_level_state(env: MultiAgentFireEnv) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+def extract_high_level_state(
+    env: MultiAgentFireEnv,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Extract sector-level fire, criticality, and agent position features."""
     fire = (env.env.fire_state > 0).astype(np.float32)
-    crit = env.env.criticality.astype(np.float32) if env.env.criticality is not None else np.zeros_like(fire)
+    crit = (
+        env.env.criticality.astype(np.float32)
+        if env.env.criticality is not None
+        else np.zeros_like(fire)
+    )
 
     sector_fire = np.zeros(16, dtype=np.float32)
     sector_asset = np.zeros(16, dtype=np.float32)
@@ -83,7 +89,7 @@ def target_seeking_action(env: MultiAgentFireEnv, agent: str, mask: list) -> int
             return 1  # up
         elif dy > 0 and (len(mask) > 2 and mask[2]):
             return 2  # down
-    
+
     if dx < 0 and (len(mask) > 3 and mask[3]):
         return 3  # left
     elif dx > 0 and (len(mask) > 4 and mask[4]):
@@ -163,7 +169,7 @@ def pretrain_commander(
     device: torch.device,
 ) -> None:
     """Pre-train commander via behavior cloning from Value-First Heuristic.
-    
+
     Uses target-seeking low-level execution for consistency with RL fine-tuning.
     """
     print(f"Generating demonstrations for behavior cloning ({num_episodes} episodes)...")
@@ -260,7 +266,7 @@ def train_hierarchical(
     env.apply_target_compliance = False
 
     print(f"Starting hierarchical RL fine-tuning for {total_episodes} episodes...")
-    print(f"  Low-level: target-seeking (fair comparison with all heuristics)")
+    print("  Low-level: target-seeking (fair comparison with all heuristics)")
     print(f"  Infra reward: -WEL_delta + {isr_weight}*ISR_delta")
     print(f"  KL coef: {kl_coef}, Entropy coef: {ent_coef}, LR: {rl_lr}")
 
@@ -309,20 +315,24 @@ def train_hierarchical(
                 s_agent = s_agent.to(device)
 
                 logits_list = commander(s_fire, s_asset, s_agent)
-                dists = [torch.distributions.Categorical(logits=l) for l in logits_list]
+                dists = [torch.distributions.Categorical(logits=logits) for logits in logits_list]
                 actions = [d.sample() for d in dists]
 
-                log_prob = sum([d.log_prob(a) for d, a in zip(dists, actions)])
+                log_prob = sum([d.log_prob(a) for d, a in zip(dists, actions, strict=False)])
                 entropy = sum([d.entropy() for d in dists])
 
                 with torch.no_grad():
                     ref_logits_list = bc_reference(s_fire, s_asset, s_agent)
-                    ref_dists = [torch.distributions.Categorical(logits=l) for l in ref_logits_list]
+                    ref_dists = [
+                        torch.distributions.Categorical(logits=logits) for logits in ref_logits_list
+                    ]
 
-                kl = sum([
-                    torch.distributions.kl_divergence(d_curr, d_ref)
-                    for d_curr, d_ref in zip(dists, ref_dists)
-                ])
+                kl = sum(
+                    [
+                        torch.distributions.kl_divergence(d_curr, d_ref)
+                        for d_curr, d_ref in zip(dists, ref_dists, strict=False)
+                    ]
+                )
 
                 states_buf_fire.append(s_fire.cpu())
                 states_buf_asset.append(s_asset.cpu())
@@ -341,15 +351,17 @@ def train_hierarchical(
 
             # Tactical layer low-level selection (ablated vs standard)
             if cfg.get("use_mappo_tactical", False):
-                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = run_low_level_step(
-                    env, low_level_actor, obs_dict, info_dict, device
+                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = (
+                    run_low_level_step(env, low_level_actor, obs_dict, info_dict, device)
                 )
             else:
                 actions_dict = {
                     agent: target_seeking_action(env, agent, info_dict[agent]["action_mask"])
                     for agent in env.agents
                 }
-                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = env.step(actions_dict)
+                next_obs, rewards_dict, terminations_dict, truncations_dict, next_info = env.step(
+                    actions_dict
+                )
 
             accumulated_raw_reward += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
@@ -417,7 +429,8 @@ def main():
     parser.add_argument("--set", type=str, action="append", default=[])
     args = parser.parse_args()
 
-    cfg = yaml.safe_load(open(args.config))
+    with open(args.config) as f:
+        cfg = yaml.safe_load(f)
     for kv in args.set:
         key, val = kv.split("=", 1)
         try:
@@ -466,11 +479,14 @@ def main():
     save_dir.mkdir(parents=True, exist_ok=True)
     save_path = save_dir / f"checkpoint_hierarchical_{region}.pt"
 
-    torch.save({
-        "commander_state_dict": commander.state_dict(),
-        "actor_state_dict": low_level_actor.state_dict(),
-        "config": cfg,
-    }, save_path)
+    torch.save(
+        {
+            "commander_state_dict": commander.state_dict(),
+            "actor_state_dict": low_level_actor.state_dict(),
+            "config": cfg,
+        },
+        save_path,
+    )
     print(f"Hierarchical strategic controller saved to {save_path}")
 
     env.close()

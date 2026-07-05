@@ -44,7 +44,9 @@ class MAPPOActor(nn.Module):
             # Mask out invalid actions by subtracting infinity
             # action_mask is boolean: True for valid, False for invalid
             fill_value = -1e9
-            logits = torch.where(action_mask, logits, torch.tensor(fill_value, device=logits.device))
+            logits = torch.where(
+                action_mask, logits, torch.tensor(fill_value, device=logits.device)
+            )
         return logits
 
 
@@ -54,8 +56,8 @@ class MAPPOCritic(nn.Module):
     def __init__(self, in_channels: int = 5, features_dim: int = 128):
         super().__init__()
         # Global state is HxW (32x32)
-        self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=2, padding=1) # 16x16
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1) # 8x8
+        self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=2, padding=1)  # 16x16
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1)  # 8x8
         self.fc1 = nn.LazyLinear(features_dim)
         self.value_head = nn.Linear(features_dim, 1)
 
@@ -140,6 +142,6 @@ class QMIXMixingNetwork(nn.Module):
         # Forward pass through mixed layers
         # Input layer: agent_qs of shape [batch_size, 1, num_agents]
         x = agent_qs.unsqueeze(1)
-        hidden = F.elu(torch.bmm(x, w1) + b1) # [bs, 1, mix_hidden]
-        out = torch.bmm(hidden, w2) + b2 # [bs, 1, 1]
-        return out.squeeze(-1).squeeze(-1) # [bs]
+        hidden = F.elu(torch.bmm(x, w1) + b1)  # [bs, 1, mix_hidden]
+        out = torch.bmm(hidden, w2) + b2  # [bs, 1, 1]
+        return out.squeeze(-1).squeeze(-1)  # [bs]

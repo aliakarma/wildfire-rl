@@ -8,13 +8,11 @@ from __future__ import annotations
 
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 from pettingzoo import ParallelEnv
 
 from wildfire_marl.env.single_agent_env import FireSuppressionEnv
-from wildfire_marl.env.rewards import InfrastructureWeightedReward, Reward
 from wildfire_marl.eval.metrics import coordination_efficiency
 
 
@@ -88,7 +86,11 @@ class MultiAgentFireEnv(ParallelEnv):
         fire_grid = (self.env.fire_state > 0).astype(np.float32)
         treated_grid = (self.env.fire_state < 0).astype(np.float32)
         fuel_grid = self.env.fuel_mask.astype(np.float32)
-        crit_grid = self.env.criticality.astype(np.float32) if self.env.criticality is not None else np.zeros((self.height, self.width), dtype=np.float32)
+        crit_grid = (
+            self.env.criticality.astype(np.float32)
+            if self.env.criticality is not None
+            else np.zeros((self.height, self.width), dtype=np.float32)
+        )
 
         # Occupancy of other agents
         occ_grid = np.zeros((self.height, self.width), dtype=np.float32)
@@ -184,7 +186,6 @@ class MultiAgentFireEnv(ParallelEnv):
         dict[str, dict[str, Any]],
     ]:
         # Process movements and queue treatments
-        treatment_cells = []
         redundant_treatments = 0
 
         # We first track which cells are treated *this step* by each agent
@@ -223,7 +224,7 @@ class MultiAgentFireEnv(ParallelEnv):
 
         # Resolve treatment conflicts
         unique_cells = set()
-        for agent, cell in attempted_treatments.items():
+        for _, cell in attempted_treatments.items():
             if cell in unique_cells:
                 # Multiple agents treating the same cell in this step
                 redundant_treatments += 1
@@ -245,6 +246,7 @@ class MultiAgentFireEnv(ParallelEnv):
         # Post-spread wrapper cascade logic
         if self.env.cascade_prob > 0.0 and self.env.asset_type is not None:
             from wildfire_marl.infra.cascade import cascade_step
+
             self.env.fire_state, newly_det, newly_ign = cascade_step(
                 fire_state=self.env.fire_state,
                 asset_type=self.env.asset_type,
@@ -260,7 +262,7 @@ class MultiAgentFireEnv(ParallelEnv):
         # Base team reward
         base_reward = float(self.env.reward_func(action=patch))
         coordination_loss = redundant_treatments * self.coordination_penalty
-        
+
         # Target compliance reward shaping (for training guidance)
         compliance_loss = 0.0
         if getattr(self, "apply_target_compliance", False) and hasattr(self, "strategic_targets"):
@@ -269,7 +271,7 @@ class MultiAgentFireEnv(ParallelEnv):
                     ay, ax = self.agent_positions[agent]
                     ty, tx = self.strategic_targets[agent]
                     compliance_loss += 0.05 * (abs(ty - ay) + abs(tx - ax))
-                    
+
         shared_reward = base_reward - coordination_loss - compliance_loss
 
         self.env.iter += 1
@@ -278,9 +280,9 @@ class MultiAgentFireEnv(ParallelEnv):
 
         # Construct outputs
         obs_dict = {agent: self._get_obs(agent) for agent in self.agents}
-        reward_dict = {agent: shared_reward for agent in self.agents}
-        terminated_dict = {agent: terminated for agent in self.agents}
-        truncated_dict = {agent: truncated for agent in self.agents}
+        reward_dict = dict.fromkeys(self.agents, shared_reward)
+        terminated_dict = dict.fromkeys(self.agents, terminated)
+        truncated_dict = dict.fromkeys(self.agents, truncated)
         info_dict = {agent: self._get_info(agent) for agent in self.agents}
 
         # Calculate final metrics if done
@@ -306,7 +308,7 @@ class MultiAgentFireEnv(ParallelEnv):
     def render(self) -> np.ndarray:
         im = self.env.render()
         # Overlay agent positions as white dots
-        for agent, (y, x) in self.agent_positions.items():
+        for _agent, (y, x) in self.agent_positions.items():
             im[y, x] = (255, 255, 255)
         return im
 

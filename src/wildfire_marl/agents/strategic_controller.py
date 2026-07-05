@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import torch
 import torch.nn as nn
-import numpy as np
 
 
 class StrategicController(nn.Module):
@@ -25,7 +24,7 @@ class StrategicController(nn.Module):
     def __init__(self, num_agents: int = 3, hidden_dim: int = 64):
         super().__init__()
         self.num_agents = num_agents
-        
+
         # Input features: 16 fire loads + 16 asset loads + num_agents positions
         in_dim = 16 + 16 + num_agents
         self.encoder = nn.Sequential(
@@ -34,11 +33,9 @@ class StrategicController(nn.Module):
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(),
         )
-        
+
         # Heads for each agent targeting one of 16 sectors
-        self.heads = nn.ModuleList([
-            nn.Linear(hidden_dim, 16) for _ in range(num_agents)
-        ])
+        self.heads = nn.ModuleList([nn.Linear(hidden_dim, 16) for _ in range(num_agents)])
 
     def forward(
         self,

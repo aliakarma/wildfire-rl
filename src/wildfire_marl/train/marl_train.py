@@ -6,7 +6,6 @@ Supports command line configuration parsing and saves checkpoints to results/run
 from __future__ import annotations
 
 import argparse
-import os
 import random
 from pathlib import Path
 from typing import Any
@@ -18,9 +17,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 import yaml
 
+from wildfire_marl.agents.agent_networks import (
+    MAPPOActor,
+    MAPPOCritic,
+    QMIXAgent,
+    QMIXMixingNetwork,
+)
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
-from wildfire_marl.env.rewards import InfrastructureWeightedReward, FireSizeReward
-from wildfire_marl.agents.agent_networks import MAPPOActor, MAPPOCritic, QMIXAgent, QMIXMixingNetwork
 
 
 def set_seed(seed: int):
@@ -32,7 +35,7 @@ def set_seed(seed: int):
 
 
 def load_config(config_path: str) -> dict[str, Any]:
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         return yaml.safe_load(f)
 
 
@@ -92,7 +95,9 @@ class QMIXReplayBuffer:
 
 
 # --- MAPPO Trainer ------------------------------------------------------------
-def train_mappo(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device) -> tuple[MAPPOActor, MAPPOCritic]:
+def train_mappo(
+    env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
+) -> tuple[MAPPOActor, MAPPOCritic]:
     num_agents = env.num_agents
     crop_size = env.crop_size
 
@@ -145,12 +150,16 @@ def train_mappo(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.devic
                 actions_t = dist.sample()
                 log_probs_t = dist.log_prob(actions_t)
 
-                state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(0)
-                val_t = critic(state_t).squeeze(0) # Critic outputs [1, 1], squeezed to [1]
+                state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                    0
+                )
+                val_t = critic(state_t).squeeze(0)  # Critic outputs [1, 1], squeezed to [1]
 
             actions_dict = {f"agent_{i}": int(actions_t[i].item()) for i in range(num_agents)}
 
-            next_obs_dict, rewards_dict, terminations_dict, truncations_dict, next_info_dict = env.step(actions_dict)
+            next_obs_dict, rewards_dict, terminations_dict, truncations_dict, next_info_dict = (
+                env.step(actions_dict)
+            )
             next_global_state = env.get_global_state()
 
             shared_reward = rewards_dict["agent_0"]
@@ -183,7 +192,9 @@ def train_mappo(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.devic
         critic.train()
 
         with torch.no_grad():
-            next_state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(0)
+            next_state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                0
+            )
             next_val = critic(next_state_t).item()
 
         values = np.array(val_buf + [next_val])
@@ -200,13 +211,27 @@ def train_mappo(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.devic
         returns = advantages + values[:-1]
 
         # Convert buffers to tensors
-        obs_arr = torch.tensor(np.array(obs_buf), dtype=torch.float32, device=device) # [N_steps, N_agents, 8, K, K]
-        act_arr = torch.tensor(np.array(action_buf), dtype=torch.long, device=device) # [N_steps, N_agents]
-        mask_arr = torch.tensor(np.array(mask_buf), dtype=torch.bool, device=device) # [N_steps, N_agents, 6]
-        old_log_probs = torch.tensor(np.array(log_prob_buf), dtype=torch.float32, device=device) # [N_steps, N_agents]
-        adv_arr = torch.tensor(advantages, dtype=torch.float32, device=device).unsqueeze(1) # [N_steps, 1]
-        ret_arr = torch.tensor(returns, dtype=torch.float32, device=device).unsqueeze(1) # [N_steps, 1]
-        state_arr = torch.tensor(np.array(state_buf), dtype=torch.float32, device=device) # [N_steps, 5, 32, 32]
+        obs_arr = torch.tensor(
+            np.array(obs_buf), dtype=torch.float32, device=device
+        )  # [N_steps, N_agents, 8, K, K]
+        act_arr = torch.tensor(
+            np.array(action_buf), dtype=torch.long, device=device
+        )  # [N_steps, N_agents]
+        mask_arr = torch.tensor(
+            np.array(mask_buf), dtype=torch.bool, device=device
+        )  # [N_steps, N_agents, 6]
+        old_log_probs = torch.tensor(
+            np.array(log_prob_buf), dtype=torch.float32, device=device
+        )  # [N_steps, N_agents]
+        adv_arr = torch.tensor(advantages, dtype=torch.float32, device=device).unsqueeze(
+            1
+        )  # [N_steps, 1]
+        ret_arr = torch.tensor(returns, dtype=torch.float32, device=device).unsqueeze(
+            1
+        )  # [N_steps, 1]
+        state_arr = torch.tensor(
+            np.array(state_buf), dtype=torch.float32, device=device
+        )  # [N_steps, 5, 32, 32]
 
         # Normalize advantages
         adv_arr = (adv_arr - adv_arr.mean()) / (adv_arr.std() + 1e-8)
@@ -267,7 +292,9 @@ def train_mappo(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.devic
 
 
 # --- QMIX Trainer -------------------------------------------------------------
-def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device) -> tuple[QMIXAgent, QMIXMixingNetwork]:
+def train_qmix(
+    env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
+) -> tuple[QMIXAgent, QMIXMixingNetwork]:
     num_agents = env.num_agents
     crop_size = env.crop_size
 
@@ -316,19 +343,31 @@ def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
             else:
                 agent_net.eval()
                 with torch.no_grad():
-                    obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                    obs_t = torch.tensor(
+                        obs_dict[agent], dtype=torch.float32, device=device
+                    ).unsqueeze(0)
                     q_vals = agent_net(obs_t).squeeze(0).cpu().numpy()
                 # Apply mask (subtract large value from invalid actions)
                 q_vals[~mask] = -1e9
                 actions_dict[agent] = int(np.argmax(q_vals))
 
-        next_obs_dict, rewards_dict, terminations_dict, truncations_dict, next_info_dict = env.step(actions_dict)
+        next_obs_dict, rewards_dict, terminations_dict, truncations_dict, next_info_dict = env.step(
+            actions_dict
+        )
         next_global_state = env.get_global_state()
 
         shared_reward = rewards_dict["agent_0"]
         done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
 
-        buffer.add(obs_dict, actions_dict, shared_reward, next_obs_dict, done, global_state, next_global_state)
+        buffer.add(
+            obs_dict,
+            actions_dict,
+            shared_reward,
+            next_obs_dict,
+            done,
+            global_state,
+            next_global_state,
+        )
 
         curr_ep_reward += shared_reward
         step_count += 1
@@ -347,7 +386,9 @@ def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
             agent_net.train()
             mixer.train()
 
-            b_obs, b_actions, b_rewards, b_next_obs, b_dones, b_states, b_next_states = buffer.sample(batch_size)
+            b_obs, b_actions, b_rewards, b_next_obs, b_dones, b_states, b_next_states = (
+                buffer.sample(batch_size)
+            )
             b_obs = b_obs.to(device)
             b_actions = b_actions.to(device)
             b_rewards = b_rewards.to(device)
@@ -359,16 +400,18 @@ def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
             # 1. Calculate Q-values for current actions: Q_i(o_i, a_i)
             # b_obs shape: [batch, num_agents, 8, K, K]
             flat_obs = b_obs.view(-1, 8, crop_size, crop_size)
-            flat_q = agent_net(flat_obs) # [batch * num_agents, 6]
+            flat_q = agent_net(flat_obs)  # [batch * num_agents, 6]
             qs = flat_q.view(batch_size, num_agents, 6)
-            chosen_qs = torch.gather(qs, dim=2, index=b_actions.unsqueeze(-1)).squeeze(-1) # [batch, num_agents]
+            chosen_qs = torch.gather(qs, dim=2, index=b_actions.unsqueeze(-1)).squeeze(
+                -1
+            )  # [batch, num_agents]
 
             # 2. Calculate target max Q-values: max_a Q_i^-(o_i', a)
             flat_next_obs = b_next_obs.view(-1, 8, crop_size, crop_size)
             with torch.no_grad():
                 flat_target_q = target_agent_net(flat_next_obs)
                 target_qs = flat_target_q.view(batch_size, num_agents, 6)
-                max_target_qs = torch.max(target_qs, dim=2)[0] # [batch, num_agents]
+                max_target_qs = torch.max(target_qs, dim=2)[0]  # [batch, num_agents]
 
             # 3. Calculate Q_tot and target Q_tot
             q_tot = mixer(chosen_qs, b_states)
@@ -392,7 +435,9 @@ def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
         # Progress printing
         if step_count % 2000 == 0 and len(ep_rewards) > 0:
             mean_ep_rew = np.mean(ep_rewards[-10:])
-            print(f"Steps: {step_count}/{total_steps} | Mean Return: {mean_ep_rew:.2f} | Epsilon: {epsilon:.2f}")
+            print(
+                f"Steps: {step_count}/{total_steps} | Mean Return: {mean_ep_rew:.2f} | Epsilon: {epsilon:.2f}"
+            )
 
     return agent_net, mixer
 
@@ -400,7 +445,9 @@ def train_qmix(env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
 def main():
     parser = argparse.ArgumentParser(description="Train wildfire multi-agent cooperative policies.")
     parser.add_argument("--config", type=str, required=True, help="Path to config yaml file")
-    parser.add_argument("--set", type=str, default=None, help="Override parameter, e.g., total_steps=1000")
+    parser.add_argument(
+        "--set", type=str, default=None, help="Override parameter, e.g., total_steps=1000"
+    )
     args = parser.parse_args()
 
     cfg = load_config(args.config)
@@ -413,7 +460,7 @@ def main():
     map_name = "Saudi" if region.lower() == "saudi" else "California"
     data_dir = cfg.get("data_dir", "data/cell2fire")
     infra_dir = f"{data_dir}/{map_name}"
-    
+
     # Init environment
     env = MultiAgentFireEnv(
         num_agents=int(cfg.get("num_agents", 3)),
@@ -422,7 +469,7 @@ def main():
         fire_map=map_name,
         data_dir=data_dir,
         max_steps=int(cfg.get("max_steps", 150)),
-        steps_per_action=60, # hourly resolution
+        steps_per_action=60,  # hourly resolution
         observe_infra=True,
         catastrophe_weight=2.0,
         cascade_prob=0.1,
@@ -443,21 +490,27 @@ def main():
         print("Starting MAPPO training...")
         actor, critic = train_mappo(env, cfg, device)
         save_path = save_dir / f"checkpoint_mappo_{region}.pt"
-        torch.save({
-            "actor_state_dict": actor.state_dict(),
-            "critic_state_dict": critic.state_dict(),
-            "config": cfg,
-        }, save_path)
+        torch.save(
+            {
+                "actor_state_dict": actor.state_dict(),
+                "critic_state_dict": critic.state_dict(),
+                "config": cfg,
+            },
+            save_path,
+        )
         print(f"MAPPO policy saved successfully to {save_path}")
     elif algo == "qmix":
         print("Starting QMIX training...")
         agent_net, mixer = train_qmix(env, cfg, device)
         save_path = save_dir / f"checkpoint_qmix_{region}.pt"
-        torch.save({
-            "agent_state_dict": agent_net.state_dict(),
-            "mixer_state_dict": mixer.state_dict(),
-            "config": cfg,
-        }, save_path)
+        torch.save(
+            {
+                "agent_state_dict": agent_net.state_dict(),
+                "mixer_state_dict": mixer.state_dict(),
+                "config": cfg,
+            },
+            save_path,
+        )
         print(f"QMIX policy saved successfully to {save_path}")
     else:
         raise ValueError(f"Unknown algorithm: {algo}")

@@ -1,9 +1,7 @@
-"""Unit tests verifying the PettingZoo multi-agent environment wrapper and coordination metrics.
-"""
+"""Unit tests verifying the PettingZoo multi-agent environment wrapper and coordination metrics."""
 
 from __future__ import annotations
 
-import pytest
 import numpy as np
 
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
@@ -81,7 +79,7 @@ def test_coordination_efficiency_metric():
 
 
 def test_division_of_labor_metrics():
-    from wildfire_marl.eval.coordination import spatial_division_of_labor, redundant_treatment_rate
+    from wildfire_marl.eval.coordination import redundant_treatment_rate, spatial_division_of_labor
 
     # Perfect division of labor (paths completely disjoint)
     paths_disjoint = {
@@ -126,26 +124,26 @@ def test_marl_action_masking():
     # but we can set fuel mask to 0 at the agent's position to force it).
     agent = "agent_0"
     y, x = env.agent_positions[agent]
-    
+
     # Check mask validity
     mask = env.action_masks(agent)
     # The first 5 movement actions are always valid
-    assert np.all(mask[:5] == True)
+    assert np.all(mask[:5])
 
     # Force non-fuel cell
     env.env.fuel_mask[y, x] = 0.0
     mask_nonfuel = env.action_masks(agent)
-    assert mask_nonfuel[5] == False
+    assert not mask_nonfuel[5]
 
     # Force clean fuel cell
     env.env.fuel_mask[y, x] = 1.0
     env.env.fire_state[y, x] = 0
     mask_clean = env.action_masks(agent)
-    assert mask_clean[5] == True
+    assert mask_clean[5]
 
     # Force burning fuel cell
     env.env.fire_state[y, x] = 1
     mask_burning = env.action_masks(agent)
-    assert mask_burning[5] == False
+    assert not mask_burning[5]
 
     env.close()

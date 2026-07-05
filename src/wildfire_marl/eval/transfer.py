@@ -1,15 +1,12 @@
-"""Domain adaptation and transfer metrics including Transfer Robustness Score (TRS) and asymmetry.
-"""
+"""Domain adaptation and transfer metrics including Transfer Robustness Score (TRS) and asymmetry."""
 
 from __future__ import annotations
-
-import math
 
 
 def transfer_robustness_score(native: float, transfer: float) -> float:
     """TRS = transfer / native performance ratio. Returns float('nan') if native is 0."""
     if native == 0.0:
-        return float('nan')
+        return float("nan")
     return float(transfer / native)
 
 

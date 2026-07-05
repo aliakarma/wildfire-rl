@@ -290,6 +290,7 @@ class FireSuppressionEnv(gym.Env):
         # Post-spread wrapper cascade logic
         if self.cascade_prob > 0.0 and self.asset_type is not None:
             from wildfire_marl.infra.cascade import cascade_step
+
             self.fire_state, newly_det, newly_ign = cascade_step(
                 fire_state=self.fire_state,
                 asset_type=self.asset_type,

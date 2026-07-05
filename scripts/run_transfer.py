@@ -1,19 +1,23 @@
-"""Cross-region evaluation and transfer robustness evaluation script.
-"""
+"""Cross-region evaluation and transfer robustness evaluation script."""
 
 from __future__ import annotations
 
 import argparse
 import random
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
 
-from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.agents.agent_networks import MAPPOActor
-from wildfire_marl.eval.metrics import burned_cells, infrastructure_survival_rate, weighted_economic_loss
-from wildfire_marl.eval.transfer import transfer_robustness_score, adaptation_asymmetry
+from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.eval.metrics import (
+    burned_cells,
+    infrastructure_survival_rate,
+    weighted_economic_loss,
+)
+from wildfire_marl.eval.transfer import adaptation_asymmetry, transfer_robustness_score
 from wildfire_marl.viz.transfer import plot_transfer_heatmap
 
 
@@ -54,7 +58,9 @@ def evaluate_transfer_cell(
             for agent in env.agents:
                 mask = info_dict[agent]["action_mask"]
                 with torch.no_grad():
-                    obs_t = torch.tensor(obs_dict[agent], dtype=torch.float32, device=device).unsqueeze(0)
+                    obs_t = torch.tensor(
+                        obs_dict[agent], dtype=torch.float32, device=device
+                    ).unsqueeze(0)
                     mask_t = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
                     logits = actor(obs_t, mask_t).squeeze(0)
                     prob = torch.softmax(logits, dim=-1)
@@ -64,7 +70,9 @@ def evaluate_transfer_cell(
                     else:
                         actions_dict[agent] = 0
 
-            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(actions_dict)
+            obs_dict, rewards_dict, terminations_dict, truncations_dict, info_dict = env.step(
+                actions_dict
+            )
             ep_rew += rewards_dict["agent_0"]
             done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
 
@@ -72,7 +80,7 @@ def evaluate_transfer_cell(
         episode_rewards.append(ep_rew)
         final_state = env.env.fire_state
         episode_burned.append(burned_cells(final_state))
-        
+
         wel = weighted_economic_loss(
             asset_type=env.env.asset_type,
             final_state=final_state,
@@ -167,10 +175,12 @@ def main():
     asymmetry = adaptation_asymmetry(trs_s_c, trs_c_s)
 
     # 2x2 Transfer Matrix of normalized scores
-    matrix = np.array([
-        [1.0, trs_s_c],
-        [trs_c_s, 1.0],
-    ])
+    matrix = np.array(
+        [
+            [1.0, trs_s_c],
+            [trs_c_s, 1.0],
+        ]
+    )
 
     print("\n" + "=" * 60)
     print("CROSS-REGION TRANSFER RESULTS (REWARDS)")

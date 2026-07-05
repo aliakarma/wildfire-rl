@@ -5,12 +5,13 @@ runs the full pytest suite, and generates a signed reproducibility certificate.
 
 from __future__ import annotations
 
+import hashlib
+import json
+import platform
+import subprocess
 import sys
 from pathlib import Path
-import json
-import hashlib
-import subprocess
-import platform
+
 
 def compute_sha256(file_path: Path) -> str:
     """Computes SHA-256 hash of a file."""
@@ -20,16 +21,17 @@ def compute_sha256(file_path: Path) -> str:
             sha.update(chunk)
     return sha.hexdigest()
 
+
 def main():
     print("\n=========================================")
     # Visual check prefix
     print("STARTING PHASE 15 REPRODUCIBILITY CERTIFICATION")
     print("=========================================\n")
-    
+
     project_root = Path(__file__).resolve().parent.parent
     results_dir = project_root / "results" / "phase15"
     results_dir.mkdir(parents=True, exist_ok=True)
-    
+
     report = {
         "timestamp": "2026-07-05T22:05:00Z",
         "system_info": {
@@ -41,7 +43,7 @@ def main():
         "evaluation_hashes": {},
         "pytest_results": {},
     }
-    
+
     # 1. Verify Model Checkpoints
     checkpoints = [
         "checkpoint_hierarchical_saudi.pt",
@@ -51,7 +53,7 @@ def main():
         "checkpoint_qmix_saudi.pt",
         "checkpoint_qmix_california.pt",
     ]
-    
+
     runs_dir = project_root / "results" / "runs"
     all_ckpts_present = True
     for ckpt in checkpoints:
@@ -63,7 +65,7 @@ def main():
         else:
             print(f"  - MISSING Checkpoint: {ckpt}")
             all_ckpts_present = False
-            
+
     # 2. Verify Evaluation Summaries
     eval_files = [
         "hierarchical_eval_summary_saudi.csv",
@@ -79,29 +81,29 @@ def main():
             print(f"  - Verified Eval Output: {eval_f} (SHA-256: {sha[:16]}...)")
         else:
             print(f"  - MISSING Eval Output: {eval_f}")
-            
+
     # 3. Run Pytest Suite
     print("\nRunning unit tests verification...")
     # Run pytest directly and capture result code
     res = subprocess.run(["pytest", "-q", "--tb=short"], capture_output=True, text=True)
     report["pytest_results"]["exit_code"] = res.returncode
     report["pytest_results"]["stdout"] = res.stdout.strip()
-    
-    tests_passed = (res.returncode == 0)
+
+    tests_passed = res.returncode == 0
     if tests_passed:
         print("  - All pytest unit tests passed successfully! ✅")
     else:
         print("  - Unit tests failed! ❌")
         print(res.stderr)
         print(res.stdout)
-        
+
     # Write certificate JSON
     cert_path = results_dir / "reproducibility_certificate.json"
     with open(cert_path, "w") as f:
         json.dump(report, f, indent=2)
-        
+
     print(f"\nSigned Reproducibility Certificate written to: {cert_path}")
-    
+
     # 4. Final Verdict
     if all_ckpts_present and tests_passed:
         print("\n=========================================")
@@ -112,6 +114,7 @@ def main():
         print("REPRODUCIBILITY CERTIFICATION STATUS: FAIL ❌")
         print("=========================================")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

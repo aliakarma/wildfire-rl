@@ -7,7 +7,6 @@ reinforcement learning agent with action masking to prevent redundant/invalid ac
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 from typing import Any
 
@@ -42,18 +41,15 @@ def make_custom_cnn_policy_kwargs(features_dim: int = 128) -> dict[str, Any]:
                 sample = th.as_tensor(observation_space.sample()[None]).float()
                 n_flatten = self.cnn(sample).shape[1]
 
-            self.linear = nn.Sequential(
-                nn.Linear(n_flatten, features_dim),
-                nn.ReLU()
-            )
+            self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.ReLU())
 
         def forward(self, observations: th.Tensor) -> th.Tensor:
             return self.linear(self.cnn(observations))
 
-    return dict(
-        features_extractor_class=CustomSmallCNN,
-        features_extractor_kwargs=dict(features_dim=features_dim),
-    )
+    return {
+        "features_extractor_class": CustomSmallCNN,
+        "features_extractor_kwargs": {"features_dim": features_dim},
+    }
 
 
 def wrap_env_for_maskable_ppo(env: gym.Env) -> gym.Env:
@@ -88,16 +84,16 @@ def train_ppo(
     """
     from sb3_contrib import MaskablePPO
     from sb3_contrib.common.maskable.policies import MaskableActorCriticPolicy
-    
+
+    from wildfire_marl.env.rewards import FireSizeReward, InfrastructureWeightedReward
     from wildfire_marl.env.single_agent_env import FireSuppressionEnv
-    from wildfire_marl.env.rewards import InfrastructureWeightedReward, FireSizeReward
-    
+
     # Map short name to capital directory name
     map_name = "Saudi" if region.lower() == "saudi" else "California"
-    
+
     # Reward class
     reward_cls = InfrastructureWeightedReward if observe_infra else FireSizeReward
-    
+
     print(f"Initializing training environment for region {region}...")
     raw_env = FireSuppressionEnv(
         fire_map=map_name,
@@ -108,11 +104,11 @@ def train_ppo(
         catastrophe_weight=catastrophe_weight,
         cascade_prob=cascade_prob,
     )
-    
+
     env = wrap_env_for_maskable_ppo(raw_env)
-    
+
     policy_kwargs = make_custom_cnn_policy_kwargs(features_dim=128)
-    
+
     print(f"Starting MaskablePPO training for {total_timesteps} steps (seed={seed})...")
     model = MaskablePPO(
         MaskableActorCriticPolicy,
@@ -126,15 +122,15 @@ def train_ppo(
         seed=seed,
         policy_kwargs=policy_kwargs,
     )
-    
+
     model.learn(total_timesteps=total_timesteps)
-    
+
     if save_path is not None:
         save_path = Path(save_path)
         save_path.parent.mkdir(parents=True, exist_ok=True)
         model.save(save_path)
         print(f"Model saved successfully to {save_path}")
-        
+
     env.close()
     return model
 
@@ -164,7 +160,9 @@ class SB3PredictorWrapper:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Train/Evaluate PPO Baselines.")
     parser.add_argument("--train", action="store_true", help="Train a baseline PPO model.")
-    parser.add_argument("--region", required=True, choices=["saudi", "california"], help="Region code.")
+    parser.add_argument(
+        "--region", required=True, choices=["saudi", "california"], help="Region code."
+    )
     parser.add_argument("--timesteps", type=int, default=10000, help="Total timesteps to train.")
     parser.add_argument("--seed", type=int, default=42, help="Seed.")
     parser.add_argument("--save-path", type=str, help="Save path for the model.")
