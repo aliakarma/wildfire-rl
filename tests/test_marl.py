@@ -80,6 +80,37 @@ def test_coordination_efficiency_metric():
     assert coordination_efficiency(steps_overlap) == 0.5
 
 
+def test_division_of_labor_metrics():
+    from wildfire_marl.eval.coordination import spatial_division_of_labor, redundant_treatment_rate
+
+    # Perfect division of labor (paths completely disjoint)
+    paths_disjoint = {
+        "agent_0": [(0, 0), (0, 1), (0, 2)],
+        "agent_1": [(5, 5), (5, 6), (5, 7)],
+    }
+    assert spatial_division_of_labor(paths_disjoint) == 1.0
+
+    # No division of labor (paths identical)
+    paths_identical = {
+        "agent_0": [(0, 0), (0, 1), (0, 2)],
+        "agent_1": [(0, 0), (0, 1), (0, 2)],
+    }
+    assert spatial_division_of_labor(paths_identical) == 0.0
+
+    # Half overlap
+    paths_half = {
+        "agent_0": [(0, 0), (0, 1)],
+        "agent_1": [(0, 1), (0, 2)],
+    }
+    # Union = {(0,0), (0,1), (0,2)} size 3. Intersection = {(0,1)} size 1.
+    # Jaccard distance = 1 - 1/3 = 2/3 = 0.6666...
+    assert abs(spatial_division_of_labor(paths_half) - (2.0 / 3.0)) < 1e-5
+
+    # Redundant treatment rate
+    assert redundant_treatment_rate(10, 2) == 0.2
+    assert redundant_treatment_rate(0, 0) == 0.0
+
+
 def test_marl_action_masking():
     env = MultiAgentFireEnv(
         num_agents=2,

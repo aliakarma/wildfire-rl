@@ -99,8 +99,15 @@ class MultiAgentFireEnv(ParallelEnv):
         # Global features
         num_burning = np.sum(fire_grid)
         global_fire_density = float(num_burning) / float(self.env.num_cells)
-        rel_y = float(y) / float(self.height - 1) if self.height > 1 else 0.0
-        rel_x = float(x) / float(self.width - 1) if self.width > 1 else 0.0
+
+        # Target features (or fallback to self coordinates if target matches self position)
+        if hasattr(self, "strategic_targets") and agent in self.strategic_targets:
+            ty, tx = self.strategic_targets[agent]
+            rel_ty = float(ty - y) / float(self.height)
+            rel_tx = float(tx - x) / float(self.width)
+        else:
+            rel_ty = float(y) / float(self.height - 1) if self.height > 1 else 0.0
+            rel_tx = float(x) / float(self.width - 1) if self.width > 1 else 0.0
 
         # Construct crops using zero padding
         obs = np.zeros((8, self.crop_size, self.crop_size), dtype=np.float32)
@@ -112,8 +119,8 @@ class MultiAgentFireEnv(ParallelEnv):
 
         # Homogeneous global channels
         obs[5] = global_fire_density
-        obs[6] = rel_y
-        obs[7] = rel_x
+        obs[6] = rel_ty
+        obs[7] = rel_tx
 
         return obs
 
@@ -149,6 +156,7 @@ class MultiAgentFireEnv(ParallelEnv):
         # Initialize agent positions around center
         center_y, center_x = self.height // 2, self.width // 2
         self.agent_positions = {}
+        self.strategic_targets = {}
         for i, agent in enumerate(self.agents):
             # Cluster around center
             offset_y = (i // 3) - 1
@@ -156,6 +164,7 @@ class MultiAgentFireEnv(ParallelEnv):
             y = int(np.clip(center_y + offset_y * 2, 0, self.height - 1))
             x = int(np.clip(center_x + offset_x * 2, 0, self.width - 1))
             self.agent_positions[agent] = (y, x)
+            self.strategic_targets[agent] = (y, x)
 
         self.agent_step_positions = [list(self.agent_positions.values())]
 
@@ -251,7 +260,17 @@ class MultiAgentFireEnv(ParallelEnv):
         # Base team reward
         base_reward = float(self.env.reward_func(action=patch))
         coordination_loss = redundant_treatments * self.coordination_penalty
-        shared_reward = base_reward - coordination_loss
+        
+        # Target compliance reward shaping (for training guidance)
+        compliance_loss = 0.0
+        if getattr(self, "apply_target_compliance", False) and hasattr(self, "strategic_targets"):
+            for agent in self.agents:
+                if agent in self.strategic_targets:
+                    ay, ax = self.agent_positions[agent]
+                    ty, tx = self.strategic_targets[agent]
+                    compliance_loss += 0.05 * (abs(ty - ay) + abs(tx - ax))
+                    
+        shared_reward = base_reward - coordination_loss - compliance_loss
 
         self.env.iter += 1
         terminated = self.env.binding.finished
