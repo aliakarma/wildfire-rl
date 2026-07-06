@@ -1,0 +1,4 @@
+Region: saudi
+Status: FAIL
+Reasons:
+  - FAIL: Policy underperforms heuristic significantly and shows no separation from Flat MARL.

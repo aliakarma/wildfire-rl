@@ -1,0 +1,35 @@
+# Conda environment for the V2 (Cell2Fire) stack — Linux only (Phase 0, REMEDIATION_PLAN_V2.md).
+# Includes the C++ build toolchain (gcc/g++/make/cmake/Eigen) required to build Cell2Fire in
+# Phase 1, and the geospatial stack (rasterio/GDAL from conda-forge) for Phase 2.
+#
+#   conda env create -f environment-linux.yml
+#   conda activate wildfire-marl
+#
+# Native Windows is NOT supported for the simulator — use WSL2, a Linux box, or Colab.
+name: wildfire-marl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  # --- C++ build toolchain for Cell2Fire (Phase 1) ---
+  - c-compiler
+  - cxx-compiler
+  - make
+  - cmake
+  - eigen
+  - libboost-headers  # Cell2Fire uses boost/algorithm/string.hpp (header-only)
+  # --- scientific core ---
+  - numpy<2.0
+  - pandas>=2.0
+  - scipy>=1.10
+  - matplotlib>=3.7
+  # --- geospatial I/O (Phase 2; conda-forge handles the GDAL binary stack) ---
+  - rasterio>=1.3
+  - gdal
+  # --- packaging ---
+  - pip
+  - pip:
+      - -e .[dev]
+      # MARL training stack (Phase 5+): install explicitly when needed —
+      #   pip install -e .[marl]        (torch + RLlib)
+      #   pip install -e .[baselines]   (SB3 + sb3-contrib for the Phase-4 PPO baseline)

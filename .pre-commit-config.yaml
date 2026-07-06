@@ -1,6 +1,9 @@
 # Run `pre-commit install` once, then hooks run on every commit.
 # Critically: nbstripout prevents notebook OUTPUTS (and the multi-MB embedded
 # images that bloated the original notebooks) from ever being committed.
+# legacy_v1/ is a FROZEN archive (Phase 0, REMEDIATION_PLAN_V2) - hooks must
+# never rewrite it.
+exclude: ^legacy_v1/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0

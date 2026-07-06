@@ -1,11 +1,11 @@
-"""Tests for the statistical significance module."""
+"""Tests for the statistical significance module (ported from V1 with import paths updated)."""
 
 from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from wildfire_rl.eval.significance import (
+from wildfire_marl.eval.significance import (
     cohens_d,
     confidence_interval_95,
     format_ci,
@@ -40,7 +40,7 @@ class TestConfidenceInterval:
 
 class TestBootstrapCI:
     def test_contains_mean_and_reproducible(self):
-        from wildfire_rl.eval.significance import bootstrap_ci
+        from wildfire_marl.eval.significance import bootstrap_ci
 
         vals = [1.0, 2.0, 3.0, 4.0, 5.0]
         lo, hi = bootstrap_ci(vals, n_boot=2000, seed=0)
@@ -49,7 +49,7 @@ class TestBootstrapCI:
         assert bootstrap_ci(vals, n_boot=2000, seed=0) == (lo, hi)
 
     def test_single_value_degenerate(self):
-        from wildfire_rl.eval.significance import bootstrap_ci
+        from wildfire_marl.eval.significance import bootstrap_ci
 
         assert bootstrap_ci([42.0]) == (42.0, 42.0)
 

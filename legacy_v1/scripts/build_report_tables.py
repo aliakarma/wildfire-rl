@@ -1,0 +1,188 @@
+#!/usr/bin/env python
+"""Render headline result tables as Markdown directly from committed ``results/*.csv``.
+
+Every table is a deterministic function of the CSVs — **no number is hand-entered**. Each table
+carries a provenance comment (source CSV + its SHA-256 + the run manifests it derives from), so the
+report can be regenerated and audited. Writes ``docs/paper/_generated_tables.md`` (or stdout).
+
+    python scripts/build_report_tables.py                                  # -> stdout
+    python scripts/build_report_tables.py --out docs/paper/_generated_tables.md
+
+Only CSVs that exist are rendered, and only the columns present in each CSV — so a retired/renamed
+CSV degrades to a skipped table rather than a crash.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+RESULTS = Path("results")
+
+# (csv, title, columns, provenance-note). Columns are intersected with what the CSV actually has.
+TABLES = [
+    (
+        "eval_saudi.csv",
+        "Saudi — Single-Agent Policy Comparison (effective method vs PPO negative result)",
+        [
+            "policy",
+            "reward_mean",
+            "reward_std",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+            "reward_mode",
+            "d_vs_ppo",
+            "sig_vs_ppo",
+        ],
+        "results/runs/train_saudi_seed_*/manifest.json",
+    ),
+    (
+        "eval_california_multiseed_california.csv",
+        "California — Single-Agent Policy Comparison (effective method vs PPO negative result)",
+        [
+            "policy",
+            "reward_mean",
+            "reward_std",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+            "reward_mode",
+            "d_vs_ppo",
+            "sig_vs_ppo",
+        ],
+        "results/runs/train_california_seed_*/manifest.json",
+    ),
+    (
+        "marl_scaling_results.csv",
+        "MARL Cooperative Scaling (PPO, matched 100k-step budget per team size)",
+        [
+            "region",
+            "num_agents",
+            "reward_mean",
+            "reward_ci_lo",
+            "reward_ci_hi",
+            "burned_cells_mean",
+            "fire_intensity_mean",
+        ],
+        "results/runs/ (marl scaling checkpoints)",
+    ),
+    (
+        "transfer_matrix_raw.csv",
+        "Cross-Region Transfer (raw reward mode)",
+        [
+            "train_region",
+            "test_region",
+            "mean_reward",
+            "mean_burned_cells",
+            "mean_fire_intensity",
+            "reward_mode",
+            "d_vs_native",
+            "sig_vs_native",
+        ],
+        "results/runs/train_*/manifest.json",
+    ),
+    (
+        "transfer_hybrid.csv",
+        "Infrastructure-Aware Transfer (Phase 15B.4) — effective + hybrid families × region",
+        [
+            "policy_family",
+            "region",
+            "burned_cells_mean",
+            "isr_mean",
+            "cps_mean",
+            "rac_mean",
+            "wel_mean",
+            "reward_mode",
+        ],
+        "scripts/run_transfer_hybrid.py (deterministic, eval-only)",
+    ),
+    (
+        "ablation/hybrid_vs_pure.csv",
+        "Ablation §15B.8 — Hybrid vs Pure Heuristic (PPO = negative baseline)",
+        ["cell", "isr_mean", "rac_mean", "ce_mean", "pa_mean", "wel_mean"],
+        "scripts/run_ablations.py --group hybrid_vs_pure",
+    ),
+    (
+        "ablation/strategic_components.csv",
+        "Ablation §15B.8 — Strategic Component Knockouts",
+        ["cell", "isr_mean", "rac_mean", "ce_mean", "pa_mean", "wel_mean"],
+        "scripts/run_ablations.py --group strategic_components",
+    ),
+]
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _fmt(v: object) -> str:
+    if isinstance(v, float):
+        return "nan" if v != v else f"{v:.3f}"  # noqa: PLR0124 (NaN check)
+    return str(v)
+
+
+def _to_md(df: pd.DataFrame) -> str:
+    cols = list(df.columns)
+    rows = ["| " + " | ".join(cols) + " |", "| " + " | ".join("---" for _ in cols) + " |"]
+    for _, row in df.iterrows():
+        rows.append("| " + " | ".join(_fmt(row[c]) for c in cols) + " |")
+    return "\n".join(rows)
+
+
+def render_table(csv_name: str, title: str, cols: list[str], provenance: str) -> str | None:
+    csv = RESULTS / csv_name
+    if not csv.exists():
+        return None
+    df = pd.read_csv(csv)
+    use = [c for c in cols if c in df.columns]
+    df = df[use]
+    out = [
+        f"### {title}",
+        "",
+        f"<!-- source: {csv.as_posix()} | sha256: {_sha256(csv)} | provenance: {provenance} -->",
+        "",
+        _to_md(df),
+        "",
+    ]
+    return "\n".join(out)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--out", default=None, help="Write to this file instead of stdout.")
+    args = ap.parse_args()
+
+    blocks = [
+        "<!-- AUTO-GENERATED by scripts/build_report_tables.py — DO NOT EDIT BY HAND. -->",
+        "<!-- Regenerate: python scripts/build_report_tables.py --out docs/paper/_generated_tables.md -->",
+        "",
+        "# Regenerated Result Tables (authoritative)",
+        "",
+    ]
+    rendered = 0
+    for csv_name, title, cols, prov in TABLES:
+        block = render_table(csv_name, title, cols, prov)
+        if block is None:
+            blocks.append(f"<!-- skipped: results/{csv_name} not found -->\n")
+        else:
+            blocks.append(block)
+            rendered += 1
+
+    text = "\n".join(blocks)
+    if args.out:
+        Path(args.out).write_text(text, encoding="utf-8")
+        print(f"Wrote {args.out} ({rendered} tables)", file=sys.stderr)
+    else:
+        print(text)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

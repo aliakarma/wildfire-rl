@@ -1,10 +1,10 @@
-"""Run-metadata / artifact-hashing tests (Phase 8)."""
+"""Run-metadata / artifact-hashing tests (ported from V1)."""
 
 from __future__ import annotations
 
 import hashlib
 
-from wildfire_rl.logging_utils import config_hash, file_sha256, run_metadata
+from wildfire_marl.reproducibility.logging_utils import config_hash, file_sha256, run_metadata
 
 
 def test_file_sha256(tmp_path):

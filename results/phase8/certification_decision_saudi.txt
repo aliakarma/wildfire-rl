@@ -1,0 +1,4 @@
+Region: saudi
+Status: PASS
+Reasons:
+  - Condition B: Hierarchical statistically matches Value-First and outperforms Flat MARL.

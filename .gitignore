@@ -82,11 +82,12 @@ wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# ---- Virtual environments ---------------------------------------------------
-.venv/
-venv/
-env/
-ENV/
+# ---- Virtual environments (root-anchored! bare `env/` would also ignore the
+# wildfire_marl.env PACKAGE — that bug silently dropped src/wildfire_marl/env/) --
+/.venv/
+/venv/
+/env/
+/ENV/
 .conda/
 conda-meta/
 
@@ -144,7 +145,28 @@ _dump.py
 _smoke.py
 _prep.py
 
+# ---- V1 archive (frozen, Phase 0 of REMEDIATION_PLAN_V2) --------------------
+# Large V1 artifacts stay untracked exactly as they were at the old paths.
+legacy_v1/models/**
+!legacy_v1/models/README.md
+legacy_v1/results/logs/
+legacy_v1/results/runs/
+legacy_v1/results/Legacy/
+legacy_v1/figures/*.png
+legacy_v1/figures/*.jpg
+legacy_v1/figures/*.jpeg
+legacy_v1/figures/*.gif
+legacy_v1/figures/*.svg
+legacy_v1/figures/*.pdf
+!legacy_v1/figures/.gitkeep
+
 # ---- Keep the tiny committed sample (MUST be last to override *.npy etc.) ----
 !data/sample/
 !data/sample/**
 
+# ---- Keep generated Cell2Fire landscapes (small, deterministic, manifest-hashed;
+#      Phase 2) — committed so CI and reviewers can run the simulator directly ----
+!data/cell2fire/
+!data/cell2fire/**
+
+/AAAI Template

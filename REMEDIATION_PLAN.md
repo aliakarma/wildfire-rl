@@ -2963,7 +2963,6 @@ python scripts/build_infrastructure.py --region saudi_eastern_province --grid 32
 python scripts/run_transfer_hybrid.py --config configs/experiment/transfer_hybrid.yaml
 python scripts/render_strategic.py --regions saudi california
 ```
-```
 
 ### Modify Existing Section
 - **Overview / Observation contract:** document the infrastructure-criticality channel and the

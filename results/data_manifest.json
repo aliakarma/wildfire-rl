@@ -75,6 +75,34 @@
     "sha256": "e01a395d1e0c57974922c9967b7d498a440266ca09b7aa13a0c97001eca03f0b",
     "bytes": 16512
   },
+  "california/raw/dem/srtm/california_dem_3arcsec.npy": {
+    "sha256": "d508e9a614a720def827abe3695600478f20224f295c1dd3a6afa2675422e462",
+    "bytes": 79200128
+  },
+  "cell2fire/California/asset_type.npy": {
+    "sha256": "ffb852a2fb42b5edf209ce2ee6d0ee1b2d28ba9d9d52ceb8bbd557a8c1aeaa8b",
+    "bytes": 4224
+  },
+  "cell2fire/California/blast_radius.npy": {
+    "sha256": "c9f9adb28e2e2f686eb23d92bf78c630ed5172e5149e34e73ca356efbfadc30b",
+    "bytes": 4224
+  },
+  "cell2fire/California/criticality.npy": {
+    "sha256": "b95416c2c4613a016ed2ee9dcd30b65bbf9ca5f1af1a1ff7ab5a9d7b678716b5",
+    "bytes": 4224
+  },
+  "cell2fire/Saudi/asset_type.npy": {
+    "sha256": "64fdab0b84ca502feaea3cd4a9f555d609ac87d9d62ec390643e5317ee82abb6",
+    "bytes": 4224
+  },
+  "cell2fire/Saudi/blast_radius.npy": {
+    "sha256": "5ce6737307f0750c51332d5f6a0c7f4f8de60a6aa978b2f6cab2f417d1ef3f6d",
+    "bytes": 4224
+  },
+  "cell2fire/Saudi/criticality.npy": {
+    "sha256": "482fb82dac6f80c47827ee34fd52da78e3fdb0452201f423204b21bbb41fd42a",
+    "bytes": 4224
+  },
   "sample/state_tensor.npy": {
     "sha256": "353f2d66f44edb90990c20fddd737b41fdff9862f14fc4aa791229b6d03b0090",
     "bytes": 1920
@@ -155,6 +183,10 @@
     "sha256": "40ee147e75858d1fe46bf70be5501c9b84d00a1cd9e27dbae37d57b262051e35",
     "bytes": 16512
   },
+  "saudi_eastern_province/raw/dem/srtm/saudi_dem_3arcsec.npy": {
+    "sha256": "8ee5dfe52998981516fdf2d20fed7db53bc4e328ab46f934b6ac092e44c7f371",
+    "bytes": 72000128
+  },
   "california/raw/dem/california_slope.tif": {
     "sha256": "4af21f0768cc939b02c09958623dc83a3ed855822334cc3fb81eca3ffcbd6bf3",
     "bytes": 119261
@@ -179,8 +211,132 @@
     "sha256": "9ae9619f57f971e5c9833498c3ab8af981cd1525dfc3694546d15da02a4e151e",
     "bytes": 112842
   },
+  "cell2fire/California/Data.csv": {
+    "sha256": "c1e0038e6d77fe8268d574ab6c15b2d38ed6ad62393e4e29b2f86b6de1c85d3a",
+    "bytes": 54766
+  },
+  "cell2fire/California/fbp_lookup_table.csv": {
+    "sha256": "4b8d0a9b53629154b9bfc552eec5880e434c803ac9a5db5dffee16ab089520f5",
+    "bytes": 11209
+  },
+  "cell2fire/California/Ignitions.csv": {
+    "sha256": "42b381f1f302cfc1472b6d5ca8454bdf8ab8579d7ff2252ae603895328149126",
+    "bytes": 19
+  },
+  "cell2fire/California/Weather.csv": {
+    "sha256": "4e42ebe8f8b59772cfb787939a773a6114241586b496b55c90eeebccb66d7ef7",
+    "bytes": 12199
+  },
+  "cell2fire/Saudi/Data.csv": {
+    "sha256": "ba6227a5ea80cdf3fdbf2f9e65b04348d58b8f2b245b34b0965e2663c8e22e8e",
+    "bytes": 58735
+  },
+  "cell2fire/Saudi/fbp_lookup_table.csv": {
+    "sha256": "4b8d0a9b53629154b9bfc552eec5880e434c803ac9a5db5dffee16ab089520f5",
+    "bytes": 11209
+  },
+  "cell2fire/Saudi/Ignitions.csv": {
+    "sha256": "299bc3e742a8eea9e0c0c953c9c49281d4603b6b4d5ef865a4a1f0c891ef11c2",
+    "bytes": 19
+  },
+  "cell2fire/Saudi/Weather.csv": {
+    "sha256": "74f78e6de53244ae1e452626e8dff641574415bfc88bba92c108f5f90bfa455d",
+    "bytes": 11929
+  },
   "saudi_eastern_province/raw/firms/active_fire/saudi_firms_june_2025.csv": {
     "sha256": "f6200c2fe71a1262159323e8c095ee8d9c3e20e5be6dec2d3ba9a5da5a15f5a7",
     "bytes": 376698
+  },
+  "cell2fire/California/asset_type.asc": {
+    "sha256": "03a081983f7b60819d1245b983be0f72961eecb8c07de8cb6c739289586b358b",
+    "bytes": 2162
+  },
+  "cell2fire/California/blast_radius.asc": {
+    "sha256": "3549599312e4e56cc1b5d88fa05debcc741fc437b992cff38f9ad42d31da7cc1",
+    "bytes": 2162
+  },
+  "cell2fire/California/criticality.asc": {
+    "sha256": "97dd2b8109cee38253f355350cd6fb0d13dc605f3827dd962a899b833e790347",
+    "bytes": 7282
+  },
+  "cell2fire/California/elevation.asc": {
+    "sha256": "6c84715edb2314b49bb370675337805c90fdc2b20a82877e501fc089a25d04c9",
+    "bytes": 6074
+  },
+  "cell2fire/California/Forest.asc": {
+    "sha256": "be7d99f64bc14436092bf250521ffd3a5445475d3edaa31d7da44c9a8f51ffc3",
+    "bytes": 2767
+  },
+  "cell2fire/California/slope.asc": {
+    "sha256": "121bdcb4ac6ba5d3e69558b9cc6d130ee1af0896d7a694be0ffa437653df9681",
+    "bytes": 5263
+  },
+  "cell2fire/Saudi/asset_type.asc": {
+    "sha256": "b12c89857ef226c82e3e8ab2cb9de943d8c53caaa55961fe397214def8004062",
+    "bytes": 2162
+  },
+  "cell2fire/Saudi/blast_radius.asc": {
+    "sha256": "0ef30b4147508c163832ca0b36ad97ae03fdb1168f48b1c7d66f7bdc5871f76e",
+    "bytes": 2162
+  },
+  "cell2fire/Saudi/criticality.asc": {
+    "sha256": "8e00b417f2419d1856925a604787b612430c0e371de327ab82fa9f0009bc7b11",
+    "bytes": 7282
+  },
+  "cell2fire/Saudi/elevation.asc": {
+    "sha256": "e42e0a7f2d3e610bf7dee8cf3d4fc394d1543c8e5a4cc70e2a31aac62dae94d3",
+    "bytes": 5904
+  },
+  "cell2fire/Saudi/Forest.asc": {
+    "sha256": "c9910f9c3c610690a3eff48536dadd0d974965a0102c6e70afece865583a2beb",
+    "bytes": 3303
+  },
+  "cell2fire/Saudi/slope.asc": {
+    "sha256": "d90d6ecaa669734a6c86051546a160c864db8da1e9b1ef3083472ff74ee40a5a",
+    "bytes": 5232
+  },
+  "california/grids/32x32/state_metadata.json": {
+    "sha256": "b5acd52b2812e85b5cc365090274ab8c00506510af19a5bb6c66d2231dc9d46f",
+    "bytes": 920
+  },
+  "california/grids/64x64/state_metadata.json": {
+    "sha256": "ccabd510f47dea675781b4069ee6b114d69098df2a181370ec2f3ff9af5e9bae",
+    "bytes": 916
+  },
+  "california/raw/dem/srtm/california_dem_manifest.json": {
+    "sha256": "6006d0bb3580ae3268d6b6cf8f238dd6a072b169f6ea2153f3abe999e33b789b",
+    "bytes": 8352
+  },
+  "cell2fire/California/conversion_report.json": {
+    "sha256": "734f856b88ffbde96b7dee590d28c1495c0155b1616a239abf06813c3dbb12ca",
+    "bytes": 1817
+  },
+  "cell2fire/California/ignition_candidates.json": {
+    "sha256": "56bfcb00998ceeb4f2c7e15de6435e73d9ba45b6b9cf53cf55261205520ea906",
+    "bytes": 2882
+  },
+  "cell2fire/Saudi/conversion_report.json": {
+    "sha256": "75892eabbd8bda6b5e1b15a994399650dc582e1cb84da05ecd0ae87706a05dff",
+    "bytes": 2010
+  },
+  "cell2fire/Saudi/ignition_candidates.json": {
+    "sha256": "97da790a4732ec02373eb98929a8d7a4e89893e652d10de549403f933139ee30",
+    "bytes": 2259
+  },
+  "saudi_eastern_province/grids/32x32/state_metadata.json": {
+    "sha256": "d2f58f17c248b6af14917daf0f22c6eed6d4ea6ff92720d70ea59ed29dfe0a5e",
+    "bytes": 936
+  },
+  "saudi_eastern_province/grids/fuel_metadata.json": {
+    "sha256": "33d6fd3387cf23ef6c86b75fcae39ce0edcc8e4580c832bfec551991a37b6fee",
+    "bytes": 234
+  },
+  "saudi_eastern_province/grids/terrain_metadata.json": {
+    "sha256": "a9020e20de1d41a61410b6ccd3a9c627f28e43d1ed8d22043459300fb0c86c22",
+    "bytes": 221
+  },
+  "saudi_eastern_province/raw/dem/srtm/saudi_dem_manifest.json": {
+    "sha256": "fd1ee1df2acc63ba619abe5bd32cb1b63d1433f9546fa4f7c379143ffe03703f",
+    "bytes": 8343
   }
 }
