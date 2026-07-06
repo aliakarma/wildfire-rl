@@ -2,10 +2,21 @@
 
 from __future__ import annotations
 
-import numpy as np
+import sys
 
+import numpy as np
+import pytest
+
+from wildfire_marl.env.cell2fire_binding import DEFAULT_BINARY
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
 from wildfire_marl.eval.metrics import coordination_efficiency
+
+pytestmark = [
+    pytest.mark.skipif(sys.platform == "win32", reason="Cell2Fire runs on Linux only"),
+    pytest.mark.skipif(
+        not DEFAULT_BINARY.exists(), reason="interactive Cell2Fire binary not built"
+    ),
+]
 
 
 def test_marl_env_basic():

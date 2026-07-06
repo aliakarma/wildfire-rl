@@ -1,0 +1,44 @@
+Phase 9 — Cleanup & Gate Verification Log
+=========================================
+timestamp : 20260703_154035
+git_sha   : ce5d5f4
+executor  : automated (supervised cleanup pass)
+
+CONTEXT
+  Colab T4 authoritative training produced 34 distinct checkpoints (10 single-agent + 24 MARL
+  scaling), 10 run manifests, and fresh eval/transfer/MARL CSVs. This pass cleaned the stale
+  pre-remediation surface and flipped both blocking gates to green.
+
+ROOT-CAUSE FINDING (California PPO "identical" rows)
+  California PPO seeds collapsed to CONSTANT actions (seed0=4, seed1=1, seed2=1, seed3=2, seed4=2).
+  All 5 checkpoints have DISTINCT weights (verified by SHA of policy.state_dict). Identical eval
+  rows are a consequence of collapse-to-constant-action on fixed eval scenarios = the honest PPO
+  negative result (Phase 16), NOT fabricated multi-seed.
+
+ACTIONS
+  - Retired stale pre-remediation CSVs -> experimental/results/stale_pre_phase9/:
+      eval_california.csv, eval_saudi_generalization.csv, transfer_matrix.csv, ablation_results.csv,
+      baseline_statistics.csv, effect_sizes.csv, controllability_metrics.csv, action_influence_metrics.csv
+  - scripts/check_seed_integrity.py: identical eval rows backed by DISTINCT checkpoints now warn
+    (honest collapse) instead of failing; real fraud (identical checkpoints) still fails. CSV list
+    updated to the fresh certified files.
+  - scripts/validate_learning_gate.py: California source -> eval_california_multiseed_california.csv (fresh).
+  - src/wildfire_rl/viz/figures.py: plot_marl_scaling tolerant of the run_marl_evaluation schema
+    (fire_intensity_mean, per-region rows) — fixes the KeyError:'fire_mean' crash.
+  - src/wildfire_rl/cli.py (make-figures): transfer heatmap falls back to transfer_matrix_raw.csv;
+    per-region baseline figure accepts config-suffixed eval filenames.
+
+VERIFICATION (this pass)
+  check_seed_integrity.py .... SEED INTEGRITY: OK        (exit 0)   34 distinct checkpoints
+  validate_learning_gate.py .. EFFECTIVE-METHOD GATE: PASS (exit 0)
+      saudi:      nearest_fire 2.10 << noop 33.34 ; PPO 32.58 = negative result
+      california: nearest_fire 0.00 << noop 182.82; PPO 184.77 = negative result
+  pytest ..................... 69 passed
+  ruff ....................... All checks passed (edited files)
+  figures .................... regenerated from fresh CSVs (transfer, baseline saudi+california, marl_scaling)
+
+REMAINING (optional, not blocking the current certified surface)
+  - Single-agent PPO ablation (run_ablation.py) not regenerated; stale one retired. Negative-result
+    diagnostic only; regenerate if the report cites it.
+  - 15B / 15B.8 extended surface (infrastructure/hybrid/symmetric-transfer/ablations + canonical GIFs)
+    not yet coded — the extended Phase 9 run remains future work.

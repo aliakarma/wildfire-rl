@@ -293,6 +293,11 @@ class MultiAgentFireEnv(ParallelEnv):
 
         return obs_dict, reward_dict, terminated_dict, truncated_dict, info_dict
 
+    @property
+    def num_agents(self) -> int:
+        """Return the number of agents in the environment."""
+        return self._num_agents
+
     def get_global_state(self) -> np.ndarray:
         """Construct the 5-channel centralized global state."""
         state = np.zeros((5, self.height, self.width), dtype=np.float32)

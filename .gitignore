@@ -82,12 +82,20 @@ wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
+<<<<<<< HEAD
+# ---- Virtual environments ---------------------------------------------------
+.venv/
+venv/
+/env/
+ENV/
+=======
 # ---- Virtual environments (root-anchored! bare `env/` would also ignore the
 # wildfire_marl.env PACKAGE — that bug silently dropped src/wildfire_marl/env/) --
 /.venv/
 /venv/
 /env/
 /ENV/
+>>>>>>> ae0bb0abc21e5b6ac74bf1c2f145e4e39abbc8ad
 .conda/
 conda-meta/
 
@@ -164,9 +172,14 @@ legacy_v1/figures/*.pdf
 !data/sample/
 !data/sample/**
 
+/legacy_v1
 # ---- Keep generated Cell2Fire landscapes (small, deterministic, manifest-hashed;
 #      Phase 2) — committed so CI and reviewers can run the simulator directly ----
 !data/cell2fire/
 !data/cell2fire/**
-
 /AAAI Template
+
+# ---- Cell2Fire C++ compiled binaries and intermediates ----------------------
+third_party/firehose/cell2fire/Cell2FireC/Cell2Fire
+third_party/firehose/cell2fire/Cell2FireC/*.o
+third_party/firehose/cell2fire/Cell2FireC/*.gch

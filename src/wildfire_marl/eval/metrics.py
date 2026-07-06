@@ -213,7 +213,10 @@ def risk_adjusted_containment(
     ff = _fire2d(final_state)
     denom = float((criticality * fi).sum())
     if denom <= 0.0:
-        return 1.0
+        total_crit = float(criticality.sum())
+        if total_crit <= 0.0:
+            return 1.0
+        return float(1.0 - (criticality * ff).sum() / total_crit)
     return float(1.0 - (criticality * ff).sum() / denom)
 
 

@@ -1,0 +1,140 @@
+\begin{thebibliography}{20}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Das et~al.(2019)Das, Gervet, Romoff, Batra, Parikh, Rabbat, and
+  Pineau}]{das2019tarmac}
+Das, A.; Gervet, T.; Romoff, J.~C.; Batra, D.; Parikh, D.; Rabbat, M.; and
+  Pineau, J. 2019.
+\newblock {TarMAC}: Targeted multi-agent communication.
+\newblock In \emph{Proceedings of the 36th International Conference on Machine
+  Learning}, 1538--1546.
+
+\bibitem[{Dietterich(1998)}]{dietterich2000maxq}
+Dietterich, T.~G. 1998.
+\newblock The MAXQ Method for Hierarchical Reinforcement Learning.
+\newblock 118–126.
+
+\bibitem[{Ghali, Akhloufi, and Wael~Saber(2022)}]{ghali2022}
+Ghali, R.; Akhloufi, M.~A.; and Wael~Saber, M. 2022.
+\newblock Deep learning and transformer approaches for {UAV}-based wildfire
+  detection and segmentation.
+\newblock \emph{Sensors}, 22(5): 1977.
+
+\bibitem[{Hu and Ntaimo(2009)}]{hu2009wildfire}
+Hu, X.; and Ntaimo, L. 2009.
+\newblock Integrated simulation and optimization for wildfire containment.
+\newblock \emph{ACM Trans. Model. Comput. Simul.}, 19(4).
+
+\bibitem[{Mahajan et~al.(2019)Mahajan, Rashid, Samvelyan, and
+  Whiteson}]{mahajan2019maven}
+Mahajan, A.; Rashid, T.; Samvelyan, M.; and Whiteson, S. 2019.
+\newblock {MAVEN}: Multi-agent variational exploration.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~32, 3303--3313.
+
+\bibitem[{Nguyen, Nguyen, and Nahavandi(2020)}]{nguyen2019disaster}
+Nguyen, T.~T.; Nguyen, N.~D.; and Nahavandi, S. 2020.
+\newblock Deep reinforcement learning for multiagent systems: A review of
+  challenges, solutions, and applications.
+\newblock \emph{IEEE Transactions on Cybernetics}, 50(9): 3826--3839.
+
+\bibitem[{Pais et~al.(2021)Pais, Carrasco, Martell, Weintraub, and
+  Woodruff}]{pais2021cell2fire}
+Pais, C.; Carrasco, J.; Martell, D.~L.; Weintraub, A.; and Woodruff, D.~L.
+  2021.
+\newblock Cell2Fire: A Cell-Based Forest Fire Growth Model to Support Strategic
+  Landscape Management Planning.
+\newblock \emph{Frontiers in Forests and Global Change}, Volume 4 - 2021.
+
+\bibitem[{Parr and Russell(1997)}]{parr1998hams}
+Parr, R.; and Russell, S. 1997.
+\newblock Reinforcement learning with hierarchies of machines.
+\newblock In \emph{Proceedings of the 11th International Conference on Neural
+  Information Processing Systems}, NIPS'97, 1043–1049. Cambridge, MA, USA:
+  MIT Press.
+
+\bibitem[{Partheepan, Sanati, and Hassan(2023)}]{partheepan2023}
+Partheepan, S.; Sanati, F.; and Hassan, J. 2023.
+\newblock Autonomous unmanned aerial vehicles in bushfire management:
+  Challenges and opportunities.
+\newblock \emph{Drones}, 7(1): 47.
+
+\bibitem[{Rajeswaran et~al.(2018)Rajeswaran, Kumar, Gupta, Vezzani, Schulman,
+  Todorov, and Levine}]{rajeswaran2017learning}
+Rajeswaran, A.; Kumar, V.; Gupta, A.; Vezzani, G.; Schulman, J.; Todorov, E.;
+  and Levine, S. 2018.
+\newblock Learning complex dexterous manipulation with deep reinforcement
+  learning and demonstrations.
+\newblock In \emph{Proceedings of Robotics: Science and Systems}.
+
+\bibitem[{Rashid et~al.(2018)Rashid, Samvelyan, de~Witt, Farquhar, Foerster,
+  and Whiteson}]{rashid2018qmix}
+Rashid, T.; Samvelyan, M.; de~Witt, C.~S.; Farquhar, G.; Foerster, J.; and
+  Whiteson, S. 2018.
+\newblock {QMIX}: Monotonic value function factorisation for deep multi-agent
+  reinforcement learning.
+\newblock In \emph{Proceedings of the 35th International Conference on Machine
+  Learning}, 4295--4304.
+
+\bibitem[{Ross, Gordon, and Bagnell(2011)}]{ross2011reduction}
+Ross, S.; Gordon, G.~J.; and Bagnell, J.~A. 2011.
+\newblock A reduction of imitation learning and structured prediction to
+  no-regret online learning.
+\newblock In \emph{Proceedings of the 14th International Conference on
+  Artificial Intelligence and Statistics}, 627--635.
+
+\bibitem[{Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
+  Klimov}]{schulman2017}
+Schulman, J.; Wolski, F.; Dhariwal, P.; Radford, A.; and Klimov, O. 2017.
+\newblock Proximal policy optimization algorithms.
+
+\bibitem[{Silver et~al.(2016)Silver, Huang, Maddison, Guez, Sifre, van~den
+  Driessche et~al.}]{silver2016mastering}
+Silver, D.; Huang, A.; Maddison, C.~J.; Guez, A.; Sifre, L.~C.; van~den
+  Driessche, G.; et~al. 2016.
+\newblock Mastering the game of {Go} with deep neural networks and tree search.
+\newblock \emph{Nature}, 529: 484--489.
+
+\bibitem[{Sukhbaatar, Szlam, and Fergus(2016)}]{sukhbaatar2016learning}
+Sukhbaatar, S.; Szlam, A.; and Fergus, R. 2016.
+\newblock Learning multiagent communication with backpropagation.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~29, 2244--2252.
+
+\bibitem[{Sutton, Precup, and Singh(1999)}]{sutton1999options}
+Sutton, R.~S.; Precup, D.; and Singh, S. 1999.
+\newblock Between {MDP}s and semi-{MDP}s: A framework for temporal abstraction
+  in reinforcement learning.
+\newblock \emph{Artificial Intelligence}, 112(1--2): 181--211.
+
+\bibitem[{Vezhnevets et~al.(2017)Vezhnevets, Osindero, Schaul, Hadsell, Heess,
+  and Graves}]{vezhnevets2017feudal}
+Vezhnevets, A.~S.; Osindero, S.; Schaul, T.; Hadsell, R.; Heess, N.; and
+  Graves, A. 2017.
+\newblock {FeUdal Networks} for hierarchical reinforcement learning.
+\newblock In \emph{Proceedings of the 34th International Conference on Machine
+  Learning}, 3540--3549.
+
+\bibitem[{Wang et~al.(2021)Wang, Gupta, Mahajan, Peng, Whiteson, and
+  Zhang}]{wang2021rode}
+Wang, T.; Gupta, T.; Mahajan, A.; Peng, B.; Whiteson, S.; and Zhang, C. 2021.
+\newblock {RODE}: Learning roles to decompose multi-agent tasks.
+\newblock In \emph{Proceedings of the 9th International Conference on Learning
+  Representations}.
+
+\bibitem[{Wu, Tucker, and Nachum(2019)}]{wu2019behavior}
+Wu, Y.; Tucker, G.; and Nachum, O. 2019.
+\newblock Behavior regularized offline reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~32, 9484--9494.
+
+\bibitem[{Yu et~al.(2022)Yu, Velu, Vinitsky, Gao, Wang, Baez, Tomizuka, and
+  Yang}]{yu2022mappo}
+Yu, C.; Velu, A.; Vinitsky, E.; Gao, J.; Wang, Y.; Baez, A.; Tomizuka, M.; and
+  Yang, Y. 2022.
+\newblock The surprising effectiveness of {PPO} in cooperative multi-agent
+  games.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~35, 24611--24624.
+
+\end{thebibliography}

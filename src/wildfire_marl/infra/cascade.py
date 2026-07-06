@@ -74,7 +74,7 @@ def cascade_step(
                 if (
                     (0 <= nx < h and 0 <= ny < w)
                     and fuel_mask[nx, ny] > 0
-                    and new_fire_state[nx, ny] <= ASSET_BURNING_THRESHOLD
+                    and new_fire_state[nx, ny] == 0
                     and rng.random() < cascade_prob
                 ):
                     new_fire_state[nx, ny] = 1.0  # Ignite at full intensity

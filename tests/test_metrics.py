@@ -121,6 +121,14 @@ def test_risk_adjusted_containment():
     # unchanged -> RAC 0.0
     assert risk_adjusted_containment(crit, _fire_state(init), _fire_state(init)) == 0.0
 
+    # No fire initially on critical cell, but burns later -> RAC < 1.0
+    init_no_crit = np.zeros((4, 4), np.float32)
+    final_crit = np.zeros((4, 4), np.float32)
+    final_crit[0, 0] = 0.5
+    assert (
+        risk_adjusted_containment(crit, _fire_state(init_no_crit), _fire_state(final_crit)) == 0.5
+    )
+
 
 def test_defending_assets_beats_minimizing_burned():
     """A policy that saves assets beats one that only minimizes burned cells on ISR/WEL/CPS,
