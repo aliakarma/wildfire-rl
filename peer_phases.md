@@ -849,3 +849,140 @@ cannot relax it.
 2. **Table 2 discrepancy discovered** (drift/latency ≈2× off): the plan expected a simple
    re-archival; the recomputation instead superseded the paper's values — recorded as an
    extension of the Phase 0 integrity pattern and folded into the retired-claims list.
+
+---
+
+# Phase 5 — Generalization & Transfer Redesign
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-07 · **Compute:** one background run, 3 parallel
+lanes, ≈2h. Artifacts in `results/phase5_peer/`: `generalization_{raw,aggregate}_{region}.csv`,
+`generalization_summary_{region}.json`, `scale_{raw,aggregate}_{region}.csv`,
+`scale_summary_{region}.json`, `generalization_dwel.png`, `envmods/` (the perturbed
+landscapes). New scripts: `scripts/run_generalization_v2.py`, `scripts/run_scale_study.py`,
+`scripts/plot_generalization.py`; `run_multiseed_eval_v2.run_episode` gained a
+`reset_options` passthrough.
+
+## Objective (from the plan)
+
+Replace the unfalsifiable TRS metric with generalization evidence that can fail (M1, H9),
+widen the evaluation axis to answer the "toy scale, one setting" objection (M6), and settle
+the fire-cadence framing (M4).
+
+## 1. New Metric: ΔWEL vs same-condition No-Op (falsifiability built in)
+
+For every held-out condition, No-Op is **re-run in that condition** and each policy is
+scored as ΔWEL = WEL(No-Op) − WEL(policy). No-Op therefore scores exactly 0 by
+construction; a policy that fails to help scores 0 (or negative). This is the property the
+old TRS lacked — TRS ≈ reward/reward ≈ 1.0 for any policy including No-Op, so it could not
+express failure.
+
+**Falsifiability demonstrated (the gate requirement):** several strategic policies score
+ΔWEL ≈ 0 in real conditions — the metric visibly fails when generalization fails (see §2).
+
+## 2. Held-out Generalization Results (5 seeds × 15 episodes, both regions)
+
+ΔWEL vs same-condition No-Op (higher = adds value; **0 = no better than inaction**):
+
+| Condition | Region | Value-First | Local Reactive | Hierarchy | CommNet |
+|---|---|---|---|---|---|
+| Held-out ignitions | Saudi | +7.20 | +1.47 | +7.20 | **+17.60** |
+| Held-out ignitions | California | +0.00 | +7.83 | +0.00 | +5.40 |
+| Wind +90° | Saudi | +11.44 | +1.19 | +11.28 | **+24.57** |
+| Wind +90° | California | +0.00 | +6.32 | +0.00 | +4.44 |
+| **Rotated assets** | Saudi | +0.08 | +2.76 | **+0.00** | −0.03 |
+| **Rotated assets** | California | +0.12 | +10.16 | **+0.04** | +7.25 |
+| **Cross-region transfer** | Saudi | — | — | **+0.00** | +0.43 |
+| **Cross-region transfer** | California | — | — | **+0.04** | +0.08 |
+
+Three genuine, publishable negative findings the old metric masked:
+
+- **Rotated-asset collapse (P10).** When the infrastructure layout is rotated 90° (unseen
+  arrangement, unchanged fuel/terrain/weather physics), the learned hierarchy and its
+  Value-First teacher fall to **No-Op level** (Saudi ΔWEL +0.00/+0.08; California
+  +0.04/+0.12). The egocentric policies — Local Reactive and CommNet, which read local
+  infrastructure through observation channels — still adapt (Local Reactive +2.76/+10.16).
+  The sector-dispatch policies do not generalize to novel asset geometry.
+- **Cross-region transfer is absent (P11).** The *corrected* transfer experiment (the
+  other region's trained policy on this region's standard env) yields ΔWEL ≤ +0.43 over
+  No-Op in both directions. This directly falsifies the paper's "strong cross-region
+  generalization (TRS > 0.95)" — transfer neither helps nor is robust; the old ≈0.95 was an
+  artifact of TRS being a ratio of a near-constant reward.
+- **California hierarchy is brittle under ignition/wind shift** (ΔWEL +0.00): it only ever
+  matched No-Op on California to begin with (Phase 2), and any distribution shift removes
+  even that.
+
+CommNet is the consistent generalizer (positive ΔWEL in 7 of 8 held-out cells, strongly so
+on Saudi), reinforcing the Phase 2 strategy ruling.
+
+## 3. Scale Study — Agent Count (M6)
+
+WEL by team size (certified protocol; CommNet is the N=3 checkpoint run **zero-shot** at
+larger N via its size-agnostic mean-pooled communication):
+
+| Region | Policy | N=3 | N=6 | N=10 |
+|---|---|---|---|---|
+| Saudi | CommNet (zero-shot) | 11.43 | 12.25 | 9.59 |
+| Saudi | Local Reactive | 26.63 | 25.80 | 24.69 |
+| Saudi | Value-First | 19.48 | 19.48 | 19.48 |
+| California | CommNet (zero-shot) | 19.17 | 16.60 | 19.39 |
+| California | Local Reactive | 15.13 | 8.81 | 5.16 |
+| California | Value-First | 24.61 | 24.53 | 24.49 |
+
+- CommNet **holds zero-shot** across team sizes (no collapse at N=10) — evidence its
+  communication mechanism scales.
+- Local Reactive **improves monotonically with team size** on scattered California assets
+  (15.1→8.8→5.2): more agents = more coverage, exactly as expected for the reactive regime.
+- Value-First is flat (fixed sector logic, indifferent to extra agents).
+- The **learned hierarchy is architecturally locked to N=3** (per-agent commander heads),
+  so it is excluded above N=3 and reported as a scaling limitation (P12).
+
+**Grid-size axis (64²) documented infeasible this pass:** the Cell2Fire landscape
+conversion and infrastructure rasters exist only at 32² (`data/*/grids/64x64/` holds the
+raw tensors but no `asset_type/criticality/blast_radius` layers or Cell2Fire `Forest.asc`),
+and every policy would require retraining. Recorded as a stated limitation rather than a
+result — the plan's gate explicitly permits a documented infeasibility note.
+
+## 4. Fire-Cadence Decision (M4) — relabel, do not change dynamics
+
+Made from the Phase 0 §2.5 code evidence: `steps_per_action=60` means **60 fire periods
+(simulated minutes) per agent step**, so the fire advances **every** step — 150 fire
+advances per 150-step episode, not ≤2. There is no slower cadence in play to "speed up";
+the hazard already evolves maximally per step. Therefore the "dynamically evolving hazard
+landscape" framing is **correct and retained**; only Table 4's mislabeled row
+("Steps per fire update = 60") is fixed in Phase 6/8 to "Simulated minutes per agent step:
+60 (fire advances every step)". No dynamics change, no rerun needed — the ≤2-updates
+inference was a labeling artifact, not a physics fact.
+
+## 5. Figure 4 Decision — retire TRS heatmap, replace with ΔWEL bars
+
+The old `transfer_heatmap.png` (all-green TRS ≥ 0.95, Phase 0 issue C7/H9) is **retired**.
+Replacement drafted: `results/phase5_peer/generalization_dwel.png` — grouped ΔWEL bars per
+policy per condition, both regions, with the 0-line making the rotated-asset / cross-region
+collapse visible. Phase 7 finalizes styling and caption; the data and message are locked.
+
+## 6. Success-Gate Verdict
+
+| Gate criterion (from plan Phase 5) | Result |
+|---|---|
+| Generalization metric assigns a clearly bad score to No-Op (falsifiability in-paper) | ✅ §1 — No-Op = 0 by construction; strategic policies also hit 0 under rotated/cross-region (§2), proving the metric can fail |
+| Held-out ignition/wind/layout results, both regions, standard protocol | ✅ §2 (4 conditions × 2 regions × 5 policies × 5 seeds × 15 episodes) |
+| Scale-study results for ≥2 agent counts and ≥2 grid sizes, or documented infeasibility | ✅ §3 — N∈{3,6,10}; 64² infeasibility documented |
+| Fire-cadence decision made from measured evidence and recorded; hazard language matches sim | ✅ §4 — relabel decision from code evidence; framing retained |
+| Figure 4 regenerated or retired | ✅ §5 — TRS retired, ΔWEL replacement drafted |
+
+**GATE: PASS.** Phase 6 (environment & data transparency) is cleared. `claims_evidence.md`
+extended with P10–P12 and two new retired claims (cross-region "strong transfer",
+"generalizes across layouts").
+
+## Deviations from the plan
+
+1. **Cross-region transfer folded into the generalization suite** (rather than a separate
+   TRS-renormalization) — the plan offered "replace OR renormalize TRS"; replacement is
+   cleaner and the corrected experiment doubles as the H9 fix (the old §9 run was broken,
+   not merely insensitive).
+2. **64² deferred with documentation** rather than run — infrastructure rasters do not
+   exist at 64² and building them + retraining is out of scope for this remediation pass;
+   the gate explicitly allows a documented infeasibility note.
+3. **CommNet added to the generalization/scale suites** (beyond the plan's hierarchy-focused
+   wording) — required because Phase 2 made CommNet the strongest policy, so its
+   generalization is now the load-bearing question.

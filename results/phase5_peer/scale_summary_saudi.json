@@ -1,0 +1,119 @@
+{
+  "region": "saudi",
+  "protocol": {
+    "seeds": [
+      42,
+      1042,
+      2042,
+      3042,
+      4042
+    ],
+    "episodes_per_seed": 15,
+    "unit": "seed means"
+  },
+  "note": "CommNet is the N=3-trained checkpoint evaluated zero-shot at larger N",
+  "by_num_agents": {
+    "3": {
+      "No-Op": {
+        "WEL_mean": 27.0,
+        "WEL_ci": [
+          27.0,
+          27.0
+        ],
+        "ISR_mean": 0.2857142857142857
+      },
+      "Value-First Heuristic": {
+        "WEL_mean": 19.479999999999997,
+        "WEL_ci": [
+          19.0,
+          20.119999999999997
+        ],
+        "ISR_mean": 0.3752380952380952
+      },
+      "Local Reactive": {
+        "WEL_mean": 26.626666666666665,
+        "WEL_ci": [
+          25.880000000000003,
+          27.0
+        ],
+        "ISR_mean": 0.28952380952380946
+      },
+      "CommNet (matched)": {
+        "WEL_mean": 11.426666666666666,
+        "WEL_ci": [
+          9.026,
+          14.039999999999997
+        ],
+        "ISR_mean": 0.45714285714285713
+      }
+    },
+    "6": {
+      "No-Op": {
+        "WEL_mean": 27.0,
+        "WEL_ci": [
+          27.0,
+          27.0
+        ],
+        "ISR_mean": 0.2857142857142857
+      },
+      "Value-First Heuristic": {
+        "WEL_mean": 19.479999999999997,
+        "WEL_ci": [
+          19.0,
+          20.119999999999997
+        ],
+        "ISR_mean": 0.3752380952380952
+      },
+      "Local Reactive": {
+        "WEL_mean": 25.8,
+        "WEL_ci": [
+          24.920000000000005,
+          26.68
+        ],
+        "ISR_mean": 0.30476190476190473
+      },
+      "CommNet (matched)": {
+        "WEL_mean": 12.253333333333334,
+        "WEL_ci": [
+          9.586666666666668,
+          15.133333333333331
+        ],
+        "ISR_mean": 0.4419047619047619
+      }
+    },
+    "10": {
+      "No-Op": {
+        "WEL_mean": 27.0,
+        "WEL_ci": [
+          27.0,
+          27.0
+        ],
+        "ISR_mean": 0.2857142857142857
+      },
+      "Value-First Heuristic": {
+        "WEL_mean": 19.479999999999997,
+        "WEL_ci": [
+          19.0,
+          20.119999999999997
+        ],
+        "ISR_mean": 0.3752380952380952
+      },
+      "Local Reactive": {
+        "WEL_mean": 24.69333333333333,
+        "WEL_ci": [
+          23.386666666666667,
+          26.04
+        ],
+        "ISR_mean": 0.3257142857142857
+      },
+      "CommNet (matched)": {
+        "WEL_mean": 9.586666666666668,
+        "WEL_ci": [
+          8.28,
+          11.533333333333333
+        ],
+        "ISR_mean": 0.4685714285714286
+      }
+    }
+  }
+}

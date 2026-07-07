@@ -91,8 +91,9 @@ def run_episode(
     seed: int,
     device: torch.device,
     behavior: BehaviorLog,
+    reset_options: dict | None = None,
 ) -> dict[str, float]:
-    obs_dict, info_dict = env.reset(seed=seed)
+    obs_dict, info_dict = env.reset(seed=seed, options=reset_options)
     env.apply_target_compliance = False
 
     curr_targets = {agent: env.agent_positions[agent] for agent in env.agents}
