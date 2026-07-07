@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.4.24)  7 JUL 2026 19:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.4.24)  7 JUL 2026 19:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -783,10 +783,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
  17217 strings out of 474116
@@ -812,7 +808,7 @@ ublic/tex-gyre/qtmr.pfb><c:/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucr
 r8a.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/newtx/ztmb.pfb><c:/texli
 ve/2024/texmf-dist/fonts/type1/public/newtx/ztmr.pfb><c:/texlive/2024/texmf-dis
 t/fonts/type1/public/newtx/ztmri.pfb>
-Output written on AnonymousSubmission2027.pdf (12 pages, 900019 bytes).
+Output written on AnonymousSubmission2027.pdf (12 pages, 900037 bytes).
 PDF statistics:
  150 PDF objects out of 1000 (max. 8388607)
  89 compressed objects within 1 object stream

@@ -1,0 +1,59 @@
+{
+  "Learned Hierarchical": {
+    "action_counts": [
+      16629,
+      1401,
+      2139,
+      928,
+      3045,
+      113
+    ],
+    "action_fractions": [
+      0.6856,
+      0.0578,
+      0.0882,
+      0.0383,
+      0.1255,
+      0.0047
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.341
+  },
+  "CommNet (matched)": {
+    "action_counts": [
+      2186,
+      1454,
+      1490,
+      276,
+      17722,
+      1130
+    ],
+    "action_fractions": [
+      0.0901,
+      0.0599,
+      0.0614,
+      0.0114,
+      0.7306,
+      0.0466
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.512
+  },
+  "Flat MARL (matched)": {
+    "action_counts": [
+      13341,
+      4963,
+      1507,
+      1574,
+      1680,
+      1220
+    ],
+    "action_fractions": [
+      0.5494,
+      0.2044,
+      0.0621,
+      0.0648,
+      0.0692,
+      0.0502
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 6.809
+  }
+}

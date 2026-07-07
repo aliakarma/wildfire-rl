@@ -1,0 +1,21 @@
+{
+  "Learned Hierarchical": {
+    "action_counts": [
+      18240,
+      4063,
+      3519,
+      2141,
+      2169,
+      243
+    ],
+    "action_fractions": [
+      0.6005,
+      0.1338,
+      0.1159,
+      0.0705,
+      0.0714,
+      0.008
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.676
+  }
+}

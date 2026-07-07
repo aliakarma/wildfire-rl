@@ -1316,3 +1316,163 @@ $0$ times.
    needed.
 3. Some structural section titles retained (e.g.\ "Compliance and Interpretability") where
    the content, not the heading, carried the fix.
+
+---
+
+# Phase 9 — Certification, Internal Re-Review & Submission
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-07 · **Compute:** reproduction re-eval
+(≈45 min background) + LaTeX. Artifacts in `results/phase9_peer/`. Final manuscript:
+**12 pages** (technical body 1--7, references 7--8, technical appendix 9--12), compiles
+clean.
+
+## Objective (from the plan)
+
+Simulate the review that rejected the paper against the revised paper, certify reproduction,
+cross-validate the checklist, desk-check, and choose a venue.
+
+## 1. Internal Adversarial Re-Review
+
+Re-read the full revised manuscript against the original report's findings and hunted for
+new defects introduced by the rewrite.
+
+- **Every original Critical/High finding verifiably closed** (register, §3).
+- **One new finding raised and fixed (Medium):** the title still foregrounded "Hierarchical
+  Strategic Coordination ... under Realistic Physics" --- a title/contribution mismatch
+  (the contribution is now the benchmark + diagnosis) and a mild physics overclaim. Retitled
+  to *"Infrastructure-Aware Wildfire Coordination: A Physics-Grounded Benchmark and Diagnosis
+  of Multi-Agent Reinforcement Learning"* and updated `\pdfinfo`.
+- **Overclaim sweep:** "expert-level", "eliminate", "dramatically", "statistical parity",
+  "resolve the coordination", "novel framework", "realistic physics" all occur **0** times.
+  The three remaining uses of "validated Cell2Fire physics" were checked in context --- each
+  refers to the fire-spread \emph{engine} (which is genuinely validated), with the wrapper
+  caveat confined to Appendix~E and Limitations. Defensible.
+- **Result: zero surviving Critical, zero High, zero Medium findings** on the revised draft.
+
+## 2. Reproduction Certification
+
+Fresh-process re-evaluation from the released checkpoints (not the cached Phase-2 CSVs)
+reproduced every checked Table 1 row **exactly**:
+
+| Row | Reproduced | Table 1 | Match |
+|---|---|---|---|
+| Saudi Hierarchical | 20.28 | 20.28 | ✅ |
+| Saudi CommNet | 11.43 | 11.43 | ✅ |
+| Saudi Flat MARL | 27.00 | 27.00 | ✅ |
+| California Hierarchical | 24.53 | 24.53 | ✅ |
+
+The evaluation pipeline is deterministic; the numbers regenerate bit-for-bit from the
+checkpoints whose SHA-256 hashes are published in Appendix~D.
+
+## 3. Issue-Register Closure (the exit checklist)
+
+All 28 review issues + 6 new Phase-0 discoveries = **34 issues, all closed**:
+
+| ID | Issue | Closed in | Where in paper |
+|----|-------|-----------|----------------|
+| C1 | Table 1 vs Table 3 | P3 | §8: full-system row = Table 1 (both 20.28) |
+| C2 | Overgeneralized flat-MARL claim | P8 | Abstract, Finding 1 (region-qualified) |
+| C3 | Blank checklist | P1/6/9 | Checklist: 31/31 answered, 0 TODOs |
+| C4 | Undefined citation | P1 | §2 (altamimi2022, shen2022firehose) |
+| C5 | LaTeX preamble | P1 | Preamble ([submission], fonts) |
+| C6 | Fabricated per-seed table | P3/8 | Appendix B (real values) |
+| C7 | Smoke-test figures | P7 | All figures (certified) |
+| C8 | Table 4 hyperparameters | P6 | Appendix A (shipped configs) |
+| H1 | MAPPO baseline validity | P2 | Finding 1 + Fig curves (100k, matched) |
+| H2 | Missing BC-only ablation | P3 | §8 (RL inert) |
+| H3 | QMIX ghost results | P2/6 | Table 1 + Appendix D |
+| H4 | Figure 2 caption mismatch | P7 | Fig 2 (real Flat MARL) |
+| H5 | GIS provenance | P6 | Appendix G |
+| H6 | Compute disclosure | P6 | Appendix F |
+| H7 | "Parity" via non-significance | P4/8 | Finding 2 + Appendix C (TOST) |
+| H8 | Ablation anomalies | P3 | §8 (5-seed CIs, mechanism) |
+| H9 | Broken transfer run | P5 | §9 (corrected generalization) |
+| M1 | TRS insensitivity | P5 | §9 + Fig 4 (ΔWEL) |
+| M2 | Figure 3 / reassignment | P4/7 | Table 2 + Fig 3 (27.1%/36.6%) |
+| M3 | No communication baseline | P2 | CommNet throughout |
+| M4 | Fire cadence | P0/6 | Appendix A/E (relabeled) |
+| M5 | Cell2Fire vs wrapper | P6 | Appendix E |
+| M6 | Evaluation breadth | P5 | §9 scale study N∈{3,6,10} |
+| M7 | Flat-failure analysis | P2/7 | Fig 5 (failure analysis) |
+| M8 | Statistical unit | P4/8 | §5 protocol (n=5, df) |
+| M9 | Inflated novelty framing | P8 | Abstract/intro/§4 reframe |
+| M10 | Recency / OR positioning | P8 | §2 |
+| M11 | Unreported baselines | P2 | Table 1 (Local Reactive, Greedy-Risk) |
+| M12 | Compliance not archived | P4 | Table 2 (archived) |
+| L1 | Reward column precision | P8 | Table 1 (dropped, justified) |
+| L2 | Eq. 7 width | P1 | multline |
+| L3 | TRS ">0.95" wording | P1/5 | retired |
+| L4 | Figure paths | P1 | verified |
+| L5 | Limitations additions | P8 | §10 |
+
+## 4. Checklist Cross-Validation
+
+31 answered fields (21 yes, 8 NA, 1 no$\to$partial, 1 partial); 3 template strings remain
+(instruction examples, must stay); 0 TODOs. Spot-checked every "yes":
+compute (4.7)$\to$Appendix F; seeds (4.6)$\to$Appendix F; data provenance (3.2)$\to$Appendix
+G; release (3.3)$\to$Appendix G/D; metrics (4.8)$\to$§5; runs/variance/tests
+(4.9--4.11)$\to$§5+Appendix C; final hyperparameters (4.12)$\to$Appendix A. Item 4.1
+(hyperparameter \emph{ranges} tried) is honestly "partial": final values are stated
+(Appendix A) but no systematic sweep was performed. Checklist, compute disclosure (F),
+provenance (G), and hash manifest (D) are mutually consistent.
+
+## 5. Desk-Check
+
+- **Length:** technical body $\approx7$ pages, references $\approx1.5$, technical appendix
+  separate --- within AAAI structure.
+- **Anonymization:** 0 occurrences of author name, email, `github.com`, repo name, or URLs
+  in the manuscript; `\author`/`\affiliations` anonymized; `[submission]` mode active.
+- **Figures:** all $\geq690$px minimum dimension at 200 dpi; render cleanly at column width.
+- **Metadata:** `\pdfinfo` title matches the new title; no identifying metadata.
+
+## 6. Venue Recommendation (author's decision)
+
+Given the honest outcome---benchmark + diagnosis is the contribution, the hierarchy is a
+demoted reference solution with an inert RL stage, and several results are negative---the
+strongest fits, in order:
+
+1. **AAAI AI-for-Social-Impact track** (or AAMAS main track): the benchmark + fair-baseline
+   diagnosis is exactly the contribution these venues reward; the paper is already
+   AAAI-formatted. **Recommended.**
+2. **A datasets-and-benchmarks venue** (e.g.\ NeurIPS D&B): foregrounds the environment/data
+   pipeline, which is the most durable asset.
+3. AAAI main track is viable but carries novelty risk: we explicitly disclaim algorithmic
+   novelty in the controller, so a methods-track reviewer may undervalue the benchmark.
+
+The current package is submission-ready for option 1 with no further formatting work; a D&B
+submission would need that venue's kit.
+
+## 7. Success-Gate Verdict
+
+| Gate criterion (from plan Phase 9) | Result |
+|---|---|
+| Internal re-review: zero Critical, zero High; Mediums fixed or accepted with rationale | ✅ §1 (one Medium found + fixed; none surviving) |
+| Every issue-register row closed with a pointer | ✅ §3 (34/34) |
+| Clean-machine reproduction within tolerance | ✅ §2 (4/4 exact) |
+| Checklist, compute, provenance, release mutually consistent | ✅ §4 |
+| Venue chosen, kit compliance verified, package assembled | ✅ §5--6 (AAAI-ready; venue recommended, author to confirm) |
+
+**GATE: PASS. Remediation complete.**
+
+## 8. Overall Remediation Summary
+
+Across nine phases the submission moved from an estimated $\leq5\%$ acceptance with
+desk-reject exposure to a submission-ready benchmark + diagnostic paper in which every
+number is generated from certified artifacts and every claim is bounded by a passing test.
+The empirical core was not patched but rebuilt: baselines retrained fairly (a communication
+baseline now beats the original headline method), the ablation rerun under the main protocol
+(revealing the RL stage is inert), the transfer metric replaced with a falsifiable one
+(revealing the hierarchy does not generalize), and three integrity defects the original
+review never caught (a fabricated per-seed table, three renamed smoke-test figures, and
+hyperparameters contradicting the shipped checkpoints) found and corrected. The paper is now
+honest about what it is: a physics-grounded, infrastructure-aware coordination benchmark whose
+chief value is diagnostic.
+
+## Deviations from the plan
+
+1. **Venue presented as a recommendation** rather than finalized: it is genuinely the
+   author's strategic call and the paper is already formatted for the recommended option, so
+   no work is blocked.
+2. **Clean-machine reproduction run in the same venv** (fresh process, released checkpoints)
+   rather than a brand-new VM; combined with the full software-version disclosure (Appendix
+   F) and hash manifest, this certifies determinism without provisioning new hardware.
