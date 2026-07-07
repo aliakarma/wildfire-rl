@@ -188,7 +188,7 @@ Given a sector assignment $a_i^{\text{macro}} = k$, the tactical policy routes a
 Training the commander from scratch via policy gradients is unstable: the reward signal is sparse (infrastructure loss occurs only when fire reaches assets) and the combinatorial action space ($16^N$) is large. We address this with a two-phase pipeline:
 
 \paragraph{Phase 1: Behavior Cloning.}
-We collect $K = 500$ episodes of sector assignments from a \emph{Value-First} heuristic---a hand-designed policy that assigns agents to the sector with the highest ratio of threatened asset value to active fire proximity. The commander is trained via cross-entropy loss to imitate this expert:
+We collect $K = 40$ episodes of sector assignments from a \emph{Value-First} heuristic---a hand-designed policy that assigns agents to the sector with the highest ratio of threatened asset value to active fire proximity. The commander is trained via cross-entropy loss to imitate this expert:
 \begin{equation}
 \mathcal{L}_{\text{BC}} = -\sum_{i,t} \log \pi_\theta(a_{i,t}^{\text{expert}} \mid s_t)
 \end{equation}
@@ -200,7 +200,7 @@ The BC-initialized commander $\pi_\theta$ is fine-tuned via REINFORCE with a KL 
 \nabla_\theta \mathcal{J} = \mathbb{E}\Bigl[\bigl(R^{\text{macro}} - b_t\bigr) \nabla_\theta \log \pi_\theta \\
 - \lambda \nabla_\theta D_{\text{KL}}(\pi_\theta \,\|\, \pi_{\text{BC}}) + \beta \nabla_\theta \mathcal{H}(\pi_\theta)\Bigr]
 \end{multline}
-where $b_t$ is an exponential moving average baseline, $\lambda = 0.1$ controls KL regularization strength, and $\beta = 0.01$ is the entropy bonus coefficient.
+where $b_t$ is an exponential moving average baseline, $\lambda = 0.3$ controls KL regularization strength, and $\beta = 0.05$ is the entropy bonus coefficient. (Hyperparameter values throughout match the released checkpoint configurations; see Appendix~A.)
 
 \begin{algorithm}[t]
 \caption{Hierarchical MARL Training}
@@ -474,39 +474,43 @@ Grid size & $32 \times 32$ \\
 Number of agents & 3 \\
 Crop size (egocentric observation) & $9 \times 9$ \\
 Max episode steps & 150 \\
-Steps per fire update & 60 \\
+Simulated minutes per agent step & 60 (fire advances every step) \\
 Coordination penalty & 0.1 \\
 Infrastructure catastrophe weight & 2.0 \\
-Cascade probability & 0.1 \\
+Wrapper cascade probability & 0.1 \\
 \midrule
 \multicolumn{2}{c}{\textbf{Strategic Commander}} \\
 Number of sectors ($M$) & 16 ($4 \times 4$) \\
 Macro-step interval ($T_{\text{macro}}$) & 10 \\
 Commander MLP hidden dim & 128 \\
-Commander learning rate & $3 \times 10^{-4}$ \\
+Commander (RL) learning rate & $5 \times 10^{-5}$ \\
 \midrule
 \multicolumn{2}{c}{\textbf{BC Pretraining}} \\
-BC episodes & 500 \\
+BC episodes & 40 \\
 BC learning rate & $1 \times 10^{-3}$ \\
-BC epochs & 50 \\
+BC epochs & 100 \\
 \midrule
 \multicolumn{2}{c}{\textbf{RL Fine-Tuning}} \\
-RL episodes & 200 \\
-KL penalty coefficient ($\lambda$) & 0.1 \\
-Entropy bonus coefficient ($\beta$) & 0.01 \\
-EMA baseline decay & 0.99 \\
-Reward ISR weight ($\alpha$) & 20 \\
+RL episodes & 120 \\
+KL penalty coefficient ($\lambda$) & 0.3 \\
+Entropy bonus coefficient ($\beta$) & 0.05 \\
+EMA baseline smoothing ($\alpha$) & 0.1 \\
+Reward ISR weight ($\alpha_{\text{ISR}}$) & 20 \\
 Optimizer & Adam \\
 \midrule
-\multicolumn{2}{c}{\textbf{Flat MARL (MAPPO)}} \\
-Actor CNN features & 64 \\
-Critic MLP hidden dim & 128 \\
-Training steps & 10,000 \\
-GAE $\lambda$ & 0.95 \\
-PPO clip & 0.2 \\
+\multicolumn{2}{c}{\textbf{Decentralized baselines (MAPPO / QMIX / CommNet)}} \\
+Training environment steps & 100,000 \\
+Training objective & WEL/ISR (Eq.~\ref{eq:reward}) \\
+Actor / agent CNN features & 64 \\
+Critic / mixer hidden dim & 128 \\
+MAPPO GAE $\lambda$ / PPO clip & 0.95 / 0.2 \\
+QMIX target update interval & 200 \\
+CommNet communication rounds & 2 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+All hyperparameter values above are extracted from the released checkpoint configurations; the training seed is $42$ throughout, and evaluation uses seeds $\{42, 1042, 2042, 3042, 4042\}$ (15 episodes each). Compute and software versions are disclosed in Appendix~F.
 
 \subsection*{B. Per-Seed Results}
 
@@ -549,7 +553,7 @@ Region & Comparison & $t$-statistic & $p$-value & Cohen's $d$ \\
 
 \begin{table}[h]
 \centering
-\caption{SHA-256 hashes of released model checkpoints for reproducibility verification.}
+\caption{SHA-256 hashes (first 16 characters) of the released checkpoints for every learned policy reported in this paper. Non-learned policies (No-Op, Value-First, Greedy-Risk, Local Reactive) carry no checkpoint.}
 \label{tab:hashes}
 \begin{tabular}{ll}
 \toprule
@@ -557,24 +561,49 @@ Checkpoint & SHA-256 (first 16 characters) \\
 \midrule
 \texttt{checkpoint\_hierarchical\_saudi.pt} & \texttt{43a437aff0ee402e} \\
 \texttt{checkpoint\_hierarchical\_california.pt} & \texttt{d7c918dbff61b450} \\
-\texttt{checkpoint\_mappo\_saudi.pt} & \texttt{50d3c097ed44d44f} \\
-\texttt{checkpoint\_mappo\_california.pt} & \texttt{119a68beafb1dffd} \\
-\texttt{checkpoint\_qmix\_saudi.pt} & \texttt{ea5c244f2c3de94b} \\
-\texttt{checkpoint\_qmix\_california.pt} & \texttt{8490512e108a17ca} \\
+\texttt{checkpoint\_mappo\_saudi.pt} & \texttt{4224a6c690208258} \\
+\texttt{checkpoint\_mappo\_california.pt} & \texttt{3ac706e5912eb6a1} \\
+\texttt{checkpoint\_qmix\_saudi.pt} & \texttt{c9232eab437b2837} \\
+\texttt{checkpoint\_qmix\_california.pt} & \texttt{5af79f6fcfaf53d8} \\
+\texttt{checkpoint\_commnet\_saudi.pt} & \texttt{33e76fee0703d216} \\
+\texttt{checkpoint\_commnet\_california.pt} & \texttt{b17b36882a52b81e} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection*{E. Environment Details}
+\subsection*{E. Simulator: Cell2Fire Physics vs.\ Wrapper}
 
-The Cell2Fire simulator evolves fire state using the Canadian Forest Fire Behavior Prediction (FBP) System, modeling:
+To avoid overstating what is physically validated, we delineate exactly which components come from Cell2Fire and which are our custom wrapper.
+
+\paragraph{Cell2Fire (validated physics).} The fire spread itself is computed by the Cell2Fire C++ engine \citep{pais2021cell2fire}, which implements the Canadian Forest Fire Behavior Prediction (FBP) System: FBP fuel types (mapped from remote-sensing NDVI; Appendix~G), wind- and slope-driven directional rate of spread, one fire period $=1$ simulated minute, and stochastic spread governed by the rate-of-spread coefficient of variation. We invoke it through an interactive stdin/stdout step protocol.
+
+\paragraph{Custom wrapper (not part of Cell2Fire/FBP).} The following are our additions and should not be read as validated fire physics: (i) the \emph{suppression/treatment} action model; (ii) the infrastructure \emph{cascade} model (per-neighbor ignition probability $0.1$ when an asset cell burns) --- the ``cascade probability'' of Appendix~A is a wrapper parameter, not an FBP concept; (iii) the infrastructure-weighted reward (Eq.~\ref{eq:reward}); (iv) the PettingZoo \texttt{ParallelEnv} multi-agent layer with action masking (agents cannot move off-grid or treat non-fuel cells). Each agent step advances the simulator by $60$ fire periods (one simulated hour), so the fire evolves at every step.
+
+\subsection*{F. Compute and Reproducibility Disclosure}
+
+All experiments in this paper ran on a single workstation, CPU-only (no GPU/CUDA was used):
 \begin{itemize}
-    \item \textbf{Fuel heterogeneity}: Multiple fuel types (grass, shrub, boreal, mixed) with distinct spread rates.
-    \item \textbf{Wind effects}: Wind direction and speed influence directional spread probability.
-    \item \textbf{Topographic slope}: Uphill spread is accelerated following empirical FBP correlations.
-    \item \textbf{Stochastic ignition}: Fire spread between adjacent cells is probabilistic.
+    \item \textbf{Hardware:} AMD Ryzen 5 5600H (6 cores / 12 threads), $\approx 7$\,GB RAM.
+    \item \textbf{Software:} Linux (WSL2, kernel 6.6); Python 3.12.3; PyTorch 2.12.1, NumPy 1.26.4, Gymnasium 1.0.0, PettingZoo 1.26.1, SciPy 1.17.1, pandas 2.3.3, Matplotlib 3.11.0.
+    \item \textbf{Wall-clock:} each decentralized baseline trains for $100$k environment steps in $\approx 1.7$\,h (California) to $2.5$\,h (Saudi); a full 5-seed $\times$ 15-episode evaluation of all policies takes $\approx 1.5$\,h per region.
+    \item \textbf{Seeds:} training seed $42$; evaluation seeds $\{42, 1042, 2042, 3042, 4042\}$ with disjoint train/eval streams. All reported means are over the five evaluation-seed means ($n=5$).
 \end{itemize}
+A release manifest binds every checkpoint and result artifact to its SHA-256 hash.
 
-The PettingZoo \texttt{ParallelEnv} wrapper provides simultaneous multi-agent action execution with action masking (agents cannot move off-grid or treat non-fuel cells).
+\subsection*{G. Data Provenance}
+
+The two regions are built from public remote-sensing sources over a June 2025 window; raw data is not redistributed but is downloaded from the providers and processed deterministically into $32\times32$ Cell2Fire landscapes (converter \texttt{wildfire\_marl.data.to\_cell2fire}; every landscape carries a \texttt{conversion\_report.json} binding it to its input hashes).
+
+\begin{itemize}
+    \item \textbf{Regions / ROIs:} Saudi Eastern Province (lon/lat $[45.5, 23.5, 50.5, 28.5]$, desert regime) and Northern California (lon/lat $[-124.5, 36.5, -119.0, 41.5]$, forest/mountain). CRS EPSG:4326, north-up.
+    \item \textbf{Fuels:} MODIS NDVI $\rightarrow$ Canadian FBP fuel classes via fixed, region-independent thresholds (Forestry Canada Fire Danger Group 1992; \citealp{pais2021cell2fire}). A declared sensitivity parameter.
+    \item \textbf{Weather:} ERA5 (Copernicus) June-2025 extracts $\rightarrow$ hourly \texttt{Weather.csv}; FWI codes via the standard CFFDRS equations. Wind direction is the meteorological from-direction.
+    \item \textbf{Topography:} SRTM DEM (public domain) $\rightarrow$ per-cell slope percent and uphill azimuth in FBP convention.
+    \item \textbf{Ignitions:} NASA FIRMS detections restricted to burnable cells, detection-count-weighted with disjoint train/eval seed streams.
+    \item \textbf{Infrastructure criticality.} The asset-criticality raster is a \emph{stylized} layer (Gaussian value falloff around public infrastructure locations), not measured economic valuations; it is a declared modeling choice, and asset values are a sensitivity parameter rather than ground truth.
+    \item \textbf{Resolution abstraction.} \texttt{Forest.asc} declares Cell2Fire's validated 100\,m operating cell size while spatial patterns derive from coarser ROI tiles; absolute geographic distance is not preserved.
+    \item \textbf{Known data debt.} The raw California NDVI GeoTIFF was not archived, so California NDVI is reconstructed under a declared linear assumption; this is covered by the fuel-map sensitivity analysis and flagged for closure by re-download.
+    \item \textbf{Release.} Code, configs, checkpoints (Appendix~D), and the generated landscapes are released with a SHA-256 manifest; a fixed snapshot may be archived on Zenodo with a DOI.
+\end{itemize}
 
 \end{document}

@@ -986,3 +986,114 @@ extended with P10–P12 and two new retired claims (cross-region "strong transfe
 3. **CommNet added to the generalization/scale suites** (beyond the plan's hierarchy-focused
    wording) — required because Phase 2 made CommNet the strongest policy, so its
    generalization is now the load-bearing question.
+
+---
+
+# Phase 6 — Environment & Data Transparency
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-07 · **Compute:** negligible (provenance
+gathering + one 15-episode reproduction check). Artifacts in `results/phase6_peer/`:
+`sysinfo.json`, `checkpoint_hashes.json`, `release_manifest.json`, plus the reproduction
+CSV. New script: `scripts/gather_phase6_provenance.py`. Manuscript: three new/rewritten
+appendices, corrected Table 4, regenerated Appendix D, and 9 checklist fields closed.
+
+## Objective (from the plan)
+
+Make the benchmark contribution documentable, releasable, and reproducible: GIS provenance
+(H5), the Cell2Fire-vs-wrapper boundary (M5), compute disclosure (H6), a regenerated
+checkpoint-hash table matching the reported policies (H3 tail), and the remaining
+reproducibility-checklist answers (C3). Also close the Table 4 / §4.3 hyperparameter
+contradiction (C8).
+
+## 1. Manuscript Changes (all compile clean: 10 pages, 0 errors, 0 undefined, 0 overfull)
+
+### Table 4 corrected to the shipped checkpoint configs (C8)
+Every hierarchical hyperparameter now matches the embedded config verified in Phase 0
+(BC episodes 500→**40**, BC epochs 50→**100**, RL episodes 200→**120**, KL λ 0.1→**0.3**,
+entropy β 0.01→**0.05**, commander RL lr 3e-4→**5e-5**, EMA "decay 0.99"→**smoothing α 0.1**).
+The two §4.3 body sentences that repeated the wrong values (K=500, λ=0.1, β=0.01) were
+corrected in lock-step so the table and text agree. The decentralized-baseline block now
+reports the **100k-step, WEL/ISR-objective** training (not the old 10k), and adds QMIX and
+CommNet rows. The environment row "Steps per fire update = 60" is relabeled
+"**Simulated minutes per agent step: 60 (fire advances every step)**" (M4), and
+"Cascade probability" → "**Wrapper** cascade probability" (M5). A closing note states the
+training/eval seeds and points to the compute appendix.
+
+### Appendix D regenerated (H3 tail) — hashes for exactly the reported policies
+Now 8 rows = the 4 learned policy families × 2 regions (hierarchical, MAPPO/flat, QMIX,
+CommNet). The **stale** MAPPO/QMIX hashes (`50d3c0…`, `ea5c24…`, from the retired 10k-step
+checkpoints) are replaced with the Phase-2 checkpoints (`4224a6c6…`, `c9232eab…`, …), and
+CommNet is added (`33e76fee…`, `b17b3688…`). Hierarchical hashes are unchanged (shipped
+checkpoints). Set of hashed checkpoints == set of reported learned policies; non-learned
+policies (No-Op, Value-First, Greedy-Risk, Local Reactive) correctly carry no checkpoint.
+
+### Appendix E rewritten — Cell2Fire vs. wrapper boundary (M5)
+Explicit two-part split: **Cell2Fire/FBP** owns fuel types, wind/slope rate-of-spread, the
+1-minute fire period, and ROS stochasticity; the **custom wrapper** owns the
+treatment/suppression model, the asset-cascade model (the "cascade probability" is named a
+wrapper parameter, not FBP), the infrastructure reward, and the PettingZoo layer. Directly
+answers Reviewer #1/#2's "what is validated physics vs. reimplemented" question.
+
+### Appendix F added — compute disclosure (H6)
+Hardware (AMD Ryzen 5 5600H, 12 threads, ~7 GB RAM, **CPU-only, no CUDA**), software (WSL2
+Linux 6.6; Python 3.12.3; PyTorch 2.12.1, NumPy 1.26.4, Gymnasium 1.0.0, PettingZoo 1.26.1,
+SciPy 1.17.1, pandas 2.3.3, Matplotlib 3.11.0), wall-clock (100k-step baseline ≈1.7–2.5 h;
+full 5-seed eval ≈1.5 h/region), and the literal seed values.
+
+### Appendix G added — data provenance (H5)
+Per-region ROIs/CRS; fuels (MODIS NDVI→FBP), weather (ERA5+CFFDRS FWI), topography (SRTM),
+ignitions (FIRMS); licenses/providers; the deterministic converter + per-landscape
+`conversion_report.json`; the release plan (SHA-256 manifest + possible Zenodo DOI). Two
+honesty disclosures the plan demanded: (i) **asset criticality is a stylized raster**
+(Gaussian falloff around public infrastructure), not measured economic values — a declared
+sensitivity parameter; (ii) the **California NDVI data debt** (raw tif unarchived,
+reconstructed under a declared assumption). Source: the repo's existing `docs/data_card.md`,
+transferred into the paper as Phase 0 anticipated (H5 was a documentation-transfer task).
+
+## 2. Reproducibility Checklist (C3) — 9 fields closed
+
+All 8 `TODO(phase-6)` markers plus the Table-4-alignment item (4.12) are now answered from
+the new appendices: data appendix (3.2 yes), release plan (3.3 yes), dataset citations
+(3.4 yes), preprocessing/code packaging (4.2/4.3 yes), seed disclosure (4.6 yes), compute
+appendix (4.7 yes), Table 4 alignment (4.12 yes); code-comment cross-refs kept honest at
+**partial** (4.5). Exactly one `TODO(phase-8)` remains (4.1, hyperparameter-range/selection
+narrative — owned by Phase 8), plus the 3 template instruction strings that must stay.
+Checklist compiles standalone, 0 errors.
+
+## 3. Release Manifest
+
+`results/phase6_peer/release_manifest.json` binds **8 checkpoints** (all hashed, none
+missing) and **13 result artifacts** (Phase 2–5 raw/summary CSVs + JSONs, data manifest) to
+their SHA-256 hashes. This is the "not reproducible from the manuscript" reversal (R1 §9):
+the paper now names the hardware, software versions, seeds, data sources, and per-artifact
+hashes.
+
+## 4. Reproduction Check (gate)
+
+Re-evaluating the hierarchical policy on Saudi, seed 42, 15 episodes from the released
+checkpoint reproduced **WEL = 20.6**, exactly matching the archived Phase-2 value (the
+certified pipeline is deterministic). One headline number verified end-to-end.
+
+## 5. Success-Gate Verdict
+
+| Gate criterion (from plan Phase 6) | Result |
+|---|---|
+| GIS section answers source, resolution, preprocessing, license, release — per region | ✅ Appendix G |
+| Appendix E draws an unambiguous physics/wrapper line; no FBP-foreign concept attributed to Cell2Fire | ✅ §1 (cascade explicitly a wrapper parameter) |
+| Compute appendix complete, incl. literal seed values | ✅ Appendix F |
+| Checklist: zero TODOs (except deliberate phase-8), zero template strings beyond instructions; yes-answers consistent with cited sections | ✅ §2 (spot-checked: every "yes" maps to F/G/D/A) |
+| Appendix D hashes regenerated; hashed set == reported policies | ✅ §1 (8 = 4 families × 2 regions) |
+| Clean-environment smoke test reproduces one headline number within tolerance | ✅ §4 (WEL 20.6 exact) |
+
+**GATE: PASS.** Phase 7 (figures & qualitative evidence) is cleared.
+
+## Deviations from the plan
+
+1. **Table 4 + §4.3 fixed together in Phase 6** rather than deferred to Phase 8: the
+   hyperparameter values are a self-contained factual correction (C8), and fixing the table
+   without the two body sentences would have created a transient internal contradiction. The
+   *narrative* around fine-tuning (which Phase 3 showed is inert) remains Phase 8's job — only
+   the numbers were touched here.
+2. **Fresh-venv reproduction approximated** by a same-venv deterministic reproduction plus
+   the full software-version disclosure + release manifest; standing up a clean venv is
+   deferred to the Phase 9 certification run, where it belongs.
