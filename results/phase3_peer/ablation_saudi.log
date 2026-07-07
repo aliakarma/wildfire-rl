@@ -1,0 +1,133 @@
+
+===== TRAIN Full System (retrained) =====
+/home/ali_akarma/venvs/wildfire-marl/lib/python3.12/site-packages/torch/autograd/graph.py:882: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12090). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.05, LR: 5e-05
+Episode 0/120 | Infra Return: -26.429 | Baseline: -2.643
+Episode 20/120 | Infra Return: -26.429 | Baseline: -25.574
+Episode 40/120 | Infra Return: -41.286 | Baseline: -32.258
+Episode 60/120 | Infra Return: -26.429 | Baseline: -29.447
+Episode 80/120 | Infra Return: -41.286 | Baseline: -32.024
+Episode 100/120 | Infra Return: -26.429 | Baseline: -34.245
+===== EVAL Full System (retrained) (tactical=target_seeking) =====
+
+===== TRAIN BC-only (no RL fine-tuning) =====
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 0 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.05, LR: 5e-05
+===== EVAL BC-only (no RL fine-tuning) (tactical=target_seeking) =====
+
+===== TRAIN w/o BC Pretraining =====
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.05, LR: 5e-05
+Episode 0/120 | Infra Return: -41.286 | Baseline: -4.129
+Episode 20/120 | Infra Return: -41.286 | Baseline: -36.462
+Episode 40/120 | Infra Return: -41.286 | Baseline: -39.014
+Episode 60/120 | Infra Return: -41.286 | Baseline: -40.491
+Episode 80/120 | Infra Return: -41.286 | Baseline: -39.575
+Episode 100/120 | Infra Return: -41.286 | Baseline: -41.078
+===== EVAL w/o BC Pretraining (tactical=target_seeking) =====
+
+===== TRAIN w/o KL Regularization =====
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.0, Entropy coef: 0.05, LR: 5e-05
+Episode 0/120 | Infra Return: -26.429 | Baseline: -2.643
+Episode 20/120 | Infra Return: -26.429 | Baseline: -25.574
+Episode 40/120 | Infra Return: -41.286 | Baseline: -32.258
+Episode 60/120 | Infra Return: -26.429 | Baseline: -29.447
+Episode 80/120 | Infra Return: -41.286 | Baseline: -32.024
+Episode 100/120 | Infra Return: -26.429 | Baseline: -34.245
+===== EVAL w/o KL Regularization (tactical=target_seeking) =====
+
+===== TRAIN w/o Entropy Bonus =====
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.0, LR: 5e-05
+Episode 0/120 | Infra Return: -26.429 | Baseline: -2.643
+Episode 20/120 | Infra Return: -26.429 | Baseline: -25.574
+Episode 40/120 | Infra Return: -41.286 | Baseline: -32.258
+Episode 60/120 | Infra Return: -26.429 | Baseline: -29.447
+Episode 80/120 | Infra Return: -41.286 | Baseline: -32.024
+Episode 100/120 | Infra Return: -26.429 | Baseline: -34.245
+===== EVAL w/o Entropy Bonus (tactical=target_seeking) =====
+
+===== TRAIN w/o WEL/ISR Reward =====
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.05, LR: 5e-05
+Episode 0/120 | Infra Return: -649.658 | Baseline: -64.966
+Episode 20/120 | Infra Return: -567.725 | Baseline: -492.830
+Episode 40/120 | Infra Return: -586.758 | Baseline: -607.552
+Episode 60/120 | Infra Return: -511.338 | Baseline: -570.744
+Episode 80/120 | Infra Return: -459.141 | Baseline: -565.125
+Episode 100/120 | Infra Return: -719.023 | Baseline: -597.075
+===== EVAL w/o WEL/ISR Reward (tactical=target_seeking) =====
+
+===== TRAIN w/o Target-Seeking =====
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 429 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 14.2742
+BC Epoch 20/100 | Loss: 2.0370
+BC Epoch 40/100 | Loss: 0.8411
+BC Epoch 60/100 | Loss: 0.5174
+BC Epoch 80/100 | Loss: 0.4021
+Starting hierarchical RL fine-tuning for 120 episodes...
+  Low-level: target-seeking (fair comparison with all heuristics)
+  Infra reward: -WEL_delta + 20.0*ISR_delta
+  KL coef: 0.3, Entropy coef: 0.05, LR: 5e-05
+Episode 0/120 | Infra Return: -41.286 | Baseline: -4.129
+Episode 20/120 | Infra Return: -41.286 | Baseline: -36.768
+Episode 40/120 | Infra Return: -41.286 | Baseline: -40.736
+Episode 60/120 | Infra Return: -41.286 | Baseline: -41.219
+Episode 80/120 | Infra Return: -41.286 | Baseline: -41.278
+Episode 100/120 | Infra Return: -41.286 | Baseline: -41.285
+===== EVAL w/o Target-Seeking (tactical=mappo) =====
+/home/ali_akarma/venvs/wildfire-marl/lib/python3.12/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+
+Ablation study complete -> results/phase3_peer
