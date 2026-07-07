@@ -1097,3 +1097,222 @@ certified pipeline is deterministic). One headline number verified end-to-end.
 2. **Fresh-venv reproduction approximated** by a same-venv deterministic reproduction plus
    the full software-version disclosure + release manifest; standing up a clean venv is
    deferred to the Phase 9 certification run, where it belongs.
+
+---
+
+# Phase 7 — Figures & Qualitative Evidence
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-07 · **Compute:** figure rendering only
+(rollout replays + plots, a few minutes). New script:
+`scripts/render_phase7_figures.py`; regenerated `scripts/plot_generalization.py`. Figures
+in `results/phase7_peer/`, copied into `AAAI Template/Figures/`.
+
+## Objective (from the plan)
+
+Every figure must support its own caption under adversarial reading. Two of the three
+original figures contradicted theirs (Phase 0 issues H4, C7) and one was a renamed
+smoke-test artifact; the transfer heatmap was vacuous (M1). Regenerate all from **certified**
+artifacts, add the flat-MARL failure-analysis figure (M7), and audit every caption against
+its image.
+
+## 1. Figures Produced (all from certified checkpoints / logs, not smoke tests)
+
+| Figure | File | Source | Fixes |
+|---|---|---|---|
+| 2. Rollout comparison | `comparison_flat_vs_hier.png` | replay of Phase-2 Flat MARL + shipped hierarchy, Saudi seed 2042, step 120 | H4, C7 |
+| (new) Failure analysis | `flat_failure_analysis.png` | Phase-2 `occupancy_saudi.npz` + `behavior_saudi.json` | M7 |
+| 3. Commander dispatch | `commander_decisions.png` | replay of shipped hierarchy, Saudi seed 42, a cross-sector macro-step | M2, C7 |
+| 4. Generalization | `generalization.png` | Phase-5 `generalization_summary_*.json` | M1, H9 (replaces TRS heatmap) |
+| (appendix) Training curves | `baseline_training_curves.png` | Phase-2 `train_curve_*.csv` | H1 convergence evidence |
+
+The old `transfer_heatmap.png` (renamed smoke artifact) is deleted; `Figures/` now holds
+exactly five certified figures. SHA-256 of each placed figure matches its
+`results/phase7_peer/` (or Phase-2/5) source — verified, so the "renamed smoke file"
+failure mode (Phase 0 C7) cannot recur.
+
+## 2. What Each New Figure Now Shows (vs. the old defect)
+
+- **Figure 2 (H4).** Old: both panels titled/valued identically (No-Op vs No-Op, WEL 4.0
+  each). New: genuine **Flat MARL** left panel (agents clustered in the interior, treating
+  cells away from assets, WEL $27.0$/ISR $0.29$) vs the hierarchy (agents on the asset
+  cluster, WEL $15.0$/ISR $0.43$) — the panels differ in both placement and outcome, and the
+  step is stated. Verified visually.
+- **Failure analysis (M7).** New occupancy heatmaps (Flat MARL disperses through the
+  interior; hierarchy concentrates on the asset cluster) + a distance-to-nearest-asset bar
+  panel (No-Op 6.7, Flat MARL 6.8, QMIX 14.7, Hierarchy 2.3, CommNet 2.5). This converts
+  "coordination collapse" from assertion to evidence; cited by the Finding-1 discussion.
+- **Figure 3 (M2).** Old: dispatch stars sat on the agents (no visible routing). New: a real
+  macro-step where **2 of 3 agents are dispatched across sector boundaries**, arrows from
+  agents to distinct asset-adjacent sector centers; caption carries the measured
+  reassignment rates ($27.1\%$ Saudi / $36.6\%$ California) so the "distributes to distinct
+  sectors" claim is backed by both the image and a number, and honestly framed as
+  placement-plus-periodic-reallocation.
+- **Figure 4 (M1/H9).** Old: all-green TRS heatmap ($\geq 0.95$), uninformative. New: grouped
+  $\Delta$WEL bars per held-out condition with a zero line; the strategic policies visibly
+  fall to zero under rotated layouts and cross-region transfer while egocentric policies
+  adapt. The figure can express failure — the property TRS lacked.
+
+## 3. Manuscript Wiring
+
+- Figure 2 and Figure 3 captions rewritten to describe the certified content (region, seed,
+  step, per-panel metrics, reassignment rates).
+- New failure-analysis figure inserted after Figure 2 with `\label{fig:failure}`; a
+  behavioral sentence added to Finding 1 citing it (mean distances $6.8$ vs $2.3$/$2.5$).
+- §9 retitled **Generalization Analysis**; the TRS figure/caption/paragraph replaced with
+  the $\Delta$WEL generalization result (frozen claims P10/P11) as a full-width `figure*`.
+- Training-curves figure added to Appendix~A with `\label{fig:curves}` as baseline
+  convergence evidence (H1).
+- Compiles clean: **11 pages, 0 errors, 0 undefined refs/cites, 0 overfull boxes, 0 missing
+  figures.**
+
+## 4. Caption--Content Audit (gate requirement)
+
+Every figure inspected against its caption and its citing text; all claimed visual features
+are present:
+
+| Figure | Caption claim | Present in image? |
+|---|---|---|
+| 2 | left=Flat MARL clustered, WEL 27.0/ISR 0.29; right=hierarchy on assets, WEL 15.0/ISR 0.43 | ✅ |
+| failure | flat disperses, hierarchy concentrates, $\approx3\times$ closer | ✅ (heatmaps + 6.8 vs 2.3 bars) |
+| 3 | cross-sector dispatch; 2/3 agents cross boundaries; 27.1%/36.6% reassignment | ✅ (arrows cross sector lines) |
+| 4 | $\Delta$WEL, No-Op=0, strategic policies fall to 0 under rotated/cross-region | ✅ (bars at zero) |
+| curves | Saudi MAPPO plateaus at No-Op WEL, CommNet learns; CA MAPPO improves, QMIX doesn't | ✅ |
+
+**Zero caption--content mismatches.** (One cosmetic fix applied mid-phase: the
+generalization figure's baked-in title was neutralized from an editorializing phrase to
+"WEL improvement over No-Op, by condition".)
+
+## 5. Success-Gate Verdict
+
+| Gate criterion (from plan Phase 7) | Result |
+|---|---|
+| Zero caption--content mismatches across all figures (audited independently) | ✅ §4 |
+| Figure 2 panels show different policies with different outcomes, timestep stated | ✅ §2 (WEL 27.0 vs 15.0, step 120) |
+| Figure 3 depicts genuine cross-sector dispatch (or honest recaption); reassignment rate in caption/§7 | ✅ §2 (2/3 cross-sector; rates in caption) |
+| Flat-MARL failure-analysis figure exists and is cited by Finding-1 discussion | ✅ §3 (`fig:failure`, cited) |
+| All figures regenerated at publication resolution from checked-in scripts under `Figures/` | ✅ 200 dpi; scripts in `scripts/`; SHA-256 matched to certified sources |
+
+**GATE: PASS.** Phase 8 (manuscript rewrite & reframe) is cleared.
+
+## Deviations from the plan
+
+1. **§9 body paragraph rewritten in Phase 7** (not just the figure/caption): the transfer
+   paragraph is inseparable from its figure, and leaving TRS prose beside a $\Delta$WEL
+   figure would have been a self-inflicted caption--content mismatch. Used only the frozen
+   P10/P11 claims. The abstract/Findings narrative reframe remains Phase 8's.
+2. **Figures use their original filenames** (overwritten with certified content) rather than
+   new names, so no stale duplicates linger; the one misleading name (`transfer_heatmap.png`)
+   was deleted and replaced by `generalization.png`.
+3. **Finding-1 prose still says "coordination collapse ... both regions"** — left for Phase 8
+   to narrow per P2; Phase 7 only added the (accurate) behavioral-evidence sentence and the
+   figure it cites.
+
+---
+
+# Phase 8 — Manuscript Rewrite & Reframe
+
+**Status:** ✅ COMPLETE · **Date:** 2026-07-07 · **Compute:** table generation + LaTeX
+compiles only. New script: `scripts/emit_phase8_tables.py` (emits Table 1 / App B / App C /
+ablation rows from certified artifacts, so no number is hand-transcribed). Manuscript:
+abstract, introduction, related work, methodology framing, Results (Table 1 + all three
+Findings), compliance section, ablation section, limitations, conclusion, and Appendices
+B/C rewritten. Final PDF: **12 pages, 0 errors, 0 undefined, 0 overfull $>10$pt.**
+
+## Objective (from the plan)
+
+Rewrite the paper around the benchmark + fair-baseline framing, with every claim bounded by
+the frozen `results/phase4_peer/claims_evidence.md` (P1–P12). Close C2, M9, M10, L1, L5, C6,
+and the narrative halves of every earlier issue.
+
+## 1. Reframe (M9, AC consensus)
+
+- **Abstract & Introduction** rewritten from "we propose a hierarchy that dramatically
+  outperforms flat MARL" to the benchmark + diagnosis + reference-solution framing. The
+  contributions list is now (i) benchmark, (ii) diagnostic evaluation, (iii) hierarchical
+  reference solution + compliance diagnostics, (iv) rigorous protocol.
+- **Inflated framing removed:** the $16^N$ action space is explicitly called "modest ...
+  the difficulty is credit assignment under sparse reward, not action-space cardinality"
+  (was "large ... combinatorial"); compliance $=1.000$ is presented as a verified design
+  guarantee, not a discovered finding.
+- **Every headline number is region-qualified**; the word "dramatically" appears $0$ times.
+
+## 2. Findings rewritten to the evidence
+
+| Finding | Now says | Backing claim |
+|---|---|---|
+| 1 | Communication-free MAPPO fails on concentrated assets (Saudi WEL $27.0=$ No-Op at 100k, curves prove plateau, $6.8$ cells from assets); region-specific; CommNet repairs it ($11.43$) | P1, P2, P3 |
+| 2 | Hierarchy comparable to teacher but **TOST-non-equivalent** ($p_{\text{TOST}}=0.36$/$0.20$); no "parity" | P4 |
+| 3 | No method dominates; rank reverses across regions (CommNet best Saudi, Local Reactive best California) | P1, P3 |
+| Ablation | BC-only $=$ full ($p=1.00$, TOST-equivalent $p=0.044$); RL stage inert (weights move $\leq5\times10^{-3}$); BC + target-seeking are load-bearing ($p=3.0\times10^{-5}$) | P5, P6 |
+| §9 | Falsifiable $\Delta$WEL generalization; hierarchy collapses under rotated layouts / cross-region | P10, P11 |
+
+## 3. Tables & integrity fixes
+
+- **Table 1** expanded to all eight reported policies per region with CIs; best-WEL bolding
+  only (CommNet Saudi, Local Reactive California); the near-constant shaped-reward column is
+  **dropped** with justification (L1). Numbers emitted from certified artifacts.
+- **Table 2** (compliance) corrected to the archived Phase-4 values ($1.99$/$2.47$ drift,
+  $0.98$/$1.21$ latency) with SD, and a cross-sector-dispatch row added.
+- **Table 3** (ablation) is now the certified 5-seed table; the full-system row is
+  numerically identical to Table 1's hierarchy ($20.28$) — C1 impossible by construction.
+- **Appendix B** (per-seed) replaced with the **real** values (C6 fabrication removed);
+  variance now matches Table 1.
+- **Appendix C** now reports Welch $t$ with $df$, a degenerate-variance footnote on the
+  $d=13.28$ comparison, and a TOST paragraph.
+- Effect sizes on degenerate baselines carry the explicit caveat (P6); no equivalence claim
+  without TOST (P4/P5).
+
+## 4. Related Work (M10)
+
+Added the 2024–2026 recency/positioning pass: an explicit "to our knowledge, no prior work
+targets multi-agent, infrastructure-weighted suppression on a validated physics engine" gap
+statement with an explicit disavowal of algorithmic-novelty claims for the controller, and
+a full sentence positioning OR suppression-planning (MIP firebreak placement) as
+complementary rather than a dismissed competitor. The CTDE paragraph now states the tested,
+region-dependent result instead of asserting universal collapse.
+
+## 5. Consistency Sweep (R1 §6 audit re-run against the new draft)
+
+All six original inconsistencies + the three new integrity defects verified resolved by
+grep:
+
+| Original inconsistency | Status |
+|---|---|
+| Table 1 (20.28) vs Table 3 (17.4) | ✅ both $20.28$; `17.4` occurs $0$ times |
+| Abstract flat-MARL claim vs App. C California | ✅ "dramatically" $\times0$; claim region-qualified |
+| Figure 2 caption vs panel (No-Op) | ✅ regenerated (Phase 7), real Flat MARL |
+| §9 "TRS $>0.95$" vs Fig 4 | ✅ "Transfer Robustness" $\times0$; $\Delta$WEL generalization |
+| App. D QMIX hashes vs no QMIX results | ✅ QMIX in Table 1 both regions |
+| Missing `altameem2022wildfire` | ✅ `altamimi2022wildfire` resolves (0 undefined) |
+| C6 fabricated per-seed | ✅ Appendix B real values |
+| C7 smoke figures | ✅ regenerated (Phase 7) |
+| C8 Table 4 hyperparameters | ✅ fixed (Phase 6) |
+
+Positive cross-document checks: $20.28$ consistent across Table 1 / ablation / Finding 2;
+CommNet $11.4$/$11.43$ consistent abstract/table/findings; compliance $1.99$/$0.98$ and
+reassignment $27.1\%$/$36.6\%$ consistent between Table 2 and §7; stale hyperparameters
+($\lambda=0.1$, $\beta=0.01$, $K=500$) and old compliance values ($4.32$, $1.67$) occur
+$0$ times.
+
+## 6. Success-Gate Verdict
+
+| Gate criterion (from plan Phase 8) | Result |
+|---|---|
+| Every quantitative claim in abstract/findings/conclusion appears in the claims-to-evidence table with a passing test | ✅ §2 mapping; all trace to P1–P12 |
+| "dramatically" only where both regions support it, or region-qualified | ✅ appears $0$ times |
+| No equivalence/parity without TOST; no effect size without variance context | ✅ §3 (TOST used; $d=13.28$ footnoted) |
+| Contributions list matches benchmark + diagnosis + reference-solution framing | ✅ §1 |
+| §2 contains the recency check + expanded OR-planning positioning | ✅ §4 |
+| Full-document consistency pass: zero contradictions; all six original inconsistencies resolved | ✅ §5 |
+
+**GATE: PASS.** Phase 9 (certification & submission) is cleared.
+
+## Deviations from the plan
+
+1. **Reward column dropped rather than decomposed** (L1): a decomposition table would add
+   little given the $<0.2\%$ policy effect; dropping it with a one-sentence justification is
+   cleaner and the reward decomposition lives in the appendix data.
+2. **Broader Impacts left unchanged**: all three reviewers rated it a strength; no edit
+   needed.
+3. Some structural section titles retained (e.g.\ "Compliance and Interpretability") where
+   the content, not the heading, carried the fix.

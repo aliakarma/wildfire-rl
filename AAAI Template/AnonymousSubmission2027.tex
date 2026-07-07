@@ -42,7 +42,7 @@
 % ABSTRACT
 % ====================================================================
 \begin{abstract}
-Coordinating multi-agent teams for wildfire suppression under realistic fire physics is a severe spatial-temporal challenge. Standard decentralized multi-agent reinforcement learning (MARL) suffers from \emph{coordination collapse}: agents with limited egocentric observations redundantly suppress nearby cells while failing to defend distant, high-value infrastructure. We propose a decoupled hierarchical architecture that separates \emph{strategic macro-dispatch}---assigning agents to spatial sectors based on threat and asset priority---from \emph{tactical micro-execution} via a deterministic target-seeking compliance policy. To stabilize strategic learning, we warm-start the commander via behavior cloning (BC) from a domain-expert heuristic and fine-tune with KL-regularized policy gradients and infrastructure-weighted economic rewards. We evaluate on two real-world GIS topographies using validated Cell2Fire wildfire physics: Saudi Arabian petroleum infrastructure and California Wildland-Urban Interface (WUI) zones. Over 5 seeds $\times$ 15 episodes, our learned hierarchy statistically matches a hand-crafted expert heuristic on Weighted Economic Loss ($p = 0.115$ Saudi; $p = 0.952$ California) while dramatically outperforming flat MARL ($p = 3.0 \times 10^{-5}$, Cohen's $d = 13.28$). Compliance diagnostics confirm near-perfect target adherence (compliance rate $1.000$, dispatch latency $1.67$ steps), providing interpretable evidence that strategic intent translates into coordinated physical behavior. Code, checkpoints, and reproducibility manifests are available in the supplementary material.
+Coordinating multi-agent teams to defend critical infrastructure during wildfires is a spatial-temporal decision problem that couples strategic asset prioritization with local suppression. We contribute an \emph{infrastructure-aware wildfire-coordination benchmark} built on the validated Cell2Fire physics engine and two documented, GIS-derived landscapes---Saudi Arabian petroleum infrastructure and California Wildland-Urban Interface (WUI) zones---together with a rigorous, fully reproducible evaluation of decentralized, communication-based, hierarchical, and heuristic controllers under a uniform 5-seed $\times$ 15-episode protocol. Our study yields three findings. First, the benchmark is \emph{diagnostic}: policy classes reverse rank across regions---a learned communication policy (CommNet) is strongest on concentrated petroleum assets (Weighted Economic Loss $11.4$ vs.\ $27.0$ for no-operation), whereas simple reactive coverage is strongest on scattered WUI assets---so no single method dominates. Second, we isolate a concrete failure mode: even with a matched objective and a $10\times$ larger training budget, \emph{communication-free} MAPPO fails to defend concentrated infrastructure, remaining at the no-operation loss level while operating, on average, $6.8$ cells from the nearest asset. Third, a behavior-cloned, KL-regularized hierarchical commander serves as an interpretable reference solution with compliance guaranteed by construction; we show through equivalence testing that it is \emph{comparable to but not statistically equivalent to} its expert teacher, and through a falsifiable generalization metric that its learned sector preferences do not transfer to rotated layouts or across regions. We release code, checkpoints, GIS pipeline, and a hashed reproducibility manifest.
 \end{abstract}
 
 % ====================================================================
@@ -53,24 +53,18 @@ Coordinating multi-agent teams for wildfire suppression under realistic fire phy
 
 Wildfire suppression demands coordinated allocation of limited suppression resources across a dynamically evolving hazard landscape. When critical infrastructure---petroleum refineries, pipeline junctions, residential structures---lies in the path of an advancing fire front, the coordination challenge intensifies: agents must \emph{strategically prioritize} which assets to defend rather than simply minimizing total burned area. This infrastructure-defense framing distinguishes wildfire suppression from generic fire-containment problems and motivates the present work.
 
-\paragraph{Problem: Flat MARL Fails.}
-Standard decentralized MARL algorithms such as MAPPO \citep{yu2022mappo} and QMIX \citep{rashid2018qmix} equip agents with local egocentric observations and learn decentralized policies via centralized training. Under partial observability and dynamic fire spread, these methods exhibit \emph{coordination collapse}: agents cluster near locally visible fire, redundantly treating the same cells while distant high-value assets burn undefended. In our experiments, flat MARL agents achieve infrastructure survival rates indistinguishable from a no-operation baseline (Section~\ref{sec:results}).
+\paragraph{Problem: When does decentralized MARL fail?}
+Standard decentralized MARL algorithms such as MAPPO \citep{yu2022mappo} and QMIX \citep{rashid2018qmix} equip agents with local egocentric observations and learn decentralized policies via centralized training. A recurring concern is that, under partial observability, agents cluster near locally visible fire and fail to allocate effort toward distant high-value assets. Rather than assert this failure in general, we treat it as an empirical question and give it a fair test: we train each baseline for a $10\times$ larger budget on the \emph{same} infrastructure-weighted objective used for evaluation. The result is region-dependent (Section~\ref{sec:results}): on concentrated petroleum infrastructure, communication-free MAPPO indeed fails---its Weighted Economic Loss is indistinguishable from taking no action---while on scattered residential assets it partially succeeds, and a learned \emph{communication} baseline succeeds in both. The failure is thus specific, not universal, and the benchmark's value is precisely that it separates these cases.
 
-\paragraph{Insight: Strategic Intent Requires Tactical Compliance.}
-Hierarchical reinforcement learning (HRL) can, in principle, resolve this failure by introducing a strategic commander that dispatches agents to priority sectors. However, a critical systems-level issue arises: if low-level agents do not reliably \emph{comply} with strategic directives, the commander's decisions become decoupled from physical outcomes. We term this the \emph{compliance gap}---the discrepancy between strategic intent and realized agent behavior. Prior HRL work rarely measures or reports this gap.
-
-\paragraph{Solution: Decoupled Hierarchical Coordination.}
-We propose a two-timescale architecture: (1) a learned \textbf{strategic commander} that assigns each agent to one of $M = 16$ spatial sectors every $T_{\text{macro}} = 10$ steps, and (2) a deterministic \textbf{target-seeking compliance policy} that routes agents to their assigned sector centers and executes local suppression. By decoupling tactical execution from strategic learning, we guarantee that the commander's decisions directly control spatial allocation, eliminating the compliance gap.
-
-\paragraph{Result: Expert-Level Infrastructure Defense.}
-On two real-world GIS topographies---Saudi Arabian petroleum grids and California WUI zones---evaluated under validated Cell2Fire wildfire physics, our learned hierarchy statistically matches a domain-expert heuristic baseline on infrastructure-weighted economic metrics while dramatically outperforming flat decentralized MARL (Table~\ref{tab:main_results}).
+\paragraph{A reference solution and the compliance gap.}
+Hierarchical reinforcement learning (HRL) offers one structured remedy: a strategic commander that dispatches agents to priority sectors. A systems-level subtlety, however, is that if low-level agents do not reliably \emph{comply} with strategic directives, the commander's decisions decouple from physical outcomes---we call this the \emph{compliance gap}. We adopt a design that closes this gap by construction: (1) a \textbf{strategic commander} assigns each agent to one of $M = 16$ spatial sectors every $T_{\text{macro}} = 10$ steps, and (2) a deterministic \textbf{target-seeking policy} routes agents to their assigned sectors, so compliance is guaranteed rather than learned. We present this hierarchy as an \emph{interpretable reference solution} rather than a performance-maximizing method: it matches its behavior-cloned expert teacher (though, as we show by equivalence testing, it is not statistically equivalent to it) and is a transparent point of comparison for the benchmark.
 
 \paragraph{Contributions.} Our contributions are:
 \begin{enumerate}
-    \item A \textbf{decoupled hierarchical MARL framework} for wildfire suppression built on validated Cell2Fire physics, providing infrastructure-aware benchmarks on real Saudi and California GIS topographies.
-    \item A \textbf{stable training pipeline} combining BC warm-start, KL-regularized policy gradients, and infrastructure-weighted economic reward shaping.
-    \item A \textbf{compliance diagnostics framework} measuring target adherence, dispatch latency, and sector drift---providing interpretable evidence that strategic intent translates into physical coordination.
-    \item \textbf{Rigorous statistical evaluation} across 5 seeds with bootstrap 95\% CIs, Welch's $t$-tests, Cohen's $d$ effect sizes, and component ablations.
+    \item An \textbf{infrastructure-aware wildfire-coordination benchmark} on the validated Cell2Fire physics engine and two documented, GIS-derived landscapes (Saudi petroleum and California WUI), with a released data pipeline and hashed manifests.
+    \item A \textbf{diagnostic evaluation} of decentralized (MAPPO, QMIX), communication-based (CommNet), heuristic, and hierarchical controllers under a uniform protocol, showing that policy classes reverse rank across regions and pinpointing a concrete failure mode of communication-free MARL on concentrated assets---supported by training curves and behavioral analysis.
+    \item A \textbf{hierarchical reference solution} with compliance guaranteed by construction, plus a \textbf{compliance-diagnostics} framework (adherence, dispatch latency, reassignment rate) that quantifies how strategic intent maps to physical behavior.
+    \item A \textbf{rigorous statistical protocol}---5 seeds, bootstrap 95\% CIs, Welch's $t$-tests with reported degrees of freedom, TOST equivalence testing, and a falsifiable generalization metric---applied uniformly across all claims.
 \end{enumerate}
 
 % ====================================================================
@@ -83,10 +77,10 @@ On two real-world GIS topographies---Saudi Arabian petroleum grids and Californi
 Wildfire spread modeling has progressed from simple cellular automata to physics-based simulators. Cell2Fire \citep{pais2021cell2fire} implements the Canadian Forest Fire Behavior Prediction (FBP) system with heterogeneous fuel types, wind effects, and topographic slope corrections. Operational research approaches optimize firebreak placement using mixed-integer programming \citep{hu2009wildfire} but assume global state observability and static fire behavior, neither of which holds during active suppression. Our work uses Cell2Fire as a validated physics backend while framing suppression as a sequential decision problem under partial observability.
 
 \paragraph{Reinforcement Learning for Wildfire and Disaster Response.}
-Recent RL approaches to wildfire include UAV-based detection \citep{ghali2022, partheepan2023}, landscape-scale fuel-treatment planning \citep{altamimi2022wildfire}, and grid-based suppression agents on Cell2Fire \citep{shen2022firehose}. However, most use simplified fire dynamics without validated physics, single-agent formulations, or toy grid sizes that lack realistic infrastructure. Disaster-response RL more broadly has explored resource allocation \citep{nguyen2019disaster}, but rarely addresses the spatial coordination challenge of multi-agent infrastructure defense under physically grounded fire spread.
+Recent RL approaches to wildfire include UAV-based detection \citep{ghali2022, partheepan2023}, landscape-scale fuel-treatment planning \citep{altamimi2022wildfire}, and grid-based suppression agents on Cell2Fire \citep{shen2022firehose}. Most use simplified fire dynamics without validated physics, single-agent formulations, or toy grids that lack realistic infrastructure; the closest prior system, Firehose \citep{shen2022firehose}, is single-objective (burned-area) and single-agent. To our knowledge, no prior work targets \emph{multi-agent, infrastructure-weighted} suppression on a validated physics engine, which is the gap our benchmark addresses; we make no claim of algorithmic novelty in the hierarchical controller itself. Operations-research approaches remain the deployed state of the art for suppression \emph{planning}: they optimize firebreak or resource placement via mixed-integer programming \citep{hu2009wildfire} under global observability and quasi-static fire, and are complementary to---not competitors of---the sequential, partially observed, reactive-suppression setting we study. Disaster-response RL more broadly has explored resource allocation \citep{nguyen2019disaster} but rarely the spatial coordination of multi-agent infrastructure defense under physically grounded fire spread.
 
 \paragraph{Cooperative MARL and Communication.}
-Centralized Training with Decentralized Execution (CTDE) is the dominant paradigm for cooperative MARL. QMIX \citep{rashid2018qmix} factorizes joint value functions under monotonicity constraints; MAPPO \citep{yu2022mappo} applies PPO \citep{schulman2017} with centralized critics. CommNet \citep{sukhbaatar2016learning} and TarMAC \citep{das2019tarmac} add learned communication channels. These methods assume agents can learn implicit coordination from reward signals alone. Under partial observability with dynamic wildfire spread, we show empirically that this assumption fails---flat MARL agents exhibit coordination collapse identical to no-operation baselines.
+Centralized Training with Decentralized Execution (CTDE) is the dominant paradigm for cooperative MARL. QMIX \citep{rashid2018qmix} factorizes joint value functions under monotonicity constraints; MAPPO \citep{yu2022mappo} applies PPO \citep{schulman2017} with centralized critics. CommNet \citep{sukhbaatar2016learning} and TarMAC \citep{das2019tarmac} add learned communication channels. A common assumption is that agents can learn implicit coordination from reward signals alone. We test this directly on our benchmark and find it holds only partially: communication-free MAPPO fails to defend concentrated infrastructure even with a fair budget, whereas adding a CommNet communication channel recovers strong performance---evidence that the operative bottleneck is inter-agent coordination rather than low-level skill.
 
 \paragraph{Hierarchical Reinforcement Learning.}
 The options framework \citep{sutton1999options} and feudal networks \citep{vezhnevets2017feudal} introduce temporal abstraction via subgoal hierarchies. HAM \citep{parr1998hams} and MAXQ \citep{dietterich2000maxq} decompose MDPs into subtask hierarchies. In multi-agent settings, RODE \citep{wang2021rode} uses role decomposition, while MAVEN \citep{mahajan2019maven} conditions on shared latent variables. Most prior HRL work uses \emph{learned} low-level policies that are jointly optimized with the high-level controller. A key distinction of our approach is that we \emph{deliberately decouple} the tactical layer into a deterministic target-seeking policy, which guarantees that strategic decisions control spatial allocation and enables direct compliance measurement.
@@ -185,7 +179,7 @@ Given a sector assignment $a_i^{\text{macro}} = k$, the tactical policy routes a
 
 \subsection{BC Warm-Start and KL-Regularized Fine-Tuning}
 \label{sec:training}
-Training the commander from scratch via policy gradients is unstable: the reward signal is sparse (infrastructure loss occurs only when fire reaches assets) and the combinatorial action space ($16^N$) is large. We address this with a two-phase pipeline:
+Training the commander from scratch via policy gradients is unstable, primarily because the reward signal is sparse and delayed: infrastructure loss registers only once fire reaches an asset, many macro-steps after the dispatch decisions that determined the outcome. (The joint macro-action space, $16^N$ with $N=3$, is modest in size; the difficulty is credit assignment under sparse reward, not action-space cardinality.) We address the sparse-reward problem with a two-phase pipeline:
 
 \paragraph{Phase 1: Behavior Cloning.}
 We collect $K = 40$ episodes of sector assignments from a \emph{Value-First} heuristic---a hand-designed policy that assigns agents to the sector with the highest ratio of threatened asset value to active fire proximity. The commander is trained via cross-entropy loss to imitate this expert:
@@ -257,7 +251,7 @@ $N = 3$ suppression agents operate simultaneously. We compare:
 \end{itemize}
 
 \paragraph{Statistical Protocol.}
-All results are evaluated over \textbf{5 independent seeds} with \textbf{15 episodes per seed}. We report means with bootstrap 95\% confidence intervals, Welch's $t$-test $p$-values, and Cohen's $d$ effect sizes.
+All results are evaluated over \textbf{5 independent seeds} with \textbf{15 episodes per seed}; the \emph{seed mean} is the unit of analysis ($n=5$). We report means with bootstrap 95\% confidence intervals and Welch's $t$-tests with Welch--Satterthwaite degrees of freedom (reported per test); Cohen's $d$ is pooled-SD and is omitted where a distribution is degenerate. For equivalence claims we use two one-sided tests (TOST) with a pre-registered margin of $\pm5\%$ of the reference policy's mean WEL. Decentralized baselines (MAPPO, QMIX, CommNet) are trained for $100$k environment steps on the same WEL/ISR objective used for evaluation (Appendix~A), removing any objective-level confound.
 
 % ====================================================================
 % 6. RESULTS
@@ -268,46 +262,62 @@ All results are evaluated over \textbf{5 independent seeds} with \textbf{15 epis
 % --- Table 1: Main Results ---
 \begin{table*}[t]
 \centering
-\caption{\textbf{Main results} across 5 seeds $\times$ 15 episodes. Values in brackets denote bootstrap 95\% CIs. The learned hierarchy matches the expert heuristic and dramatically outperforms flat MARL on infrastructure-weighted metrics.}
+\caption{\textbf{Main results} across 5 seeds $\times$ 15 episodes (seed means, $n=5$; brackets are bootstrap 95\% CIs). Lower WEL / higher ISR is better; \textbf{bold} marks the best WEL per region. No single policy dominates: CommNet is strongest on concentrated Saudi assets, simple reactive coverage on scattered California assets. Rows with no CI have zero across-seed variance.}
 \label{tab:main_results}
 \vspace{0.5em}
-\begin{tabular}{llcccc}
+\begin{tabular}{llcc}
 \toprule
-Region & Policy & WEL $\downarrow$ & ISR $\uparrow$ & Reward $\uparrow$ & CE $\uparrow$ \\
+Region & Policy & WEL $\downarrow$ & ISR $\uparrow$ \\
 \midrule
-\multirow{4}{*}{\textbf{Saudi Arabia}}
-& No-Op & 27.00 & 0.286 & $-549.14$ & 1.000 \\
-& Flat MARL & 27.00 & 0.286 & $-548.99$ & 0.975 \\
-& Value-First & 19.48 \small{[19.0, 20.1]} & 0.375 \small{[0.37, 0.38]} & $-548.13$ & 0.996 \\
-& \textbf{Hierarchical} & \textbf{20.28} \small{[19.8, 20.9]} & \textbf{0.366} \small{[0.36, 0.37]} & $\mathbf{-548.07}$ & 0.995 \\
+\multirow{8}{*}{\textbf{Saudi Arabia}}
+& No-Op & 27.00 & 0.286 \\
+& Greedy-Risk & 27.00 & 0.286 \\
+& Local Reactive & 26.63 \small{[25.9, 27.0]} & 0.290 \\
+& Flat MARL (MAPPO) & 27.00 & 0.286 \\
+& QMIX & 25.08 \small{[24.4, 25.8]} & 0.320 \\
+& CommNet & \textbf{11.43} \small{[9.0, 14.0]} & 0.457 \\
+& Value-First (expert) & 19.48 \small{[19.0, 20.1]} & 0.375 \\
+& Hierarchical (ours) & 20.28 \small{[19.8, 20.9]} & 0.366 \\
 \midrule
-\multirow{4}{*}{\textbf{California}}
-& No-Op & 25.25 & 0.231 & $-423.08$ & 1.000 \\
-& Flat MARL & 25.25 & 0.231 & $-423.08$ & 0.894 \\
-& Value-First & 24.61 \small{[22.9, 26.1]} & 0.249 \small{[0.21, 0.30]} & $-420.83$ & 0.991 \\
-& \textbf{Hierarchical} & \textbf{24.53} \small{[22.9, 26.1]} & \textbf{0.251} \small{[0.21, 0.30]} & $\mathbf{-420.79}$ & 0.984 \\
+\multirow{8}{*}{\textbf{California}}
+& No-Op & 25.25 \small{[23.4, 27.1]} & 0.231 \\
+& Greedy-Risk & 25.21 \small{[23.3, 27.1]} & 0.233 \\
+& Local Reactive & \textbf{15.13} \small{[12.9, 17.6]} & 0.471 \\
+& Flat MARL (MAPPO) & 23.33 \small{[21.4, 25.3]} & 0.249 \\
+& QMIX & 25.25 \small{[23.4, 27.1]} & 0.231 \\
+& CommNet & 19.17 \small{[16.8, 21.5]} & 0.389 \\
+& Value-First (expert) & 24.61 \small{[23.0, 26.2]} & 0.249 \\
+& Hierarchical (ours) & 24.53 \small{[23.0, 26.1]} & 0.251 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-Table~\ref{tab:main_results} presents the certified multi-seed results. Three key findings emerge:
+Table~\ref{tab:main_results} presents the multi-seed results. We omit the shaped-reward column: it is dominated by a policy-independent burned-area constant ($\approx-549$ Saudi, $-423$ California), so between-policy differences of $<1$ on that scale are not meaningful; WEL and ISR are the infrastructure-relevant metrics. Three findings emerge.
 
-\paragraph{Finding 1: Flat MARL Exhibits Coordination Collapse.}
-Flat MARL achieves WEL and ISR values indistinguishable from the No-Op baseline in both regions. Despite centralized training, decentralized MAPPO agents cluster near locally visible fire and fail to allocate suppression effort toward distant infrastructure. In Saudi Arabia, flat agents achieve CE = 0.975, indicating minor spatial overlap, yet infrastructure survival is identical to doing nothing---the agents suppress fire in the wrong locations.
+\paragraph{Finding 1: Communication-free MARL fails on concentrated infrastructure---a specific, not universal, failure.}
+On Saudi petroleum assets, MAPPO's WEL is $27.00$, exactly the No-Op level, despite $100$k training steps on the matched objective; QMIX barely improves ($25.08$). The training curves (Figure~\ref{fig:curves}) show MAPPO plateauing at this level rather than diverging, so the failure is not an undertrained-baseline artifact. Behavioral logging makes the mechanism concrete: flat MARL agents operate at a mean Chebyshev distance of $6.8$ cells from the nearest asset (versus $2.3$ for the hierarchy and $2.5$ for CommNet), spending effort far from the infrastructure they must defend (Figures~\ref{fig:comparison},~\ref{fig:failure}). The failure is region-specific: on scattered California assets the same MAPPO improves over No-Op ($23.33$ vs.\ $25.25$, though not significantly, $p=0.25$). Crucially, adding a learned communication channel repairs the concentrated-asset failure---CommNet reaches WEL $11.43$ on Saudi, the best of any method---indicating the bottleneck is inter-agent coordination, not low-level skill.
 
 % --- Figure 2: Side-by-Side Rollout Comparison ---
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{Figures/comparison_flat_vs_hier.png}
-    \caption{\textbf{Qualitative rollout comparison.} Left: Flat MARL agents cluster near local fire, leaving petroleum infrastructure (red stars) undefended. Right: Hierarchical agents are dispatched to asset-adjacent sectors, establishing containment lines around critical infrastructure.}
+    \caption{\textbf{Qualitative rollout comparison} (Saudi, seed 2042, mid-episode snapshot at step 120). \emph{Left:} the retrained Flat MARL policy (MAPPO, 100k steps, trained on the same WEL/ISR objective) clusters its agents (circles) near the interior fire and treats cells (blue) away from the gold infrastructure markers, which all burn (WEL $27.0$, ISR $0.29$). \emph{Right:} the hierarchy positions agents adjacent to high-value assets, keeping several unburned (WEL $15.0$, ISR $0.43$). WEL accumulates as assets burn, so the mid-episode value is below the episode total; the two panels differ in both agent placement and outcome.}
     \label{fig:comparison}
 \end{figure}
 
-\paragraph{Finding 2: Learned Hierarchy Matches Expert Heuristic.}
-On Saudi Arabia, the learned hierarchy achieves WEL = 20.28 versus the Value-First heuristic's 19.48 ($p = 0.115$, Welch's $t$-test). On California, the hierarchy achieves WEL = 24.53 versus 24.61 ($p = 0.952$). In both regions, the 95\% CIs overlap substantially, confirming statistical parity.
+% --- Figure: Flat MARL failure analysis (behavioral evidence) ---
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{Figures/flat_failure_analysis.png}
+    \caption{\textbf{Where agents spend time (Saudi).} \emph{Left, center:} time-integrated cell occupancy over all evaluation episodes for Flat MARL and the hierarchy (cyan stars = infrastructure). Flat MARL disperses through the interior; the hierarchy concentrates occupancy on the asset cluster. \emph{Right:} mean Chebyshev distance to the nearest asset per policy---the strategic and communication policies operate $\approx 3\times$ closer to infrastructure than Flat MARL, QMIX, or inaction.}
+    \label{fig:failure}
+\end{figure}
 
-\paragraph{Finding 3: Hierarchy Dramatically Outperforms Flat MARL.}
-Against flat MARL, the hierarchy improves WEL from 27.00 to 20.28 in Saudi Arabia ($p = 3.039 \times 10^{-5}$, Cohen's $d = 13.28$---an extremely large effect). This demonstrates that strategic coordination, not just low-level skill, is the bottleneck for infrastructure defense under partial observability.
+\paragraph{Finding 2: The hierarchy is comparable to---but not statistically equivalent to---its expert teacher.}
+The learned hierarchy tracks its Value-First teacher closely: Saudi WEL $20.28$ vs.\ $19.48$ (Welch $t=-1.77$, $df=8.0$, $p=0.115$), California $24.53$ vs.\ $24.61$ ($t=0.06$, $df=8.0$, $p=0.95$). We deliberately avoid inferring equivalence from non-significance: a TOST at the pre-registered $\pm5\%$ margin \emph{fails} to establish equivalence in either region ($p_{\text{TOST}}=0.36$ Saudi, $0.20$ California), and on Saudi the teacher retains a nominal edge ($d=1.12$). The honest reading is that the hierarchy is a competitive reference solution that neither beats nor is proven equal to the heuristic it clones---consistent with our positioning of it as an interpretable baseline rather than a performance contribution.
+
+\paragraph{Finding 3: No method dominates; the benchmark is diagnostic.}
+Ranking reverses across regions (Table~\ref{tab:main_results}): CommNet is best on Saudi ($11.43$; vs.\ hierarchy $t=-5.89$, $df=4.4$, $p=0.003$, $d=-3.72$), whereas a trivial reactive-coverage policy is best on California ($15.13$; vs.\ hierarchy $t=-3.30$, $df=6.9$, $p=0.013$, $d=-2.09$). Concentrated petroleum assets reward learned communication and strategic dispatch; scattered WUI assets reward broad coverage. This reversal is the benchmark's central diagnostic property: it discriminates between coordination strategies that a single-region evaluation would conflate, and it is why we present the environment and this comparison, rather than any one controller, as the contribution.
 
 % ====================================================================
 % 7. COMPLIANCE AND INTERPRETABILITY ANALYSIS
@@ -315,20 +325,21 @@ Against flat MARL, the hierarchy improves WEL from 27.00 to 20.28 in Saudi Arabi
 \section{Compliance and Interpretability}
 \label{sec:compliance}
 
-A central claim of our work is that the decoupled architecture eliminates the compliance gap between strategic intent and tactical execution. We validate this with three diagnostic metrics:
+The decoupled architecture closes the compliance gap \emph{by construction}: because the tactical layer deterministically seeks the assigned sector, the commander's decisions necessarily control spatial allocation. We therefore do not present compliance as a discovered result; instead we \emph{verify} the guarantee holds in implementation and quantify the resulting behavior with three diagnostics (Table~\ref{tab:compliance}), archived over the full 5-seed protocol.
 
 \begin{table}[t]
 \centering
-\caption{\textbf{Tactical compliance diagnostics.}}
+\caption{\textbf{Tactical compliance diagnostics} (5 seeds $\times$ 15 episodes; mean\,$\pm$\,SD). Compliance is $1.000$ by construction; drift and latency are behavioral consequences.}
 \label{tab:compliance}
 \vspace{0.5em}
 \begin{tabular}{lcc}
 \toprule
 Metric & Saudi & California \\
 \midrule
-Target Compliance Rate & 1.000 & 1.000 \\
-Mean Sector Drift (cells) & 4.32 & 4.18 \\
-Dispatch Latency (steps) & 1.67 & 1.72 \\
+Target Compliance Rate & $1.000 \pm 0.000$ & $1.000 \pm 0.000$ \\
+Mean Sector Drift (cells) & $1.99 \pm 0.35$ & $2.47 \pm 1.06$ \\
+Dispatch Latency (steps) & $0.98 \pm 0.29$ & $1.21 \pm 0.62$ \\
+Cross-sector dispatch rate & $27.1\%$ & $36.6\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -337,18 +348,15 @@ Dispatch Latency (steps) & 1.67 & 1.72 \\
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{Figures/commander_decisions.png}
-    \caption{\textbf{Commander dispatch visualization.} Arrows show agent routing from current positions (circles) to assigned sector centers (stars). The 4$\times$4 sector grid is overlaid on the fire/asset map. The commander distributes agents to distinct high-value sectors, avoiding overlap.}
+    \caption{\textbf{Commander dispatch visualization} (Saudi, seed 42, a macro-step with a cross-sector dispatch). Arrows show agent routing from current positions (white circles) to assigned sector centers (blue stars); the $4\times4$ sector grid is overlaid on the fire/asset map (gold stars = infrastructure). Here two of three agents are dispatched \emph{across} sector boundaries toward asset-adjacent sectors. Averaged over all evaluation episodes, the commander dispatches an agent to a sector other than its current one in $27.1\%$ (Saudi) / $36.6\%$ (California) of dispatch events; strategic dispatch is thus a mix of initial placement and periodic cross-sector reallocation, not continuous re-routing.}
     \label{fig:commander}
 \end{figure}
 
-\paragraph{Target Compliance Rate.}
-Across all evaluated episodes in both regions, agents \emph{always} move toward their assigned sector center (compliance rate = 1.000). This is by construction: the target-seeking policy guarantees compliance. The diagnostic value lies in confirming that no implementation errors break this guarantee.
+\paragraph{Compliance and latency.}
+Compliance is $1.000$ in every episode---the intended guarantee, verified free of implementation error. Agents reach within one cell of their assigned sector center in $\approx1$ step on average ($0.98$ Saudi, $1.21$ California), far inside the $T_{\text{macro}}=10$ interval, so they are in position for the bulk of each macro-period.
 
-\paragraph{Dispatch Latency.}
-Agents reach within 1 cell of their assigned sector center in an average of 1.67 steps (Saudi) and 1.72 steps (California) after a dispatch event---substantially faster than the $T_{\text{macro}} = 10$-step inter-dispatch interval, confirming that agents are in position for the majority of each macro-period.
-
-\paragraph{Sector Drift.}
-Mean Euclidean drift from sector centers is 4.32 cells (Saudi), reflecting the expected behavior: agents navigate toward the center, then move outward to suppress nearby fire. The drift is well within sector boundaries ($8 \times 8$ cells each), confirming spatial partitioning.
+\paragraph{Reassignment---an honest account of ``strategic dispatch.''}
+Mean drift from sector centers is $1.99$/$2.47$ cells, well within the $8\times8$ sectors. Importantly, the commander re-routes an agent \emph{across} sectors in only $27.1\%$ (Saudi) / $36.6\%$ (California) of dispatch events (Figure~\ref{fig:commander}); the remainder keep an agent in its current sector. Strategic behavior is therefore dominated by initial placement plus occasional reallocation, not continuous re-tasking---a caveat that tempers any interpretation of the commander as performing fine-grained dynamic control.
 
 % ====================================================================
 % 8. ABLATION ANALYSIS
@@ -356,55 +364,50 @@ Mean Euclidean drift from sector centers is 4.32 cells (Saudi), reflecting the e
 \section{Ablation Analysis}
 \label{sec:ablation}
 
-We ablate each design component independently (Table~\ref{tab:ablation}).
+We ablate each design component under the same 5-seed protocol as the main results; the full-system row is \emph{the same runs} as the hierarchy in Table~\ref{tab:main_results} (Table~\ref{tab:ablation}).
 
 \begin{table}[t]
 \centering
-\caption{\textbf{Component ablation on Saudi Arabia.} Each row removes one design element from the full system.}
+\caption{\textbf{Component ablation on Saudi Arabia} (5 seeds $\times$ 15 episodes; brackets are 95\% CIs). The full-system row reuses the Table~\ref{tab:main_results} hierarchy runs. $p$ is Welch's test vs.\ the full system.}
 \label{tab:ablation}
 \vspace{0.5em}
 \begin{tabular}{lccc}
 \toprule
-Configuration & WEL $\downarrow$ & ISR $\uparrow$ & CE $\uparrow$ \\
+Configuration & WEL $\downarrow$ & ISR $\uparrow$ & $p$ vs.\ full \\
 \midrule
-Full System & \textbf{17.4} & \textbf{0.400} & 0.997 \\
+Full System & 20.28 \small{[19.8, 20.9]} & 0.366 & --- \\
+BC-only (no RL) & 20.28 \small{[19.6, 20.9]} & 0.366 & $1.00$ \\
 \midrule
-w/o BC Pretraining & 27.0 & 0.286 & 0.999 \\
-w/o KL Regularization & 18.2 & 0.390 & 0.994 \\
-w/o Entropy Bonus & 17.4 & 0.400 & 0.994 \\
-w/o WEL/ISR Reward & 18.2 & 0.390 & 0.991 \\
-w/o Target-Seeking & 18.2 & 0.390 & 0.992 \\
+w/o BC Pretraining & 27.00 \small{[27.0, 27.0]} & 0.286 & $3.0\!\times\!10^{-5}$ \\
+w/o KL Regularization & 20.76 \small{[20.3, 21.2]} & 0.360 & $0.31$ \\
+w/o Entropy Bonus & 20.76 \small{[20.3, 21.2]} & 0.360 & $0.31$ \\
+w/o WEL/ISR Reward & 20.60 \small{[19.6, 21.6]} & 0.362 & $0.64$ \\
+w/o Target-Seeking & 27.00 \small{[27.0, 27.0]} & 0.286 & $3.0\!\times\!10^{-5}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{BC Pretraining is Critical.}
-Without BC initialization, the commander learns from scratch and converges to a degenerate policy indistinguishable from No-Op (WEL = 27.0). The sparse, delayed nature of infrastructure-loss rewards makes pure RL exploration insufficient.
+\paragraph{Two components carry the system.}
+Removing BC pretraining collapses the commander to No-Op level (WEL $27.00$): pure policy-gradient exploration under sparse, delayed infrastructure reward learns nothing. Replacing the deterministic tactical layer with the (fairly trained, $100$k-step) MAPPO actor \emph{also} collapses the system to $27.00$: the learned actor ignores commander directives, confirming the compliance gap is a real systems issue, not a theoretical one. Both effects are large and significant ($p=3.0\times10^{-5}$).
 
-\paragraph{KL Regularization Prevents Forgetting.}
-Removing the KL penalty degrades WEL from 17.4 to 18.2 ($+4.6\%$), indicating catastrophic forgetting of the BC-learned spatial priorities during RL fine-tuning.
-
-\paragraph{Economic Reward Shaping Targets Infrastructure.}
-Replacing WEL/ISR-based rewards with generic burned-area penalties degrades infrastructure metrics. The economic reward focuses the commander on defending high-value assets rather than uniformly minimizing fire spread.
-
-\paragraph{Target-Seeking Enforces Compliance.}
-Replacing the deterministic target-seeking policy with the frozen MAPPO actor degrades WEL from 17.4 to 18.2. The MAPPO actor was trained without target compliance and silently ignores commander directives---confirming that the compliance gap is a real systems issue, not a theoretical concern.
+\paragraph{RL fine-tuning contributes nothing measurable.}
+The most informative row is BC-only: removing RL fine-tuning entirely leaves performance unchanged (WEL $20.28$ vs.\ $20.28$; $p=1.00$; TOST-equivalent at $\pm5\%$, $p=0.044$). Consistent with this, the KL, entropy, and reward-shaping ablations move WEL by $<0.5$ and are not significant ($p\geq0.31$). Inspecting weights confirms the mechanism: over $120$ fine-tuning episodes the commander moves $\leq5\times10^{-3}$ from the BC solution and changes none of $200$ probe dispatch decisions. \emph{The learned system is, in effect, behavior cloning of the Value-First heuristic}; the KL-regularized RL stage as configured is inert. We report this plainly---it is why we frame the hierarchy as a reference solution and identifies improving the fine-tuning stage as clear future work. (Identical rows among the KL/entropy/reward ablations follow from this inertness combined with WEL taking discrete values on a coarse lattice.)
 
 % ====================================================================
 % 9. TRANSFER ANALYSIS
 % ====================================================================
-\section{Transfer Analysis}
+\section{Generalization Analysis}
 \label{sec:transfer}
 
-% --- Figure 4: Transfer Heatmap ---
-\begin{figure}[t]
+% --- Figure 4: Held-out generalization (replaces the retired TRS heatmap) ---
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=0.75\columnwidth]{Figures/transfer_heatmap.png}
-    \caption{\textbf{Cross-region Transfer Robustness Scores (TRS).} Policies trained on one region are evaluated on the other. TRS $\geq 0.95$ indicates strong cross-region generalization.}
+    \includegraphics[width=0.92\textwidth]{Figures/generalization.png}
+    \caption{\textbf{Held-out generalization}, measured as $\Delta$WEL $=$ WEL(No-Op) $-$ WEL(policy) computed \emph{within} each condition, so No-Op scores $0$ by construction and a policy that fails to help is visibly on the zero line. Under held-out ignitions and shifted wind, the strategic and communication policies retain value; under a rotated asset layout and cross-region transfer, the hierarchy and its heuristic teacher collapse to the No-Op line while the egocentric policies (Local Reactive, CommNet) still adapt.}
     \label{fig:transfer}
-\end{figure}
+\end{figure*}
 
-We evaluate cross-region transfer by deploying the Saudi-trained commander on California and vice versa, computing Transfer Robustness Scores (TRS = cross-region reward / native-region reward). Both transfer directions yield TRS $\geq 0.95$ (Figure~\ref{fig:transfer}), indicating that the commander's coarse $4 \times 4$ spatial representation captures strategic principles (defend threatened assets, partition agents) that generalize across diverse fuel structures and infrastructure layouts.
+We measure generalization by re-evaluating trained policies under four held-out conditions---novel ignition cells, wind rotated $90^\circ$, a rotated infrastructure layout, and cross-region deployment---and scoring each as its WEL improvement over a No-Op baseline \emph{run in the same condition} (Figure~\ref{fig:transfer}). Unlike a reward-ratio transfer score, this metric is falsifiable: No-Op scores exactly $0$, so a policy that adds no value is indistinguishable from inaction. Two findings follow. First, generalization is \emph{structure-dependent}: under held-out ignitions and shifted wind the strategic and communication policies retain most of their value (e.g.\ Saudi CommNet $\Delta$WEL $+17.6$ and $+24.6$ respectively), but under a rotated asset layout the sector-dispatch policies---the learned hierarchy and its Value-First teacher---fall to the No-Op line ($\Delta$WEL $+0.0$/$+0.08$ Saudi), while the egocentric Local Reactive and CommNet policies still adapt. Second, \emph{cross-region transfer is essentially absent}: a policy trained on one region and deployed on the other improves on No-Op by at most $\Delta$WEL $+0.43$ in either direction. The commander's learned sector preferences do not transfer to novel infrastructure geometries.
 
 % ====================================================================
 % 10. LIMITATIONS
@@ -414,20 +417,17 @@ We evaluate cross-region transfer by deploying the Saudi-trained commander on Ca
 
 We acknowledge several limitations:
 
-\paragraph{Deterministic Tactical Execution.}
-The target-seeking compliance policy is hand-designed rather than learned. While this guarantees compliance and enables fair strategic comparisons, it limits the system's ability to discover novel low-level suppression tactics.
+\paragraph{The hierarchy's RL stage is inert.}
+As Section~\ref{sec:ablation} shows, our KL-regularized fine-tuning does not measurably improve on behavior cloning; the learned commander is effectively a clone of the Value-First heuristic. Making the RL stage productive---e.g.\ a weaker KL anchor, a stronger baseline, or a learned tactical layer---is the clearest path to a hierarchy that \emph{beats} rather than matches its teacher.
 
-\paragraph{Grid Scale.}
-Current experiments use $32 \times 32$ grids. Scaling to operationally relevant resolutions ($1000^2+$ cells) requires sub-gridding or attention-based architectures.
+\paragraph{Reward--metric coupling and evaluation scope.}
+The commander's training reward is a function of the same WEL/ISR quantities used for evaluation; while the baselines share this objective (removing relative confound), absolute performance should be read with that coupling in mind. All results use a single simulator (Cell2Fire), a single month of weather, and asset-criticality rasters that are stylized rather than economically measured (Appendix~G); cross-simulator and multi-season validation remain open.
 
-\paragraph{Agent Count.}
-We evaluate with $N = 3$ agents. Scaling to larger teams ($N > 10$) may require communication mechanisms or attention-based commander architectures.
+\paragraph{Scale and generalization boundaries.}
+We evaluate $N\in\{3,6,10\}$ agents on $32\times32$ grids. The learned hierarchy is architecturally fixed to $N=3$ (per-agent commander heads) and does not scale without redesign; the communication and reactive baselines do scale (Section~\ref{sec:transfer}). Larger grids ($64^2+$) require rebuilding the infrastructure rasters and retraining and are left to future work. Finally, generalization is limited: the hierarchy's learned sector preferences collapse to No-Op level under rotated layouts and do not transfer across regions (Figure~\ref{fig:transfer}).
 
-\paragraph{Single Simulator.}
-All results use Cell2Fire. While Cell2Fire implements validated FBP physics, cross-simulator validation (e.g., against FARSITE or Phoenix) would strengthen generalizability claims.
-
-\paragraph{Heuristic Parity, Not Superiority.}
-Our learned hierarchy matches but does not consistently outperform the Value-First expert heuristic. Achieving superiority likely requires richer low-level policies or longer training horizons.
+\paragraph{Fire dynamics.}
+Each agent step advances the simulator one simulated hour and the fire evolves every step; nonetheless the episode horizon ($\sim150$ hours) captures a single fire's active phase rather than a multi-day campaign.
 
 % ====================================================================
 % 11. BROADER IMPACTS
@@ -443,7 +443,7 @@ Wildfire suppression research has clear positive potential: effective coordinati
 \section{Conclusion}
 \label{sec:conclusion}
 
-We presented a decoupled hierarchical MARL architecture for infrastructure-aware wildfire suppression under validated physics. By separating strategic macro-dispatch from deterministic tactical compliance, we resolve the coordination collapse exhibited by flat decentralized MARL: agents that defend the right assets rather than merely suppressing nearby fire. Our BC-initialized, KL-regularized training pipeline achieves expert-level infrastructure defense across two real-world GIS topographies, while compliance diagnostics provide interpretable evidence that strategic intent translates into coordinated physical behavior. We release code, checkpoints, and reproducibility manifests to support future research on hierarchical coordination for spatially critical applications.
+We presented an infrastructure-aware wildfire-coordination benchmark on validated Cell2Fire physics with documented GIS landscapes, and used it to diagnose how decentralized, communication-based, hierarchical, and heuristic controllers behave under a uniform, reproducible protocol. The benchmark is discriminating: policy classes reverse rank across regions, so no single method dominates. It isolates a concrete failure---communication-free MAPPO cannot defend concentrated infrastructure even with a fair budget, while a learned communication channel repairs it---locating the bottleneck in inter-agent coordination. Our behavior-cloned hierarchical commander serves as an interpretable reference solution with compliance guaranteed by construction; we report honestly that its RL stage does not improve on cloning, that it is comparable to but not equivalent to its teacher, and that its learned preferences do not transfer to unseen layouts. We release the code, checkpoints, GIS pipeline, and hashed manifests, and hope the benchmark supports future work on when---and by what mechanism---coordination can be learned for spatially critical suppression.
 
 % ====================================================================
 % REFERENCES
@@ -512,42 +512,59 @@ CommNet communication rounds & 2 \\
 
 All hyperparameter values above are extracted from the released checkpoint configurations; the training seed is $42$ throughout, and evaluation uses seeds $\{42, 1042, 2042, 3042, 4042\}$ (15 episodes each). Compute and software versions are disclosed in Appendix~F.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\columnwidth]{Figures/baseline_training_curves.png}
+    \caption{\textbf{Decentralized-baseline training curves} (rolling mean over 25 episodes, $100$k environment steps on the WEL/ISR objective). Convergence evidence for the baseline validity: on Saudi, Flat MARL (MAPPO) plateaus at the No-Op WEL level despite the full budget, whereas CommNet learns to defend infrastructure; on California, MAPPO improves while QMIX does not. This distinguishes genuine coordination failure from an undertrained baseline.}
+    \label{fig:curves}
+\end{figure}
+
 \subsection*{B. Per-Seed Results}
 
 \begin{table}[h]
 \centering
-\caption{Per-seed WEL results for the Learned Hierarchical policy.}
+\caption{Per-seed WEL (seeds $42,1042,2042,3042,4042$) for the hierarchy and its Value-First teacher; the seed mean is the unit of analysis.}
 \label{tab:per_seed}
 \begin{tabular}{lccccc}
 \toprule
-Region & Seed 1 & Seed 2 & Seed 3 & Seed 4 & Seed 5 \\
+Policy, Region & S1 & S2 & S3 & S4 & S5 \\
 \midrule
-Saudi Arabia & 19.8 & 20.4 & 20.9 & 20.2 & 20.1 \\
-California & 24.1 & 25.0 & 24.8 & 23.9 & 24.9 \\
+Hierarchical, Saudi & 20.6 & 19.8 & 21.4 & 19.8 & 19.8 \\
+Value-First, Saudi & 19.0 & 19.0 & 20.6 & 19.0 & 19.8 \\
+Hierarchical, California & 24.2 & 26.5 & 26.5 & 22.0 & 23.4 \\
+Value-First, California & 24.2 & 26.9 & 26.5 & 22.0 & 23.4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection*{C. Statistical Test Details}
 
+Welch's $t$-tests on seed means ($n=5$), with Welch--Satterthwaite $df$; Cohen's $d$ pooled-SD (sign: policy $-$ reference on WEL, so negative $d$ = policy has lower WEL).
+
 \begin{table}[h]
 \centering
-\caption{Welch's $t$-test and Cohen's $d$ for Hierarchical vs.\ baselines.}
+\caption{Key WEL comparisons under the uniform protocol.}
 \label{tab:statistics}
 \begin{tabular}{llccc}
 \toprule
-Region & Comparison & $t$-statistic & $p$-value & Cohen's $d$ \\
+Region & Comparison & $t$ ($df$) & $p$ & $d$ \\
 \midrule
-\multirow{2}{*}{Saudi}
-& vs.\ Value-First & $-1.94$ & 0.115 & $-1.23$ \\
-& vs.\ Flat MARL & $21.0$ & $3.0 \times 10^{-5}$ & $13.28$ \\
+\multirow{3}{*}{Saudi}
+& Hier vs.\ Value-First & $-1.77$ (8.0) & 0.115 & $-1.12$ \\
+& Hier vs.\ Flat MARL & $21.0$ (4.0) & $3.0\!\times\!10^{-5}$ & $13.28$$^{\dagger}$ \\
+& CommNet vs.\ Hier & $-5.89$ (4.4) & 0.003 & $-3.72$ \\
 \midrule
-\multirow{2}{*}{California}
-& vs.\ Value-First & $-0.062$ & 0.952 & $-0.039$ \\
-& vs.\ Flat MARL & $-0.517$ & 0.620 & $-0.327$ \\
+\multirow{3}{*}{California}
+& Hier vs.\ Value-First & $0.06$ (8.0) & 0.952 & $0.04$ \\
+& Hier vs.\ Flat MARL & $-0.85$ (7.7) & 0.420 & $-0.54$ \\
+& CommNet vs.\ Hier & $-3.30$ (6.9) & 0.013 & $-2.09$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\noindent$^{\dagger}$The Flat MARL / No-Op WEL distribution is degenerate (zero variance at $27.0$), so this large $d$ reflects a near-constant comparator and should be read as ``clearly separated,'' not as a calibrated effect size.
+
+\paragraph{Equivalence (TOST).} With a pre-registered $\pm5\%$-of-reference margin, the hierarchy is \emph{not} equivalent to Value-First (Saudi $p_{\text{TOST}}=0.36$; California $0.20$), whereas the BC-only commander \emph{is} equivalent to the full system (Saudi $p_{\text{TOST}}=0.044$)---i.e.\ RL fine-tuning adds nothing detectable.
 
 \subsection*{D. Checkpoint Hashes}
 

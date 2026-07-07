@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.4.24)  7 JUL 2026 18:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.4.24)  7 JUL 2026 19:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -669,91 +669,100 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 45.
 (c:/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
+Underfull \hbox (badness 1102) in paragraph at lines 45--46
+\T1/ntxtlf/m/n/9 truc-ture dur-ing wild-fires is a spatial-temporal de-ci-sion
+ []
+
+
+Underfull \hbox (badness 1052) in paragraph at lines 45--46
+\T1/ntxtlf/m/n/9 prob-lem that cou-ples strate-gic as-set pri-or-i-ti-za-tion w
+ith
+ []
+
+
+Underfull \hbox (badness 1596) in paragraph at lines 45--46
+\T1/ntxtlf/m/it/9 wildfire-coordination bench-mark \T1/ntxtlf/m/n/9 built on th
+e val-i-dated
+ []
+
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
 (Font)              scaled to size 10.0pt on input line 54.
-
-Underfull \hbox (badness 1694) in paragraph at lines 57--58
- \T1/ntxtlf/b/n/10 Prob-lem: Flat MARL Fails. \T1/ntxtlf/m/n/10 Stan-dard de-ce
-n-tral-ized
- []
-
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 7.0pt on input line 63.
+(Font)              scaled to size 7.0pt on input line 60.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 5.0pt on input line 63.
-
-Underfull \hbox (badness 1205) in paragraph at lines 71--72
-\T1/ntxtlf/m/n/10 KL-regularized pol-icy gra-di-ents, and infrastructure-
- []
-
+(Font)              scaled to size 5.0pt on input line 60.
 [1{c:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/202
 4/texmf-dist/fonts/enc/dvips/newtx/ntx-ec-tlf.enc}
 
 
 
 ]
-Underfull \hbox (badness 3019) in paragraph at lines 92--93
+Underfull \hbox (badness 3019) in paragraph at lines 86--87
  \T1/ntxtlf/b/n/10 Hi-er-ar-chi-cal Re-in-force-ment Learn-ing. \T1/ntxtlf/m/n/
 10 The op-tions
  []
 
 LaTeX Font Info:    Trying to load font information for TS1+ntxtlf on input lin
-e 108.
+e 102.
 (c:/texlive/2024/texmf-dist/tex/latex/newtx/ts1ntxtlf.fd
 File: ts1ntxtlf.fd 2015/01/18 v1.0 fd file for TS1/ntxtlf
 )
 LaTeX Font Info:    Font shape `TS1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.0pt on input line 108.
-LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 169.
-LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 10.95pt on input line 169.
+(Font)              scaled to size 10.0pt on input line 102.
  [2{c:/texlive/2024/texmf-dist/fonts/enc/dvips/tex-gyre/q-ts1.enc}]
-LaTeX Font Info:    Trying to load font information for T1+pcr on input line 18
-4.
+LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
+(Font)              scaled to size 10.95pt on input line 163.
+LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
+(Font)              scaled to size 10.95pt on input line 163.
+LaTeX Font Info:    Trying to load font information for T1+pcr on input line 17
+8.
 
 (c:/texlive/2024/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 ) [3{c:/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc}]
-<Figures/comparison_flat_vs_hier.png, id=35, 1304.875pt x 692.5875pt>
+<Figures/comparison_flat_vs_hier.png, id=33, 621.522pt x 317.988pt>
 File: Figures/comparison_flat_vs_hier.png Graphic file (type png)
 <use Figures/comparison_flat_vs_hier.png>
 Package pdftex.def Info: Figures/comparison_flat_vs_hier.png  used on input lin
-e 301.
-(pdftex.def)             Requested size: 239.39438pt x 127.05931pt.
-<Figures/commander_decisions.png, id=37, 433.62pt x 433.62pt>
+e 303.
+(pdftex.def)             Requested size: 239.39438pt x 122.48155pt.
+<Figures/flat_failure_analysis.png, id=35, 758.835pt x 281.853pt>
+File: Figures/flat_failure_analysis.png Graphic file (type png)
+<use Figures/flat_failure_analysis.png>
+Package pdftex.def Info: Figures/flat_failure_analysis.png  used on input line 
+311.
+(pdftex.def)             Requested size: 239.39438pt x 88.91748pt.
+ [4 <./Figures/comparison_flat_vs_hier.png>]
+Overfull \hbox (15.32133pt too wide) in paragraph at lines 335--345
+ [][] 
+ []
+
+<Figures/commander_decisions.png, id=40, 375.804pt x 361.35pt>
 File: Figures/commander_decisions.png Graphic file (type png)
 <use Figures/commander_decisions.png>
-Package pdftex.def Info: Figures/commander_decisions.png  used on input line 33
-9.
-(pdftex.def)             Requested size: 239.39438pt x 239.3982pt.
- [4 <./Figures/comparison_flat_vs_hier.png> <./Figures/commander_decisions.png>
-]
-<Figures/transfer_heatmap.png, id=43, 361.35pt x 289.08pt>
-File: Figures/transfer_heatmap.png Graphic file (type png)
-<use Figures/transfer_heatmap.png>
-Package pdftex.def Info: Figures/transfer_heatmap.png  used on input line 402.
-(pdftex.def)             Requested size: 179.54578pt x 143.63538pt.
+Package pdftex.def Info: Figures/commander_decisions.png  used on input line 35
+0.
+(pdftex.def)             Requested size: 239.39438pt x 230.18803pt.
 
-Underfull \hbox (badness 1178) in paragraph at lines 418--419
- \T1/ntxtlf/b/n/10 De-ter-min-is-tic Tac-ti-cal Ex-e-cu-tion. \T1/ntxtlf/m/n/10
- The target-seeking
+Overfull \hbox (33.22256pt too wide) in paragraph at lines 374--388
+ [][] 
  []
 
-[5 <./Figures/transfer_heatmap.png>]
-Underfull \hbox (badness 2538) in paragraph at lines 427--428
- \T1/ntxtlf/b/n/10 Sin-gle Sim-u-la-tor. \T1/ntxtlf/m/n/10 All re-sults use Cel
-l2Fire. While
- []
+[5 <./Figures/flat_failure_analysis.png>]
+<Figures/generalization.png, id=45, 939.51pt x 332.442pt>
+File: Figures/generalization.png Graphic file (type png)
+<use Figures/generalization.png>
+Package pdftex.def Info: Figures/generalization.png  used on input line 405.
+(pdftex.def)             Requested size: 465.41786pt x 164.68356pt.
+ [6 <./Figures/commander_decisions.png>] (./AnonymousSubmission2027.bbl [7 <./F
+igures/generalization.png>]) [8]
+<Figures/baseline_training_curves.png, id=58, 867.24pt x 505.89pt>
+File: Figures/baseline_training_curves.png Graphic file (type png)
+<use Figures/baseline_training_curves.png>
+Package pdftex.def Info: Figures/baseline_training_curves.png  used on input li
+ne 517.
+(pdftex.def)             Requested size: 505.89pt x 295.1069pt.
 
-
-Underfull \hbox (badness 3449) in paragraph at lines 427--428
-\T1/ntxtlf/m/n/10 Cell2Fire im-ple-ments val-i-dated FBP physics, cross-
- []
-
-(./AnonymousSubmission2027.bbl [6]) [7
-
-]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
@@ -763,9 +772,13 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[8
 
-] [9] [10] (./AnonymousSubmission2027.aux)
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[9
+
+] [10 <./Figures/baseline_training_curves.png>] [11] [12]
+(./AnonymousSubmission2027.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
@@ -776,35 +789,33 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
- 17199 strings out of 474116
- 336910 string characters out of 5747717
+ 17217 strings out of 474116
+ 337558 string characters out of 5747717
  1956190 words of memory out of 5000000
- 39211 multiletter control sequences out of 15000+600000
+ 39229 multiletter control sequences out of 15000+600000
  603456 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 95i,13n,107p,1719b,844s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 95i,13n,107p,1910b,844s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
 live/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2024
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2024/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2024/texmf-dist/fonts/t
 ype1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2024/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmmi9.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.p
-fb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texl
-ive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2024/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2024/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2024/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy9.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/sy
-mbols/msbm10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/tex-gyre/qtmr.p
-fb><c:/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2
-024/texmf-dist/fonts/type1/public/newtx/ztmb.pfb><c:/texlive/2024/texmf-dist/fo
-nts/type1/public/newtx/ztmr.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/
-newtx/ztmri.pfb>
-Output written on AnonymousSubmission2027.pdf (10 pages, 421951 bytes).
+/cm/cmr10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.p
+fb><c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texl
+ive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2024/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2024/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2024/texmf-dist/fonts/typ
+e1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/p
+ublic/tex-gyre/qtmr.pfb><c:/texlive/2024/texmf-dist/fonts/type1/urw/courier/ucr
+r8a.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/newtx/ztmb.pfb><c:/texli
+ve/2024/texmf-dist/fonts/type1/public/newtx/ztmr.pfb><c:/texlive/2024/texmf-dis
+t/fonts/type1/public/newtx/ztmri.pfb>
+Output written on AnonymousSubmission2027.pdf (12 pages, 900019 bytes).
 PDF statistics:
  150 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
+ 89 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 28 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 38 words of extra memory for PDF output out of 10000 (max. 10000000)
 

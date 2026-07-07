@@ -59,9 +59,8 @@ for ax, region in zip(axes, ["saudi", "california"], strict=True):
 axes[0].set_ylabel("ΔWEL vs No-Op  (higher = adds value; 0 = no better than inaction)")
 axes[1].legend(fontsize=8, loc="upper right")
 fig.suptitle(
-    "Held-out generalization (replaces the vacuous TRS metric): strategic policies fall to "
-    "0 under rotated layouts and cross-region transfer",
-    fontsize=10,
+    "Held-out generalization: WEL improvement over No-Op, by condition",
+    fontsize=11,
 )
 fig.tight_layout()
 out = BASE / "generalization_dwel.png"
