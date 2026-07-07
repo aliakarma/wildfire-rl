@@ -87,6 +87,48 @@ class InfrastructureWeightedReward(Reward):
         return fire_penalty + catastrophe_penalty
 
 
+class WELISRDeltaReward(Reward):
+    """Per-step delta of the strategic objective: -dWEL + alpha * dISR.
+
+    Telescopes over an episode to -(WEL_T - WEL_0) + alpha * (ISR_T - ISR_0) — exactly the
+    macro objective the hierarchical commander is fine-tuned on (Eq. 1 of the paper). Used
+    to train flat baselines on the *same* objective they are evaluated on, removing the
+    objective-level confound flagged in the peer review (issue H1 / Reviewer #2 §5).
+    """
+
+    def __init__(self, env: FireSuppressionEnv, isr_weight: float = 20.0):
+        super().__init__(env)
+        self.isr_weight = float(isr_weight)
+        self.asset_values = getattr(env, "asset_values", {1: 10.0, 2: 4.0, 3: 6.0, 4: 3.0})
+        self._prev_objective: float | None = None
+
+    @classmethod
+    def name(cls) -> str:
+        return "WELISRDeltaReward"
+
+    def _objective(self) -> float:
+        from wildfire_marl.eval.metrics import (
+            infrastructure_survival_rate,
+            weighted_economic_loss,
+        )
+
+        asset_type = getattr(self.env, "asset_type", None)
+        wel = weighted_economic_loss(asset_type, self.env.fire_state, self.asset_values)
+        isr = infrastructure_survival_rate(asset_type, self.env.fire_state)
+        return -wel + self.isr_weight * isr
+
+    def __call__(self, action: int | list[int] | None = None) -> float:
+        current = self._objective()
+        # env.iter == 0 -> first step of a fresh episode: re-anchor, no reward carry-over
+        if self._prev_objective is None or self.env.iter == 0:
+            delta = 0.0
+        else:
+            delta = current - self._prev_objective
+        self._prev_objective = current
+        return delta
+
+
 REWARD_CLASSES: dict[str, type[Reward]] = {
-    cls.name(): cls for cls in (FireSizeReward, InfrastructureWeightedReward)
+    cls.name(): cls
+    for cls in (FireSizeReward, InfrastructureWeightedReward, WELISRDeltaReward)
 }

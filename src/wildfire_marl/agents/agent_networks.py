@@ -69,6 +69,46 @@ class MAPPOCritic(nn.Module):
         return self.value_head(x)
 
 
+class CommNetActor(nn.Module):
+    """CommNet-style communication actor (Sukhbaatar et al., 2016).
+
+    Each agent encodes its egocentric crop with the shared CNN; ``comm_rounds`` rounds of
+    mean-pooled hidden-state exchange follow (each agent receives the mean of the *other*
+    agents' hidden states); a shared head maps the final hidden state to action logits.
+    Added for the peer-review remediation (issue M3: communication baseline).
+    """
+
+    def __init__(
+        self,
+        in_channels: int = 8,
+        action_dim: int = 6,
+        features_dim: int = 64,
+        comm_rounds: int = 2,
+    ):
+        super().__init__()
+        self.extractor = CustomSmallCNN(in_channels=in_channels, features_dim=features_dim)
+        self.comm_rounds = comm_rounds
+        self.f_h = nn.Linear(features_dim, features_dim)
+        self.f_c = nn.Linear(features_dim, features_dim)
+        self.action_head = nn.Linear(features_dim, action_dim)
+
+    def forward(self, obs: torch.Tensor, action_mask: torch.Tensor | None = None) -> torch.Tensor:
+        """obs: [B, N, C, K, K]; action_mask: [B, N, A] (True = valid). Returns [B, N, A]."""
+        batch, num_agents = obs.shape[0], obs.shape[1]
+        h = self.extractor(obs.reshape(batch * num_agents, *obs.shape[2:]))
+        h = h.view(batch, num_agents, -1)
+        for _ in range(self.comm_rounds):
+            total = h.sum(dim=1, keepdim=True)
+            comm = (total - h) / max(num_agents - 1, 1)
+            h = torch.tanh(self.f_h(h) + self.f_c(comm))
+        logits = self.action_head(h)
+        if action_mask is not None:
+            logits = torch.where(
+                action_mask, logits, torch.tensor(-1e9, device=logits.device)
+            )
+        return logits
+
+
 class QMIXAgent(nn.Module):
     """Decentralized Q-value network for QMIX."""
 

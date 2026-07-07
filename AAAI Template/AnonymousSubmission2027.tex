@@ -3,19 +3,16 @@
 % Hierarchical Multi-Agent Wildfire Suppression
 % ====================================================================
 \documentclass[letterpaper]{article}
-\usepackage{aaai2027}
-\usepackage{times}
-\usepackage{helvet}
-\usepackage{courier}
+% [submission] mode: anonymized review format; the style itself loads the required
+% fonts (newtxtext/helvet/courier) and owns page geometry — do not load times or
+% set \pdfpagewidth manually (forbidden by aaai2027.sty).
+\usepackage[submission]{aaai2027}
 \usepackage[hyphens]{url}
 \usepackage{graphicx}
 \urlstyle{rm}
 \def\UrlFont{\rm}
 \usepackage{natbib}
-\usepackage{caption}
 \frenchspacing
-\setlength{\pdfpagewidth}{8.5in}
-\setlength{\pdfpageheight}{11in}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -23,7 +20,6 @@
 \usepackage{multirow}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning}
 
@@ -37,6 +33,7 @@
 
 \title{Hierarchical Strategic Coordination for \\ Infrastructure-Aware Wildfire Suppression \\ under Realistic Physics}
 \author{Anonymous Authors}
+\affiliations{Anonymous Affiliations}
 
 \begin{document}
 \maketitle
@@ -86,7 +83,7 @@ On two real-world GIS topographies---Saudi Arabian petroleum grids and Californi
 Wildfire spread modeling has progressed from simple cellular automata to physics-based simulators. Cell2Fire \citep{pais2021cell2fire} implements the Canadian Forest Fire Behavior Prediction (FBP) system with heterogeneous fuel types, wind effects, and topographic slope corrections. Operational research approaches optimize firebreak placement using mixed-integer programming \citep{hu2009wildfire} but assume global state observability and static fire behavior, neither of which holds during active suppression. Our work uses Cell2Fire as a validated physics backend while framing suppression as a sequential decision problem under partial observability.
 
 \paragraph{Reinforcement Learning for Wildfire and Disaster Response.}
-Recent RL approaches to wildfire include UAV-based detection \citep{ghali2022, partheepan2023} and grid-based fire-fighting agents \citep{altameem2022wildfire}. However, most use simplified fire dynamics without validated physics, single-agent formulations, or toy grid sizes that lack realistic infrastructure. Disaster-response RL more broadly has explored resource allocation \citep{nguyen2019disaster}, but rarely addresses the spatial coordination challenge of multi-agent infrastructure defense under physically grounded fire spread.
+Recent RL approaches to wildfire include UAV-based detection \citep{ghali2022, partheepan2023}, landscape-scale fuel-treatment planning \citep{altamimi2022wildfire}, and grid-based suppression agents on Cell2Fire \citep{shen2022firehose}. However, most use simplified fire dynamics without validated physics, single-agent formulations, or toy grid sizes that lack realistic infrastructure. Disaster-response RL more broadly has explored resource allocation \citep{nguyen2019disaster}, but rarely addresses the spatial coordination challenge of multi-agent infrastructure defense under physically grounded fire spread.
 
 \paragraph{Cooperative MARL and Communication.}
 Centralized Training with Decentralized Execution (CTDE) is the dominant paradigm for cooperative MARL. QMIX \citep{rashid2018qmix} factorizes joint value functions under monotonicity constraints; MAPPO \citep{yu2022mappo} applies PPO \citep{schulman2017} with centralized critics. CommNet \citep{sukhbaatar2016learning} and TarMAC \citep{das2019tarmac} add learned communication channels. These methods assume agents can learn implicit coordination from reward signals alone. Under partial observability with dynamic wildfire spread, we show empirically that this assumption fails---flat MARL agents exhibit coordination collapse identical to no-operation baselines.
@@ -137,7 +134,7 @@ where $\text{WEL} = \sum_j v_j \cdot \mathbf{1}[\text{asset}_j \text{ burned}]$ 
 % --- Figure 1: Architecture Diagram in TikZ ---
 \begin{figure}[t]
     \centering
-    \scalebox{0.8}{
+    \resizebox{\columnwidth}{!}{
     \begin{tikzpicture}[
         node distance=1.2cm and 0.8cm,
         block/.style={draw, fill=blue!10, rectangle, minimum height=2.8em, minimum width=6em, rounded corners, align=center, font=\small},
@@ -198,10 +195,11 @@ We collect $K = 500$ episodes of sector assignments from a \emph{Value-First} he
 
 \paragraph{Phase 2: KL-Regularized Policy Gradient.}
 The BC-initialized commander $\pi_\theta$ is fine-tuned via REINFORCE with a KL penalty against the frozen BC prior $\pi_{\text{BC}}$:
-\begin{equation}
+\begin{multline}
 \label{eq:pg_update}
-\nabla_\theta \mathcal{J} = \mathbb{E}\Bigl[\bigl(R^{\text{macro}} - b_t\bigr) \nabla_\theta \log \pi_\theta - \lambda \nabla_\theta D_{\text{KL}}(\pi_\theta \| \pi_{\text{BC}}) + \beta \nabla_\theta \mathcal{H}(\pi_\theta)\Bigr]
-\end{equation}
+\nabla_\theta \mathcal{J} = \mathbb{E}\Bigl[\bigl(R^{\text{macro}} - b_t\bigr) \nabla_\theta \log \pi_\theta \\
+- \lambda \nabla_\theta D_{\text{KL}}(\pi_\theta \,\|\, \pi_{\text{BC}}) + \beta \nabla_\theta \mathcal{H}(\pi_\theta)\Bigr]
+\end{multline}
 where $b_t$ is an exponential moving average baseline, $\lambda = 0.1$ controls KL regularization strength, and $\beta = 0.01$ is the entropy bonus coefficient.
 
 \begin{algorithm}[t]
@@ -406,7 +404,7 @@ Replacing the deterministic target-seeking policy with the frozen MAPPO actor de
     \label{fig:transfer}
 \end{figure}
 
-We evaluate cross-region transfer by deploying the Saudi-trained commander on California and vice versa, computing Transfer Robustness Scores (TRS = cross-region reward / native-region reward). Both transfer directions yield TRS $> 0.95$ (Figure~\ref{fig:transfer}), indicating that the commander's coarse $4 \times 4$ spatial representation captures strategic principles (defend threatened assets, partition agents) that generalize across diverse fuel structures and infrastructure layouts.
+We evaluate cross-region transfer by deploying the Saudi-trained commander on California and vice versa, computing Transfer Robustness Scores (TRS = cross-region reward / native-region reward). Both transfer directions yield TRS $\geq 0.95$ (Figure~\ref{fig:transfer}), indicating that the commander's coarse $4 \times 4$ spatial representation captures strategic principles (defend threatened assets, partition agents) that generalize across diverse fuel structures and infrastructure layouts.
 
 % ====================================================================
 % 10. LIMITATIONS
@@ -450,7 +448,8 @@ We presented a decoupled hierarchical MARL architecture for infrastructure-aware
 % ====================================================================
 % REFERENCES
 % ====================================================================
-\bibliographystyle{aaai2027}
+% \bibliographystyle is issued by aaai2027.sty itself; a second call here would
+% produce a duplicate \bibstyle in the .aux and a BibTeX error.
 \bibliography{aaai2027}
 
 % ====================================================================

@@ -18,12 +18,37 @@ import torch.optim as optim
 import yaml
 
 from wildfire_marl.agents.agent_networks import (
+    CommNetActor,
     MAPPOActor,
     MAPPOCritic,
     QMIXAgent,
     QMIXMixingNetwork,
 )
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.env.rewards import (
+    FireSizeReward,
+    InfrastructureWeightedReward,
+    WELISRDeltaReward,
+)
+from wildfire_marl.eval.metrics import (
+    infrastructure_survival_rate,
+    weighted_economic_loss,
+)
+
+
+def _episode_metrics(env: MultiAgentFireEnv) -> tuple[float, float]:
+    """WEL/ISR of the current (finished) episode — call BEFORE env.reset()."""
+    final_state = env.env.fire_state
+    wel = weighted_economic_loss(
+        asset_type=env.env.asset_type,
+        final_state=final_state,
+        asset_values=env.env.asset_values,
+    )
+    isr = infrastructure_survival_rate(
+        asset_type=env.env.asset_type,
+        final_state=final_state,
+    )
+    return float(wel), float(isr)
 
 
 def set_seed(seed: int):
@@ -97,7 +122,7 @@ class QMIXReplayBuffer:
 # --- MAPPO Trainer ------------------------------------------------------------
 def train_mappo(
     env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
-) -> tuple[MAPPOActor, MAPPOCritic]:
+) -> tuple[MAPPOActor, MAPPOCritic, list[dict[str, float]]]:
     num_agents = env.num_agents
     crop_size = env.crop_size
 
@@ -121,6 +146,7 @@ def train_mappo(
     step_count = 0
     ep_rewards = []
     curr_ep_reward = 0.0
+    train_curve: list[dict[str, float]] = []
 
     while step_count < total_steps:
         # Buffer to store rollouts
@@ -179,9 +205,19 @@ def train_mappo(
             step_count += 1
 
             if done:
+                ep_wel, ep_isr = _episode_metrics(env)
+                ep_rewards.append(curr_ep_reward)
+                train_curve.append(
+                    {
+                        "env_steps": step_count,
+                        "episode": len(ep_rewards),
+                        "episode_return": curr_ep_reward,
+                        "WEL": ep_wel,
+                        "ISR": ep_isr,
+                    }
+                )
                 obs_dict, info_dict = env.reset()
                 global_state = env.get_global_state()
-                ep_rewards.append(curr_ep_reward)
                 curr_ep_reward = 0.0
             else:
                 obs_dict, info_dict = next_obs_dict, next_info_dict
@@ -288,13 +324,214 @@ def train_mappo(
             mean_ep_rew = np.mean(ep_rewards[-10:])
             print(f"Steps: {step_count}/{total_steps} | Mean Return (10 eps): {mean_ep_rew:.2f}")
 
-    return actor, critic
+    return actor, critic, train_curve
+
+
+# --- CommNet Trainer ----------------------------------------------------------
+def train_commnet(
+    env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
+) -> tuple[CommNetActor, MAPPOCritic, list[dict[str, float]]]:
+    """PPO training of a CommNet-style joint communication actor.
+
+    Identical training machinery to MAPPO (shared reward, GAE, centralized critic), except
+    the actor processes all agents' observations jointly and exchanges mean-pooled hidden
+    states before acting. Added for the peer-review remediation (issue M3).
+    """
+    num_agents = env.num_agents
+    crop_size = env.crop_size
+
+    actor = CommNetActor(
+        in_channels=8,
+        action_dim=6,
+        features_dim=64,
+        comm_rounds=int(cfg.get("comm_rounds", 2)),
+    ).to(device)
+    critic = MAPPOCritic(in_channels=5, features_dim=128).to(device)
+
+    actor_optimizer = optim.Adam(actor.parameters(), lr=float(cfg.get("lr_actor", 3e-4)))
+    critic_optimizer = optim.Adam(critic.parameters(), lr=float(cfg.get("lr_critic", 1e-3)))
+
+    total_steps = int(cfg.get("total_steps", 50000))
+    n_steps = int(cfg.get("n_steps", 1024))
+    batch_size = int(cfg.get("batch_size", 64))
+    ppo_epochs = int(cfg.get("ppo_epochs", 4))
+    clip_eps = float(cfg.get("clip_eps", 0.2))
+    gamma = float(cfg.get("gamma", 0.99))
+    gae_lambda = float(cfg.get("gae_lambda", 0.95))
+
+    obs_dict, info_dict = env.reset()
+    global_state = env.get_global_state()
+
+    step_count = 0
+    ep_rewards = []
+    curr_ep_reward = 0.0
+    train_curve: list[dict[str, float]] = []
+
+    while step_count < total_steps:
+        obs_buf = []
+        action_buf = []
+        mask_buf = []
+        reward_buf = []
+        done_buf = []
+        log_prob_buf = []
+        val_buf = []
+        state_buf = []
+
+        actor.eval()
+        critic.eval()
+
+        for _ in range(n_steps):
+            obs_list = [obs_dict[f"agent_{i}"] for i in range(num_agents)]
+            mask_list = [info_dict[f"agent_{i}"]["action_mask"] for i in range(num_agents)]
+
+            obs_t = torch.tensor(
+                np.array(obs_list), dtype=torch.float32, device=device
+            ).unsqueeze(0)  # [1, N, 8, K, K]
+            mask_t = torch.tensor(
+                np.array(mask_list), dtype=torch.bool, device=device
+            ).unsqueeze(0)  # [1, N, 6]
+
+            with torch.no_grad():
+                logits = actor(obs_t, mask_t)  # [1, N, 6]
+                dist = torch.distributions.Categorical(logits=logits)
+                actions_t = dist.sample()  # [1, N]
+                log_probs_t = dist.log_prob(actions_t)  # [1, N]
+
+                state_t = torch.tensor(
+                    global_state, dtype=torch.float32, device=device
+                ).unsqueeze(0)
+                val_t = critic(state_t).squeeze(0)
+
+            actions_np = actions_t.squeeze(0).cpu().numpy()
+            actions_dict = {f"agent_{i}": int(actions_np[i]) for i in range(num_agents)}
+
+            next_obs_dict, rewards_dict, terminations_dict, truncations_dict, next_info_dict = (
+                env.step(actions_dict)
+            )
+            next_global_state = env.get_global_state()
+
+            shared_reward = rewards_dict["agent_0"]
+            done = terminations_dict["agent_0"] or truncations_dict["agent_0"]
+
+            obs_buf.append(obs_list)
+            action_buf.append(actions_np)
+            mask_buf.append(mask_list)
+            reward_buf.append(shared_reward)
+            done_buf.append(done)
+            log_prob_buf.append(log_probs_t.squeeze(0).cpu().numpy())
+            val_buf.append(val_t.item())
+            state_buf.append(global_state)
+
+            curr_ep_reward += shared_reward
+            step_count += 1
+
+            if done:
+                ep_wel, ep_isr = _episode_metrics(env)
+                ep_rewards.append(curr_ep_reward)
+                train_curve.append(
+                    {
+                        "env_steps": step_count,
+                        "episode": len(ep_rewards),
+                        "episode_return": curr_ep_reward,
+                        "WEL": ep_wel,
+                        "ISR": ep_isr,
+                    }
+                )
+                obs_dict, info_dict = env.reset()
+                global_state = env.get_global_state()
+                curr_ep_reward = 0.0
+            else:
+                obs_dict, info_dict = next_obs_dict, next_info_dict
+                global_state = next_global_state
+
+        # GAE
+        actor.train()
+        critic.train()
+
+        with torch.no_grad():
+            next_state_t = torch.tensor(
+                global_state, dtype=torch.float32, device=device
+            ).unsqueeze(0)
+            next_val = critic(next_state_t).item()
+
+        values = np.array(val_buf + [next_val])
+        rewards = np.array(reward_buf)
+        dones = np.array(done_buf)
+
+        advantages = np.zeros(n_steps, dtype=np.float32)
+        last_gae = 0.0
+        for t in reversed(range(n_steps)):
+            non_terminal = 1.0 - dones[t]
+            delta = rewards[t] + gamma * values[t + 1] * non_terminal - values[t]
+            advantages[t] = last_gae = delta + gamma * gae_lambda * non_terminal * last_gae
+
+        returns = advantages + values[:-1]
+
+        obs_arr = torch.tensor(
+            np.array(obs_buf), dtype=torch.float32, device=device
+        )  # [T, N, 8, K, K]
+        act_arr = torch.tensor(np.array(action_buf), dtype=torch.long, device=device)  # [T, N]
+        mask_arr = torch.tensor(np.array(mask_buf), dtype=torch.bool, device=device)  # [T, N, 6]
+        old_log_probs = torch.tensor(
+            np.array(log_prob_buf), dtype=torch.float32, device=device
+        )  # [T, N]
+        adv_arr = torch.tensor(advantages, dtype=torch.float32, device=device).unsqueeze(
+            1
+        )  # [T, 1]
+        ret_arr = torch.tensor(returns, dtype=torch.float32, device=device).unsqueeze(1)
+        state_arr = torch.tensor(np.array(state_buf), dtype=torch.float32, device=device)
+
+        adv_arr = (adv_arr - adv_arr.mean()) / (adv_arr.std() + 1e-8)
+
+        # PPO epochs over timesteps (each timestep carries all N agents jointly)
+        for _ in range(ppo_epochs):
+            indices = np.arange(n_steps)
+            np.random.shuffle(indices)
+            for start in range(0, n_steps, batch_size):
+                end = start + batch_size
+                batch_idx = indices[start:end]
+
+                logits = actor(obs_arr[batch_idx], mask_arr[batch_idx])  # [b, N, 6]
+                dist = torch.distributions.Categorical(logits=logits)
+                new_log_probs = dist.log_prob(act_arr[batch_idx])  # [b, N]
+                entropy = dist.entropy().mean()
+
+                ratio = torch.exp(new_log_probs - old_log_probs[batch_idx])
+                adv_b = adv_arr[batch_idx]  # [b, 1] broadcasts over agents
+                surr1 = ratio * adv_b
+                surr2 = torch.clamp(ratio, 1.0 - clip_eps, 1.0 + clip_eps) * adv_b
+                actor_loss = -torch.min(surr1, surr2).mean() - 0.01 * entropy
+
+                actor_optimizer.zero_grad()
+                actor_loss.backward()
+                nn.utils.clip_grad_norm_(actor.parameters(), max_norm=0.5)
+                actor_optimizer.step()
+
+            critic_indices = np.arange(n_steps)
+            np.random.shuffle(critic_indices)
+            for start in range(0, n_steps, batch_size):
+                end = start + batch_size
+                batch_idx = critic_indices[start:end]
+
+                values_pred = critic(state_arr[batch_idx]).squeeze(-1)
+                critic_loss = F.mse_loss(values_pred, ret_arr[batch_idx].squeeze(-1))
+
+                critic_optimizer.zero_grad()
+                critic_loss.backward()
+                nn.utils.clip_grad_norm_(critic.parameters(), max_norm=0.5)
+                critic_optimizer.step()
+
+        if len(ep_rewards) > 0:
+            mean_ep_rew = np.mean(ep_rewards[-10:])
+            print(f"Steps: {step_count}/{total_steps} | Mean Return (10 eps): {mean_ep_rew:.2f}")
+
+    return actor, critic, train_curve
 
 
 # --- QMIX Trainer -------------------------------------------------------------
 def train_qmix(
     env: MultiAgentFireEnv, cfg: dict[str, Any], device: torch.device
-) -> tuple[QMIXAgent, QMIXMixingNetwork]:
+) -> tuple[QMIXAgent, QMIXMixingNetwork, list[dict[str, float]]]:
     num_agents = env.num_agents
     crop_size = env.crop_size
 
@@ -325,6 +562,7 @@ def train_qmix(
     step_count = 0
     ep_rewards = []
     curr_ep_reward = 0.0
+    train_curve: list[dict[str, float]] = []
 
     while step_count < total_steps:
         epsilon = max(
@@ -373,9 +611,19 @@ def train_qmix(
         step_count += 1
 
         if done:
+            ep_wel, ep_isr = _episode_metrics(env)
+            ep_rewards.append(curr_ep_reward)
+            train_curve.append(
+                {
+                    "env_steps": step_count,
+                    "episode": len(ep_rewards),
+                    "episode_return": curr_ep_reward,
+                    "WEL": ep_wel,
+                    "ISR": ep_isr,
+                }
+            )
             obs_dict, info_dict = env.reset()
             global_state = env.get_global_state()
-            ep_rewards.append(curr_ep_reward)
             curr_ep_reward = 0.0
         else:
             obs_dict, info_dict = next_obs_dict, next_info_dict
@@ -439,7 +687,7 @@ def train_qmix(
                 f"Steps: {step_count}/{total_steps} | Mean Return: {mean_ep_rew:.2f} | Epsilon: {epsilon:.2f}"
             )
 
-    return agent_net, mixer
+    return agent_net, mixer, train_curve
 
 
 def main():
@@ -461,6 +709,17 @@ def main():
     data_dir = cfg.get("data_dir", "data/cell2fire")
     infra_dir = f"{data_dir}/{map_name}"
 
+    # Training-objective selection (peer-review issue H1: match the evaluation objective)
+    reward_name = str(cfg.get("reward", "firesize")).lower()
+    reward_classes = {
+        "firesize": FireSizeReward,
+        "infra": InfrastructureWeightedReward,
+        "welisr": WELISRDeltaReward,
+    }
+    if reward_name not in reward_classes:
+        raise ValueError(f"Unknown reward '{reward_name}' (choose from {list(reward_classes)})")
+    reward_cls = reward_classes[reward_name]
+
     # Init environment
     env = MultiAgentFireEnv(
         num_agents=int(cfg.get("num_agents", 3)),
@@ -469,26 +728,27 @@ def main():
         fire_map=map_name,
         data_dir=data_dir,
         max_steps=int(cfg.get("max_steps", 150)),
-        steps_per_action=60,  # hourly resolution
+        steps_per_action=60,  # 60 fire periods (simulated minutes) per agent step
         observe_infra=True,
         catastrophe_weight=2.0,
         cascade_prob=0.1,
         infra_dir=infra_dir,
+        reward_cls=reward_cls,
     )
 
     seed = int(cfg.get("seed", 42))
     set_seed(seed)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Training on device: {device} | Region: {region.upper()}")
+    print(f"Training on device: {device} | Region: {region.upper()} | Reward: {reward_name}")
 
     algo = cfg.get("algo", "mappo").lower()
-    save_dir = Path("results/runs")
+    save_dir = Path(cfg.get("save_dir", "results/runs"))
     save_dir.mkdir(parents=True, exist_ok=True)
 
     if algo == "mappo":
         print("Starting MAPPO training...")
-        actor, critic = train_mappo(env, cfg, device)
+        actor, critic, train_curve = train_mappo(env, cfg, device)
         save_path = save_dir / f"checkpoint_mappo_{region}.pt"
         torch.save(
             {
@@ -501,7 +761,7 @@ def main():
         print(f"MAPPO policy saved successfully to {save_path}")
     elif algo == "qmix":
         print("Starting QMIX training...")
-        agent_net, mixer = train_qmix(env, cfg, device)
+        agent_net, mixer, train_curve = train_qmix(env, cfg, device)
         save_path = save_dir / f"checkpoint_qmix_{region}.pt"
         torch.save(
             {
@@ -512,8 +772,29 @@ def main():
             save_path,
         )
         print(f"QMIX policy saved successfully to {save_path}")
+    elif algo == "commnet":
+        print("Starting CommNet training...")
+        actor, critic, train_curve = train_commnet(env, cfg, device)
+        save_path = save_dir / f"checkpoint_commnet_{region}.pt"
+        torch.save(
+            {
+                "actor_state_dict": actor.state_dict(),
+                "critic_state_dict": critic.state_dict(),
+                "config": cfg,
+            },
+            save_path,
+        )
+        print(f"CommNet policy saved successfully to {save_path}")
     else:
         raise ValueError(f"Unknown algorithm: {algo}")
+
+    # Training-curve archive (peer-review issue H1: convergence evidence)
+    if train_curve:
+        import pandas as pd
+
+        curve_path = save_dir / f"train_curve_{algo}_{region}.csv"
+        pd.DataFrame(train_curve).to_csv(curve_path, index=False)
+        print(f"Training curve ({len(train_curve)} episodes) saved to {curve_path}")
 
     env.close()
 
