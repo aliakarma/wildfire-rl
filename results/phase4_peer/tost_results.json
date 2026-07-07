@@ -1,0 +1,33 @@
+{
+  "margin_definition": "+/-5% of reference policy mean WEL",
+  "saudi: Hierarchical vs Value-First (ref)": {
+    "mean_diff": 0.8000000000000043,
+    "margin": 0.9739999999999999,
+    "se": 0.4525483399593904,
+    "df": 8.000000000000002,
+    "p_lower": 0.002209126400866806,
+    "p_upper": 0.3553174336480964,
+    "p_tost": 0.3553174336480964,
+    "equivalent_at_0.05": false
+  },
+  "california: Hierarchical vs Value-First (ref)": {
+    "mean_diff": -0.08000000000000185,
+    "margin": 1.2306666666666668,
+    "se": 1.2914075008816281,
+    "df": 7.9785858820344755,
+    "p_lower": 0.19949572370904473,
+    "p_upper": 0.16996617300829045,
+    "p_tost": 0.19949572370904473,
+    "equivalent_at_0.05": false
+  },
+  "saudi: BC-only vs Full System (ref)": {
+    "mean_diff": 0.0,
+    "margin": 1.014,
+    "se": 0.5184592558726285,
+    "df": 7.570815450643774,
+    "p_lower": 0.04413370397834978,
+    "p_upper": 0.04413370397834978,
+    "p_tost": 0.04413370397834978,
+    "equivalent_at_0.05": true
+  }
+}
