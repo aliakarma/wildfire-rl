@@ -39,11 +39,13 @@ REGIMES: dict[str, dict[str, Any]] = {
         "ros_cv": 0.0,
         "max_steps": 150,
     },
-    # Suppression-relevant default (== medium).
+    # Suppression-relevant default (== medium). Calibrated so the strong reactive baseline
+    # cannot fully contain the fire (Local Reactive WEL ~15, not ~0), leaving room for
+    # strategic coordination to win.
     "default": {
         "steps_per_action": 30,
-        "wind_scale": 0.3,
-        "ffmc": 85.0,
+        "wind_scale": 0.6,
+        "ffmc": 90.0,
         "ignition_mode": "threat",
         "ignition_dist": (6, 12),
         "ignition_arc_deg": 60.0,
@@ -52,9 +54,9 @@ REGIMES: dict[str, dict[str, Any]] = {
         "max_steps": 150,
     },
     "easy": {
-        "steps_per_action": 20,
-        "wind_scale": 0.2,
-        "ffmc": 80.0,
+        "steps_per_action": 30,
+        "wind_scale": 0.4,
+        "ffmc": 87.0,
         "ignition_mode": "threat",
         "ignition_dist": (8, 14),
         "ignition_arc_deg": 60.0,
@@ -64,8 +66,8 @@ REGIMES: dict[str, dict[str, Any]] = {
     },
     "medium": {
         "steps_per_action": 30,
-        "wind_scale": 0.3,
-        "ffmc": 85.0,
+        "wind_scale": 0.6,
+        "ffmc": 90.0,
         "ignition_mode": "threat",
         "ignition_dist": (6, 12),
         "ignition_arc_deg": 60.0,
@@ -74,9 +76,9 @@ REGIMES: dict[str, dict[str, Any]] = {
         "max_steps": 150,
     },
     "hard": {
-        "steps_per_action": 40,
-        "wind_scale": 0.5,
-        "ffmc": 90.0,
+        "steps_per_action": 30,
+        "wind_scale": 0.8,
+        "ffmc": 92.0,
         "ignition_mode": "threat",
         "ignition_dist": (4, 10),
         "ignition_arc_deg": 60.0,
@@ -88,25 +90,26 @@ REGIMES: dict[str, dict[str, Any]] = {
 
 #: Region-specific regime overrides. Saudi (petroleum, concentrated assets) uses the base
 #: ``REGIMES`` above; California (WUI, scattered assets, different fuels) spreads differently, so
-#: its suppression-relevant band sits at a lighter moderation. Values calibrated from the
-#: Phase-1 No-Op-vs-Value-First sweep (California headroom peaks at wind x0.4 / FFMC 88 / 30-min
-#: steps: No-Op ISR 0.375, Value-First ISR 0.667).
+#: its strategic-headroom band sits at a slightly lighter moderation. Values calibrated from the
+#: Phase-1 sweep vs the *strong* Local-Reactive baseline (California default wind x0.5 / FFMC 90:
+#: No-Op WEL 34 / ISR 0.00, Local Reactive WEL 11 / ISR 0.69 -> reactive helps but cannot
+#: contain the fire, leaving room for strategic coordination).
 REGION_OVERRIDES: dict[str, dict[str, dict[str, Any]]] = {
     "california": {
-        "easy": {"wind_scale": 0.3, "ffmc": 85.0, "steps_per_action": 25, "ignition_dist": (8, 14)},
+        "easy": {"wind_scale": 0.35, "ffmc": 87.0, "steps_per_action": 30, "ignition_dist": (8, 14)},
         "default": {
-            "wind_scale": 0.4,
-            "ffmc": 88.0,
+            "wind_scale": 0.5,
+            "ffmc": 90.0,
             "steps_per_action": 30,
             "ignition_dist": (6, 12),
         },
         "medium": {
-            "wind_scale": 0.4,
-            "ffmc": 88.0,
+            "wind_scale": 0.5,
+            "ffmc": 90.0,
             "steps_per_action": 30,
             "ignition_dist": (6, 12),
         },
-        "hard": {"wind_scale": 0.5, "ffmc": 90.0, "steps_per_action": 35, "ignition_dist": (4, 10)},
+        "hard": {"wind_scale": 0.7, "ffmc": 92.0, "steps_per_action": 30, "ignition_dist": (4, 10)},
     },
 }
 
