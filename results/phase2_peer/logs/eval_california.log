@@ -1,0 +1,36 @@
+[california] No-Op | seed 42 | 15 episodes
+[california] Greedy-Risk Heuristic | seed 42 | 15 episodes
+[california] Value-First Heuristic | seed 42 | 15 episodes
+[california] Flat MARL (matched) | seed 42 | 15 episodes
+[california] QMIX (matched) | seed 42 | 15 episodes
+[california] CommNet (matched) | seed 42 | 15 episodes
+[california] Learned Hierarchical | seed 42 | 15 episodes
+[california] No-Op | seed 1042 | 15 episodes
+[california] Greedy-Risk Heuristic | seed 1042 | 15 episodes
+[california] Value-First Heuristic | seed 1042 | 15 episodes
+[california] Flat MARL (matched) | seed 1042 | 15 episodes
+[california] QMIX (matched) | seed 1042 | 15 episodes
+[california] CommNet (matched) | seed 1042 | 15 episodes
+[california] Learned Hierarchical | seed 1042 | 15 episodes
+[california] No-Op | seed 2042 | 15 episodes
+[california] Greedy-Risk Heuristic | seed 2042 | 15 episodes
+[california] Value-First Heuristic | seed 2042 | 15 episodes
+[california] Flat MARL (matched) | seed 2042 | 15 episodes
+[california] QMIX (matched) | seed 2042 | 15 episodes
+[california] CommNet (matched) | seed 2042 | 15 episodes
+[california] Learned Hierarchical | seed 2042 | 15 episodes
+[california] No-Op | seed 3042 | 15 episodes
+[california] Greedy-Risk Heuristic | seed 3042 | 15 episodes
+[california] Value-First Heuristic | seed 3042 | 15 episodes
+[california] Flat MARL (matched) | seed 3042 | 15 episodes
+[california] QMIX (matched) | seed 3042 | 15 episodes
+[california] CommNet (matched) | seed 3042 | 15 episodes
+[california] Learned Hierarchical | seed 3042 | 15 episodes
+[california] No-Op | seed 4042 | 15 episodes
+[california] Greedy-Risk Heuristic | seed 4042 | 15 episodes
+[california] Value-First Heuristic | seed 4042 | 15 episodes
+[california] Flat MARL (matched) | seed 4042 | 15 episodes
+[california] QMIX (matched) | seed 4042 | 15 episodes
+[california] CommNet (matched) | seed 4042 | 15 episodes
+[california] Learned Hierarchical | seed 4042 | 15 episodes
+[california] evaluation complete -> results/phase2_peer

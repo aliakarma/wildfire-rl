@@ -1,0 +1,511 @@
+{
+  "region": "saudi",
+  "protocol": {
+    "seeds": [
+      42
+    ],
+    "episodes_per_seed": 1,
+    "unit": "seed means"
+  },
+  "metrics": {
+    "WEL": {
+      "No-Op": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      },
+      "Greedy-Risk Heuristic": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      },
+      "Value-First Heuristic": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      },
+      "Flat MARL (matched)": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      },
+      "QMIX (matched)": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      },
+      "CommNet (matched)": {
+        "mean": 1.0,
+        "std": NaN,
+        "ci_lo": 1.0,
+        "ci_hi": 1.0,
+        "per_seed": [
+          1.0
+        ]
+      },
+      "Learned Hierarchical": {
+        "mean": 27.0,
+        "std": NaN,
+        "ci_lo": 27.0,
+        "ci_hi": 27.0,
+        "per_seed": [
+          27.0
+        ]
+      }
+    },
+    "ISR": {
+      "No-Op": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      },
+      "Greedy-Risk Heuristic": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      },
+      "Value-First Heuristic": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      },
+      "Flat MARL (matched)": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      },
+      "QMIX (matched)": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      },
+      "CommNet (matched)": {
+        "mean": 0.5714285714285714,
+        "std": NaN,
+        "ci_lo": 0.5714285714285714,
+        "ci_hi": 0.5714285714285714,
+        "per_seed": [
+          0.5714
+        ]
+      },
+      "Learned Hierarchical": {
+        "mean": 0.2857142857142857,
+        "std": NaN,
+        "ci_lo": 0.2857142857142857,
+        "ci_hi": 0.2857142857142857,
+        "per_seed": [
+          0.2857
+        ]
+      }
+    },
+    "CE": {
+      "No-Op": {
+        "mean": 1.0,
+        "std": NaN,
+        "ci_lo": 1.0,
+        "ci_hi": 1.0,
+        "per_seed": [
+          1.0
+        ]
+      },
+      "Greedy-Risk Heuristic": {
+        "mean": 1.0,
+        "std": NaN,
+        "ci_lo": 1.0,
+        "ci_hi": 1.0,
+        "per_seed": [
+          1.0
+        ]
+      },
+      "Value-First Heuristic": {
+        "mean": 0.98989898989899,
+        "std": NaN,
+        "ci_lo": 0.98989898989899,
+        "ci_hi": 0.98989898989899,
+        "per_seed": [
+          0.9899
+        ]
+      },
+      "Flat MARL (matched)": {
+        "mean": 1.0,
+        "std": NaN,
+        "ci_lo": 1.0,
+        "ci_hi": 1.0,
+        "per_seed": [
+          1.0
+        ]
+      },
+      "QMIX (matched)": {
+        "mean": 0.7575757575757576,
+        "std": NaN,
+        "ci_lo": 0.7575757575757576,
+        "ci_hi": 0.7575757575757576,
+        "per_seed": [
+          0.7576
+        ]
+      },
+      "CommNet (matched)": {
+        "mean": 0.696969696969697,
+        "std": NaN,
+        "ci_lo": 0.696969696969697,
+        "ci_hi": 0.696969696969697,
+        "per_seed": [
+          0.697
+        ]
+      },
+      "Learned Hierarchical": {
+        "mean": 0.9696969696969697,
+        "std": NaN,
+        "ci_lo": 0.9696969696969697,
+        "ci_hi": 0.9696969696969697,
+        "per_seed": [
+          0.9697
+        ]
+      }
+    },
+    "burned_cells": {
+      "No-Op": {
+        "mean": 900.0,
+        "std": NaN,
+        "ci_lo": 900.0,
+        "ci_hi": 900.0,
+        "per_seed": [
+          900.0
+        ]
+      },
+      "Greedy-Risk Heuristic": {
+        "mean": 900.0,
+        "std": NaN,
+        "ci_lo": 900.0,
+        "ci_hi": 900.0,
+        "per_seed": [
+          900.0
+        ]
+      },
+      "Value-First Heuristic": {
+        "mean": 900.0,
+        "std": NaN,
+        "ci_lo": 900.0,
+        "ci_hi": 900.0,
+        "per_seed": [
+          900.0
+        ]
+      },
+      "Flat MARL (matched)": {
+        "mean": 895.0,
+        "std": NaN,
+        "ci_lo": 895.0,
+        "ci_hi": 895.0,
+        "per_seed": [
+          895.0
+        ]
+      },
+      "QMIX (matched)": {
+        "mean": 895.0,
+        "std": NaN,
+        "ci_lo": 895.0,
+        "ci_hi": 895.0,
+        "per_seed": [
+          895.0
+        ]
+      },
+      "CommNet (matched)": {
+        "mean": 891.0,
+        "std": NaN,
+        "ci_lo": 891.0,
+        "ci_hi": 891.0,
+        "per_seed": [
+          891.0
+        ]
+      },
+      "Learned Hierarchical": {
+        "mean": 900.0,
+        "std": NaN,
+        "ci_lo": 900.0,
+        "ci_hi": 900.0,
+        "per_seed": [
+          900.0
+        ]
+      }
+    },
+    "total_reward": {
+      "No-Op": {
+        "mean": -191.26953125,
+        "std": NaN,
+        "ci_lo": -191.26953125,
+        "ci_hi": -191.26953125,
+        "per_seed": [
+          -191.2695
+        ]
+      },
+      "Greedy-Risk Heuristic": {
+        "mean": -191.26953125,
+        "std": NaN,
+        "ci_lo": -191.26953125,
+        "ci_hi": -191.26953125,
+        "per_seed": [
+          -191.2695
+        ]
+      },
+      "Value-First Heuristic": {
+        "mean": -191.26953125,
+        "std": NaN,
+        "ci_lo": -191.26953125,
+        "ci_hi": -191.26953125,
+        "per_seed": [
+          -191.2695
+        ]
+      },
+      "Flat MARL (matched)": {
+        "mean": -190.0390625,
+        "std": NaN,
+        "ci_lo": -190.0390625,
+        "ci_hi": -190.0390625,
+        "per_seed": [
+          -190.0391
+        ]
+      },
+      "QMIX (matched)": {
+        "mean": -189.94140625,
+        "std": NaN,
+        "ci_lo": -189.94140625,
+        "ci_hi": -189.94140625,
+        "per_seed": [
+          -189.9414
+        ]
+      },
+      "CommNet (matched)": {
+        "mean": -190.20703125,
+        "std": NaN,
+        "ci_lo": -190.20703125,
+        "ci_hi": -190.20703125,
+        "per_seed": [
+          -190.207
+        ]
+      },
+      "Learned Hierarchical": {
+        "mean": -191.26953125,
+        "std": NaN,
+        "ci_lo": -191.26953125,
+        "ci_hi": -191.26953125,
+        "per_seed": [
+          -191.2695
+        ]
+      }
+    }
+  },
+  "comparisons": {
+    "WEL": {
+      "Greedy-Risk Heuristic": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Value-First Heuristic": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Flat MARL (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "QMIX (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "CommNet (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Learned Hierarchical": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      }
+    },
+    "ISR": {
+      "Greedy-Risk Heuristic": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Value-First Heuristic": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Flat MARL (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "QMIX (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "CommNet (matched)": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      },
+      "Learned Hierarchical": {
+        "vs_NoOp": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        },
+        "vs_Hierarchical": {
+          "t_stat": null,
+          "p_val": null,
+          "cohens_d": null,
+          "note": "both degenerate"
+        }
+      }
+    }
+  }
+}

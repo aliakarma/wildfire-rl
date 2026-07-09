@@ -1,0 +1,135 @@
+{
+  "No-Op": {
+    "action_counts": [
+      96,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "action_fractions": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 6.667
+  },
+  "Greedy-Risk Heuristic": {
+    "action_counts": [
+      2,
+      31,
+      25,
+      31,
+      7,
+      0
+    ],
+    "action_fractions": [
+      0.0208,
+      0.3229,
+      0.2604,
+      0.3229,
+      0.0729,
+      0.0
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 8.427
+  },
+  "Value-First Heuristic": {
+    "action_counts": [
+      10,
+      11,
+      20,
+      13,
+      42,
+      0
+    ],
+    "action_fractions": [
+      0.1042,
+      0.1146,
+      0.2083,
+      0.1354,
+      0.4375,
+      0.0
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 3.042
+  },
+  "Flat MARL (matched)": {
+    "action_counts": [
+      37,
+      35,
+      2,
+      8,
+      9,
+      5
+    ],
+    "action_fractions": [
+      0.3854,
+      0.3646,
+      0.0208,
+      0.0833,
+      0.0938,
+      0.0521
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 6.635
+  },
+  "QMIX (matched)": {
+    "action_counts": [
+      0,
+      0,
+      6,
+      85,
+      0,
+      5
+    ],
+    "action_fractions": [
+      0.0,
+      0.0,
+      0.0625,
+      0.8854,
+      0.0,
+      0.0521
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 12.906
+  },
+  "CommNet (matched)": {
+    "action_counts": [
+      3,
+      4,
+      7,
+      1,
+      67,
+      14
+    ],
+    "action_fractions": [
+      0.0312,
+      0.0417,
+      0.0729,
+      0.0104,
+      0.6979,
+      0.1458
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.802
+  },
+  "Learned Hierarchical": {
+    "action_counts": [
+      20,
+      11,
+      20,
+      5,
+      40,
+      0
+    ],
+    "action_fractions": [
+      0.2083,
+      0.1146,
+      0.2083,
+      0.0521,
+      0.4167,
+      0.0
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 3.292
+  }
+}

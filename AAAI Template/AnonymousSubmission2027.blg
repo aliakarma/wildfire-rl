@@ -2,52 +2,45 @@ This is BibTeX, Version 0.99d (TeX Live 2024)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: AnonymousSubmission2027.aux
 The style file: aaai2027.bst
-Illegal, another \bibstyle command---line 51 of file AnonymousSubmission2027.aux
- : \bibstyle
- :          {aaai2027}
-I'm skipping whatever remains of this command
 Database file #1: aaai2027.bib
-Warning--I didn't find a database entry for "altameem2022wildfire"
-Warning--empty journal in dietterich2000maxq
-You've used 20 entries,
+You've used 22 entries,
             2840 wiz_defined-function locations,
-            709 strings with 9037 characters,
-and the built_in function-call counts, 15948 in all, are:
-= -- 1283
-> -- 907
+            716 strings with 9466 characters,
+and the built_in function-call counts, 17311 in all, are:
+= -- 1390
+> -- 990
 < -- 4
-+ -- 333
-- -- 308
-* -- 1132
-:= -- 2490
-add.period$ -- 80
-call.type$ -- 20
-change.case$ -- 189
-chr.to.int$ -- 21
-cite$ -- 21
-duplicate$ -- 1073
-empty$ -- 1014
-format.name$ -- 364
-if$ -- 3177
++ -- 363
+- -- 336
+* -- 1235
+:= -- 2719
+add.period$ -- 90
+call.type$ -- 22
+change.case$ -- 207
+chr.to.int$ -- 23
+cite$ -- 22
+duplicate$ -- 1163
+empty$ -- 1101
+format.name$ -- 398
+if$ -- 3439
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 228
-newline$ -- 103
-num.names$ -- 80
-pop$ -- 525
+missing$ -- 249
+newline$ -- 114
+num.names$ -- 88
+pop$ -- 565
 preamble$ -- 1
-purify$ -- 167
+purify$ -- 183
 quote$ -- 0
-skip$ -- 568
+skip$ -- 603
 stack$ -- 0
-substring$ -- 685
-swap$ -- 611
+substring$ -- 725
+swap$ -- 661
 text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 180
-warning$ -- 1
-while$ -- 114
+type$ -- 198
+warning$ -- 0
+while$ -- 123
 width$ -- 0
-write$ -- 263
-(There was 1 error message)
+write$ -- 293

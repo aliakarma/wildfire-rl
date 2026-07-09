@@ -1,0 +1,16 @@
+[saudi] Learned Hierarchical | seed 42 | 15 episodes
+[saudi] CommNet (matched) | seed 42 | 15 episodes
+[saudi] Flat MARL (matched) | seed 42 | 15 episodes
+[saudi] Learned Hierarchical | seed 1042 | 15 episodes
+[saudi] CommNet (matched) | seed 1042 | 15 episodes
+[saudi] Flat MARL (matched) | seed 1042 | 15 episodes
+[saudi] Learned Hierarchical | seed 2042 | 15 episodes
+[saudi] CommNet (matched) | seed 2042 | 15 episodes
+[saudi] Flat MARL (matched) | seed 2042 | 15 episodes
+[saudi] Learned Hierarchical | seed 3042 | 15 episodes
+[saudi] CommNet (matched) | seed 3042 | 15 episodes
+[saudi] Flat MARL (matched) | seed 3042 | 15 episodes
+[saudi] Learned Hierarchical | seed 4042 | 15 episodes
+[saudi] CommNet (matched) | seed 4042 | 15 episodes
+[saudi] Flat MARL (matched) | seed 4042 | 15 episodes
+[saudi] evaluation complete -> results/phase9_peer

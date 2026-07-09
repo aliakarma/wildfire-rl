@@ -1,0 +1,1351 @@
+region,condition,policy,seed,episode,WEL,ISR,CE,burned_cells,total_reward
+california,heldout_ignition,No-Op,42,0,34.0,0.0,1.0,827,-393.173828125
+california,heldout_ignition,No-Op,42,1,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,42,2,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,42,3,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,42,4,28.0,0.16666666666666666,1.0,742,-540.654296875
+california,heldout_ignition,No-Op,42,5,34.0,0.0,1.0,827,-393.154296875
+california,heldout_ignition,No-Op,42,6,16.0,0.5,1.0,578,-279.35546875
+california,heldout_ignition,No-Op,42,7,12.0,0.5,1.0,498,-324.912109375
+california,heldout_ignition,No-Op,42,8,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,42,9,28.0,0.16666666666666666,1.0,742,-540.6640625
+california,heldout_ignition,No-Op,42,10,34.0,0.0,1.0,827,-393.193359375
+california,heldout_ignition,No-Op,42,11,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,42,12,12.0,0.5,1.0,498,-324.90234375
+california,heldout_ignition,No-Op,42,13,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,42,14,28.0,0.16666666666666666,1.0,742,-540.615234375
+california,heldout_ignition,No-Op,1042,0,34.0,0.0,1.0,827,-393.1640625
+california,heldout_ignition,No-Op,1042,1,16.0,0.5,1.0,578,-279.345703125
+california,heldout_ignition,No-Op,1042,2,12.0,0.5,1.0,498,-324.90234375
+california,heldout_ignition,No-Op,1042,3,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,1042,4,28.0,0.16666666666666666,1.0,742,-540.625
+california,heldout_ignition,No-Op,1042,5,34.0,0.0,1.0,827,-393.193359375
+california,heldout_ignition,No-Op,1042,6,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,1042,7,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,1042,8,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,1042,9,28.0,0.16666666666666666,1.0,742,-540.654296875
+california,heldout_ignition,No-Op,1042,10,34.0,0.0,1.0,827,-393.173828125
+california,heldout_ignition,No-Op,1042,11,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,1042,12,12.0,0.5,1.0,498,-324.8828125
+california,heldout_ignition,No-Op,1042,13,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,1042,14,28.0,0.16666666666666666,1.0,742,-540.654296875
+california,heldout_ignition,No-Op,2042,0,34.0,0.0,1.0,827,-393.1640625
+california,heldout_ignition,No-Op,2042,1,16.0,0.5,1.0,578,-279.375
+california,heldout_ignition,No-Op,2042,2,12.0,0.5,1.0,498,-324.90234375
+california,heldout_ignition,No-Op,2042,3,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,2042,4,28.0,0.16666666666666666,1.0,742,-540.673828125
+california,heldout_ignition,No-Op,2042,5,34.0,0.0,1.0,827,-393.18359375
+california,heldout_ignition,No-Op,2042,6,16.0,0.5,1.0,578,-279.35546875
+california,heldout_ignition,No-Op,2042,7,12.0,0.5,1.0,498,-324.912109375
+california,heldout_ignition,No-Op,2042,8,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,2042,9,28.0,0.16666666666666666,1.0,742,-540.615234375
+california,heldout_ignition,No-Op,2042,10,34.0,0.0,1.0,827,-393.203125
+california,heldout_ignition,No-Op,2042,11,16.0,0.5,1.0,578,-279.35546875
+california,heldout_ignition,No-Op,2042,12,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,2042,13,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,2042,14,28.0,0.16666666666666666,1.0,742,-540.615234375
+california,heldout_ignition,No-Op,3042,0,34.0,0.0,1.0,827,-393.1640625
+california,heldout_ignition,No-Op,3042,1,16.0,0.5,1.0,578,-279.3359375
+california,heldout_ignition,No-Op,3042,2,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,3042,3,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,3042,4,28.0,0.16666666666666666,1.0,742,-540.625
+california,heldout_ignition,No-Op,3042,5,34.0,0.0,1.0,827,-393.1640625
+california,heldout_ignition,No-Op,3042,6,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,3042,7,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,3042,8,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,3042,9,28.0,0.16666666666666666,1.0,742,-540.634765625
+california,heldout_ignition,No-Op,3042,10,34.0,0.0,1.0,827,-393.203125
+california,heldout_ignition,No-Op,3042,11,16.0,0.5,1.0,578,-279.365234375
+california,heldout_ignition,No-Op,3042,12,12.0,0.5,1.0,498,-324.90234375
+california,heldout_ignition,No-Op,3042,13,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,3042,14,28.0,0.16666666666666666,1.0,742,-540.60546875
+california,heldout_ignition,No-Op,4042,0,34.0,0.0,1.0,827,-393.173828125
+california,heldout_ignition,No-Op,4042,1,16.0,0.5,1.0,578,-279.3359375
+california,heldout_ignition,No-Op,4042,2,12.0,0.5,1.0,498,-324.892578125
+california,heldout_ignition,No-Op,4042,3,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,4042,4,28.0,0.16666666666666666,1.0,742,-540.60546875
+california,heldout_ignition,No-Op,4042,5,34.0,0.0,1.0,827,-393.193359375
+california,heldout_ignition,No-Op,4042,6,16.0,0.5,1.0,578,-279.345703125
+california,heldout_ignition,No-Op,4042,7,12.0,0.5,1.0,498,-324.912109375
+california,heldout_ignition,No-Op,4042,8,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,4042,9,28.0,0.16666666666666666,1.0,742,-540.60546875
+california,heldout_ignition,No-Op,4042,10,34.0,0.0,1.0,827,-393.173828125
+california,heldout_ignition,No-Op,4042,11,16.0,0.5,1.0,578,-279.35546875
+california,heldout_ignition,No-Op,4042,12,12.0,0.5,1.0,498,-324.8828125
+california,heldout_ignition,No-Op,4042,13,0.0,1.0,1.0,279,-112.32421875
+california,heldout_ignition,No-Op,4042,14,28.0,0.16666666666666666,1.0,742,-540.5859375
+california,heldout_ignition,Value-First Heuristic,42,0,34.0,0.0,0.9964912280701754,824,-391.71875
+california,heldout_ignition,Value-First Heuristic,42,1,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,42,2,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,42,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,42,4,28.0,0.16666666666666666,0.9862068965517241,740,-538.2421875
+california,heldout_ignition,Value-First Heuristic,42,5,34.0,0.0,0.9964912280701754,824,-391.69921875
+california,heldout_ignition,Value-First Heuristic,42,6,16.0,0.5,0.993103448275862,574,-277.470703125
+california,heldout_ignition,Value-First Heuristic,42,7,12.0,0.5,0.9908045977011494,497,-324.23828125
+california,heldout_ignition,Value-First Heuristic,42,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,42,9,28.0,0.16666666666666666,0.9862068965517241,740,-538.251953125
+california,heldout_ignition,Value-First Heuristic,42,10,34.0,0.0,0.9964912280701754,824,-391.73828125
+california,heldout_ignition,Value-First Heuristic,42,11,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,42,12,12.0,0.5,0.9908045977011494,497,-324.228515625
+california,heldout_ignition,Value-First Heuristic,42,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,42,14,28.0,0.16666666666666666,0.9862068965517241,740,-538.203125
+california,heldout_ignition,Value-First Heuristic,1042,0,34.0,0.0,0.9964912280701754,824,-391.708984375
+california,heldout_ignition,Value-First Heuristic,1042,1,16.0,0.5,0.993103448275862,574,-277.4609375
+california,heldout_ignition,Value-First Heuristic,1042,2,12.0,0.5,0.9908045977011494,497,-324.228515625
+california,heldout_ignition,Value-First Heuristic,1042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,1042,4,28.0,0.16666666666666666,0.9862068965517241,740,-538.203125
+california,heldout_ignition,Value-First Heuristic,1042,5,34.0,0.0,0.9964912280701754,824,-391.73828125
+california,heldout_ignition,Value-First Heuristic,1042,6,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,1042,7,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,1042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,1042,9,28.0,0.16666666666666666,0.9862068965517241,740,-538.2421875
+california,heldout_ignition,Value-First Heuristic,1042,10,34.0,0.0,0.9964912280701754,824,-391.71875
+california,heldout_ignition,Value-First Heuristic,1042,11,16.0,0.5,0.993103448275862,574,-277.470703125
+california,heldout_ignition,Value-First Heuristic,1042,12,12.0,0.5,0.9908045977011494,497,-324.208984375
+california,heldout_ignition,Value-First Heuristic,1042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,1042,14,28.0,0.16666666666666666,0.9862068965517241,740,-538.232421875
+california,heldout_ignition,Value-First Heuristic,2042,0,34.0,0.0,0.9964912280701754,824,-391.708984375
+california,heldout_ignition,Value-First Heuristic,2042,1,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,2042,2,12.0,0.5,0.9908045977011494,497,-324.228515625
+california,heldout_ignition,Value-First Heuristic,2042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,2042,4,28.0,0.16666666666666666,0.9862068965517241,740,-538.26171875
+california,heldout_ignition,Value-First Heuristic,2042,5,34.0,0.0,0.9964912280701754,824,-391.728515625
+california,heldout_ignition,Value-First Heuristic,2042,6,16.0,0.5,0.993103448275862,574,-277.470703125
+california,heldout_ignition,Value-First Heuristic,2042,7,12.0,0.5,0.9908045977011494,497,-324.23828125
+california,heldout_ignition,Value-First Heuristic,2042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,2042,9,28.0,0.16666666666666666,0.9862068965517241,740,-538.203125
+california,heldout_ignition,Value-First Heuristic,2042,10,34.0,0.0,0.9964912280701754,824,-391.748046875
+california,heldout_ignition,Value-First Heuristic,2042,11,16.0,0.5,0.993103448275862,574,-277.470703125
+california,heldout_ignition,Value-First Heuristic,2042,12,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,2042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,2042,14,28.0,0.16666666666666666,0.9862068965517241,740,-538.203125
+california,heldout_ignition,Value-First Heuristic,3042,0,34.0,0.0,0.9964912280701754,824,-391.708984375
+california,heldout_ignition,Value-First Heuristic,3042,1,16.0,0.5,0.993103448275862,574,-277.451171875
+california,heldout_ignition,Value-First Heuristic,3042,2,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,3042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,3042,4,28.0,0.16666666666666666,0.9862068965517241,740,-538.212890625
+california,heldout_ignition,Value-First Heuristic,3042,5,34.0,0.0,0.9964912280701754,824,-391.708984375
+california,heldout_ignition,Value-First Heuristic,3042,6,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,3042,7,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,3042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,3042,9,28.0,0.16666666666666666,0.9862068965517241,740,-538.212890625
+california,heldout_ignition,Value-First Heuristic,3042,10,34.0,0.0,0.9964912280701754,824,-391.73828125
+california,heldout_ignition,Value-First Heuristic,3042,11,16.0,0.5,0.993103448275862,574,-277.48046875
+california,heldout_ignition,Value-First Heuristic,3042,12,12.0,0.5,0.9908045977011494,497,-324.228515625
+california,heldout_ignition,Value-First Heuristic,3042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,3042,14,28.0,0.16666666666666666,0.9862068965517241,740,-538.193359375
+california,heldout_ignition,Value-First Heuristic,4042,0,34.0,0.0,0.9964912280701754,824,-391.71875
+california,heldout_ignition,Value-First Heuristic,4042,1,16.0,0.5,0.993103448275862,574,-277.451171875
+california,heldout_ignition,Value-First Heuristic,4042,2,12.0,0.5,0.9908045977011494,497,-324.21875
+california,heldout_ignition,Value-First Heuristic,4042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,4042,4,28.0,0.16666666666666666,0.9862068965517241,740,-538.193359375
+california,heldout_ignition,Value-First Heuristic,4042,5,34.0,0.0,0.9964912280701754,824,-391.73828125
+california,heldout_ignition,Value-First Heuristic,4042,6,16.0,0.5,0.993103448275862,574,-277.4609375
+california,heldout_ignition,Value-First Heuristic,4042,7,12.0,0.5,0.9908045977011494,497,-324.23828125
+california,heldout_ignition,Value-First Heuristic,4042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,4042,9,28.0,0.16666666666666666,0.9862068965517241,740,-538.193359375
+california,heldout_ignition,Value-First Heuristic,4042,10,34.0,0.0,0.9964912280701754,824,-391.708984375
+california,heldout_ignition,Value-First Heuristic,4042,11,16.0,0.5,0.993103448275862,574,-277.470703125
+california,heldout_ignition,Value-First Heuristic,4042,12,12.0,0.5,0.9908045977011494,497,-324.208984375
+california,heldout_ignition,Value-First Heuristic,4042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Value-First Heuristic,4042,14,28.0,0.16666666666666666,0.9862068965517241,740,-538.173828125
+california,heldout_ignition,Local Reactive,42,0,16.0,0.3333333333333333,0.9964912280701754,773,-358.61328125
+california,heldout_ignition,Local Reactive,42,1,10.0,0.8333333333333334,1.0,464,-257.197265625
+california,heldout_ignition,Local Reactive,42,2,6.0,0.6666666666666666,1.0,327,-274.462890625
+california,heldout_ignition,Local Reactive,42,3,-12.0,1.0,0.9862068965517241,244,-108.06640625
+california,heldout_ignition,Local Reactive,42,4,22.0,0.3333333333333333,1.0,613,-475.869140625
+california,heldout_ignition,Local Reactive,42,5,28.0,0.16666666666666666,0.9964912280701754,780,-362.75390625
+california,heldout_ignition,Local Reactive,42,6,10.0,0.6666666666666666,0.9908045977011494,556,-276.83828125
+california,heldout_ignition,Local Reactive,42,7,9.0,0.6666666666666666,0.9954022988505747,423,-298.427734375
+california,heldout_ignition,Local Reactive,42,8,0.0,1.0,0.9954022988505747,239,-107.67578125
+california,heldout_ignition,Local Reactive,42,9,16.0,0.5,0.9977011494252873,542,-421.650390625
+california,heldout_ignition,Local Reactive,42,10,28.0,0.16666666666666666,0.9929824561403509,791,-369.2578125
+california,heldout_ignition,Local Reactive,42,11,10.0,0.6666666666666666,0.9954022988505747,539,-274.228515625
+california,heldout_ignition,Local Reactive,42,12,9.0,0.6666666666666666,1.0,411,-303.26171875
+california,heldout_ignition,Local Reactive,42,13,-12.0,1.0,0.9770114942528736,211,-102.58515625
+california,heldout_ignition,Local Reactive,42,14,22.0,0.3333333333333333,1.0,653,-489.58984375
+california,heldout_ignition,Local Reactive,1042,0,28.0,0.16666666666666666,0.9894736842105263,791,-367.94921875
+california,heldout_ignition,Local Reactive,1042,1,4.0,0.8333333333333334,0.9862068965517241,496,-266.240234375
+california,heldout_ignition,Local Reactive,1042,2,-12.0,1.0,0.9954022988505747,396,-295.29296875
+california,heldout_ignition,Local Reactive,1042,3,-6.0,1.0,0.9954022988505747,272,-112.05078125
+california,heldout_ignition,Local Reactive,1042,4,16.0,0.5,1.0,593,-435.322265625
+california,heldout_ignition,Local Reactive,1042,5,34.0,0.0,1.0,781,-724.736328125
+california,heldout_ignition,Local Reactive,1042,6,4.0,0.6666666666666666,0.9908045977011494,521,-274.269921875
+california,heldout_ignition,Local Reactive,1042,7,9.0,0.6666666666666666,1.0,388,-305.95703125
+california,heldout_ignition,Local Reactive,1042,8,-13.0,1.0,1.0,275,-112.080078125
+california,heldout_ignition,Local Reactive,1042,9,28.0,0.16666666666666666,0.9885057471264368,647,-471.76015625
+california,heldout_ignition,Local Reactive,1042,10,28.0,0.16666666666666666,1.0,779,-411.8359375
+california,heldout_ignition,Local Reactive,1042,11,10.0,0.8333333333333334,0.9954022988505747,467,-252.4609375
+california,heldout_ignition,Local Reactive,1042,12,3.0,0.8333333333333334,0.993103448275862,407,-295.732421875
+california,heldout_ignition,Local Reactive,1042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Local Reactive,1042,14,22.0,0.3333333333333333,0.9885057471264368,599,-464.931640625
+california,heldout_ignition,Local Reactive,2042,0,16.0,0.3333333333333333,0.9824561403508771,765,-347.705078125
+california,heldout_ignition,Local Reactive,2042,1,-16.0,1.0,0.9954022988505747,436,-253.798828125
+california,heldout_ignition,Local Reactive,2042,2,9.0,0.6666666666666666,0.9977011494252873,417,-302.275390625
+california,heldout_ignition,Local Reactive,2042,3,0.0,1.0,0.9954022988505747,248,-108.801171875
+california,heldout_ignition,Local Reactive,2042,4,2.0,0.5,1.0,652,-473.6328125
+california,heldout_ignition,Local Reactive,2042,5,28.0,0.16666666666666666,0.9973753280839895,750,-531.8359375
+california,heldout_ignition,Local Reactive,2042,6,1.0,0.6666666666666666,1.0,464,-262.3828125
+california,heldout_ignition,Local Reactive,2042,7,6.0,0.6666666666666666,0.9977011494252873,404,-293.955078125
+california,heldout_ignition,Local Reactive,2042,8,-9.0,1.0,0.9954022988505747,279,-112.42421875
+california,heldout_ignition,Local Reactive,2042,9,22.0,0.3333333333333333,0.9908045977011494,685,-498.8671875
+california,heldout_ignition,Local Reactive,2042,10,22.0,0.3333333333333333,0.9964912280701754,789,-362.802734375
+california,heldout_ignition,Local Reactive,2042,11,7.0,0.6666666666666666,0.9908045977011494,489,-266.357421875
+california,heldout_ignition,Local Reactive,2042,12,6.0,0.6666666666666666,1.0,315,-283.408203125
+california,heldout_ignition,Local Reactive,2042,13,-3.0,1.0,1.0,207,-100.517578125
+california,heldout_ignition,Local Reactive,2042,14,16.0,0.5,1.0,573,-457.421875
+california,heldout_ignition,Local Reactive,3042,0,28.0,0.16666666666666666,0.993127147766323,790,-351.708984375
+california,heldout_ignition,Local Reactive,3042,1,7.0,0.8333333333333334,0.9724137931034482,476,-261.733203125
+california,heldout_ignition,Local Reactive,3042,2,6.0,0.6666666666666666,0.993103448275862,424,-300.62734375
+california,heldout_ignition,Local Reactive,3042,3,0.0,1.0,0.9954022988505747,274,-112.138671875
+california,heldout_ignition,Local Reactive,3042,4,4.0,0.6666666666666666,0.9977011494252873,481,-401.201171875
+california,heldout_ignition,Local Reactive,3042,5,28.0,0.16666666666666666,0.9789473684210527,797,-370.0
+california,heldout_ignition,Local Reactive,3042,6,4.0,0.8333333333333334,0.9770114942528736,532,-273.459375
+california,heldout_ignition,Local Reactive,3042,7,0.0,0.8333333333333334,0.9862068965517241,374,-291.975
+california,heldout_ignition,Local Reactive,3042,8,-6.0,1.0,0.9885057471264368,277,-112.375390625
+california,heldout_ignition,Local Reactive,3042,9,22.0,0.3333333333333333,0.9908045977011494,665,-488.88671875
+california,heldout_ignition,Local Reactive,3042,10,28.0,0.16666666666666666,0.9908045977011494,761,-682.199609375
+california,heldout_ignition,Local Reactive,3042,11,13.0,0.6666666666666666,0.9977011494252873,510,-263.18359375
+california,heldout_ignition,Local Reactive,3042,12,6.0,0.6666666666666666,1.0,431,-311.181640625
+california,heldout_ignition,Local Reactive,3042,13,0.0,1.0,0.9977011494252873,260,-111.34765625
+california,heldout_ignition,Local Reactive,3042,14,16.0,0.5,0.9977011494252873,625,-443.3984375
+california,heldout_ignition,Local Reactive,4042,0,28.0,0.16666666666666666,1.0,786,-357.783203125
+california,heldout_ignition,Local Reactive,4042,1,4.0,0.8333333333333334,0.9977011494252873,460,-258.7109375
+california,heldout_ignition,Local Reactive,4042,2,-9.0,1.0,1.0,359,-288.33984375
+california,heldout_ignition,Local Reactive,4042,3,-3.0,1.0,0.9977011494252873,255,-110.56640625
+california,heldout_ignition,Local Reactive,4042,4,28.0,0.16666666666666666,1.0,629,-452.724609375
+california,heldout_ignition,Local Reactive,4042,5,34.0,0.0,0.9964912280701754,790,-367.40234375
+california,heldout_ignition,Local Reactive,4042,6,4.0,0.8333333333333334,0.9954022988505747,504,-266.220703125
+california,heldout_ignition,Local Reactive,4042,7,9.0,0.6666666666666666,0.9908045977011494,377,-294.7875
+california,heldout_ignition,Local Reactive,4042,8,-3.0,1.0,0.9885057471264368,243,-106.09375
+california,heldout_ignition,Local Reactive,4042,9,16.0,0.5,0.9954022988505747,617,-467.822265625
+california,heldout_ignition,Local Reactive,4042,10,34.0,0.0,0.9894736842105263,776,-333.937890625
+california,heldout_ignition,Local Reactive,4042,11,13.0,0.6666666666666666,0.993103448275862,418,-250.6078125
+california,heldout_ignition,Local Reactive,4042,12,0.0,0.8333333333333334,1.0,393,-296.71875
+california,heldout_ignition,Local Reactive,4042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Local Reactive,4042,14,28.0,0.16666666666666666,0.9977011494252873,593,-443.212890625
+california,heldout_ignition,Learned Hierarchical,42,0,34.0,0.0,0.9894736842105263,826,-392.578125
+california,heldout_ignition,Learned Hierarchical,42,1,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,42,2,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,42,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,42,4,28.0,0.16666666666666666,0.9632183908045977,739,-537.998046875
+california,heldout_ignition,Learned Hierarchical,42,5,34.0,0.0,0.9894736842105263,826,-392.55859375
+california,heldout_ignition,Learned Hierarchical,42,6,16.0,0.5,0.9885057471264368,575,-278.232421875
+california,heldout_ignition,Learned Hierarchical,42,7,12.0,0.5,0.993103448275862,497,-324.23828125
+california,heldout_ignition,Learned Hierarchical,42,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,42,9,28.0,0.16666666666666666,0.9632183908045977,739,-538.0078125
+california,heldout_ignition,Learned Hierarchical,42,10,34.0,0.0,0.9894736842105263,826,-392.59765625
+california,heldout_ignition,Learned Hierarchical,42,11,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,42,12,12.0,0.5,0.993103448275862,497,-324.228515625
+california,heldout_ignition,Learned Hierarchical,42,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,42,14,28.0,0.16666666666666666,0.9632183908045977,739,-537.958984375
+california,heldout_ignition,Learned Hierarchical,1042,0,34.0,0.0,0.9894736842105263,826,-392.568359375
+california,heldout_ignition,Learned Hierarchical,1042,1,16.0,0.5,0.9885057471264368,575,-278.22265625
+california,heldout_ignition,Learned Hierarchical,1042,2,12.0,0.5,0.993103448275862,497,-324.228515625
+california,heldout_ignition,Learned Hierarchical,1042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,1042,4,28.0,0.16666666666666666,0.9632183908045977,739,-537.958984375
+california,heldout_ignition,Learned Hierarchical,1042,5,34.0,0.0,0.9894736842105263,826,-392.59765625
+california,heldout_ignition,Learned Hierarchical,1042,6,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,1042,7,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,1042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,1042,9,28.0,0.16666666666666666,0.9632183908045977,739,-537.998046875
+california,heldout_ignition,Learned Hierarchical,1042,10,34.0,0.0,0.9894736842105263,826,-392.578125
+california,heldout_ignition,Learned Hierarchical,1042,11,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,1042,12,12.0,0.5,0.993103448275862,497,-324.208984375
+california,heldout_ignition,Learned Hierarchical,1042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,1042,14,28.0,0.16666666666666666,0.9632183908045977,739,-537.98828125
+california,heldout_ignition,Learned Hierarchical,2042,0,34.0,0.0,0.9894736842105263,826,-392.568359375
+california,heldout_ignition,Learned Hierarchical,2042,1,16.0,0.5,0.9885057471264368,575,-278.251953125
+california,heldout_ignition,Learned Hierarchical,2042,2,12.0,0.5,0.993103448275862,497,-324.228515625
+california,heldout_ignition,Learned Hierarchical,2042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,2042,4,28.0,0.16666666666666666,0.9632183908045977,739,-538.0078125
+california,heldout_ignition,Learned Hierarchical,2042,5,34.0,0.0,0.9894736842105263,826,-392.587890625
+california,heldout_ignition,Learned Hierarchical,2042,6,16.0,0.5,0.9885057471264368,575,-278.232421875
+california,heldout_ignition,Learned Hierarchical,2042,7,12.0,0.5,0.993103448275862,497,-324.23828125
+california,heldout_ignition,Learned Hierarchical,2042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,2042,9,28.0,0.16666666666666666,0.9632183908045977,739,-537.958984375
+california,heldout_ignition,Learned Hierarchical,2042,10,34.0,0.0,0.9894736842105263,826,-392.607421875
+california,heldout_ignition,Learned Hierarchical,2042,11,16.0,0.5,0.9885057471264368,575,-278.232421875
+california,heldout_ignition,Learned Hierarchical,2042,12,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,2042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,2042,14,28.0,0.16666666666666666,0.9632183908045977,739,-537.94921875
+california,heldout_ignition,Learned Hierarchical,3042,0,34.0,0.0,0.9894736842105263,826,-392.568359375
+california,heldout_ignition,Learned Hierarchical,3042,1,16.0,0.5,0.9885057471264368,575,-278.212890625
+california,heldout_ignition,Learned Hierarchical,3042,2,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,3042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,3042,4,28.0,0.16666666666666666,0.9632183908045977,739,-537.958984375
+california,heldout_ignition,Learned Hierarchical,3042,5,34.0,0.0,0.9894736842105263,826,-392.568359375
+california,heldout_ignition,Learned Hierarchical,3042,6,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,3042,7,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,3042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,3042,9,28.0,0.16666666666666666,0.9632183908045977,739,-537.96875
+california,heldout_ignition,Learned Hierarchical,3042,10,34.0,0.0,0.9894736842105263,826,-392.607421875
+california,heldout_ignition,Learned Hierarchical,3042,11,16.0,0.5,0.9885057471264368,575,-278.2421875
+california,heldout_ignition,Learned Hierarchical,3042,12,12.0,0.5,0.993103448275862,497,-324.228515625
+california,heldout_ignition,Learned Hierarchical,3042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,3042,14,28.0,0.16666666666666666,0.9632183908045977,739,-537.94921875
+california,heldout_ignition,Learned Hierarchical,4042,0,34.0,0.0,0.9894736842105263,826,-392.578125
+california,heldout_ignition,Learned Hierarchical,4042,1,16.0,0.5,0.9885057471264368,575,-278.212890625
+california,heldout_ignition,Learned Hierarchical,4042,2,12.0,0.5,0.993103448275862,497,-324.21875
+california,heldout_ignition,Learned Hierarchical,4042,3,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,4042,4,28.0,0.16666666666666666,0.9632183908045977,739,-537.94921875
+california,heldout_ignition,Learned Hierarchical,4042,5,34.0,0.0,0.9894736842105263,826,-392.59765625
+california,heldout_ignition,Learned Hierarchical,4042,6,16.0,0.5,0.9885057471264368,575,-278.22265625
+california,heldout_ignition,Learned Hierarchical,4042,7,12.0,0.5,0.993103448275862,497,-324.23828125
+california,heldout_ignition,Learned Hierarchical,4042,8,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,4042,9,28.0,0.16666666666666666,0.9632183908045977,739,-537.94921875
+california,heldout_ignition,Learned Hierarchical,4042,10,34.0,0.0,0.9894736842105263,826,-392.578125
+california,heldout_ignition,Learned Hierarchical,4042,11,16.0,0.5,0.9885057471264368,575,-278.232421875
+california,heldout_ignition,Learned Hierarchical,4042,12,12.0,0.5,0.993103448275862,497,-324.208984375
+california,heldout_ignition,Learned Hierarchical,4042,13,0.0,1.0,0.993103448275862,279,-112.32421875
+california,heldout_ignition,Learned Hierarchical,4042,14,28.0,0.16666666666666666,0.9632183908045977,739,-537.9296875
+california,heldout_ignition,CommNet (matched),42,0,28.0,0.16666666666666666,0.5824561403508772,807,-378.880859375
+california,heldout_ignition,CommNet (matched),42,1,10.0,0.6666666666666666,0.767816091954023,537,-272.620703125
+california,heldout_ignition,CommNet (matched),42,2,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),42,3,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),42,4,22.0,0.3333333333333333,0.9954022988505747,734,-533.994140625
+california,heldout_ignition,CommNet (matched),42,5,28.0,0.16666666666666666,0.5824561403508772,807,-378.861328125
+california,heldout_ignition,CommNet (matched),42,6,10.0,0.6666666666666666,0.767816091954023,537,-272.601171875
+california,heldout_ignition,CommNet (matched),42,7,6.0,0.6666666666666666,0.41839080459770117,478,-307.133203125
+california,heldout_ignition,CommNet (matched),42,8,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),42,9,22.0,0.3333333333333333,0.9954022988505747,734,-533.984375
+california,heldout_ignition,CommNet (matched),42,10,28.0,0.16666666666666666,0.5824561403508772,807,-378.900390625
+california,heldout_ignition,CommNet (matched),42,11,10.0,0.6666666666666666,0.767816091954023,537,-272.601171875
+california,heldout_ignition,CommNet (matched),42,12,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),42,13,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),42,14,22.0,0.3333333333333333,0.9954022988505747,734,-533.96484375
+california,heldout_ignition,CommNet (matched),1042,0,28.0,0.16666666666666666,0.5824561403508772,807,-378.87109375
+california,heldout_ignition,CommNet (matched),1042,1,10.0,0.6666666666666666,0.767816091954023,537,-272.59140625
+california,heldout_ignition,CommNet (matched),1042,2,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),1042,3,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),1042,4,22.0,0.3333333333333333,0.9954022988505747,734,-533.96484375
+california,heldout_ignition,CommNet (matched),1042,5,28.0,0.16666666666666666,0.5824561403508772,807,-378.890625
+california,heldout_ignition,CommNet (matched),1042,6,10.0,0.6666666666666666,0.767816091954023,537,-272.620703125
+california,heldout_ignition,CommNet (matched),1042,7,6.0,0.6666666666666666,0.41839080459770117,478,-307.10390625
+california,heldout_ignition,CommNet (matched),1042,8,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),1042,9,22.0,0.3333333333333333,0.9954022988505747,734,-533.994140625
+california,heldout_ignition,CommNet (matched),1042,10,28.0,0.16666666666666666,0.5824561403508772,807,-378.880859375
+california,heldout_ignition,CommNet (matched),1042,11,10.0,0.6666666666666666,0.767816091954023,537,-272.601171875
+california,heldout_ignition,CommNet (matched),1042,12,6.0,0.6666666666666666,0.41839080459770117,478,-307.094140625
+california,heldout_ignition,CommNet (matched),1042,13,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),1042,14,22.0,0.3333333333333333,0.9954022988505747,734,-533.984375
+california,heldout_ignition,CommNet (matched),2042,0,28.0,0.16666666666666666,0.5824561403508772,807,-378.87109375
+california,heldout_ignition,CommNet (matched),2042,1,10.0,0.6666666666666666,0.767816091954023,537,-272.6109375
+california,heldout_ignition,CommNet (matched),2042,2,6.0,0.6666666666666666,0.41839080459770117,478,-307.1234375
+california,heldout_ignition,CommNet (matched),2042,3,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),2042,4,22.0,0.3333333333333333,0.9954022988505747,734,-534.013671875
+california,heldout_ignition,CommNet (matched),2042,5,28.0,0.16666666666666666,0.5824561403508772,807,-378.890625
+california,heldout_ignition,CommNet (matched),2042,6,10.0,0.6666666666666666,0.767816091954023,537,-272.6109375
+california,heldout_ignition,CommNet (matched),2042,7,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),2042,8,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),2042,9,22.0,0.3333333333333333,0.9954022988505747,734,-533.96484375
+california,heldout_ignition,CommNet (matched),2042,10,28.0,0.16666666666666666,0.5824561403508772,807,-378.91015625
+california,heldout_ignition,CommNet (matched),2042,11,10.0,0.6666666666666666,0.767816091954023,537,-272.6109375
+california,heldout_ignition,CommNet (matched),2042,12,6.0,0.6666666666666666,0.41839080459770117,478,-307.10390625
+california,heldout_ignition,CommNet (matched),2042,13,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),2042,14,22.0,0.3333333333333333,0.9954022988505747,734,-533.955078125
+california,heldout_ignition,CommNet (matched),3042,0,28.0,0.16666666666666666,0.5824561403508772,807,-378.861328125
+california,heldout_ignition,CommNet (matched),3042,1,10.0,0.6666666666666666,0.767816091954023,537,-272.59140625
+california,heldout_ignition,CommNet (matched),3042,2,6.0,0.6666666666666666,0.41839080459770117,478,-307.10390625
+california,heldout_ignition,CommNet (matched),3042,3,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),3042,4,22.0,0.3333333333333333,0.9954022988505747,734,-533.96484375
+california,heldout_ignition,CommNet (matched),3042,5,28.0,0.16666666666666666,0.5824561403508772,807,-378.861328125
+california,heldout_ignition,CommNet (matched),3042,6,10.0,0.6666666666666666,0.767816091954023,537,-272.6109375
+california,heldout_ignition,CommNet (matched),3042,7,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),3042,8,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),3042,9,22.0,0.3333333333333333,0.9954022988505747,734,-533.974609375
+california,heldout_ignition,CommNet (matched),3042,10,28.0,0.16666666666666666,0.5824561403508772,807,-378.880859375
+california,heldout_ignition,CommNet (matched),3042,11,10.0,0.6666666666666666,0.767816091954023,537,-272.620703125
+california,heldout_ignition,CommNet (matched),3042,12,6.0,0.6666666666666666,0.41839080459770117,478,-307.1234375
+california,heldout_ignition,CommNet (matched),3042,13,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),3042,14,22.0,0.3333333333333333,0.9954022988505747,734,-533.955078125
+california,heldout_ignition,CommNet (matched),4042,0,28.0,0.16666666666666666,0.5824561403508772,807,-378.880859375
+california,heldout_ignition,CommNet (matched),4042,1,10.0,0.6666666666666666,0.767816091954023,537,-272.59140625
+california,heldout_ignition,CommNet (matched),4042,2,6.0,0.6666666666666666,0.41839080459770117,478,-307.113671875
+california,heldout_ignition,CommNet (matched),4042,3,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),4042,4,22.0,0.3333333333333333,0.9954022988505747,734,-533.9453125
+california,heldout_ignition,CommNet (matched),4042,5,28.0,0.16666666666666666,0.5824561403508772,807,-378.890625
+california,heldout_ignition,CommNet (matched),4042,6,10.0,0.6666666666666666,0.767816091954023,537,-272.59140625
+california,heldout_ignition,CommNet (matched),4042,7,6.0,0.6666666666666666,0.41839080459770117,478,-307.1234375
+california,heldout_ignition,CommNet (matched),4042,8,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),4042,9,22.0,0.3333333333333333,0.9954022988505747,734,-533.955078125
+california,heldout_ignition,CommNet (matched),4042,10,28.0,0.16666666666666666,0.5824561403508772,807,-378.87109375
+california,heldout_ignition,CommNet (matched),4042,11,10.0,0.6666666666666666,0.767816091954023,537,-272.6109375
+california,heldout_ignition,CommNet (matched),4042,12,6.0,0.6666666666666666,0.41839080459770117,478,-307.10390625
+california,heldout_ignition,CommNet (matched),4042,13,-3.0,1.0,0.7724137931034483,265,-111.62109375
+california,heldout_ignition,CommNet (matched),4042,14,22.0,0.3333333333333333,0.9954022988505747,734,-533.935546875
+california,cross_region,No-Op,42,0,34.0,0.0,1.0,827,-421.54296875
+california,cross_region,No-Op,42,1,16.0,0.5,1.0,555,-281.123046875
+california,cross_region,No-Op,42,2,28.0,0.16666666666666666,1.0,632,-415.400390625
+california,cross_region,No-Op,42,3,12.0,0.5,1.0,487,-307.79296875
+california,cross_region,No-Op,42,4,22.0,0.3333333333333333,1.0,623,-376.923828125
+california,cross_region,No-Op,42,5,34.0,0.0,1.0,827,-599.43359375
+california,cross_region,No-Op,42,6,34.0,0.0,1.0,827,-578.642578125
+california,cross_region,No-Op,42,7,34.0,0.0,1.0,827,-358.10546875
+california,cross_region,No-Op,42,8,22.0,0.3333333333333333,1.0,543,-347.119140625
+california,cross_region,No-Op,42,9,34.0,0.0,1.0,827,-571.689453125
+california,cross_region,No-Op,42,10,9.0,0.6666666666666666,1.0,418,-259.091796875
+california,cross_region,No-Op,42,11,22.0,0.3333333333333333,1.0,542,-333.046875
+california,cross_region,No-Op,42,12,34.0,0.0,1.0,827,-436.279296875
+california,cross_region,No-Op,42,13,12.0,0.5,1.0,466,-301.787109375
+california,cross_region,No-Op,42,14,22.0,0.3333333333333333,1.0,613,-358.974609375
+california,cross_region,No-Op,1042,0,22.0,0.3333333333333333,1.0,543,-349.462890625
+california,cross_region,No-Op,1042,1,34.0,0.0,1.0,765,-550.556640625
+california,cross_region,No-Op,1042,2,34.0,0.0,1.0,827,-341.083984375
+california,cross_region,No-Op,1042,3,28.0,0.16666666666666666,1.0,748,-566.416015625
+california,cross_region,No-Op,1042,4,34.0,0.0,1.0,827,-564.765625
+california,cross_region,No-Op,1042,5,28.0,0.16666666666666666,1.0,783,-553.59375
+california,cross_region,No-Op,1042,6,22.0,0.3333333333333333,1.0,539,-327.63671875
+california,cross_region,No-Op,1042,7,12.0,0.5,1.0,475,-309.052734375
+california,cross_region,No-Op,1042,8,34.0,0.0,1.0,827,-377.75390625
+california,cross_region,No-Op,1042,9,34.0,0.0,1.0,827,-584.638671875
+california,cross_region,No-Op,1042,10,34.0,0.0,1.0,757,-511.9140625
+california,cross_region,No-Op,1042,11,22.0,0.3333333333333333,1.0,634,-392.05078125
+california,cross_region,No-Op,1042,12,22.0,0.3333333333333333,1.0,634,-392.041015625
+california,cross_region,No-Op,1042,13,34.0,0.0,1.0,827,-654.43359375
+california,cross_region,No-Op,1042,14,22.0,0.3333333333333333,1.0,525,-293.3203125
+california,cross_region,No-Op,2042,0,28.0,0.16666666666666666,1.0,745,-559.208984375
+california,cross_region,No-Op,2042,1,34.0,0.0,1.0,827,-528.935546875
+california,cross_region,No-Op,2042,2,34.0,0.0,1.0,827,-597.822265625
+california,cross_region,No-Op,2042,3,34.0,0.0,1.0,827,-581.953125
+california,cross_region,No-Op,2042,4,28.0,0.16666666666666666,1.0,653,-403.984375
+california,cross_region,No-Op,2042,5,22.0,0.3333333333333333,1.0,625,-378.291015625
+california,cross_region,No-Op,2042,6,12.0,0.5,1.0,504,-332.080078125
+california,cross_region,No-Op,2042,7,34.0,0.0,1.0,827,-584.619140625
+california,cross_region,No-Op,2042,8,28.0,0.16666666666666666,1.0,724,-565.48828125
+california,cross_region,No-Op,2042,9,28.0,0.16666666666666666,1.0,796,-569.16015625
+california,cross_region,No-Op,2042,10,22.0,0.3333333333333333,1.0,618,-368.154296875
+california,cross_region,No-Op,2042,11,16.0,0.5,1.0,591,-285.83984375
+california,cross_region,No-Op,2042,12,28.0,0.16666666666666666,1.0,748,-573.779296875
+california,cross_region,No-Op,2042,13,34.0,0.0,1.0,827,-429.7265625
+california,cross_region,No-Op,2042,14,34.0,0.0,1.0,827,-585.556640625
+california,cross_region,No-Op,3042,0,28.0,0.16666666666666666,1.0,623,-459.0234375
+california,cross_region,No-Op,3042,1,6.0,0.6666666666666666,1.0,454,-240.9375
+california,cross_region,No-Op,3042,2,34.0,0.0,1.0,827,-393.193359375
+california,cross_region,No-Op,3042,3,22.0,0.3333333333333333,1.0,613,-357.529296875
+california,cross_region,No-Op,3042,4,34.0,0.0,1.0,827,-388.720703125
+california,cross_region,No-Op,3042,5,28.0,0.16666666666666666,1.0,769,-557.75390625
+california,cross_region,No-Op,3042,6,3.0,0.8333333333333334,1.0,311,-131.42578125
+california,cross_region,No-Op,3042,7,9.0,0.6666666666666666,1.0,407,-235.8984375
+california,cross_region,No-Op,3042,8,16.0,0.5,1.0,522,-249.8828125
+california,cross_region,No-Op,3042,9,28.0,0.16666666666666666,1.0,748,-526.318359375
+california,cross_region,No-Op,3042,10,28.0,0.16666666666666666,1.0,670,-476.943359375
+california,cross_region,No-Op,3042,11,28.0,0.16666666666666666,1.0,816,-616.71875
+california,cross_region,No-Op,3042,12,34.0,0.0,1.0,827,-485.634765625
+california,cross_region,No-Op,3042,13,22.0,0.3333333333333333,1.0,646,-409.189453125
+california,cross_region,No-Op,3042,14,16.0,0.5,1.0,561,-278.583984375
+california,cross_region,No-Op,4042,0,12.0,0.5,1.0,483,-266.54296875
+california,cross_region,No-Op,4042,1,22.0,0.3333333333333333,1.0,551,-370.3125
+california,cross_region,No-Op,4042,2,3.0,0.8333333333333334,1.0,330,-153.37890625
+california,cross_region,No-Op,4042,3,28.0,0.16666666666666666,1.0,728,-488.828125
+california,cross_region,No-Op,4042,4,28.0,0.16666666666666666,1.0,699,-511.083984375
+california,cross_region,No-Op,4042,5,34.0,0.0,1.0,827,-397.294921875
+california,cross_region,No-Op,4042,6,22.0,0.3333333333333333,1.0,609,-372.138671875
+california,cross_region,No-Op,4042,7,34.0,0.0,1.0,827,-461.42578125
+california,cross_region,No-Op,4042,8,22.0,0.3333333333333333,1.0,560,-379.86328125
+california,cross_region,No-Op,4042,9,28.0,0.16666666666666666,1.0,814,-590.478515625
+california,cross_region,No-Op,4042,10,12.0,0.5,1.0,468,-272.275390625
+california,cross_region,No-Op,4042,11,34.0,0.0,1.0,827,-300.41015625
+california,cross_region,No-Op,4042,12,22.0,0.3333333333333333,1.0,638,-412.431640625
+california,cross_region,No-Op,4042,13,28.0,0.16666666666666666,1.0,656,-431.85546875
+california,cross_region,No-Op,4042,14,28.0,0.16666666666666666,1.0,683,-454.5703125
+california,cross_region,Learned Hierarchical [trained on saudi],42,0,34.0,0.0,1.0,824,-418.65234375
+california,cross_region,Learned Hierarchical [trained on saudi],42,1,16.0,0.5,1.0,544,-272.3828125
+california,cross_region,Learned Hierarchical [trained on saudi],42,2,28.0,0.16666666666666666,0.9954022988505747,629,-414.21875
+california,cross_region,Learned Hierarchical [trained on saudi],42,3,12.0,0.5,0.993103448275862,485,-306.708984375
+california,cross_region,Learned Hierarchical [trained on saudi],42,4,22.0,0.3333333333333333,1.0,621,-374.189453125
+california,cross_region,Learned Hierarchical [trained on saudi],42,5,34.0,0.0,1.0,824,-593.3203125
+california,cross_region,Learned Hierarchical [trained on saudi],42,6,34.0,0.0,1.0,826,-576.5625
+california,cross_region,Learned Hierarchical [trained on saudi],42,7,34.0,0.0,1.0,824,-356.62109375
+california,cross_region,Learned Hierarchical [trained on saudi],42,8,22.0,0.3333333333333333,0.993103448275862,539,-344.51171875
+california,cross_region,Learned Hierarchical [trained on saudi],42,9,34.0,0.0,1.0,824,-569.287109375
+california,cross_region,Learned Hierarchical [trained on saudi],42,10,9.0,0.6666666666666666,0.9540229885057471,415,-257.880859375
+california,cross_region,Learned Hierarchical [trained on saudi],42,11,22.0,0.3333333333333333,0.993103448275862,539,-330.126953125
+california,cross_region,Learned Hierarchical [trained on saudi],42,12,34.0,0.0,1.0,824,-434.384765625
+california,cross_region,Learned Hierarchical [trained on saudi],42,13,12.0,0.5,0.9862068965517241,464,-300.771484375
+california,cross_region,Learned Hierarchical [trained on saudi],42,14,22.0,0.3333333333333333,1.0,609,-354.814453125
+california,cross_region,Learned Hierarchical [trained on saudi],1042,0,22.0,0.3333333333333333,0.9977011494252873,540,-346.69921875
+california,cross_region,Learned Hierarchical [trained on saudi],1042,1,34.0,0.0,0.9977011494252873,762,-549.27734375
+california,cross_region,Learned Hierarchical [trained on saudi],1042,2,34.0,0.0,1.0,824,-339.53125
+california,cross_region,Learned Hierarchical [trained on saudi],1042,3,28.0,0.16666666666666666,0.9908045977011494,745,-564.462890625
+california,cross_region,Learned Hierarchical [trained on saudi],1042,4,34.0,0.0,1.0,824,-561.005859375
+california,cross_region,Learned Hierarchical [trained on saudi],1042,5,28.0,0.16666666666666666,1.0,780,-547.01171875
+california,cross_region,Learned Hierarchical [trained on saudi],1042,6,22.0,0.3333333333333333,0.9977011494252873,536,-325.17578125
+california,cross_region,Learned Hierarchical [trained on saudi],1042,7,12.0,0.5,0.9471264367816092,473,-308.10546875
+california,cross_region,Learned Hierarchical [trained on saudi],1042,8,34.0,0.0,1.0,824,-375.76171875
+california,cross_region,Learned Hierarchical [trained on saudi],1042,9,34.0,0.0,1.0,826,-582.021484375
+california,cross_region,Learned Hierarchical [trained on saudi],1042,10,34.0,0.0,0.9977011494252873,755,-510.72265625
+california,cross_region,Learned Hierarchical [trained on saudi],1042,11,22.0,0.3333333333333333,1.0,632,-387.880859375
+california,cross_region,Learned Hierarchical [trained on saudi],1042,12,22.0,0.3333333333333333,1.0,632,-387.87109375
+california,cross_region,Learned Hierarchical [trained on saudi],1042,13,34.0,0.0,1.0,824,-651.337890625
+california,cross_region,Learned Hierarchical [trained on saudi],1042,14,22.0,0.3333333333333333,0.9908045977011494,522,-290.78125
+california,cross_region,Learned Hierarchical [trained on saudi],2042,0,28.0,0.16666666666666666,0.9977011494252873,742,-557.392578125
+california,cross_region,Learned Hierarchical [trained on saudi],2042,1,34.0,0.0,1.0,824,-526.865234375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,2,34.0,0.0,1.0,824,-595.302734375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,3,34.0,0.0,1.0,824,-572.509765625
+california,cross_region,Learned Hierarchical [trained on saudi],2042,4,28.0,0.16666666666666666,1.0,650,-397.7734375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,5,22.0,0.3333333333333333,1.0,622,-374.013671875
+california,cross_region,Learned Hierarchical [trained on saudi],2042,6,12.0,0.5,0.9770114942528736,501,-329.677734375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,7,34.0,0.0,1.0,826,-582.001953125
+california,cross_region,Learned Hierarchical [trained on saudi],2042,8,28.0,0.16666666666666666,1.0,721,-561.19140625
+california,cross_region,Learned Hierarchical [trained on saudi],2042,9,28.0,0.16666666666666666,1.0,793,-566.923828125
+california,cross_region,Learned Hierarchical [trained on saudi],2042,10,22.0,0.3333333333333333,1.0,614,-352.34375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,11,16.0,0.5,1.0,588,-278.701171875
+california,cross_region,Learned Hierarchical [trained on saudi],2042,12,28.0,0.16666666666666666,0.9471264367816092,745,-571.689453125
+california,cross_region,Learned Hierarchical [trained on saudi],2042,13,34.0,0.0,1.0,824,-427.109375
+california,cross_region,Learned Hierarchical [trained on saudi],2042,14,34.0,0.0,0.9975124378109452,824,-583.388671875
+california,cross_region,Learned Hierarchical [trained on saudi],3042,0,28.0,0.16666666666666666,0.9862068965517241,621,-457.5390625
+california,cross_region,Learned Hierarchical [trained on saudi],3042,1,6.0,0.6666666666666666,0.9908045977011494,450,-238.3984375
+california,cross_region,Learned Hierarchical [trained on saudi],3042,2,34.0,0.0,1.0,824,-391.953125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,3,22.0,0.3333333333333333,1.0,609,-353.33984375
+california,cross_region,Learned Hierarchical [trained on saudi],3042,4,34.0,0.0,1.0,824,-386.58203125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,5,28.0,0.16666666666666666,1.0,767,-553.330078125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,6,3.0,0.8333333333333334,0.9954022988505747,308,-130.60546875
+california,cross_region,Learned Hierarchical [trained on saudi],3042,7,9.0,0.6666666666666666,0.9517241379310345,405,-235.283203125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,8,13.0,0.6666666666666666,1.0,494,-229.9609375
+california,cross_region,Learned Hierarchical [trained on saudi],3042,9,28.0,0.16666666666666666,0.9908045977011494,745,-524.970703125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,10,28.0,0.16666666666666666,0.9908045977011494,667,-474.697265625
+california,cross_region,Learned Hierarchical [trained on saudi],3042,11,28.0,0.16666666666666666,1.0,813,-614.31640625
+california,cross_region,Learned Hierarchical [trained on saudi],3042,12,34.0,0.0,1.0,824,-483.0078125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,13,22.0,0.3333333333333333,1.0,639,-405.703125
+california,cross_region,Learned Hierarchical [trained on saudi],3042,14,16.0,0.5,1.0,548,-260.732421875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,0,12.0,0.5,0.9977011494252873,476,-263.603515625
+california,cross_region,Learned Hierarchical [trained on saudi],4042,1,22.0,0.3333333333333333,0.993103448275862,549,-368.7109375
+california,cross_region,Learned Hierarchical [trained on saudi],4042,2,3.0,0.8333333333333334,0.993103448275862,327,-152.65625
+california,cross_region,Learned Hierarchical [trained on saudi],4042,3,28.0,0.16666666666666666,1.0,725,-476.435546875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,4,28.0,0.16666666666666666,1.0,695,-506.30859375
+california,cross_region,Learned Hierarchical [trained on saudi],4042,5,34.0,0.0,1.0,824,-396.07421875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,6,22.0,0.3333333333333333,0.9908045977011494,604,-370.146484375
+california,cross_region,Learned Hierarchical [trained on saudi],4042,7,34.0,0.0,1.0,824,-457.16796875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,8,22.0,0.3333333333333333,0.9908045977011494,558,-378.154296875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,9,28.0,0.16666666666666666,1.0,811,-587.900390625
+california,cross_region,Learned Hierarchical [trained on saudi],4042,10,12.0,0.5,0.993103448275862,465,-270.4296875
+california,cross_region,Learned Hierarchical [trained on saudi],4042,11,34.0,0.0,1.0,824,-298.720703125
+california,cross_region,Learned Hierarchical [trained on saudi],4042,12,22.0,0.3333333333333333,1.0,636,-410.595703125
+california,cross_region,Learned Hierarchical [trained on saudi],4042,13,28.0,0.16666666666666666,0.9632183908045977,653,-429.287109375
+california,cross_region,Learned Hierarchical [trained on saudi],4042,14,28.0,0.16666666666666666,1.0,681,-449.6875
+california,cross_region,CommNet (matched) [trained on saudi],42,0,34.0,0.0,0.6797385620915033,811,-409.85546875
+california,cross_region,CommNet (matched) [trained on saudi],42,1,16.0,0.5,0.6758620689655173,545,-277.023828125
+california,cross_region,CommNet (matched) [trained on saudi],42,2,28.0,0.16666666666666666,0.6206896551724138,617,-403.571484375
+california,cross_region,CommNet (matched) [trained on saudi],42,3,12.0,0.5,0.6758620689655173,459,-299.7234375
+california,cross_region,CommNet (matched) [trained on saudi],42,4,22.0,0.3333333333333333,0.6758620689655173,616,-372.075
+california,cross_region,CommNet (matched) [trained on saudi],42,5,34.0,0.0,0.675990675990676,818,-590.690625
+california,cross_region,CommNet (matched) [trained on saudi],42,6,34.0,0.0,0.676923076923077,820,-572.221484375
+california,cross_region,CommNet (matched) [trained on saudi],42,7,34.0,0.0,0.6819923371647509,807,-351.410546875
+california,cross_region,CommNet (matched) [trained on saudi],42,8,22.0,0.3333333333333333,0.6758620689655173,526,-335.55625
+california,cross_region,CommNet (matched) [trained on saudi],42,9,34.0,0.0,0.6766169154228856,811,-556.212890625
+california,cross_region,CommNet (matched) [trained on saudi],42,10,9.0,0.6666666666666666,0.6758620689655173,394,-256.056640625
+california,cross_region,CommNet (matched) [trained on saudi],42,11,22.0,0.3333333333333333,0.6758620689655173,526,-321.955078125
+california,cross_region,CommNet (matched) [trained on saudi],42,12,34.0,0.0,0.6798679867986799,810,-425.609765625
+california,cross_region,CommNet (matched) [trained on saudi],42,13,12.0,0.5,0.6758620689655173,438,-295.468359375
+california,cross_region,CommNet (matched) [trained on saudi],42,14,22.0,0.3333333333333333,0.6758620689655173,606,-354.340625
+california,cross_region,CommNet (matched) [trained on saudi],1042,0,22.0,0.3333333333333333,0.6758620689655173,524,-335.11171875
+california,cross_region,CommNet (matched) [trained on saudi],1042,1,34.0,0.0,0.6758620689655173,746,-539.50625
+california,cross_region,CommNet (matched) [trained on saudi],1042,2,34.0,0.0,0.6814814814814815,810,-341.046875
+california,cross_region,CommNet (matched) [trained on saudi],1042,3,28.0,0.16666666666666666,0.6758620689655173,729,-550.38515625
+california,cross_region,CommNet (matched) [trained on saudi],1042,4,34.0,0.0,0.6762589928057554,812,-549.711328125
+california,cross_region,CommNet (matched) [trained on saudi],1042,5,28.0,0.16666666666666666,0.6758620689655173,774,-545.04609375
+california,cross_region,CommNet (matched) [trained on saudi],1042,6,22.0,0.3333333333333333,0.6758620689655173,524,-316.835546875
+california,cross_region,CommNet (matched) [trained on saudi],1042,7,12.0,0.5,0.6758620689655173,445,-303.361328125
+california,cross_region,CommNet (matched) [trained on saudi],1042,8,34.0,0.0,0.6805555555555556,809,-368.7640625
+california,cross_region,CommNet (matched) [trained on saudi],1042,9,34.0,0.0,0.6765432098765433,820,-578.295703125
+california,cross_region,CommNet (matched) [trained on saudi],1042,10,34.0,0.0,0.6758620689655173,737,-502.43828125
+california,cross_region,CommNet (matched) [trained on saudi],1042,11,22.0,0.3333333333333333,0.6781609195402298,627,-387.026171875
+california,cross_region,CommNet (matched) [trained on saudi],1042,12,22.0,0.3333333333333333,0.6781609195402298,627,-387.01640625
+california,cross_region,CommNet (matched) [trained on saudi],1042,13,34.0,0.0,0.34953703703703703,821,-648.012109375
+california,cross_region,CommNet (matched) [trained on saudi],1042,14,22.0,0.3333333333333333,0.6758620689655173,513,-285.253515625
+california,cross_region,CommNet (matched) [trained on saudi],2042,0,28.0,0.16666666666666666,0.6758620689655173,726,-545.07265625
+california,cross_region,CommNet (matched) [trained on saudi],2042,1,34.0,0.0,0.6721311475409836,814,-518.344140625
+california,cross_region,CommNet (matched) [trained on saudi],2042,2,34.0,0.0,0.3530864197530864,819,-589.82109375
+california,cross_region,CommNet (matched) [trained on saudi],2042,3,34.0,0.0,0.6758620689655173,816,-570.65390625
+california,cross_region,CommNet (matched) [trained on saudi],2042,4,28.0,0.16666666666666666,0.6758620689655173,644,-396.637890625
+california,cross_region,CommNet (matched) [trained on saudi],2042,5,22.0,0.3333333333333333,0.6758620689655173,618,-373.373828125
+california,cross_region,CommNet (matched) [trained on saudi],2042,6,12.0,0.5,0.6758620689655173,480,-325.18515625
+california,cross_region,CommNet (matched) [trained on saudi],2042,7,34.0,0.0,0.6765432098765433,820,-578.276171875
+california,cross_region,CommNet (matched) [trained on saudi],2042,8,28.0,0.16666666666666666,0.6735632183908046,711,-548.539453125
+california,cross_region,CommNet (matched) [trained on saudi],2042,9,28.0,0.16666666666666666,0.6758620689655173,780,-553.793359375
+california,cross_region,CommNet (matched) [trained on saudi],2042,10,16.0,0.5,0.6758620689655173,601,-338.571484375
+california,cross_region,CommNet (matched) [trained on saudi],2042,11,16.0,0.5,0.6758620689655173,554,-244.359765625
+california,cross_region,CommNet (matched) [trained on saudi],2042,12,28.0,0.16666666666666666,0.6758620689655173,734,-561.47421875
+california,cross_region,CommNet (matched) [trained on saudi],2042,13,34.0,0.0,0.6796116504854369,810,-417.57265625
+california,cross_region,CommNet (matched) [trained on saudi],2042,14,34.0,0.0,0.36318407960199006,821,-580.668359375
+california,cross_region,CommNet (matched) [trained on saudi],3042,0,28.0,0.16666666666666666,0.6758620689655173,605,-448.2953125
+california,cross_region,CommNet (matched) [trained on saudi],3042,1,6.0,0.6666666666666666,0.6758620689655173,427,-232.382421875
+california,cross_region,CommNet (matched) [trained on saudi],3042,2,34.0,0.0,0.6807017543859649,806,-385.785546875
+california,cross_region,CommNet (matched) [trained on saudi],3042,3,22.0,0.3333333333333333,0.6758620689655173,606,-352.8953125
+california,cross_region,CommNet (matched) [trained on saudi],3042,4,34.0,0.0,0.584192439862543,807,-379.244921875
+california,cross_region,CommNet (matched) [trained on saudi],3042,5,28.0,0.16666666666666666,0.6758620689655173,760,-548.1125
+california,cross_region,CommNet (matched) [trained on saudi],3042,6,3.0,0.8333333333333334,0.6758620689655173,293,-129.52109375
+california,cross_region,CommNet (matched) [trained on saudi],3042,7,9.0,0.6666666666666666,0.6758620689655173,383,-232.836328125
+california,cross_region,CommNet (matched) [trained on saudi],3042,8,16.0,0.5,0.6574712643678161,508,-243.65703125
+california,cross_region,CommNet (matched) [trained on saudi],3042,9,28.0,0.16666666666666666,0.6758620689655173,729,-515.0140625
+california,cross_region,CommNet (matched) [trained on saudi],3042,10,28.0,0.16666666666666666,0.6735632183908046,661,-467.265234375
+california,cross_region,CommNet (matched) [trained on saudi],3042,11,28.0,0.16666666666666666,0.38850574712643676,806,-606.4203125
+california,cross_region,CommNet (matched) [trained on saudi],3042,12,34.0,0.0,0.6756756756756757,819,-479.606640625
+california,cross_region,CommNet (matched) [trained on saudi],3042,13,22.0,0.3333333333333333,0.6183908045977011,635,-400.021875
+california,cross_region,CommNet (matched) [trained on saudi],3042,14,16.0,0.5,0.3954022988505747,543,-254.73828125
+california,cross_region,CommNet (matched) [trained on saudi],4042,0,12.0,0.5,0.6758620689655173,455,-257.4703125
+california,cross_region,CommNet (matched) [trained on saudi],4042,1,22.0,0.3333333333333333,0.6758620689655173,534,-360.109375
+california,cross_region,CommNet (matched) [trained on saudi],4042,2,3.0,0.8333333333333334,0.6758620689655173,314,-151.664453125
+california,cross_region,CommNet (matched) [trained on saudi],4042,3,28.0,0.16666666666666666,0.6758620689655173,718,-479.9703125
+california,cross_region,CommNet (matched) [trained on saudi],4042,4,28.0,0.16666666666666666,0.6735632183908046,686,-498.66640625
+california,cross_region,CommNet (matched) [trained on saudi],4042,5,34.0,0.0,0.6807017543859649,806,-389.811328125
+california,cross_region,CommNet (matched) [trained on saudi],4042,6,22.0,0.3333333333333333,0.6758620689655173,594,-359.78984375
+california,cross_region,CommNet (matched) [trained on saudi],4042,7,34.0,0.0,0.6796116504854369,811,-450.451171875
+california,cross_region,CommNet (matched) [trained on saudi],4042,8,22.0,0.3333333333333333,0.6758620689655173,545,-369.6578125
+california,cross_region,CommNet (matched) [trained on saudi],4042,9,28.0,0.16666666666666666,0.6758620689655173,799,-573.402734375
+california,cross_region,CommNet (matched) [trained on saudi],4042,10,12.0,0.5,0.6758620689655173,442,-265.1484375
+california,cross_region,CommNet (matched) [trained on saudi],4042,11,34.0,0.0,0.6811594202898551,810,-348.2734375
+california,cross_region,CommNet (matched) [trained on saudi],4042,12,22.0,0.3333333333333333,0.6758620689655173,631,-407.3265625
+california,cross_region,CommNet (matched) [trained on saudi],4042,13,28.0,0.16666666666666666,0.6735632183908046,644,-420.734375
+california,cross_region,CommNet (matched) [trained on saudi],4042,14,28.0,0.16666666666666666,0.6781609195402298,676,-448.715625
+california,wind_plus90,No-Op,42,0,34.0,0.0,1.0,827,-667.98828125
+california,wind_plus90,No-Op,42,1,34.0,0.0,1.0,827,-684.130859375
+california,wind_plus90,No-Op,42,2,34.0,0.0,1.0,820,-651.796875
+california,wind_plus90,No-Op,42,3,12.0,0.5,1.0,552,-311.23046875
+california,wind_plus90,No-Op,42,4,34.0,0.0,1.0,827,-655.751953125
+california,wind_plus90,No-Op,42,5,34.0,0.0,1.0,827,-512.71484375
+california,wind_plus90,No-Op,42,6,34.0,0.0,1.0,827,-556.4453125
+california,wind_plus90,No-Op,42,7,34.0,0.0,1.0,725,-533.76953125
+california,wind_plus90,No-Op,42,8,34.0,0.0,1.0,784,-517.080078125
+california,wind_plus90,No-Op,42,9,34.0,0.0,1.0,803,-606.03515625
+california,wind_plus90,No-Op,42,10,12.0,0.5,1.0,409,-216.03515625
+california,wind_plus90,No-Op,42,11,34.0,0.0,1.0,816,-595.87890625
+california,wind_plus90,No-Op,42,12,34.0,0.0,1.0,806,-625.3515625
+california,wind_plus90,No-Op,42,13,12.0,0.5,1.0,430,-228.4765625
+california,wind_plus90,No-Op,42,14,34.0,0.0,1.0,827,-574.248046875
+california,wind_plus90,No-Op,1042,0,34.0,0.0,1.0,790,-528.046875
+california,wind_plus90,No-Op,1042,1,24.0,0.16666666666666666,1.0,480,-210.46875
+california,wind_plus90,No-Op,1042,2,34.0,0.0,1.0,690,-472.16796875
+california,wind_plus90,No-Op,1042,3,24.0,0.16666666666666666,1.0,718,-461.103515625
+california,wind_plus90,No-Op,1042,4,34.0,0.0,1.0,827,-591.533203125
+california,wind_plus90,No-Op,1042,5,34.0,0.0,1.0,827,-430.009765625
+california,wind_plus90,No-Op,1042,6,34.0,0.0,1.0,789,-533.251953125
+california,wind_plus90,No-Op,1042,7,12.0,0.5,1.0,404,-208.6328125
+california,wind_plus90,No-Op,1042,8,34.0,0.0,1.0,694,-479.19921875
+california,wind_plus90,No-Op,1042,9,34.0,0.0,1.0,827,-567.9296875
+california,wind_plus90,No-Op,1042,10,24.0,0.16666666666666666,1.0,472,-208.193359375
+california,wind_plus90,No-Op,1042,11,34.0,0.0,1.0,827,-473.96484375
+california,wind_plus90,No-Op,1042,12,34.0,0.0,1.0,827,-473.955078125
+california,wind_plus90,No-Op,1042,13,34.0,0.0,1.0,820,-685.15625
+california,wind_plus90,No-Op,1042,14,34.0,0.0,1.0,820,-627.392578125
+california,wind_plus90,No-Op,2042,0,24.0,0.16666666666666666,1.0,639,-376.357421875
+california,wind_plus90,No-Op,2042,1,34.0,0.0,1.0,801,-619.111328125
+california,wind_plus90,No-Op,2042,2,34.0,0.0,1.0,808,-633.505859375
+california,wind_plus90,No-Op,2042,3,34.0,0.0,1.0,827,-404.0234375
+california,wind_plus90,No-Op,2042,4,34.0,0.0,1.0,827,-470.751953125
+california,wind_plus90,No-Op,2042,5,34.0,0.0,1.0,827,-576.689453125
+california,wind_plus90,No-Op,2042,6,9.0,0.6666666666666666,1.0,369,-163.18359375
+california,wind_plus90,No-Op,2042,7,34.0,0.0,1.0,827,-567.900390625
+california,wind_plus90,No-Op,2042,8,34.0,0.0,1.0,827,-666.25
+california,wind_plus90,No-Op,2042,9,34.0,0.0,1.0,769,-481.865234375
+california,wind_plus90,No-Op,2042,10,34.0,0.0,1.0,827,-492.91015625
+california,wind_plus90,No-Op,2042,11,34.0,0.0,1.0,827,-408.203125
+california,wind_plus90,No-Op,2042,12,34.0,0.0,1.0,755,-495.48828125
+california,wind_plus90,No-Op,2042,13,34.0,0.0,1.0,827,-664.0625
+california,wind_plus90,No-Op,2042,14,24.0,0.16666666666666666,1.0,726,-484.365234375
+california,wind_plus90,No-Op,3042,0,24.0,0.16666666666666666,1.0,547,-305.419921875
+california,wind_plus90,No-Op,3042,1,28.0,0.16666666666666666,1.0,754,-458.06640625
+california,wind_plus90,No-Op,3042,2,34.0,0.0,1.0,599,-345.95703125
+california,wind_plus90,No-Op,3042,3,34.0,0.0,1.0,827,-582.96875
+california,wind_plus90,No-Op,3042,4,24.0,0.16666666666666666,1.0,586,-325.703125
+california,wind_plus90,No-Op,3042,5,34.0,0.0,1.0,827,-561.30859375
+california,wind_plus90,No-Op,3042,6,22.0,0.3333333333333333,1.0,547,-288.544921875
+california,wind_plus90,No-Op,3042,7,12.0,0.5,1.0,454,-241.89453125
+california,wind_plus90,No-Op,3042,8,34.0,0.0,1.0,827,-646.064453125
+california,wind_plus90,No-Op,3042,9,24.0,0.16666666666666666,1.0,523,-244.111328125
+california,wind_plus90,No-Op,3042,10,34.0,0.0,1.0,805,-612.40234375
+california,wind_plus90,No-Op,3042,11,34.0,0.0,1.0,798,-584.736328125
+california,wind_plus90,No-Op,3042,12,34.0,0.0,1.0,780,-568.9453125
+california,wind_plus90,No-Op,3042,13,34.0,0.0,1.0,827,-569.423828125
+california,wind_plus90,No-Op,3042,14,34.0,0.0,1.0,827,-516.26953125
+california,wind_plus90,No-Op,4042,0,34.0,0.0,1.0,733,-458.984375
+california,wind_plus90,No-Op,4042,1,24.0,0.16666666666666666,1.0,612,-353.603515625
+california,wind_plus90,No-Op,4042,2,12.0,0.5,1.0,453,-237.734375
+california,wind_plus90,No-Op,4042,3,34.0,0.0,1.0,827,-370.234375
+california,wind_plus90,No-Op,4042,4,34.0,0.0,1.0,827,-681.650390625
+california,wind_plus90,No-Op,4042,5,34.0,0.0,1.0,632,-413.18359375
+california,wind_plus90,No-Op,4042,6,34.0,0.0,1.0,821,-664.82421875
+california,wind_plus90,No-Op,4042,7,34.0,0.0,1.0,820,-650.947265625
+california,wind_plus90,No-Op,4042,8,34.0,0.0,1.0,696,-433.662109375
+california,wind_plus90,No-Op,4042,9,34.0,0.0,1.0,802,-595.673828125
+california,wind_plus90,No-Op,4042,10,18.0,0.3333333333333333,1.0,608,-368.837890625
+california,wind_plus90,No-Op,4042,11,34.0,0.0,1.0,724,-512.34375
+california,wind_plus90,No-Op,4042,12,34.0,0.0,1.0,826,-692.87109375
+california,wind_plus90,No-Op,4042,13,34.0,0.0,1.0,814,-602.802734375
+california,wind_plus90,No-Op,4042,14,34.0,0.0,1.0,827,-517.490234375
+california,wind_plus90,Value-First Heuristic,42,0,34.0,0.0,1.0,826,-666.50390625
+california,wind_plus90,Value-First Heuristic,42,1,34.0,0.0,0.9766899766899767,824,-681.26953125
+california,wind_plus90,Value-First Heuristic,42,2,34.0,0.0,0.993103448275862,819,-650.46875
+california,wind_plus90,Value-First Heuristic,42,3,12.0,0.5,0.9954022988505747,550,-309.072265625
+california,wind_plus90,Value-First Heuristic,42,4,34.0,0.0,0.9903381642512077,823,-651.58203125
+california,wind_plus90,Value-First Heuristic,42,5,34.0,0.0,0.9905660377358491,825,-511.40625
+california,wind_plus90,Value-First Heuristic,42,6,34.0,0.0,0.9858757062146892,825,-554.74609375
+california,wind_plus90,Value-First Heuristic,42,7,34.0,0.0,0.9954022988505747,724,-532.685546875
+california,wind_plus90,Value-First Heuristic,42,8,34.0,0.0,0.993103448275862,780,-514.755859375
+california,wind_plus90,Value-First Heuristic,42,9,34.0,0.0,0.9839080459770115,800,-603.876953125
+california,wind_plus90,Value-First Heuristic,42,10,12.0,0.5,0.9954022988505747,407,-214.94140625
+california,wind_plus90,Value-First Heuristic,42,11,34.0,0.0,0.9908045977011494,812,-592.646484375
+california,wind_plus90,Value-First Heuristic,42,12,34.0,0.0,0.9908045977011494,804,-623.564453125
+california,wind_plus90,Value-First Heuristic,42,13,12.0,0.5,0.9954022988505747,428,-227.353515625
+california,wind_plus90,Value-First Heuristic,42,14,34.0,0.0,0.9915254237288136,824,-571.240234375
+california,wind_plus90,Value-First Heuristic,1042,0,34.0,0.0,0.993103448275862,786,-525.60546875
+california,wind_plus90,Value-First Heuristic,1042,1,24.0,0.16666666666666666,0.9954022988505747,458,-198.212890625
+california,wind_plus90,Value-First Heuristic,1042,2,34.0,0.0,0.993103448275862,686,-469.697265625
+california,wind_plus90,Value-First Heuristic,1042,3,24.0,0.16666666666666666,0.9977011494252873,715,-457.87109375
+california,wind_plus90,Value-First Heuristic,1042,4,34.0,0.0,0.9928057553956835,824,-588.388671875
+california,wind_plus90,Value-First Heuristic,1042,5,34.0,0.0,0.989247311827957,826,-429.404296875
+california,wind_plus90,Value-First Heuristic,1042,6,34.0,0.0,0.9954022988505747,787,-531.806640625
+california,wind_plus90,Value-First Heuristic,1042,7,12.0,0.5,0.9954022988505747,402,-207.490234375
+california,wind_plus90,Value-First Heuristic,1042,8,34.0,0.0,0.9862068965517241,690,-475.68359375
+california,wind_plus90,Value-First Heuristic,1042,9,34.0,0.0,0.9887005649717514,825,-566.279296875
+california,wind_plus90,Value-First Heuristic,1042,10,24.0,0.16666666666666666,0.9954022988505747,450,-197.83203125
+california,wind_plus90,Value-First Heuristic,1042,11,34.0,0.0,0.9906542056074766,824,-503.369140625
+california,wind_plus90,Value-First Heuristic,1042,12,34.0,0.0,0.9906542056074766,824,-503.349609375
+california,wind_plus90,Value-First Heuristic,1042,13,34.0,0.0,0.993103448275862,818,-683.41796875
+california,wind_plus90,Value-First Heuristic,1042,14,34.0,0.0,0.9885057471264368,817,-625.185546875
+california,wind_plus90,Value-First Heuristic,2042,0,24.0,0.16666666666666666,0.9977011494252873,625,-373.798828125
+california,wind_plus90,Value-First Heuristic,2042,1,34.0,0.0,0.9816091954022989,799,-616.494140625
+california,wind_plus90,Value-First Heuristic,2042,2,34.0,0.0,0.993103448275862,805,-629.638671875
+california,wind_plus90,Value-First Heuristic,2042,3,34.0,0.0,0.9859649122807017,825,-402.978515625
+california,wind_plus90,Value-First Heuristic,2042,4,34.0,0.0,0.9873015873015873,824,-492.2265625
+california,wind_plus90,Value-First Heuristic,2042,5,34.0,0.0,0.9943019943019943,824,-573.515625
+california,wind_plus90,Value-First Heuristic,2042,6,9.0,0.6666666666666666,0.9954022988505747,367,-162.216796875
+california,wind_plus90,Value-First Heuristic,2042,7,34.0,0.0,0.9887005649717514,825,-566.25
+california,wind_plus90,Value-First Heuristic,2042,8,34.0,0.0,0.9871794871794872,827,-666.25
+california,wind_plus90,Value-First Heuristic,2042,9,34.0,0.0,0.9885057471264368,765,-479.150390625
+california,wind_plus90,Value-First Heuristic,2042,10,34.0,0.0,0.9842767295597484,826,-507.55859375
+california,wind_plus90,Value-First Heuristic,2042,11,34.0,0.0,0.9925925925925926,827,-408.203125
+california,wind_plus90,Value-First Heuristic,2042,12,34.0,0.0,0.9954022988505747,750,-490.322265625
+california,wind_plus90,Value-First Heuristic,2042,13,34.0,0.0,1.0,826,-662.24609375
+california,wind_plus90,Value-First Heuristic,2042,14,24.0,0.16666666666666666,0.9885057471264368,724,-483.349609375
+california,wind_plus90,Value-First Heuristic,3042,0,24.0,0.16666666666666666,0.9954022988505747,545,-303.623046875
+california,wind_plus90,Value-First Heuristic,3042,1,28.0,0.16666666666666666,0.9908045977011494,750,-455.859375
+california,wind_plus90,Value-First Heuristic,3042,2,34.0,0.0,0.9954022988505747,591,-342.236328125
+california,wind_plus90,Value-First Heuristic,3042,3,34.0,0.0,0.988795518207283,824,-579.90234375
+california,wind_plus90,Value-First Heuristic,3042,4,24.0,0.16666666666666666,0.9862068965517241,583,-323.427734375
+california,wind_plus90,Value-First Heuristic,3042,5,34.0,0.0,0.987987987987988,826,-560.52734375
+california,wind_plus90,Value-First Heuristic,3042,6,22.0,0.3333333333333333,0.993103448275862,545,-287.509765625
+california,wind_plus90,Value-First Heuristic,3042,7,12.0,0.5,0.993103448275862,453,-241.328125
+california,wind_plus90,Value-First Heuristic,3042,8,34.0,0.0,0.9855072463768116,824,-643.212890625
+california,wind_plus90,Value-First Heuristic,3042,9,24.0,0.16666666666666666,0.9954022988505747,499,-228.3203125
+california,wind_plus90,Value-First Heuristic,3042,10,34.0,0.0,0.993103448275862,804,-611.064453125
+california,wind_plus90,Value-First Heuristic,3042,11,34.0,0.0,0.993103448275862,796,-582.75390625
+california,wind_plus90,Value-First Heuristic,3042,12,34.0,0.0,0.9885057471264368,777,-566.484375
+california,wind_plus90,Value-First Heuristic,3042,13,34.0,0.0,0.9915966386554622,824,-566.50390625
+california,wind_plus90,Value-First Heuristic,3042,14,34.0,0.0,0.9885057471264368,824,-545.888671875
+california,wind_plus90,Value-First Heuristic,4042,0,34.0,0.0,0.993103448275862,729,-454.62890625
+california,wind_plus90,Value-First Heuristic,4042,1,24.0,0.16666666666666666,0.9954022988505747,610,-351.7578125
+california,wind_plus90,Value-First Heuristic,4042,2,12.0,0.5,0.9954022988505747,451,-236.357421875
+california,wind_plus90,Value-First Heuristic,4042,3,34.0,0.0,0.9880952380952381,826,-369.580078125
+california,wind_plus90,Value-First Heuristic,4042,4,34.0,0.0,0.9897435897435898,825,-678.69140625
+california,wind_plus90,Value-First Heuristic,4042,5,34.0,0.0,0.9977011494252873,628,-410.244140625
+california,wind_plus90,Value-First Heuristic,4042,6,34.0,0.0,0.993103448275862,817,-661.181640625
+california,wind_plus90,Value-First Heuristic,4042,7,34.0,0.0,0.9862068965517241,819,-649.755859375
+california,wind_plus90,Value-First Heuristic,4042,8,34.0,0.0,0.9954022988505747,694,-431.23046875
+california,wind_plus90,Value-First Heuristic,4042,9,34.0,0.0,0.9793103448275862,800,-592.83203125
+california,wind_plus90,Value-First Heuristic,4042,10,18.0,0.3333333333333333,0.9908045977011494,607,-368.076171875
+california,wind_plus90,Value-First Heuristic,4042,11,34.0,0.0,1.0,719,-509.541015625
+california,wind_plus90,Value-First Heuristic,4042,12,34.0,0.0,0.9908045977011494,823,-690.1171875
+california,wind_plus90,Value-First Heuristic,4042,13,34.0,0.0,0.9908045977011494,812,-601.25
+california,wind_plus90,Value-First Heuristic,4042,14,34.0,0.0,0.9842767295597484,826,-515.771484375
+california,wind_plus90,Local Reactive,42,0,34.0,0.0,1.0,799,-632.890625
+california,wind_plus90,Local Reactive,42,1,34.0,0.0,1.0,790,-645.9765625
+california,wind_plus90,Local Reactive,42,2,34.0,0.0,1.0,786,-617.666015625
+california,wind_plus90,Local Reactive,42,3,3.0,0.8333333333333334,1.0,290,-228.115234375
+california,wind_plus90,Local Reactive,42,4,34.0,0.0,0.9927536231884058,788,-623.896484375
+california,wind_plus90,Local Reactive,42,5,34.0,0.0,0.9937106918238994,798,-487.626953125
+california,wind_plus90,Local Reactive,42,6,34.0,0.0,1.0,777,-495.17578125
+california,wind_plus90,Local Reactive,42,7,28.0,0.16666666666666666,0.9908045977011494,632,-475.3953125
+california,wind_plus90,Local Reactive,42,8,28.0,0.16666666666666666,0.993103448275862,739,-468.916015625
+california,wind_plus90,Local Reactive,42,9,34.0,0.0,1.0,670,-483.486328125
+california,wind_plus90,Local Reactive,42,10,-16.0,0.8333333333333334,0.993103448275862,297,-191.48671875
+california,wind_plus90,Local Reactive,42,11,28.0,0.16666666666666666,0.9954022988505747,761,-549.9609375
+california,wind_plus90,Local Reactive,42,12,34.0,0.0,0.9885057471264368,750,-553.515625
+california,wind_plus90,Local Reactive,42,13,-9.0,1.0,1.0,330,-203.681640625
+california,wind_plus90,Local Reactive,42,14,28.0,0.16666666666666666,0.9976019184652278,749,-654.55078125
+california,wind_plus90,Local Reactive,1042,0,22.0,0.16666666666666666,0.9908045977011494,744,-486.572265625
+california,wind_plus90,Local Reactive,1042,1,18.0,0.3333333333333333,0.9954022988505747,408,-196.26953125
+california,wind_plus90,Local Reactive,1042,2,6.0,0.6666666666666666,1.0,314,-246.552734375
+california,wind_plus90,Local Reactive,1042,3,18.0,0.3333333333333333,1.0,523,-345.205078125
+california,wind_plus90,Local Reactive,1042,4,34.0,0.0,0.9977011494252873,769,-570.498046875
+california,wind_plus90,Local Reactive,1042,5,28.0,0.16666666666666666,0.996415770609319,792,-405.078125
+california,wind_plus90,Local Reactive,1042,6,28.0,0.16666666666666666,0.9954022988505747,677,-471.357421875
+california,wind_plus90,Local Reactive,1042,7,9.0,0.6666666666666666,0.993103448275862,279,-183.1859375
+california,wind_plus90,Local Reactive,1042,8,8.0,0.3333333333333333,0.9977011494252873,587,-426.572265625
+california,wind_plus90,Local Reactive,1042,9,34.0,0.0,1.0,776,-515.224609375
+california,wind_plus90,Local Reactive,1042,10,18.0,0.3333333333333333,1.0,384,-176.416015625
+california,wind_plus90,Local Reactive,1042,11,34.0,0.0,1.0,787,-442.48046875
+california,wind_plus90,Local Reactive,1042,12,34.0,0.0,1.0,791,-444.765625
+california,wind_plus90,Local Reactive,1042,13,34.0,0.0,0.9954022988505747,795,-653.37890625
+california,wind_plus90,Local Reactive,1042,14,16.0,0.5,1.0,593,-491.767578125
+california,wind_plus90,Local Reactive,2042,0,18.0,0.3333333333333333,1.0,455,-288.57421875
+california,wind_plus90,Local Reactive,2042,1,28.0,0.16666666666666666,0.9839080459770115,779,-575.88125
+california,wind_plus90,Local Reactive,2042,2,34.0,0.0,0.9977011494252873,767,-568.955078125
+california,wind_plus90,Local Reactive,2042,3,22.0,0.16666666666666666,0.9894736842105263,787,-377.9296875
+california,wind_plus90,Local Reactive,2042,4,34.0,0.0,0.9934640522875817,797,-444.6484375
+california,wind_plus90,Local Reactive,2042,5,34.0,0.0,0.9971509971509972,785,-540.4296875
+california,wind_plus90,Local Reactive,2042,6,6.0,0.6666666666666666,1.0,298,-148.681640625
+california,wind_plus90,Local Reactive,2042,7,28.0,0.16666666666666666,1.0,795,-537.255859375
+california,wind_plus90,Local Reactive,2042,8,28.0,0.16666666666666666,1.0,778,-615.2734375
+california,wind_plus90,Local Reactive,2042,9,28.0,0.16666666666666666,0.9816091954022989,710,-432.58515625
+california,wind_plus90,Local Reactive,2042,10,28.0,0.16666666666666666,0.9954022988505747,778,-762.3828125
+california,wind_plus90,Local Reactive,2042,11,16.0,0.3333333333333333,1.0,776,-475.361328125
+california,wind_plus90,Local Reactive,2042,12,14.0,0.16666666666666666,0.9954022988505747,648,-434.43359375
+california,wind_plus90,Local Reactive,2042,13,34.0,0.0,0.9908045977011494,779,-588.681640625
+california,wind_plus90,Local Reactive,2042,14,18.0,0.3333333333333333,0.9793103448275862,614,-428.686328125
+california,wind_plus90,Local Reactive,3042,0,12.0,0.5,0.9954022988505747,421,-274.58984375
+california,wind_plus90,Local Reactive,3042,1,10.0,0.6666666666666666,0.9954022988505747,590,-384.2578125
+california,wind_plus90,Local Reactive,3042,2,19.0,0.3333333333333333,0.9977011494252873,302,-229.47265625
+california,wind_plus90,Local Reactive,3042,3,34.0,0.0,1.0,797,-553.30078125
+california,wind_plus90,Local Reactive,3042,4,12.0,0.5,0.9954022988505747,471,-274.21875
+california,wind_plus90,Local Reactive,3042,5,34.0,0.0,0.984984984984985,794,-529.797265625
+california,wind_plus90,Local Reactive,3042,6,19.0,0.5,1.0,426,-257.197265625
+california,wind_plus90,Local Reactive,3042,7,3.0,0.8333333333333334,0.993103448275862,377,-223.251953125
+california,wind_plus90,Local Reactive,3042,8,28.0,0.16666666666666666,0.9927536231884058,776,-602.15078125
+california,wind_plus90,Local Reactive,3042,9,18.0,0.3333333333333333,0.9954022988505747,456,-224.7265625
+california,wind_plus90,Local Reactive,3042,10,34.0,0.0,0.9908045977011494,754,-558.154296875
+california,wind_plus90,Local Reactive,3042,11,34.0,0.0,1.0,752,-535.3515625
+california,wind_plus90,Local Reactive,3042,12,34.0,0.0,0.9954022988505747,710,-509.21875
+california,wind_plus90,Local Reactive,3042,13,34.0,0.0,1.0,774,-528.876953125
+california,wind_plus90,Local Reactive,3042,14,28.0,0.16666666666666666,0.9880952380952381,788,-482.8515625
+california,wind_plus90,Local Reactive,4042,0,28.0,0.16666666666666666,1.0,642,-404.74609375
+california,wind_plus90,Local Reactive,4042,1,12.0,0.5,0.993103448275862,493,-322.1875
+california,wind_plus90,Local Reactive,4042,2,9.0,0.6666666666666666,0.993103448275862,318,-205.361328125
+california,wind_plus90,Local Reactive,4042,3,34.0,0.0,0.9920634920634921,797,-347.42421875
+california,wind_plus90,Local Reactive,4042,4,28.0,0.16666666666666666,0.9974358974358974,784,-621.943359375
+california,wind_plus90,Local Reactive,4042,5,28.0,0.16666666666666666,0.9977011494252873,530,-306.23046875
+california,wind_plus90,Local Reactive,4042,6,34.0,0.0,1.0,729,-583.046875
+california,wind_plus90,Local Reactive,4042,7,34.0,0.0,1.0,779,-605.205078125
+california,wind_plus90,Local Reactive,4042,8,28.0,0.16666666666666666,1.0,616,-376.2890625
+california,wind_plus90,Local Reactive,4042,9,34.0,0.0,0.9977011494252873,769,-540.751953125
+california,wind_plus90,Local Reactive,4042,10,2.0,0.5,0.9954022988505747,483,-319.5140625
+california,wind_plus90,Local Reactive,4042,11,34.0,0.0,1.0,620,-409.560546875
+california,wind_plus90,Local Reactive,4042,12,34.0,0.0,1.0,765,-631.11328125
+california,wind_plus90,Local Reactive,4042,13,8.0,0.3333333333333333,0.9977011494252873,628,-474.27734375
+california,wind_plus90,Local Reactive,4042,14,22.0,0.16666666666666666,0.9968553459119497,785,-477.75390625
+california,wind_plus90,Learned Hierarchical,42,0,34.0,0.0,0.8912037037037037,826,-666.50390625
+california,wind_plus90,Learned Hierarchical,42,1,34.0,0.0,0.965034965034965,824,-680.76171875
+california,wind_plus90,Learned Hierarchical,42,2,34.0,0.0,0.9724137931034482,817,-648.427734375
+california,wind_plus90,Learned Hierarchical,42,3,12.0,0.5,0.9885057471264368,550,-309.072265625
+california,wind_plus90,Learned Hierarchical,42,4,34.0,0.0,0.966183574879227,823,-651.58203125
+california,wind_plus90,Learned Hierarchical,42,5,34.0,0.0,0.9937106918238994,825,-511.40625
+california,wind_plus90,Learned Hierarchical,42,6,34.0,0.0,0.9943502824858758,824,-554.033203125
+california,wind_plus90,Learned Hierarchical,42,7,34.0,0.0,0.9264367816091954,723,-531.494140625
+california,wind_plus90,Learned Hierarchical,42,8,34.0,0.0,0.9839080459770115,781,-515.478515625
+california,wind_plus90,Learned Hierarchical,42,9,34.0,0.0,0.9540229885057471,800,-603.642578125
+california,wind_plus90,Learned Hierarchical,42,10,12.0,0.5,0.9655172413793104,407,-214.94140625
+california,wind_plus90,Learned Hierarchical,42,11,34.0,0.0,0.9885057471264368,813,-593.779296875
+california,wind_plus90,Learned Hierarchical,42,12,34.0,0.0,0.9379310344827586,805,-624.66796875
+california,wind_plus90,Learned Hierarchical,42,13,12.0,0.5,0.9885057471264368,428,-227.24609375
+california,wind_plus90,Learned Hierarchical,42,14,34.0,0.0,0.9915254237288136,824,-571.240234375
+california,wind_plus90,Learned Hierarchical,1042,0,34.0,0.0,0.9793103448275862,787,-526.34765625
+california,wind_plus90,Learned Hierarchical,1042,1,24.0,0.16666666666666666,0.9954022988505747,458,-198.212890625
+california,wind_plus90,Learned Hierarchical,1042,2,34.0,0.0,0.9770114942528736,686,-469.697265625
+california,wind_plus90,Learned Hierarchical,1042,3,24.0,0.16666666666666666,0.9954022988505747,716,-458.7109375
+california,wind_plus90,Learned Hierarchical,1042,4,34.0,0.0,0.9112709832134293,824,-588.388671875
+california,wind_plus90,Learned Hierarchical,1042,5,34.0,0.0,0.992831541218638,826,-429.51171875
+california,wind_plus90,Learned Hierarchical,1042,6,34.0,0.0,0.9885057471264368,786,-531.513671875
+california,wind_plus90,Learned Hierarchical,1042,7,12.0,0.5,0.9655172413793104,402,-207.490234375
+california,wind_plus90,Learned Hierarchical,1042,8,34.0,0.0,0.9793103448275862,691,-476.904296875
+california,wind_plus90,Learned Hierarchical,1042,9,34.0,0.0,0.9943502824858758,824,-565.60546875
+california,wind_plus90,Learned Hierarchical,1042,10,24.0,0.16666666666666666,0.9908045977011494,450,-197.83203125
+california,wind_plus90,Learned Hierarchical,1042,11,34.0,0.0,0.9844236760124611,824,-503.369140625
+california,wind_plus90,Learned Hierarchical,1042,12,34.0,0.0,0.9844236760124611,824,-503.349609375
+california,wind_plus90,Learned Hierarchical,1042,13,34.0,0.0,0.9540229885057471,817,-682.587890625
+california,wind_plus90,Learned Hierarchical,1042,14,34.0,0.0,0.9862068965517241,818,-625.556640625
+california,wind_plus90,Learned Hierarchical,2042,0,24.0,0.16666666666666666,0.9954022988505747,626,-373.955078125
+california,wind_plus90,Learned Hierarchical,2042,1,34.0,0.0,0.9310344827586207,798,-617.83203125
+california,wind_plus90,Learned Hierarchical,2042,2,34.0,0.0,0.9839080459770115,805,-631.2890625
+california,wind_plus90,Learned Hierarchical,2042,3,34.0,0.0,0.9929824561403509,825,-402.978515625
+california,wind_plus90,Learned Hierarchical,2042,4,34.0,0.0,0.9873015873015873,824,-492.2265625
+california,wind_plus90,Learned Hierarchical,2042,5,34.0,0.0,0.9857549857549858,824,-573.515625
+california,wind_plus90,Learned Hierarchical,2042,6,9.0,0.6666666666666666,0.9793103448275862,368,-162.63671875
+california,wind_plus90,Learned Hierarchical,2042,7,34.0,0.0,0.9943502824858758,824,-565.576171875
+california,wind_plus90,Learned Hierarchical,2042,8,34.0,0.0,0.9717948717948718,824,-662.48046875
+california,wind_plus90,Learned Hierarchical,2042,9,34.0,0.0,0.9885057471264368,766,-480.126953125
+california,wind_plus90,Learned Hierarchical,2042,10,34.0,0.0,0.9528301886792453,824,-506.552734375
+california,wind_plus90,Learned Hierarchical,2042,11,34.0,0.0,0.9814814814814815,825,-406.103515625
+california,wind_plus90,Learned Hierarchical,2042,12,34.0,0.0,0.9954022988505747,753,-493.84765625
+california,wind_plus90,Learned Hierarchical,2042,13,34.0,0.0,0.8564814814814815,826,-662.24609375
+california,wind_plus90,Learned Hierarchical,2042,14,24.0,0.16666666666666666,0.9839080459770115,716,-480.9765625
+california,wind_plus90,Learned Hierarchical,3042,0,24.0,0.16666666666666666,0.9793103448275862,545,-303.59375
+california,wind_plus90,Learned Hierarchical,3042,1,28.0,0.16666666666666666,0.993103448275862,751,-456.494140625
+california,wind_plus90,Learned Hierarchical,3042,2,34.0,0.0,0.993103448275862,592,-343.427734375
+california,wind_plus90,Learned Hierarchical,3042,3,34.0,0.0,0.9915966386554622,824,-579.90234375
+california,wind_plus90,Learned Hierarchical,3042,4,24.0,0.16666666666666666,0.9954022988505747,584,-324.4140625
+california,wind_plus90,Learned Hierarchical,3042,5,34.0,0.0,0.990990990990991,825,-559.94140625
+california,wind_plus90,Learned Hierarchical,3042,6,22.0,0.3333333333333333,0.9885057471264368,545,-287.509765625
+california,wind_plus90,Learned Hierarchical,3042,7,12.0,0.5,0.9885057471264368,451,-240.4296875
+california,wind_plus90,Learned Hierarchical,3042,8,34.0,0.0,0.961352657004831,823,-639.970703125
+california,wind_plus90,Learned Hierarchical,3042,9,24.0,0.16666666666666666,0.9954022988505747,500,-228.9453125
+california,wind_plus90,Learned Hierarchical,3042,10,34.0,0.0,0.9770114942528736,803,-610.78125
+california,wind_plus90,Learned Hierarchical,3042,11,34.0,0.0,0.9885057471264368,795,-582.6953125
+california,wind_plus90,Learned Hierarchical,3042,12,34.0,0.0,0.9632183908045977,778,-567.685546875
+california,wind_plus90,Learned Hierarchical,3042,13,34.0,0.0,0.9915966386554622,824,-566.50390625
+california,wind_plus90,Learned Hierarchical,3042,14,34.0,0.0,0.9798850574712644,824,-545.888671875
+california,wind_plus90,Learned Hierarchical,4042,0,34.0,0.0,0.993103448275862,730,-457.6953125
+california,wind_plus90,Learned Hierarchical,4042,1,24.0,0.16666666666666666,0.9655172413793104,610,-351.77734375
+california,wind_plus90,Learned Hierarchical,4042,2,12.0,0.5,0.993103448275862,450,-236.6796875
+california,wind_plus90,Learned Hierarchical,4042,3,34.0,0.0,0.9642857142857143,826,-369.580078125
+california,wind_plus90,Learned Hierarchical,4042,4,34.0,0.0,0.9948717948717949,824,-678.056640625
+california,wind_plus90,Learned Hierarchical,4042,5,34.0,0.0,0.9747126436781609,630,-411.337890625
+california,wind_plus90,Learned Hierarchical,4042,6,34.0,0.0,0.9816091954022989,818,-662.5
+california,wind_plus90,Learned Hierarchical,4042,7,34.0,0.0,0.9103448275862069,818,-648.974609375
+california,wind_plus90,Learned Hierarchical,4042,8,34.0,0.0,0.9885057471264368,693,-431.728515625
+california,wind_plus90,Learned Hierarchical,4042,9,34.0,0.0,0.9655172413793104,799,-593.6328125
+california,wind_plus90,Learned Hierarchical,4042,10,18.0,0.3333333333333333,0.9885057471264368,607,-368.076171875
+california,wind_plus90,Learned Hierarchical,4042,11,34.0,0.0,0.903448275862069,719,-509.541015625
+california,wind_plus90,Learned Hierarchical,4042,12,34.0,0.0,0.9839080459770115,823,-690.1171875
+california,wind_plus90,Learned Hierarchical,4042,13,34.0,0.0,0.9724137931034482,811,-600.80078125
+california,wind_plus90,Learned Hierarchical,4042,14,34.0,0.0,0.949685534591195,825,-515.322265625
+california,wind_plus90,CommNet (matched),42,0,34.0,0.0,0.6875,819,-654.32578125
+california,wind_plus90,CommNet (matched),42,1,34.0,0.0,0.6873563218390805,806,-687.0980468750001
+california,wind_plus90,CommNet (matched),42,2,28.0,0.16666666666666666,0.45057471264367815,797,-616.67890625
+california,wind_plus90,CommNet (matched),42,3,6.0,0.6666666666666666,0.41839080459770117,505,-285.590234375
+california,wind_plus90,CommNet (matched),42,4,28.0,0.16666666666666666,0.45410628019323673,805,-631.424609375
+california,wind_plus90,CommNet (matched),42,5,28.0,0.16666666666666666,0.7138364779874213,807,-499.701171875
+california,wind_plus90,CommNet (matched),42,6,28.0,0.16666666666666666,0.7146892655367232,805,-539.662109375
+california,wind_plus90,CommNet (matched),42,7,34.0,0.0,0.6873563218390805,717,-522.253125
+california,wind_plus90,CommNet (matched),42,8,28.0,0.16666666666666666,0.42758620689655175,768,-490.56796875
+california,wind_plus90,CommNet (matched),42,9,28.0,0.16666666666666666,0.7241379310344828,776,-573.15390625
+california,wind_plus90,CommNet (matched),42,10,3.0,0.8333333333333334,0.7080459770114943,314,-166.144140625
+california,wind_plus90,CommNet (matched),42,11,28.0,0.16666666666666666,0.5172413793103449,789,-564.69609375
+california,wind_plus90,CommNet (matched),42,12,28.0,0.16666666666666666,0.7310344827586207,779,-586.323046875
+california,wind_plus90,CommNet (matched),42,13,6.0,0.6666666666666666,0.5218390804597701,355,-185.14765625
+california,wind_plus90,CommNet (matched),42,14,34.0,0.0,0.692090395480226,818,-566.53984375
+california,wind_plus90,CommNet (matched),1042,0,28.0,0.16666666666666666,0.7103448275862069,758,-488.6734375
+california,wind_plus90,CommNet (matched),1042,1,18.0,0.3333333333333333,0.7586206896551724,428,-180.234375
+california,wind_plus90,CommNet (matched),1042,2,28.0,0.16666666666666666,0.9885057471264368,645,-410.051171875
+california,wind_plus90,CommNet (matched),1042,3,24.0,0.16666666666666666,0.7195402298850575,695,-438.564453125
+california,wind_plus90,CommNet (matched),1042,4,28.0,0.16666666666666666,0.8081534772182254,799,-562.67578125
+california,wind_plus90,CommNet (matched),1042,5,34.0,0.0,0.5268817204301075,819,-425.15078125
+california,wind_plus90,CommNet (matched),1042,6,28.0,0.16666666666666666,0.42528735632183906,774,-508.43398437499997
+california,wind_plus90,CommNet (matched),1042,7,6.0,0.6666666666666666,0.7034482758620689,339,-167.084375
+california,wind_plus90,CommNet (matched),1042,8,28.0,0.16666666666666666,0.7540229885057471,648,-413.1640625
+california,wind_plus90,CommNet (matched),1042,9,28.0,0.16666666666666666,0.7146892655367232,805,-551.390625
+california,wind_plus90,CommNet (matched),1042,10,18.0,0.3333333333333333,0.7586206896551724,329,-158.681640625
+california,wind_plus90,CommNet (matched),1042,11,34.0,0.0,0.6957928802588996,818,-468.64921875
+california,wind_plus90,CommNet (matched),1042,12,34.0,0.0,0.6957928802588996,818,-468.639453125
+california,wind_plus90,CommNet (matched),1042,13,34.0,0.0,0.9908045977011494,812,-681.5625
+california,wind_plus90,CommNet (matched),1042,14,28.0,0.16666666666666666,0.7057471264367816,798,-598.34140625
+california,wind_plus90,CommNet (matched),2042,0,24.0,0.16666666666666666,0.6873563218390805,617,-357.56796875
+california,wind_plus90,CommNet (matched),2042,1,28.0,0.16666666666666666,0.9425287356321839,785,-600.72265625
+california,wind_plus90,CommNet (matched),2042,2,28.0,0.16666666666666666,0.7241379310344828,783,-600.26328125
+california,wind_plus90,CommNet (matched),2042,3,28.0,0.16666666666666666,0.47368421052631576,814,-393.67890625
+california,wind_plus90,CommNet (matched),2042,4,34.0,0.0,0.696078431372549,819,-466.459375
+california,wind_plus90,CommNet (matched),2042,5,34.0,0.0,0.6923076923076923,819,-570.2484375
+california,wind_plus90,CommNet (matched),2042,6,3.0,0.8333333333333334,0.9954022988505747,329,-143.65234375
+california,wind_plus90,CommNet (matched),2042,7,28.0,0.16666666666666666,0.7146892655367232,805,-551.380859375
+california,wind_plus90,CommNet (matched),2042,8,34.0,0.0,0.6897435897435897,821,-660.544140625
+california,wind_plus90,CommNet (matched),2042,9,34.0,0.0,0.7609195402298851,758,-474.87734375
+california,wind_plus90,CommNet (matched),2042,10,34.0,0.0,0.6955128205128205,820,-489.5234375
+california,wind_plus90,CommNet (matched),2042,11,34.0,0.0,0.7,817,-403.86640624999995
+california,wind_plus90,CommNet (matched),2042,12,34.0,0.0,0.7034482758620689,705,-447.709375
+california,wind_plus90,CommNet (matched),2042,13,28.0,0.16666666666666666,0.7060185185185185,807,-642.689453125
+california,wind_plus90,CommNet (matched),2042,14,18.0,0.3333333333333333,0.4436781609195402,664,-445.849609375
+california,wind_plus90,CommNet (matched),3042,0,18.0,0.3333333333333333,0.45057471264367815,525,-284.059765625
+california,wind_plus90,CommNet (matched),3042,1,22.0,0.3333333333333333,0.42528735632183906,740,-438.141796875
+california,wind_plus90,CommNet (matched),3042,2,28.0,0.16666666666666666,0.9793103448275862,492,-294.677734375
+california,wind_plus90,CommNet (matched),3042,3,34.0,0.0,0.6918767507002801,818,-575.28984375
+california,wind_plus90,CommNet (matched),3042,4,18.0,0.3333333333333333,0.767816091954023,471,-250.46875
+california,wind_plus90,CommNet (matched),3042,5,28.0,0.16666666666666666,0.7177177177177178,809,-546.7375
+california,wind_plus90,CommNet (matched),3042,6,16.0,0.5,0.49195402298850577,480,-246.03125
+california,wind_plus90,CommNet (matched),3042,7,6.0,0.6666666666666666,0.7103448275862069,354,-180.208984375
+california,wind_plus90,CommNet (matched),3042,8,34.0,0.0,0.6884057971014492,807,-629.047265625
+california,wind_plus90,CommNet (matched),3042,9,18.0,0.3333333333333333,0.7655172413793103,483,-210.05859375
+california,wind_plus90,CommNet (matched),3042,10,28.0,0.16666666666666666,0.9977011494252873,791,-594.453125
+california,wind_plus90,CommNet (matched),3042,11,34.0,0.0,0.728735632183908,794,-583.53515625
+california,wind_plus90,CommNet (matched),3042,12,34.0,0.0,0.7011494252873564,770,-555.871484375
+california,wind_plus90,CommNet (matched),3042,13,22.0,0.16666666666666666,0.6918767507002801,815,-560.08203125
+california,wind_plus90,CommNet (matched),3042,14,34.0,0.0,0.6934523809523809,817,-509.68671875
+california,wind_plus90,CommNet (matched),4042,0,28.0,0.16666666666666666,0.42528735632183906,720,-436.481640625
+california,wind_plus90,CommNet (matched),4042,1,18.0,0.3333333333333333,0.42528735632183906,595,-337.994921875
+california,wind_plus90,CommNet (matched),4042,2,6.0,0.6666666666666666,0.48735632183908045,367,-191.59765624999997
+california,wind_plus90,CommNet (matched),4042,3,22.0,0.16666666666666666,0.7023809523809523,818,-366.3640625
+california,wind_plus90,CommNet (matched),4042,4,28.0,0.16666666666666666,0.7102564102564103,809,-663.251171875
+california,wind_plus90,CommNet (matched),4042,5,28.0,0.16666666666666666,0.42528735632183906,616,-399.235546875
+california,wind_plus90,CommNet (matched),4042,6,28.0,0.16666666666666666,0.45057471264367815,798,-633.59296875
+california,wind_plus90,CommNet (matched),4042,7,28.0,0.16666666666666666,0.7149425287356321,803,-632.104296875
+california,wind_plus90,CommNet (matched),4042,8,22.0,0.3333333333333333,0.4160919540229885,662,-390.11445312499995
+california,wind_plus90,CommNet (matched),4042,9,28.0,0.16666666666666666,0.774712643678161,766,-566.357421875
+california,wind_plus90,CommNet (matched),4042,10,12.0,0.5,0.42528735632183906,571,-341.911328125
+california,wind_plus90,CommNet (matched),4042,11,28.0,0.16666666666666666,0.6068965517241379,684,-457.2265625
+california,wind_plus90,CommNet (matched),4042,12,28.0,0.16666666666666666,0.7103448275862069,798,-661.83515625
+california,wind_plus90,CommNet (matched),4042,13,28.0,0.16666666666666666,0.7195402298850575,792,-576.718359375
+california,wind_plus90,CommNet (matched),4042,14,34.0,0.0,0.6761006289308176,814,-509.31796875
+california,assets_rot90,No-Op,42,0,22.0,0.3333333333333333,1.0,827,-421.533203125
+california,assets_rot90,No-Op,42,1,9.0,0.6666666666666666,1.0,555,-281.11328125
+california,assets_rot90,No-Op,42,2,12.0,0.5,1.0,632,-415.400390625
+california,assets_rot90,No-Op,42,3,12.0,0.5,1.0,487,-307.79296875
+california,assets_rot90,No-Op,42,4,12.0,0.5,1.0,623,-376.9140625
+california,assets_rot90,No-Op,42,5,22.0,0.3333333333333333,1.0,827,-599.39453125
+california,assets_rot90,No-Op,42,6,22.0,0.3333333333333333,1.0,827,-578.61328125
+california,assets_rot90,No-Op,42,7,22.0,0.3333333333333333,1.0,827,-358.10546875
+california,assets_rot90,No-Op,42,8,12.0,0.5,1.0,543,-347.109375
+california,assets_rot90,No-Op,42,9,22.0,0.3333333333333333,1.0,827,-571.640625
+california,assets_rot90,No-Op,42,10,12.0,0.5,1.0,418,-259.091796875
+california,assets_rot90,No-Op,42,11,12.0,0.5,1.0,542,-333.037109375
+california,assets_rot90,No-Op,42,12,22.0,0.3333333333333333,1.0,827,-436.259765625
+california,assets_rot90,No-Op,42,13,12.0,0.5,1.0,466,-301.787109375
+california,assets_rot90,No-Op,42,14,12.0,0.5,1.0,613,-358.96484375
+california,assets_rot90,No-Op,1042,0,12.0,0.5,1.0,543,-349.462890625
+california,assets_rot90,No-Op,1042,1,22.0,0.3333333333333333,1.0,765,-550.546875
+california,assets_rot90,No-Op,1042,2,22.0,0.3333333333333333,1.0,827,-341.07421875
+california,assets_rot90,No-Op,1042,3,22.0,0.3333333333333333,1.0,748,-566.416015625
+california,assets_rot90,No-Op,1042,4,22.0,0.3333333333333333,1.0,827,-564.755859375
+california,assets_rot90,No-Op,1042,5,22.0,0.3333333333333333,1.0,783,-553.583984375
+california,assets_rot90,No-Op,1042,6,12.0,0.5,1.0,539,-327.63671875
+california,assets_rot90,No-Op,1042,7,12.0,0.5,1.0,475,-309.052734375
+california,assets_rot90,No-Op,1042,8,22.0,0.3333333333333333,1.0,827,-377.75390625
+california,assets_rot90,No-Op,1042,9,22.0,0.3333333333333333,1.0,827,-584.619140625
+california,assets_rot90,No-Op,1042,10,22.0,0.3333333333333333,1.0,757,-511.9140625
+california,assets_rot90,No-Op,1042,11,12.0,0.5,1.0,635,-392.05078125
+california,assets_rot90,No-Op,1042,12,12.0,0.5,1.0,634,-392.021484375
+california,assets_rot90,No-Op,1042,13,22.0,0.3333333333333333,1.0,827,-654.43359375
+california,assets_rot90,No-Op,1042,14,12.0,0.5,1.0,525,-293.30078125
+california,assets_rot90,No-Op,2042,0,22.0,0.3333333333333333,1.0,745,-559.208984375
+california,assets_rot90,No-Op,2042,1,22.0,0.3333333333333333,1.0,827,-528.916015625
+california,assets_rot90,No-Op,2042,2,22.0,0.3333333333333333,1.0,827,-597.822265625
+california,assets_rot90,No-Op,2042,3,22.0,0.3333333333333333,1.0,827,-581.904296875
+california,assets_rot90,No-Op,2042,4,12.0,0.5,1.0,653,-403.96484375
+california,assets_rot90,No-Op,2042,5,12.0,0.5,1.0,626,-378.291015625
+california,assets_rot90,No-Op,2042,6,12.0,0.5,1.0,504,-332.080078125
+california,assets_rot90,No-Op,2042,7,22.0,0.3333333333333333,1.0,827,-584.619140625
+california,assets_rot90,No-Op,2042,8,12.0,0.5,1.0,724,-565.458984375
+california,assets_rot90,No-Op,2042,9,22.0,0.3333333333333333,1.0,796,-569.16015625
+california,assets_rot90,No-Op,2042,10,9.0,0.6666666666666666,1.0,618,-368.134765625
+california,assets_rot90,No-Op,2042,11,9.0,0.6666666666666666,1.0,591,-285.83984375
+california,assets_rot90,No-Op,2042,12,22.0,0.3333333333333333,1.0,748,-573.76953125
+california,assets_rot90,No-Op,2042,13,22.0,0.3333333333333333,1.0,827,-429.6875
+california,assets_rot90,No-Op,2042,14,22.0,0.3333333333333333,1.0,827,-585.556640625
+california,assets_rot90,No-Op,3042,0,12.0,0.5,1.0,623,-458.984375
+california,assets_rot90,No-Op,3042,1,9.0,0.6666666666666666,1.0,454,-240.9375
+california,assets_rot90,No-Op,3042,2,22.0,0.3333333333333333,1.0,827,-393.193359375
+california,assets_rot90,No-Op,3042,3,12.0,0.5,1.0,613,-357.51953125
+california,assets_rot90,No-Op,3042,4,22.0,0.3333333333333333,1.0,827,-388.701171875
+california,assets_rot90,No-Op,3042,5,22.0,0.3333333333333333,1.0,769,-557.75390625
+california,assets_rot90,No-Op,3042,6,6.0,0.8333333333333334,1.0,311,-131.435546875
+california,assets_rot90,No-Op,3042,7,12.0,0.5,1.0,407,-235.8984375
+california,assets_rot90,No-Op,3042,8,9.0,0.6666666666666666,1.0,522,-249.8828125
+california,assets_rot90,No-Op,3042,9,22.0,0.3333333333333333,1.0,748,-526.2890625
+california,assets_rot90,No-Op,3042,10,12.0,0.5,1.0,670,-476.884765625
+california,assets_rot90,No-Op,3042,11,22.0,0.3333333333333333,1.0,816,-616.708984375
+california,assets_rot90,No-Op,3042,12,22.0,0.3333333333333333,1.0,827,-485.634765625
+california,assets_rot90,No-Op,3042,13,12.0,0.5,1.0,646,-409.1796875
+california,assets_rot90,No-Op,3042,14,9.0,0.6666666666666666,1.0,561,-278.583984375
+california,assets_rot90,No-Op,4042,0,12.0,0.5,1.0,483,-266.54296875
+california,assets_rot90,No-Op,4042,1,12.0,0.5,1.0,551,-370.3125
+california,assets_rot90,No-Op,4042,2,6.0,0.8333333333333334,1.0,330,-153.37890625
+california,assets_rot90,No-Op,4042,3,12.0,0.5,1.0,728,-488.80859375
+california,assets_rot90,No-Op,4042,4,12.0,0.5,1.0,699,-511.07421875
+california,assets_rot90,No-Op,4042,5,22.0,0.3333333333333333,1.0,827,-397.314453125
+california,assets_rot90,No-Op,4042,6,12.0,0.5,1.0,609,-372.12890625
+california,assets_rot90,No-Op,4042,7,22.0,0.3333333333333333,1.0,827,-461.40625
+california,assets_rot90,No-Op,4042,8,12.0,0.5,1.0,560,-379.86328125
+california,assets_rot90,No-Op,4042,9,22.0,0.3333333333333333,1.0,814,-590.46875
+california,assets_rot90,No-Op,4042,10,12.0,0.5,1.0,468,-272.275390625
+california,assets_rot90,No-Op,4042,11,22.0,0.3333333333333333,1.0,827,-300.390625
+california,assets_rot90,No-Op,4042,12,12.0,0.5,1.0,638,-412.412109375
+california,assets_rot90,No-Op,4042,13,12.0,0.5,1.0,656,-431.81640625
+california,assets_rot90,No-Op,4042,14,12.0,0.5,1.0,683,-454.560546875
+california,assets_rot90,Value-First Heuristic,42,0,22.0,0.3333333333333333,1.0,824,-420.048828125
+california,assets_rot90,Value-First Heuristic,42,1,9.0,0.6666666666666666,1.0,552,-279.267578125
+california,assets_rot90,Value-First Heuristic,42,2,12.0,0.5,1.0,630,-412.001953125
+california,assets_rot90,Value-First Heuristic,42,3,12.0,0.5,0.9954022988505747,483,-305.64453125
+california,assets_rot90,Value-First Heuristic,42,4,12.0,0.5,1.0,616,-373.10546875
+california,assets_rot90,Value-First Heuristic,42,5,22.0,0.3333333333333333,0.9976689976689976,824,-596.396484375
+california,assets_rot90,Value-First Heuristic,42,6,22.0,0.3333333333333333,0.9974358974358974,824,-576.93359375
+california,assets_rot90,Value-First Heuristic,42,7,22.0,0.3333333333333333,0.9923371647509579,826,-357.55859375
+california,assets_rot90,Value-First Heuristic,42,8,12.0,0.5,1.0,541,-346.123046875
+california,assets_rot90,Value-First Heuristic,42,9,22.0,0.3333333333333333,0.9975124378109452,826,-570.72265625
+california,assets_rot90,Value-First Heuristic,42,10,12.0,0.5,0.9977011494252873,416,-258.0859375
+california,assets_rot90,Value-First Heuristic,42,11,12.0,0.5,1.0,539,-330.400390625
+california,assets_rot90,Value-First Heuristic,42,12,22.0,0.3333333333333333,0.9966996699669967,826,-435.986328125
+california,assets_rot90,Value-First Heuristic,42,13,12.0,0.5,0.9977011494252873,464,-300.5078125
+california,assets_rot90,Value-First Heuristic,42,14,9.0,0.6666666666666666,1.0,603,-355.634765625
+california,assets_rot90,Value-First Heuristic,1042,0,12.0,0.5,1.0,541,-347.958984375
+california,assets_rot90,Value-First Heuristic,1042,1,22.0,0.3333333333333333,0.9908045977011494,763,-546.767578125
+california,assets_rot90,Value-First Heuristic,1042,2,22.0,0.3333333333333333,0.9962546816479401,826,-340.390625
+california,assets_rot90,Value-First Heuristic,1042,3,22.0,0.3333333333333333,0.9977011494252873,745,-564.091796875
+california,assets_rot90,Value-First Heuristic,1042,4,22.0,0.3333333333333333,0.9976019184652278,824,-563.154296875
+california,assets_rot90,Value-First Heuristic,1042,5,22.0,0.3333333333333333,0.9977011494252873,779,-551.279296875
+california,assets_rot90,Value-First Heuristic,1042,6,12.0,0.5,1.0,535,-325.068359375
+california,assets_rot90,Value-First Heuristic,1042,7,12.0,0.5,0.9977011494252873,473,-307.724609375
+california,assets_rot90,Value-First Heuristic,1042,8,22.0,0.3333333333333333,1.0,827,-377.75390625
+california,assets_rot90,Value-First Heuristic,1042,9,22.0,0.3333333333333333,0.9975308641975309,824,-579.94140625
+california,assets_rot90,Value-First Heuristic,1042,10,22.0,0.3333333333333333,0.9908045977011494,755,-507.71484375
+california,assets_rot90,Value-First Heuristic,1042,11,12.0,0.5,1.0,632,-390.087890625
+california,assets_rot90,Value-First Heuristic,1042,12,12.0,0.5,1.0,631,-390.05859375
+california,assets_rot90,Value-First Heuristic,1042,13,22.0,0.3333333333333333,1.0,824,-652.1875
+california,assets_rot90,Value-First Heuristic,1042,14,12.0,0.5,1.0,520,-291.005859375
+california,assets_rot90,Value-First Heuristic,2042,0,22.0,0.3333333333333333,0.9977011494252873,743,-558.076171875
+california,assets_rot90,Value-First Heuristic,2042,1,22.0,0.3333333333333333,1.0,826,-528.7109375
+california,assets_rot90,Value-First Heuristic,2042,2,22.0,0.3333333333333333,1.0,824,-595.400390625
+california,assets_rot90,Value-First Heuristic,2042,3,22.0,0.3333333333333333,0.9977011494252873,823,-578.02734375
+california,assets_rot90,Value-First Heuristic,2042,4,12.0,0.5,0.9977011494252873,652,-403.173828125
+california,assets_rot90,Value-First Heuristic,2042,5,9.0,0.6666666666666666,0.993103448275862,621,-375.927734375
+california,assets_rot90,Value-First Heuristic,2042,6,12.0,0.5,1.0,502,-330.166015625
+california,assets_rot90,Value-First Heuristic,2042,7,22.0,0.3333333333333333,0.9975308641975309,824,-579.94140625
+california,assets_rot90,Value-First Heuristic,2042,8,12.0,0.5,1.0,722,-563.095703125
+california,assets_rot90,Value-First Heuristic,2042,9,22.0,0.3333333333333333,1.0,794,-568.349609375
+california,assets_rot90,Value-First Heuristic,2042,10,9.0,0.6666666666666666,1.0,614,-366.34765625
+california,assets_rot90,Value-First Heuristic,2042,11,9.0,0.6666666666666666,1.0,587,-284.189453125
+california,assets_rot90,Value-First Heuristic,2042,12,22.0,0.3333333333333333,0.9954022988505747,746,-571.064453125
+california,assets_rot90,Value-First Heuristic,2042,13,22.0,0.3333333333333333,1.0,824,-428.18359375
+california,assets_rot90,Value-First Heuristic,2042,14,22.0,0.3333333333333333,0.9950248756218906,826,-584.521484375
+california,assets_rot90,Value-First Heuristic,3042,0,12.0,0.5,0.9954022988505747,622,-457.783203125
+california,assets_rot90,Value-First Heuristic,3042,1,9.0,0.6666666666666666,1.0,452,-239.66796875
+california,assets_rot90,Value-First Heuristic,3042,2,22.0,0.3333333333333333,0.9929824561403509,826,-392.55859375
+california,assets_rot90,Value-First Heuristic,3042,3,12.0,0.5,1.0,604,-354.208984375
+california,assets_rot90,Value-First Heuristic,3042,4,22.0,0.3333333333333333,0.9965635738831615,826,-388.046875
+california,assets_rot90,Value-First Heuristic,3042,5,22.0,0.3333333333333333,0.9977011494252873,767,-555.791015625
+california,assets_rot90,Value-First Heuristic,3042,6,6.0,0.8333333333333334,1.0,310,-131.181640625
+california,assets_rot90,Value-First Heuristic,3042,7,12.0,0.5,0.9977011494252873,404,-234.794921875
+california,assets_rot90,Value-First Heuristic,3042,8,9.0,0.6666666666666666,1.0,516,-248.486328125
+california,assets_rot90,Value-First Heuristic,3042,9,22.0,0.3333333333333333,0.993103448275862,745,-524.35546875
+california,assets_rot90,Value-First Heuristic,3042,10,12.0,0.5,1.0,668,-475.46875
+california,assets_rot90,Value-First Heuristic,3042,11,22.0,0.3333333333333333,1.0,813,-614.560546875
+california,assets_rot90,Value-First Heuristic,3042,12,22.0,0.3333333333333333,0.993993993993994,826,-485.390625
+california,assets_rot90,Value-First Heuristic,3042,13,12.0,0.5,1.0,643,-406.42578125
+california,assets_rot90,Value-First Heuristic,3042,14,9.0,0.6666666666666666,1.0,554,-276.845703125
+california,assets_rot90,Value-First Heuristic,4042,0,9.0,0.6666666666666666,1.0,478,-264.921875
+california,assets_rot90,Value-First Heuristic,4042,1,12.0,0.5,0.9954022988505747,548,-366.93359375
+california,assets_rot90,Value-First Heuristic,4042,2,6.0,0.8333333333333334,1.0,329,-153.076171875
+california,assets_rot90,Value-First Heuristic,4042,3,12.0,0.5,0.9977011494252873,726,-487.2265625
+california,assets_rot90,Value-First Heuristic,4042,4,12.0,0.5,0.9977011494252873,697,-508.0078125
+california,assets_rot90,Value-First Heuristic,4042,5,22.0,0.3333333333333333,0.9964912280701754,826,-396.6796875
+california,assets_rot90,Value-First Heuristic,4042,6,12.0,0.5,1.0,604,-369.150390625
+california,assets_rot90,Value-First Heuristic,4042,7,22.0,0.3333333333333333,0.9967637540453075,826,-461.142578125
+california,assets_rot90,Value-First Heuristic,4042,8,12.0,0.5,1.0,558,-377.44140625
+california,assets_rot90,Value-First Heuristic,4042,9,22.0,0.3333333333333333,1.0,811,-588.4375
+california,assets_rot90,Value-First Heuristic,4042,10,12.0,0.5,1.0,466,-271.25
+california,assets_rot90,Value-First Heuristic,4042,11,22.0,0.3333333333333333,0.984313725490196,823,-298.45703125
+california,assets_rot90,Value-First Heuristic,4042,12,12.0,0.5,1.0,636,-409.482421875
+california,assets_rot90,Value-First Heuristic,4042,13,12.0,0.5,1.0,654,-428.349609375
+california,assets_rot90,Value-First Heuristic,4042,14,12.0,0.5,0.9977011494252873,682,-453.916015625
+california,assets_rot90,Local Reactive,42,0,16.0,0.5,0.984251968503937,781,-578.351953125
+california,assets_rot90,Local Reactive,42,1,-9.0,1.0,1.0,425,-239.86328125
+california,assets_rot90,Local Reactive,42,2,6.0,0.6666666666666666,1.0,488,-362.548828125
+california,assets_rot90,Local Reactive,42,3,-6.0,0.8333333333333334,1.0,393,-268.994140625
+california,assets_rot90,Local Reactive,42,4,0.0,0.8333333333333334,1.0,568,-357.75390625
+california,assets_rot90,Local Reactive,42,5,4.0,0.6666666666666666,0.9953379953379954,756,-533.45703125
+california,assets_rot90,Local Reactive,42,6,16.0,0.5,1.0,760,-635.908203125
+california,assets_rot90,Local Reactive,42,7,10.0,0.6666666666666666,0.9850187265917603,783,-310.951953125
+california,assets_rot90,Local Reactive,42,8,3.0,0.8333333333333334,0.993103448275862,417,-315.21484375
+california,assets_rot90,Local Reactive,42,9,10.0,0.6666666666666666,1.0,790,-495.3515625
+california,assets_rot90,Local Reactive,42,10,3.0,0.8333333333333334,0.993103448275862,340,-247.062890625
+california,assets_rot90,Local Reactive,42,11,6.0,0.6666666666666666,0.9885057471264368,468,-315.849609375
+california,assets_rot90,Local Reactive,42,12,16.0,0.5,1.0,805,-394.82421875
+california,assets_rot90,Local Reactive,42,13,0.0,0.8333333333333334,1.0,396,-285.498046875
+california,assets_rot90,Local Reactive,42,14,3.0,0.8333333333333334,1.0,464,-317.91015625
+california,assets_rot90,Local Reactive,1042,0,0.0,0.8333333333333334,1.0,471,-331.34765625
+california,assets_rot90,Local Reactive,1042,1,16.0,0.5,0.9954022988505747,628,-477.890625
+california,assets_rot90,Local Reactive,1042,2,10.0,0.6666666666666666,1.0,768,-685.91796875
+california,assets_rot90,Local Reactive,1042,3,6.0,0.6666666666666666,0.993103448275862,614,-494.3359375
+california,assets_rot90,Local Reactive,1042,4,10.0,0.6666666666666666,1.0,737,-502.431640625
+california,assets_rot90,Local Reactive,1042,5,10.0,0.6666666666666666,0.9954022988505747,677,-494.86328125
+california,assets_rot90,Local Reactive,1042,6,0.0,0.8333333333333334,0.9954022988505747,476,-315.634765625
+california,assets_rot90,Local Reactive,1042,7,6.0,0.6666666666666666,1.0,383,-288.84765625
+california,assets_rot90,Local Reactive,1042,8,16.0,0.5,1.0,787,-301.11328125
+california,assets_rot90,Local Reactive,1042,9,-2.0,0.8333333333333334,1.0,757,-593.2421875
+california,assets_rot90,Local Reactive,1042,10,10.0,0.6666666666666666,1.0,654,-454.3359375
+california,assets_rot90,Local Reactive,1042,11,0.0,0.8333333333333334,1.0,522,-350.56640625
+california,assets_rot90,Local Reactive,1042,12,0.0,0.8333333333333334,1.0,545,-360.205078125
+california,assets_rot90,Local Reactive,1042,13,10.0,0.6666666666666666,0.9885057471264368,769,-615.419921875
+california,assets_rot90,Local Reactive,1042,14,0.0,0.8333333333333334,1.0,408,-270.517578125
+california,assets_rot90,Local Reactive,2042,0,16.0,0.5,1.0,607,-455.6640625
+california,assets_rot90,Local Reactive,2042,1,16.0,0.5,0.9918032786885246,801,-481.142578125
+california,assets_rot90,Local Reactive,2042,2,16.0,0.5,0.9925925925925926,799,-510.8203125
+california,assets_rot90,Local Reactive,2042,3,10.0,0.6666666666666666,0.9954022988505747,763,-529.6875
+california,assets_rot90,Local Reactive,2042,4,3.0,0.8333333333333334,1.0,549,-363.154296875
+california,assets_rot90,Local Reactive,2042,5,0.0,0.8333333333333334,1.0,513,-336.767578125
+california,assets_rot90,Local Reactive,2042,6,0.0,0.8333333333333334,1.0,391,-307.021484375
+california,assets_rot90,Local Reactive,2042,7,13.0,0.6666666666666666,1.0,703,-576.943359375
+california,assets_rot90,Local Reactive,2042,8,-4.0,0.6666666666666666,0.9977011494252873,654,-522.724609375
+california,assets_rot90,Local Reactive,2042,9,16.0,0.5,0.9954022988505747,761,-520.754296875
+california,assets_rot90,Local Reactive,2042,10,0.0,0.8333333333333334,0.9908045977011494,499,-340.51015625
+california,assets_rot90,Local Reactive,2042,11,0.0,0.8333333333333334,1.0,501,-270.9765625
+california,assets_rot90,Local Reactive,2042,12,16.0,0.5,0.9908045977011494,717,-545.09765625
+california,assets_rot90,Local Reactive,2042,13,4.0,0.6666666666666666,1.0,788,-398.49609375
+california,assets_rot90,Local Reactive,2042,14,16.0,0.5,0.9800995024875622,777,-503.38359375
+california,assets_rot90,Local Reactive,3042,0,6.0,0.6666666666666666,1.0,467,-410.76171875
+california,assets_rot90,Local Reactive,3042,1,3.0,0.8333333333333334,1.0,354,-223.486328125
+california,assets_rot90,Local Reactive,3042,2,10.0,0.6666666666666666,1.0,777,-415.224609375
+california,assets_rot90,Local Reactive,3042,3,3.0,0.8333333333333334,1.0,498,-326.171875
+california,assets_rot90,Local Reactive,3042,4,16.0,0.5,0.9690721649484536,808,-363.28125
+california,assets_rot90,Local Reactive,3042,5,6.0,0.6666666666666666,0.993103448275862,639,-495.390625
+california,assets_rot90,Local Reactive,3042,6,-9.0,1.0,1.0,263,-121.943359375
+california,assets_rot90,Local Reactive,3042,7,3.0,0.8333333333333334,0.9954022988505747,322,-219.482421875
+california,assets_rot90,Local Reactive,3042,8,0.0,0.8333333333333334,0.9862068965517241,451,-239.055078125
+california,assets_rot90,Local Reactive,3042,9,16.0,0.5,0.9839080459770115,583,-439.267578125
+california,assets_rot90,Local Reactive,3042,10,6.0,0.6666666666666666,0.993103448275862,598,-443.30078125
+california,assets_rot90,Local Reactive,3042,11,16.0,0.5,0.9862068965517241,782,-580.703125
+california,assets_rot90,Local Reactive,3042,12,10.0,0.6666666666666666,0.984984984984985,802,-440.546875
+california,assets_rot90,Local Reactive,3042,13,0.0,0.8333333333333334,1.0,549,-379.00390625
+california,assets_rot90,Local Reactive,3042,14,3.0,0.8333333333333334,0.9977011494252873,431,-251.943359375
+california,assets_rot90,Local Reactive,4042,0,3.0,0.8333333333333334,1.0,376,-240.21484375
+california,assets_rot90,Local Reactive,4042,1,0.0,0.8333333333333334,0.9954022988505747,418,-328.544921875
+california,assets_rot90,Local Reactive,4042,2,0.0,0.8333333333333334,0.993103448275862,287,-149.228515625
+california,assets_rot90,Local Reactive,4042,3,0.0,0.8333333333333334,0.9954022988505747,667,-454.19921875
+california,assets_rot90,Local Reactive,4042,4,-9.0,1.0,0.9977011494252873,553,-429.375
+california,assets_rot90,Local Reactive,4042,5,16.0,0.5,0.9964912280701754,792,-371.2890625
+california,assets_rot90,Local Reactive,4042,6,6.0,0.6666666666666666,0.9954022988505747,509,-335.966796875
+california,assets_rot90,Local Reactive,4042,7,16.0,0.5,0.9902912621359223,800,-426.03515625
+california,assets_rot90,Local Reactive,4042,8,0.0,0.8333333333333334,1.0,480,-340.224609375
+california,assets_rot90,Local Reactive,4042,9,16.0,0.5,1.0,764,-520.33203125
+california,assets_rot90,Local Reactive,4042,10,0.0,0.8333333333333334,0.9954022988505747,378,-246.19375
+california,assets_rot90,Local Reactive,4042,11,10.0,0.6666666666666666,1.0,783,-356.962890625
+california,assets_rot90,Local Reactive,4042,12,3.0,0.8333333333333334,1.0,531,-381.298828125
+california,assets_rot90,Local Reactive,4042,13,3.0,0.8333333333333334,0.9977011494252873,502,-384.599609375
+california,assets_rot90,Local Reactive,4042,14,3.0,0.8333333333333334,1.0,592,-408.125
+california,assets_rot90,Learned Hierarchical,42,0,22.0,0.3333333333333333,1.0,825,-420.390625
+california,assets_rot90,Learned Hierarchical,42,1,9.0,0.6666666666666666,0.9908045977011494,542,-278.720703125
+california,assets_rot90,Learned Hierarchical,42,2,12.0,0.5,1.0,626,-412.20703125
+california,assets_rot90,Learned Hierarchical,42,3,12.0,0.5,0.9701149425287356,485,-306.9921875
+california,assets_rot90,Learned Hierarchical,42,4,12.0,0.5,0.9908045977011494,614,-373.828125
+california,assets_rot90,Learned Hierarchical,42,5,22.0,0.3333333333333333,0.9953379953379954,826,-598.88671875
+california,assets_rot90,Learned Hierarchical,42,6,22.0,0.3333333333333333,0.9897435897435898,825,-577.421875
+california,assets_rot90,Learned Hierarchical,42,7,22.0,0.3333333333333333,0.9770114942528736,826,-357.79296875
+california,assets_rot90,Learned Hierarchical,42,8,12.0,0.5,0.9977011494252873,538,-344.609375
+california,assets_rot90,Learned Hierarchical,42,9,22.0,0.3333333333333333,0.9328358208955224,824,-569.306640625
+california,assets_rot90,Learned Hierarchical,42,10,12.0,0.5,0.9540229885057471,416,-258.0859375
+california,assets_rot90,Learned Hierarchical,42,11,12.0,0.5,1.0,535,-329.47265625
+california,assets_rot90,Learned Hierarchical,42,12,22.0,0.3333333333333333,0.9966996699669967,824,-434.4921875
+california,assets_rot90,Learned Hierarchical,42,13,12.0,0.5,0.9655172413793104,464,-300.64453125
+california,assets_rot90,Learned Hierarchical,42,14,12.0,0.5,0.9885057471264368,601,-356.728515625
+california,assets_rot90,Learned Hierarchical,1042,0,12.0,0.5,0.9977011494252873,539,-347.01171875
+california,assets_rot90,Learned Hierarchical,1042,1,22.0,0.3333333333333333,0.9954022988505747,751,-538.203125
+california,assets_rot90,Learned Hierarchical,1042,2,22.0,0.3333333333333333,0.9962546816479401,825,-340.107421875
+california,assets_rot90,Learned Hierarchical,1042,3,22.0,0.3333333333333333,1.0,746,-563.486328125
+california,assets_rot90,Learned Hierarchical,1042,4,22.0,0.3333333333333333,0.9928057553956835,825,-563.603515625
+california,assets_rot90,Learned Hierarchical,1042,5,22.0,0.3333333333333333,0.9954022988505747,780,-550.810546875
+california,assets_rot90,Learned Hierarchical,1042,6,12.0,0.5,0.993103448275862,534,-324.423828125
+california,assets_rot90,Learned Hierarchical,1042,7,12.0,0.5,0.993103448275862,474,-308.515625
+california,assets_rot90,Learned Hierarchical,1042,8,22.0,0.3333333333333333,1.0,825,-376.71875
+california,assets_rot90,Learned Hierarchical,1042,9,22.0,0.3333333333333333,0.9925925925925926,826,-583.935546875
+california,assets_rot90,Learned Hierarchical,1042,10,22.0,0.3333333333333333,0.9954022988505747,749,-496.337890625
+california,assets_rot90,Learned Hierarchical,1042,11,12.0,0.5,0.9195402298850575,626,-388.955078125
+california,assets_rot90,Learned Hierarchical,1042,12,12.0,0.5,0.9195402298850575,625,-388.92578125
+california,assets_rot90,Learned Hierarchical,1042,13,22.0,0.3333333333333333,0.9606481481481481,825,-652.36328125
+california,assets_rot90,Learned Hierarchical,1042,14,12.0,0.5,1.0,512,-290.205078125
+california,assets_rot90,Learned Hierarchical,2042,0,22.0,0.3333333333333333,1.0,744,-559.091796875
+california,assets_rot90,Learned Hierarchical,2042,1,22.0,0.3333333333333333,0.9863387978142076,825,-527.685546875
+california,assets_rot90,Learned Hierarchical,2042,2,22.0,0.3333333333333333,0.9753086419753086,825,-596.318359375
+california,assets_rot90,Learned Hierarchical,2042,3,22.0,0.3333333333333333,0.9954022988505747,825,-580.17578125
+california,assets_rot90,Learned Hierarchical,2042,4,12.0,0.5,0.9425287356321839,646,-401.708984375
+california,assets_rot90,Learned Hierarchical,2042,5,12.0,0.5,0.9126436781609195,616,-375.46875
+california,assets_rot90,Learned Hierarchical,2042,6,12.0,0.5,0.993103448275862,503,-331.416015625
+california,assets_rot90,Learned Hierarchical,2042,7,22.0,0.3333333333333333,0.9925925925925926,826,-583.935546875
+california,assets_rot90,Learned Hierarchical,2042,8,12.0,0.5,0.9126436781609195,721,-561.728515625
+california,assets_rot90,Learned Hierarchical,2042,9,22.0,0.3333333333333333,0.9241379310344827,794,-566.9140625
+california,assets_rot90,Learned Hierarchical,2042,10,9.0,0.6666666666666666,0.9287356321839081,609,-366.123046875
+california,assets_rot90,Learned Hierarchical,2042,11,9.0,0.6666666666666666,0.9701149425287356,587,-283.671875
+california,assets_rot90,Learned Hierarchical,2042,12,22.0,0.3333333333333333,0.9655172413793104,746,-570.99609375
+california,assets_rot90,Learned Hierarchical,2042,13,22.0,0.3333333333333333,1.0,825,-428.388671875
+california,assets_rot90,Learned Hierarchical,2042,14,22.0,0.3333333333333333,0.9975124378109452,824,-583.115234375
+california,assets_rot90,Learned Hierarchical,3042,0,12.0,0.5,0.993103448275862,621,-457.177734375
+california,assets_rot90,Learned Hierarchical,3042,1,9.0,0.6666666666666666,0.9954022988505747,445,-239.169921875
+california,assets_rot90,Learned Hierarchical,3042,2,22.0,0.3333333333333333,0.9859649122807017,826,-392.79296875
+california,assets_rot90,Learned Hierarchical,3042,3,12.0,0.5,0.9885057471264368,601,-355.33203125
+california,assets_rot90,Learned Hierarchical,3042,4,22.0,0.3333333333333333,0.9965635738831615,825,-387.6171875
+california,assets_rot90,Learned Hierarchical,3042,5,22.0,0.3333333333333333,0.9862068965517241,767,-556.728515625
+california,assets_rot90,Learned Hierarchical,3042,6,6.0,0.8333333333333334,0.993103448275862,310,-131.19140625
+california,assets_rot90,Learned Hierarchical,3042,7,12.0,0.5,0.9655172413793104,405,-235.078125
+california,assets_rot90,Learned Hierarchical,3042,8,9.0,0.6666666666666666,0.9862068965517241,511,-248.251953125
+california,assets_rot90,Learned Hierarchical,3042,9,22.0,0.3333333333333333,0.9793103448275862,744,-521.162109375
+california,assets_rot90,Learned Hierarchical,3042,10,12.0,0.5,0.9885057471264368,666,-474.306640625
+california,assets_rot90,Learned Hierarchical,3042,11,22.0,0.3333333333333333,0.9471264367816092,814,-614.267578125
+california,assets_rot90,Learned Hierarchical,3042,12,22.0,0.3333333333333333,0.996996996996997,824,-483.046875
+california,assets_rot90,Learned Hierarchical,3042,13,12.0,0.5,0.9218390804597701,634,-405.634765625
+california,assets_rot90,Learned Hierarchical,3042,14,9.0,0.6666666666666666,0.9862068965517241,551,-277.353515625
+california,assets_rot90,Learned Hierarchical,4042,0,9.0,0.6666666666666666,0.9977011494252873,472,-264.00390625
+california,assets_rot90,Learned Hierarchical,4042,1,12.0,0.5,0.9471264367816092,550,-368.974609375
+california,assets_rot90,Learned Hierarchical,4042,2,6.0,0.8333333333333334,0.993103448275862,329,-153.115234375
+california,assets_rot90,Learned Hierarchical,4042,3,12.0,0.5,0.9908045977011494,724,-485.9375
+california,assets_rot90,Learned Hierarchical,4042,4,12.0,0.5,0.9724137931034482,693,-506.58203125
+california,assets_rot90,Learned Hierarchical,4042,5,22.0,0.3333333333333333,0.9859649122807017,825,-396.30859375
+california,assets_rot90,Learned Hierarchical,4042,6,12.0,0.5,1.0,600,-368.095703125
+california,assets_rot90,Learned Hierarchical,4042,7,22.0,0.3333333333333333,1.0,825,-460.21484375
+california,assets_rot90,Learned Hierarchical,4042,8,12.0,0.5,0.9908045977011494,558,-377.98828125
+california,assets_rot90,Learned Hierarchical,4042,9,22.0,0.3333333333333333,0.993103448275862,812,-588.61328125
+california,assets_rot90,Learned Hierarchical,4042,10,12.0,0.5,0.9908045977011494,463,-271.3671875
+california,assets_rot90,Learned Hierarchical,4042,11,22.0,0.3333333333333333,0.9882352941176471,826,-300.166015625
+california,assets_rot90,Learned Hierarchical,4042,12,12.0,0.5,0.9908045977011494,633,-407.96875
+california,assets_rot90,Learned Hierarchical,4042,13,12.0,0.5,0.993103448275862,653,-429.47265625
+california,assets_rot90,Learned Hierarchical,4042,14,12.0,0.5,0.9494252873563218,681,-452.890625
+california,assets_rot90,CommNet (matched),42,0,10.0,0.5,0.9971751412429378,810,-537.470703125
+california,assets_rot90,CommNet (matched),42,1,-3.0,0.8333333333333334,0.7379310344827587,523,-268.351953125
+california,assets_rot90,CommNet (matched),42,2,12.0,0.5,0.7195402298850575,589,-389.94570312499997
+california,assets_rot90,CommNet (matched),42,3,0.0,0.6666666666666666,0.9977011494252873,450,-289.013671875
+california,assets_rot90,CommNet (matched),42,4,9.0,0.6666666666666666,0.8022988505747126,553,-357.79453125
+california,assets_rot90,CommNet (matched),42,5,10.0,0.5,0.9976689976689976,808,-585.126953125
+california,assets_rot90,CommNet (matched),42,6,22.0,0.3333333333333333,0.9974358974358974,795,-558.7890625
+california,assets_rot90,CommNet (matched),42,7,10.0,0.5,0.9965986394557823,809,-436.796875
+california,assets_rot90,CommNet (matched),42,8,0.0,0.6666666666666666,0.9977011494252873,512,-326.220703125
+california,assets_rot90,CommNet (matched),42,9,22.0,0.3333333333333333,0.9975124378109452,791,-542.919921875
+california,assets_rot90,CommNet (matched),42,10,-3.0,0.8333333333333334,0.9977011494252873,357,-233.837890625
+california,assets_rot90,CommNet (matched),42,11,-3.0,0.8333333333333334,0.9954022988505747,501,-313.056640625
+california,assets_rot90,CommNet (matched),42,12,22.0,0.3333333333333333,0.8877887788778878,805,-421.298828125
+california,assets_rot90,CommNet (matched),42,13,12.0,0.5,0.7218390804597701,436,-286.264453125
+california,assets_rot90,CommNet (matched),42,14,9.0,0.6666666666666666,0.7586206896551724,553,-346.737109375
+california,assets_rot90,CommNet (matched),1042,0,0.0,0.6666666666666666,0.9977011494252873,511,-328.671875
+california,assets_rot90,CommNet (matched),1042,1,10.0,0.5,0.9977011494252873,749,-528.76953125
+california,assets_rot90,CommNet (matched),1042,2,10.0,0.5,0.9966329966329966,809,-410.8984375
+california,assets_rot90,CommNet (matched),1042,3,6.0,0.6666666666666666,0.7333333333333333,666,-524.756640625
+california,assets_rot90,CommNet (matched),1042,4,10.0,0.5,0.9976019184652278,808,-550.91796875
+california,assets_rot90,CommNet (matched),1042,5,22.0,0.3333333333333333,0.7195402298850575,755,-539.603515625
+california,assets_rot90,CommNet (matched),1042,6,0.0,0.6666666666666666,0.9954022988505747,504,-306.396484375
+california,assets_rot90,CommNet (matched),1042,7,0.0,0.6666666666666666,0.9977011494252873,417,-267.71484375
+california,assets_rot90,CommNet (matched),1042,8,22.0,0.3333333333333333,0.7326388888888888,810,-366.069140625
+california,assets_rot90,CommNet (matched),1042,9,10.0,0.5,0.9975308641975309,808,-570.60546875
+california,assets_rot90,CommNet (matched),1042,10,10.0,0.5,0.9977011494252873,729,-482.822265625
+california,assets_rot90,CommNet (matched),1042,11,9.0,0.6666666666666666,0.7586206896551724,581,-381.28203125
+california,assets_rot90,CommNet (matched),1042,12,9.0,0.6666666666666666,0.7586206896551724,581,-381.272265625
+california,assets_rot90,CommNet (matched),1042,13,22.0,0.3333333333333333,0.6993006993006993,782,-639.8144531250002
+california,assets_rot90,CommNet (matched),1042,14,-3.0,0.8333333333333334,0.7379310344827587,496,-277.053125
+california,assets_rot90,CommNet (matched),2042,0,22.0,0.3333333333333333,0.5977011494252874,711,-536.42890625
+california,assets_rot90,CommNet (matched),2042,1,22.0,0.3333333333333333,0.42349726775956287,812,-513.422265625
+california,assets_rot90,CommNet (matched),2042,2,22.0,0.3333333333333333,0.6938271604938272,804,-576.703515625
+california,assets_rot90,CommNet (matched),2042,3,10.0,0.5,0.9977011494252873,808,-567.1484375
+california,assets_rot90,CommNet (matched),2042,4,9.0,0.6666666666666666,0.7195402298850575,607,-391.06132812500005
+california,assets_rot90,CommNet (matched),2042,5,9.0,0.6666666666666666,0.7586206896551724,572,-366.8152343750001
+california,assets_rot90,CommNet (matched),2042,6,0.0,0.6666666666666666,0.9977011494252873,449,-287.1484375
+california,assets_rot90,CommNet (matched),2042,7,10.0,0.5,0.9975308641975309,808,-570.576171875
+california,assets_rot90,CommNet (matched),2042,8,0.0,0.6666666666666666,0.9977011494252873,705,-548.271484375
+california,assets_rot90,CommNet (matched),2042,9,22.0,0.3333333333333333,0.6735632183908046,779,-563.608203125
+california,assets_rot90,CommNet (matched),2042,10,-3.0,0.8333333333333334,0.9977011494252873,589,-354.775390625
+california,assets_rot90,CommNet (matched),2042,11,-3.0,0.8333333333333334,0.7379310344827587,552,-278.00507812499995
+california,assets_rot90,CommNet (matched),2042,12,22.0,0.3333333333333333,0.7379310344827587,742,-568.01015625
+california,assets_rot90,CommNet (matched),2042,13,10.0,0.5,0.9971509971509972,810,-529.4140625
+california,assets_rot90,CommNet (matched),2042,14,22.0,0.3333333333333333,0.753731343283582,806,-571.530078125
+california,assets_rot90,CommNet (matched),3042,0,6.0,0.6666666666666666,0.7333333333333333,586,-436.2707031250002
+california,assets_rot90,CommNet (matched),3042,1,-3.0,0.8333333333333334,0.9977011494252873,397,-225.009765625
+california,assets_rot90,CommNet (matched),3042,2,10.0,0.5,0.9965277777777778,802,-387.607421875
+california,assets_rot90,CommNet (matched),3042,3,9.0,0.6666666666666666,0.7586206896551724,553,-345.272265625
+california,assets_rot90,CommNet (matched),3042,4,10.0,0.5,0.9965635738831615,812,-378.427734375
+california,assets_rot90,CommNet (matched),3042,5,22.0,0.3333333333333333,0.7195402298850575,748,-541.137109375
+california,assets_rot90,CommNet (matched),3042,6,-6.0,1.0,0.7402298850574712,291,-129.348046875
+california,assets_rot90,CommNet (matched),3042,7,-3.0,0.8333333333333334,0.9977011494252873,376,-223.515625
+california,assets_rot90,CommNet (matched),3042,8,-3.0,0.8333333333333334,0.7379310344827587,485,-239.68984375
+california,assets_rot90,CommNet (matched),3042,9,10.0,0.5,0.9977011494252873,736,-504.51171875
+california,assets_rot90,CommNet (matched),3042,10,-6.0,0.8333333333333334,0.8551724137931035,632,-441.533203125
+california,assets_rot90,CommNet (matched),3042,11,22.0,0.3333333333333333,0.7724137931034483,806,-613.57890625
+california,assets_rot90,CommNet (matched),3042,12,22.0,0.3333333333333333,0.5825825825825826,820,-481.89921875
+california,assets_rot90,CommNet (matched),3042,13,9.0,0.6666666666666666,0.7195402298850575,598,-393.83476562500005
+california,assets_rot90,CommNet (matched),3042,14,-3.0,0.8333333333333334,0.7379310344827587,527,-266.44765625
+california,assets_rot90,CommNet (matched),4042,0,-3.0,0.8333333333333334,0.7379310344827587,445,-252.2484375
+california,assets_rot90,CommNet (matched),4042,1,0.0,0.6666666666666666,0.7563218390804598,514,-337.153125
+california,assets_rot90,CommNet (matched),4042,2,-6.0,1.0,0.9977011494252873,285,-147.314453125
+california,assets_rot90,CommNet (matched),4042,3,12.0,0.5,0.7195402298850575,699,-476.0878906250001
+california,assets_rot90,CommNet (matched),4042,4,12.0,0.5,0.7195402298850575,672,-491.9375000000001
+california,assets_rot90,CommNet (matched),4042,5,10.0,0.5,0.9965277777777778,803,-392.177734375
+california,assets_rot90,CommNet (matched),4042,6,9.0,0.6666666666666666,0.7586206896551724,545,-352.66796875
+california,assets_rot90,CommNet (matched),4042,7,22.0,0.3333333333333333,0.47249190938511326,795,-450.8554687499999
+california,assets_rot90,CommNet (matched),4042,8,12.0,0.5,0.7333333333333333,535,-365.74140624999995
+california,assets_rot90,CommNet (matched),4042,9,22.0,0.3333333333333333,0.7540229885057471,799,-586.879296875
+california,assets_rot90,CommNet (matched),4042,10,9.0,0.6666666666666666,0.774712643678161,405,-258.369140625
+california,assets_rot90,CommNet (matched),4042,11,10.0,0.5,0.984313725490196,803,-289.98046875
+california,assets_rot90,CommNet (matched),4042,12,9.0,0.6666666666666666,0.7195402298850575,592,-391.89375
+california,assets_rot90,CommNet (matched),4042,13,0.0,0.6666666666666666,0.9977011494252873,621,-403.876953125
+california,assets_rot90,CommNet (matched),4042,14,12.0,0.5,0.7195402298850575,653,-436.6031250000001

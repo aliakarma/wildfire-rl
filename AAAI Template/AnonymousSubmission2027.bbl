@@ -1,5 +1,12 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{22}
 \providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Altamimi et~al.(2022)Altamimi, Lagoa, Borges, McDill, Andriotis, and
+  Papakonstantinou}]{altamimi2022wildfire}
+Altamimi, A.; Lagoa, C.; Borges, J.~G.; McDill, M.~E.; Andriotis, C.~P.; and
+  Papakonstantinou, K.~G. 2022.
+\newblock Large-scale wildfire mitigation through deep reinforcement learning.
+\newblock \emph{Frontiers in Forests and Global Change}, 5: 734330.
 
 \bibitem[{Das et~al.(2019)Das, Gervet, Romoff, Batra, Parikh, Rabbat, and
   Pineau}]{das2019tarmac}
@@ -12,7 +19,10 @@ Das, A.; Gervet, T.; Romoff, J.~C.; Batra, D.; Parikh, D.; Rabbat, M.; and
 \bibitem[{Dietterich(1998)}]{dietterich2000maxq}
 Dietterich, T.~G. 1998.
 \newblock The MAXQ Method for Hierarchical Reinforcement Learning.
-\newblock 118–126.
+\newblock In \emph{Proceedings of the Fifteenth International Conference on
+  Machine Learning}, ICML '98, 118–126. San Francisco, CA, USA: Morgan
+  Kaufmann Publishers Inc.
+\newblock ISBN 1558605568.
 
 \bibitem[{Ghali, Akhloufi, and Wael~Saber(2022)}]{ghali2022}
 Ghali, R.; Akhloufi, M.~A.; and Wael~Saber, M. 2022.
@@ -87,6 +97,13 @@ Ross, S.; Gordon, G.~J.; and Bagnell, J.~A. 2011.
   Klimov}]{schulman2017}
 Schulman, J.; Wolski, F.; Dhariwal, P.; Radford, A.; and Klimov, O. 2017.
 \newblock Proximal policy optimization algorithms.
+
+\bibitem[{Shen and Curtis(2022)}]{shen2022firehose}
+Shen, W.; and Curtis, A. 2022.
+\newblock Firehose: Wildfire prevention and management using deep reinforcement
+  learning.
+\newblock Technical report, MIT CSAIL.
+  \url{https://williamshen-nz.github.io/firehose/}.
 
 \bibitem[{Silver et~al.(2016)Silver, Huang, Maddison, Guez, Sifre, van~den
   Driessche et~al.}]{silver2016mastering}

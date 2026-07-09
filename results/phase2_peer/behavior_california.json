@@ -1,0 +1,135 @@
+{
+  "No-Op": {
+    "action_counts": [
+      30375,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "action_fractions": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 3.0
+  },
+  "Greedy-Risk Heuristic": {
+    "action_counts": [
+      15731,
+      3428,
+      3708,
+      3012,
+      4389,
+      113
+    ],
+    "action_fractions": [
+      0.5178,
+      0.1128,
+      0.122,
+      0.0991,
+      0.1445,
+      0.0037
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 5.851
+  },
+  "Value-First Heuristic": {
+    "action_counts": [
+      17099,
+      4346,
+      4079,
+      2292,
+      2325,
+      234
+    ],
+    "action_fractions": [
+      0.5629,
+      0.1431,
+      0.1343,
+      0.0755,
+      0.0765,
+      0.0077
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.668
+  },
+  "Flat MARL (matched)": {
+    "action_counts": [
+      1830,
+      1916,
+      11835,
+      10614,
+      3786,
+      394
+    ],
+    "action_fractions": [
+      0.0602,
+      0.0631,
+      0.3896,
+      0.3494,
+      0.1246,
+      0.013
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 6.598
+  },
+  "QMIX (matched)": {
+    "action_counts": [
+      6,
+      7297,
+      4945,
+      9917,
+      8138,
+      72
+    ],
+    "action_fractions": [
+      0.0002,
+      0.2402,
+      0.1628,
+      0.3265,
+      0.2679,
+      0.0024
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 3.935
+  },
+  "CommNet (matched)": {
+    "action_counts": [
+      14482,
+      4724,
+      5658,
+      2220,
+      1340,
+      1981
+    ],
+    "action_fractions": [
+      0.4763,
+      0.1554,
+      0.1861,
+      0.073,
+      0.0441,
+      0.0652
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 4.493
+  },
+  "Learned Hierarchical": {
+    "action_counts": [
+      18240,
+      4063,
+      3519,
+      2141,
+      2169,
+      243
+    ],
+    "action_fractions": [
+      0.6005,
+      0.1338,
+      0.1159,
+      0.0705,
+      0.0714,
+      0.008
+    ],
+    "mean_chebyshev_dist_to_nearest_asset": 2.676
+  }
+}
