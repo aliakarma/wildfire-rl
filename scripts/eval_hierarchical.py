@@ -21,6 +21,7 @@ import torch
 from wildfire_marl.agents.agent_networks import MAPPOActor
 from wildfire_marl.agents.strategic_controller import StrategicController, get_sector_center
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.env.regimes import make_marl_env
 from wildfire_marl.eval.metrics import (
     burned_cells,
     infrastructure_survival_rate,
@@ -230,29 +231,14 @@ def evaluate_hierarchical_policy(
 def main():
     parser = argparse.ArgumentParser(description="Evaluate hierarchical dispatch policies.")
     parser.add_argument("--region", type=str, required=True, choices=["saudi", "california"])
+    parser.add_argument("--regime", type=str, default="default", help="Benchmark regime name")
     parser.add_argument("--episodes", type=int, default=20)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     set_seed(args.seed)
 
-    map_name = "Saudi" if args.region.lower() == "saudi" else "California"
-    data_dir = "data/cell2fire"
-    infra_dir = f"{data_dir}/{map_name}"
-
-    env = MultiAgentFireEnv(
-        num_agents=3,
-        crop_size=9,
-        coordination_penalty=0.1,
-        fire_map=map_name,
-        data_dir=data_dir,
-        max_steps=150,
-        steps_per_action=60,
-        observe_infra=True,
-        catastrophe_weight=2.0,
-        cascade_prob=0.1,
-        infra_dir=infra_dir,
-    )
+    env = make_marl_env(args.region, regime=args.regime)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     hierarchical_ckpt = Path(f"results/runs/checkpoint_hierarchical_{args.region}.pt")

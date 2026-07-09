@@ -25,6 +25,7 @@ from wildfire_marl.agents.agent_networks import (
     QMIXMixingNetwork,
 )
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.env.regimes import make_marl_env
 from wildfire_marl.env.rewards import (
     FireSizeReward,
     InfrastructureWeightedReward,
@@ -338,7 +339,6 @@ def train_commnet(
     states before acting. Added for the peer-review remediation (issue M3).
     """
     num_agents = env.num_agents
-    crop_size = env.crop_size
 
     actor = CommNetActor(
         in_channels=8,
@@ -384,12 +384,12 @@ def train_commnet(
             obs_list = [obs_dict[f"agent_{i}"] for i in range(num_agents)]
             mask_list = [info_dict[f"agent_{i}"]["action_mask"] for i in range(num_agents)]
 
-            obs_t = torch.tensor(
-                np.array(obs_list), dtype=torch.float32, device=device
-            ).unsqueeze(0)  # [1, N, 8, K, K]
-            mask_t = torch.tensor(
-                np.array(mask_list), dtype=torch.bool, device=device
-            ).unsqueeze(0)  # [1, N, 6]
+            obs_t = torch.tensor(np.array(obs_list), dtype=torch.float32, device=device).unsqueeze(
+                0
+            )  # [1, N, 8, K, K]
+            mask_t = torch.tensor(np.array(mask_list), dtype=torch.bool, device=device).unsqueeze(
+                0
+            )  # [1, N, 6]
 
             with torch.no_grad():
                 logits = actor(obs_t, mask_t)  # [1, N, 6]
@@ -397,9 +397,9 @@ def train_commnet(
                 actions_t = dist.sample()  # [1, N]
                 log_probs_t = dist.log_prob(actions_t)  # [1, N]
 
-                state_t = torch.tensor(
-                    global_state, dtype=torch.float32, device=device
-                ).unsqueeze(0)
+                state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                    0
+                )
                 val_t = critic(state_t).squeeze(0)
 
             actions_np = actions_t.squeeze(0).cpu().numpy()
@@ -449,9 +449,9 @@ def train_commnet(
         critic.train()
 
         with torch.no_grad():
-            next_state_t = torch.tensor(
-                global_state, dtype=torch.float32, device=device
-            ).unsqueeze(0)
+            next_state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                0
+            )
             next_val = critic(next_state_t).item()
 
         values = np.array(val_buf + [next_val])
@@ -705,9 +705,7 @@ def main():
 
     # Setup environment parameters
     region = cfg.get("region", "saudi")
-    map_name = "Saudi" if region.lower() == "saudi" else "California"
     data_dir = cfg.get("data_dir", "data/cell2fire")
-    infra_dir = f"{data_dir}/{map_name}"
 
     # Training-objective selection (peer-review issue H1: match the evaluation objective)
     reward_name = str(cfg.get("reward", "firesize")).lower()
@@ -720,20 +718,33 @@ def main():
         raise ValueError(f"Unknown reward '{reward_name}' (choose from {list(reward_classes)})")
     reward_cls = reward_classes[reward_name]
 
-    # Init environment
-    env = MultiAgentFireEnv(
+    # Init environment via the regime factory (one env definition shared across all methods).
+    # `regime` selects the suppression-relevant benchmark conditions (default: "default");
+    # any spec-level key present in the config overrides the regime default.
+    regime = str(cfg.get("regime", "default"))
+    _spec_keys = (
+        "steps_per_action",
+        "max_steps",
+        "treat_radius",
+        "wind_scale",
+        "ffmc",
+        "ros_cv",
+        "ignition_mode",
+        "ignition_dist",
+        "ignition_arc_deg",
+    )
+    overrides = {k: cfg[k] for k in _spec_keys if k in cfg}
+    env = make_marl_env(
+        region,
+        regime=regime,
+        data_dir=data_dir,
         num_agents=int(cfg.get("num_agents", 3)),
         crop_size=int(cfg.get("crop_size", 9)),
         coordination_penalty=float(cfg.get("coordination_penalty", 0.1)),
-        fire_map=map_name,
-        data_dir=data_dir,
-        max_steps=int(cfg.get("max_steps", 150)),
-        steps_per_action=60,  # 60 fire periods (simulated minutes) per agent step
-        observe_infra=True,
-        catastrophe_weight=2.0,
-        cascade_prob=0.1,
-        infra_dir=infra_dir,
+        catastrophe_weight=float(cfg.get("catastrophe_weight", 2.0)),
+        cascade_prob=float(cfg.get("cascade_prob", 0.1)),
         reward_cls=reward_cls,
+        **overrides,
     )
 
     seed = int(cfg.get("seed", 42))
