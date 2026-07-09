@@ -109,6 +109,58 @@ class CommNetActor(nn.Module):
         return logits
 
 
+class CommTacticalActor(nn.Module):
+    """Learned communicating tactical actor for the Hierarchy+Comms proposed model.
+
+    Each agent (i) encodes its egocentric crop with the shared CNN, (ii) concatenates an
+    explicit encoding of its assigned sector target ``(rel_dy, rel_dx)`` from the strategic
+    commander, (iii) exchanges ``comm_rounds`` rounds of mean-pooled messages with the other
+    agents (CommNet), and (iv) maps the final hidden state to micro-action logits. Unlike the
+    deterministic Chebyshev target-seeking of the original hierarchy (whose RL stage was inert),
+    this tactical layer is *learned end-to-end*, so the team can discover coordinated
+    firebreak-building rather than merely walking to a sector center. Shared parameters make it
+    agent-count agnostic (N is a runtime dimension), removing the N=3 architectural lock.
+    """
+
+    def __init__(
+        self,
+        in_channels: int = 8,
+        action_dim: int = 6,
+        features_dim: int = 64,
+        comm_rounds: int = 2,
+        target_dim: int = 16,
+    ):
+        super().__init__()
+        self.extractor = CustomSmallCNN(in_channels=in_channels, features_dim=features_dim)
+        self.target_enc = nn.Sequential(nn.Linear(2, target_dim), nn.ReLU())
+        self.fuse = nn.Linear(features_dim + target_dim, features_dim)
+        self.comm_rounds = comm_rounds
+        self.f_h = nn.Linear(features_dim, features_dim)
+        self.f_c = nn.Linear(features_dim, features_dim)
+        self.action_head = nn.Linear(features_dim, action_dim)
+
+    def forward(
+        self,
+        obs: torch.Tensor,
+        target: torch.Tensor,
+        action_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """obs: [B, N, C, K, K]; target: [B, N, 2]; mask: [B, N, A] (True=valid). Returns [B, N, A]."""
+        batch, num_agents = obs.shape[0], obs.shape[1]
+        h = self.extractor(obs.reshape(batch * num_agents, *obs.shape[2:]))
+        h = h.view(batch, num_agents, -1)
+        t = self.target_enc(target)
+        h = F.relu(self.fuse(torch.cat([h, t], dim=-1)))
+        for _ in range(self.comm_rounds):
+            total = h.sum(dim=1, keepdim=True)
+            comm = (total - h) / max(num_agents - 1, 1)
+            h = torch.tanh(self.f_h(h) + self.f_c(comm))
+        logits = self.action_head(h)
+        if action_mask is not None:
+            logits = torch.where(action_mask, logits, torch.tensor(-1e9, device=logits.device))
+        return logits
+
+
 class QMIXAgent(nn.Module):
     """Decentralized Q-value network for QMIX."""
 

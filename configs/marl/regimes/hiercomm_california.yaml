@@ -1,0 +1,35 @@
+# Hierarchy+Comms proposed model on the suppression-relevant default regime (California).
+# Trainer: python -m wildfire_marl.train.hier_comm_train --config <this>
+region: california
+regime: default
+commander: learned
+comm_rounds: 2
+num_agents: 3
+
+# Behavior-cloning warm-start
+bc_tactical_episodes: 30
+bc_tactical_epochs: 60
+pretrain_episodes: 40
+bc_epochs: 100
+
+# PPO (tactical actor + centralized critic)
+total_steps: 120000
+n_steps: 1500
+ppo_epochs: 4
+batch_size: 256
+clip_eps: 0.2
+gamma: 0.99
+gae_lambda: 0.95
+lr_actor: 0.0003
+lr_critic: 0.001
+ent_coef: 0.02
+shaping_coef: 0.05
+
+# Learned-commander policy gradient
+rl_lr: 0.00005
+kl_coef: 0.3
+cmd_ent_coef: 0.05
+
+seed: 42
+data_dir: data/cell2fire
+save_dir: results/phase3
