@@ -59,19 +59,25 @@ LEARNED: set[str] = {"mappo", "qmix", "commnet", "hiercomm", "hiercomm_heur"}
 ALL_KINDS: list[str] = list(LABELS)
 
 
-def checkpoint_path(kind: str, region: str, ckpt_dir: str | Path) -> Path:
-    """Checkpoint file a learned method saves/loads (hiercomm_heur shares the heur-commander run)."""
+def checkpoint_path(kind: str, region: str, ckpt_dir: str | Path, seed: int | None = None) -> Path:
+    """Checkpoint file a learned method saves/loads.
+
+    ``seed`` appends an ``_s<seed>`` suffix for the multi-training-seed sweep; omit it for the
+    single-seed convention (backward compatible). ``hiercomm_heur`` shares the heuristic-commander
+    run's stem.
+    """
     stem = "hiercomm_heur" if kind == "hiercomm_heur" else kind
-    return Path(ckpt_dir) / f"checkpoint_{stem}_{region}.pt"
+    suffix = f"_s{seed}" if seed is not None else ""
+    return Path(ckpt_dir) / f"checkpoint_{stem}_{region}{suffix}.pt"
 
 
 def load_nets(
-    kind: str, region: str, ckpt_dir: str | Path, num_agents: int, device
+    kind: str, region: str, ckpt_dir: str | Path, num_agents: int, device, seed: int | None = None
 ) -> dict[str, Any]:
     """Load the network(s) for a learned policy; returns {} for non-learned heuristics."""
     if kind not in LEARNED:
         return {}
-    path = checkpoint_path(kind, region, ckpt_dir)
+    path = checkpoint_path(kind, region, ckpt_dir, seed=seed)
     if not path.exists():
         raise FileNotFoundError(f"Missing checkpoint for '{kind}' ({region}): {path}")
     ckpt = torch.load(path, map_location=device)
@@ -247,9 +253,14 @@ def evaluate(
     episodes: int,
     ckpt_dir: str | Path,
     device,
+    train_seed: int | None = None,
 ) -> list[dict[str, Any]]:
-    """Evaluate ``kind`` over ``seeds`` x ``episodes``; return per-episode records."""
-    nets = load_nets(kind, region, ckpt_dir, env.num_agents, device)
+    """Evaluate ``kind`` over ``seeds`` x ``episodes``; return per-episode records.
+
+    ``train_seed`` selects a specific training-seed checkpoint (``_s<seed>``) for the multi-seed
+    sweep; ``None`` uses the single-seed checkpoint.
+    """
+    nets = load_nets(kind, region, ckpt_dir, env.num_agents, device, seed=train_seed)
     records = []
     for s in seeds:
         for e in range(episodes):
