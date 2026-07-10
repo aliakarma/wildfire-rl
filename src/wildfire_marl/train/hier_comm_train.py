@@ -282,6 +282,7 @@ def train_hier_comm(env, cfg: dict[str, Any], device):
     ep_returns: list[float] = []
     train_curve: list[dict[str, float]] = []
     cmd_baseline = 0.0
+    ppo_ep_idx = 0  # persistent training-episode counter for deterministic env seeding
 
     while step_count < total_steps:
         # --- collect a rollout of full episodes (~rollout_steps transitions) ---------------
@@ -302,7 +303,9 @@ def train_hier_comm(env, cfg: dict[str, Any], device):
         critic.eval()
 
         while collected < rollout_steps:
-            obs, info = env.reset()
+            # Seed deterministically (base seed*100000, disjoint from BC 7000 / eval +100000).
+            obs, info = env.reset(seed=int(cfg.get("seed", 42)) * 100_000 + ppo_ep_idx)
+            ppo_ep_idx += 1
             done, sc = False, 0
             ep_ret = 0.0
             burning_prev = int((env.env.fire_state > 0).sum())

@@ -54,20 +54,34 @@ METRICS = ["WEL", "ISR", "CE", "burned", "return"]
 
 def _base_cfg(kind: str, steps: int, quick: bool) -> dict:
     """Training config per method (Phase-3 defaults; trimmed in --quick)."""
-    if kind in ("mappo", "commnet", "qmix"):
+    if kind in ("mappo", "commnet"):
         cfg = {
             "total_steps": steps,
             "n_steps": 1024,
-            "batch_size": 64 if kind != "qmix" else 32,
+            "batch_size": 64,
             "ppo_epochs": 4,
             "clip_eps": 0.2,
             "gamma": 0.99,
             "gae_lambda": 0.95,
             "lr_actor": 3e-4,
             "lr_critic": 1e-3,
-            "lr": 5e-4,
             "comm_rounds": 2,
-            "target_update_interval": 200,
+        }
+    elif kind == "qmix":
+        # Documented QMIX retrain: the original Phase-3 config (lr 5e-4, batch 32,
+        # target-sync 200, 60% eps-decay, 5k buffer) flatlined at the No-Op level. This tuned
+        # config gives the value-factorised learner a fairer chance on the sparse WEL/ISR
+        # reward: higher LR, larger batch + replay buffer, more frequent target sync, and a
+        # longer exploration schedule.
+        cfg = {
+            "total_steps": steps,
+            "batch_size": 64,
+            "gamma": 0.99,
+            "lr": 1e-3,
+            "target_update_interval": 100,
+            "epsilon_end": 0.05,
+            "epsilon_decay_frac": 0.7,
+            "buffer_capacity": 20000,
         }
     else:  # hiercomm / hiercomm_heur
         cfg = {
