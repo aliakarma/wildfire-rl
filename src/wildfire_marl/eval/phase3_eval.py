@@ -176,6 +176,52 @@ def _qmix_actions(env, net, obs, info, device) -> dict[str, int]:
     return acts
 
 
+def select_actions(env, kind: str, nets: dict[str, Any], obs, info, device, sc: int) -> dict[str, int]:
+    """Strategic dispatch + low-level action selection for one env step of a policy ``kind``.
+
+    Shared by :func:`rollout_episode` (evaluation) and the Phase-5 GIF renderer so both step the
+    environment with identical behaviour.
+    """
+    if sc % MACRO_INTERVAL == 0:
+        if kind == "value_first":
+            _dispatch_heuristic(env)
+        elif kind == "greedy_risk":
+            _greedy_risk_dispatch(env)
+        elif kind == "hiercomm" and "commander" in nets:
+            s = [t.to(device) for t in extract_high_level_state(env)]
+            with torch.no_grad():
+                logits_list = nets["commander"](*s)
+            for i, a in enumerate(env.agents):
+                env.strategic_targets[a] = get_sector_center(int(logits_list[i].argmax().item()))
+        elif kind in ("hiercomm_heur", "hiercomm"):
+            _dispatch_value(env)  # value-aware asset dispatch (learned-tactical fallback)
+    if kind == "local_reactive":
+        _reactive_targets(env)
+
+    if kind == "noop":
+        return dict.fromkeys(env.agents, 0)
+    if kind in ("value_first", "greedy_risk", "local_reactive"):
+        return {a: target_seeking_action(env, a, info[a]["action_mask"]) for a in env.agents}
+    if kind == "mappo":
+        return _flat_actions(env, nets["actor"], obs, info, device, comms=False)
+    if kind == "commnet":
+        return _flat_actions(env, nets["actor"], obs, info, device, comms=True)
+    if kind == "qmix":
+        return _qmix_actions(env, nets["agent"], obs, info, device)
+    # hiercomm / hiercomm_heur -> learned comms-tactical actor
+    tgt = compute_targets(env)
+    obs_t = torch.tensor(
+        np.array([obs[a] for a in env.agents]), dtype=torch.float32, device=device
+    ).unsqueeze(0)
+    tgt_t = torch.tensor(tgt, dtype=torch.float32, device=device).unsqueeze(0)
+    mask_t = torch.tensor(
+        np.array([info[a]["action_mask"] for a in env.agents]), dtype=torch.bool, device=device
+    ).unsqueeze(0)
+    with torch.no_grad():
+        logits = nets["actor"](obs_t, tgt_t, mask_t).squeeze(0)
+    return {a: int(logits[i].argmax().item()) for i, a in enumerate(env.agents)}
+
+
 def rollout_episode(env, kind: str, nets: dict[str, Any], device, seed: int) -> dict[str, float]:
     """Run one evaluation episode; return WEL / ISR / CE / burned / return."""
     obs, info = env.reset(seed=seed)
@@ -183,52 +229,7 @@ def rollout_episode(env, kind: str, nets: dict[str, Any], device, seed: int) -> 
     done, sc, ep_ret = False, 0, 0.0
     ce = 1.0
     while not done:
-        # strategic dispatch (every macro interval) for hierarchical / heuristic policies
-        if sc % MACRO_INTERVAL == 0:
-            if kind == "value_first":
-                _dispatch_heuristic(env)
-            elif kind == "greedy_risk":
-                _greedy_risk_dispatch(env)
-            elif kind == "hiercomm" and "commander" in nets:
-                s = [t.to(device) for t in extract_high_level_state(env)]
-                with torch.no_grad():
-                    logits_list = nets["commander"](*s)
-                for i, a in enumerate(env.agents):
-                    env.strategic_targets[a] = get_sector_center(
-                        int(logits_list[i].argmax().item())
-                    )
-            elif kind in ("hiercomm_heur", "hiercomm"):
-                # value-aware asset dispatch (heuristic commander / learned-tactical fallback)
-                _dispatch_value(env)
-        if kind == "local_reactive":
-            _reactive_targets(env)
-
-        # low-level actions
-        if kind == "noop":
-            acts = dict.fromkeys(env.agents, 0)
-        elif kind in ("value_first", "greedy_risk", "local_reactive"):
-            acts = {a: target_seeking_action(env, a, info[a]["action_mask"]) for a in env.agents}
-        elif kind == "mappo":
-            acts = _flat_actions(env, nets["actor"], obs, info, device, comms=False)
-        elif kind == "commnet":
-            acts = _flat_actions(env, nets["actor"], obs, info, device, comms=True)
-        elif kind == "qmix":
-            acts = _qmix_actions(env, nets["agent"], obs, info, device)
-        else:  # hiercomm / hiercomm_heur -> learned comms-tactical actor
-            tgt = compute_targets(env)
-            obs_t = torch.tensor(
-                np.array([obs[a] for a in env.agents]), dtype=torch.float32, device=device
-            ).unsqueeze(0)
-            tgt_t = torch.tensor(tgt, dtype=torch.float32, device=device).unsqueeze(0)
-            mask_t = torch.tensor(
-                np.array([info[a]["action_mask"] for a in env.agents]),
-                dtype=torch.bool,
-                device=device,
-            ).unsqueeze(0)
-            with torch.no_grad():
-                logits = nets["actor"](obs_t, tgt_t, mask_t).squeeze(0)
-            acts = {a: int(logits[i].argmax().item()) for i, a in enumerate(env.agents)}
-
+        acts = select_actions(env, kind, nets, obs, info, device, sc)
         obs, rew, term, trunc, info = env.step(acts)
         ep_ret += float(rew["agent_0"])
         done = term["agent_0"] or trunc["agent_0"]

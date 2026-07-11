@@ -47,7 +47,12 @@ figures/*.jpeg
 figures/*.gif
 figures/*.svg
 figures/*.pdf
+figures/phase5*/
+figures/phase5_geo/
 !figures/.gitkeep
+
+# ---- GIS basemap tile cache (contextily) ------------------------------------
+data/geo_cache/
 
 # ---- Experiment tracking ----------------------------------------------------
 wandb/
@@ -175,3 +180,4 @@ legacy_v1/figures/*.pdf
 third_party/firehose/cell2fire/Cell2FireC/Cell2Fire
 third_party/firehose/cell2fire/Cell2FireC/*.o
 third_party/firehose/cell2fire/Cell2FireC/*.gch
+/venv_wsl
