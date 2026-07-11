@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
+from wildfire_marl.viz.basemap import fetch_region_basemap
+
 
 def draw_grid_cell(ax, y, x, color, alpha=1.0, marker=None, size=80, label=None):
     """Helper to draw a specific grid cell on the plot."""
@@ -32,6 +34,7 @@ def render_rollout_frame(
     ce: float,
     region: str,
     policy_name: str,
+    use_basemap: bool = True,
 ) -> Image.Image:
     """Renders a single frame of the environment rollout as a PIL Image."""
     fig, ax = plt.subplots(figsize=(6.5, 6.5), dpi=100)
@@ -40,8 +43,18 @@ def render_rollout_frame(
     ax.set_xlim(-0.5, width - 0.5)
     ax.set_ylim(height - 0.5, -0.5)  # Top-left is (0,0)
 
-    # 1. Base landscape / Fuel (green background)
-    ax.imshow(np.ones((height, width, 3)) * 0.9, origin="upper")
+    # 1. Base landscape: OSM basemap for the region ROI when available, else flat grey
+    basemap = fetch_region_basemap(region) if use_basemap else None
+    if basemap is not None:
+        ax.imshow(
+            basemap,
+            origin="upper",
+            extent=(-0.5, width - 0.5, height - 0.5, -0.5),
+            alpha=0.75,
+            zorder=1,
+        )
+    else:
+        ax.imshow(np.ones((height, width, 3)) * 0.9, origin="upper")
 
     # Draw 4x4 sector boundaries (16 sectors)
     for i in range(1, 4):
@@ -126,4 +139,15 @@ def compile_rollout_gif(
 ):
     """Compiles list of PIL images into an animated GIF."""
     Path(save_path).parent.mkdir(parents=True, exist_ok=True)
-    frames[0].save(save_path, save_all=True, append_images=frames[1:], duration=duration, loop=0)
+    # Quantize each RGBA frame to a full-frame palette image; without this PIL
+    # writes lossy delta frames that ghost/tear on detailed (basemap) backgrounds.
+    palettized = [f.convert("RGB").quantize(colors=256, dither=Image.FLOYDSTEINBERG) for f in frames]
+    palettized[0].save(
+        save_path,
+        save_all=True,
+        append_images=palettized[1:],
+        duration=duration,
+        loop=0,
+        disposal=2,
+        optimize=False,
+    )
