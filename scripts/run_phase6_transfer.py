@@ -213,28 +213,74 @@ def eval_policy_seedscores(
     return raw, per
 
 
+# --------------------------------------------------------------------------- resume helpers
+
+
+def _rebuild_per(rows) -> dict[str, list[float]]:
+    """Reconstruct {metric: [per-training-seed means]} from one unit's raw episode rows."""
+    per: dict[str, list[float]] = {m: [] for m in METRICS}
+    df = pd.DataFrame(rows)
+    if len(df) == 0:
+        return per
+    if df["train_seed"].isna().all():
+        for m in METRICS:
+            per[m] = [float(df[m].mean())]
+    else:
+        for _ts, g in df.groupby("train_seed"):
+            for m in METRICS:
+                per[m].append(float(g[m].mean()))
+    return per
+
+
+def _append_rows(csv_path: Path, rows) -> None:
+    """Append one completed unit's rows to the raw CSV (crash-resilient checkpoint)."""
+    pd.DataFrame(rows).to_csv(csv_path, mode="a", header=not csv_path.exists(), index=False)
+
+
+def _load_existing(csv_path: Path):
+    return pd.read_csv(csv_path) if csv_path.exists() else pd.DataFrame()
+
+
 # --------------------------------------------------------------------------- transfer study
 
 
 def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_seeds, device):
-    """Full train-region x eval-region matrix for the learned transfer policies."""
-    raw_all: list[dict] = []
-    # cell[(policy, train_region, eval_region)] = {metric: [per-seed means]}
+    """Full train-region x eval-region matrix for the learned transfer policies (resumable)."""
+    raw_path = out_dir / "transfer_matrix_raw.csv"
+    existing = _load_existing(raw_path)
+    all_rows: list[dict] = existing.to_dict("records") if len(existing) else []
     cell: dict[tuple, dict] = {}
+
+    def _prev_rows(kind, tr, er):
+        if len(existing) == 0:
+            return None
+        sub = existing[(existing.policy == kind) & (existing.ckpt_region == tr)
+                       & (existing.eval_region == er)]
+        return sub.to_dict("records") if len(sub) else None
+
     for eval_region in REGIONS:
-        env = _std_env(eval_region)
+        env = None
         for kind in policies:
             for train_region in REGIONS:
+                prev = _prev_rows(kind, train_region, eval_region)
+                if prev is not None:
+                    cell[(kind, train_region, eval_region)] = _rebuild_per(prev)
+                    print(f"  [transfer] SKIP (done) {kind}: {train_region}->{eval_region}", flush=True)
+                    continue
+                if env is None:
+                    env = _std_env(eval_region)
                 raw, per = eval_policy_seedscores(
                     env, kind, train_region, ckpt_dir, device, eval_seeds, episodes, train_seeds
                 )
                 for r in raw:
                     r["eval_region"] = eval_region
-                raw_all.extend(raw)
+                _append_rows(raw_path, raw)
+                all_rows.extend(raw)
                 cell[(kind, train_region, eval_region)] = per
                 print(f"  [transfer] {kind}: train={train_region} eval={eval_region} "
                       f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}", flush=True)
-        env.close()
+        if env is not None:
+            env.close()
 
     summary: dict = {"protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds,
                                   "episodes": episodes}, "policies": {}}
@@ -270,7 +316,11 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
             )
         summary["policies"][kind] = entry
 
-    pd.DataFrame(raw_all).to_csv(out_dir / "transfer_matrix_raw.csv", index=False)
+    # rewrite a clean, de-duplicated CSV (the incremental appends are the crash-safe checkpoint)
+    if all_rows:
+        pd.DataFrame(all_rows).drop_duplicates(
+            subset=["policy", "ckpt_region", "eval_region", "train_seed", "eval_seed", "episode"]
+        ).to_csv(raw_path, index=False)
     (out_dir / "transfer_summary.json").write_text(json.dumps(summary, indent=2))
     _emit_transfer_table(summary, policies, out_dir / "phase6_transfer_table.tex")
     return summary
@@ -315,15 +365,25 @@ def _condition_env(region: str, condition: str):
 
 
 def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_seeds, device):
-    """Per-region stress conditions with falsifiable dWEL vs the per-condition No-Op baseline."""
-    raw_all: list[dict] = []
+    """Per-region stress conditions with falsifiable dWEL vs the per-condition No-Op baseline (resumable)."""
+    raw_path = out_dir / "generalization_raw.csv"
+    existing = _load_existing(raw_path)
+    raw_all: list[dict] = existing.to_dict("records") if len(existing) else []
     summary: dict = {"protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds,
                                   "episodes": episodes}, "regions": {}}
+
+    def _prev_rows(region, condition, kind, ckpt_region):
+        if len(existing) == 0:
+            return None
+        sub = existing[(existing.region == region) & (existing.condition == condition)
+                       & (existing.policy == kind) & (existing.ckpt_region == ckpt_region)]
+        return sub.to_dict("records") if len(sub) else None
+
     for region in REGIONS:
         other = "california" if region == "saudi" else "saudi"
         reg_summary: dict = {}
         for condition in GEN_CONDITIONS:
-            env, cells = _condition_env(region, condition)
+            env = None
             # policies for this condition: cross_region uses the OTHER region's learned policies;
             # every other condition uses this region's own policies (+ heuristics as reference).
             if condition == "cross_region":
@@ -335,20 +395,29 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
             wel_by_policy: dict[str, list[float]] = {}
             per_by_policy: dict[str, dict] = {}
             for kind, ckpt_region in cond_policies:
-                raw, per = eval_policy_seedscores(
-                    env, kind, ckpt_region, ckpt_dir, device, eval_seeds, episodes, train_seeds,
-                    ignition_cells=cells,
-                )
-                for r in raw:
-                    r["region"] = region
-                    r["condition"] = condition
-                raw_all.extend(raw)
                 tag = kind if condition != "cross_region" or kind == "noop" else f"{kind}_from_{other}"
+                prev = _prev_rows(region, condition, kind, ckpt_region)
+                if prev is not None:
+                    per = _rebuild_per(prev)
+                    print(f"  [gen] SKIP (done) {region}/{condition}: {tag}", flush=True)
+                else:
+                    if env is None:
+                        env, cells = _condition_env(region, condition)
+                    raw, per = eval_policy_seedscores(
+                        env, kind, ckpt_region, ckpt_dir, device, eval_seeds, episodes, train_seeds,
+                        ignition_cells=cells,
+                    )
+                    for r in raw:
+                        r["region"] = region
+                        r["condition"] = condition
+                    _append_rows(raw_path, raw)
+                    raw_all.extend(raw)
+                    print(f"  [gen] {region}/{condition}: {tag} "
+                          f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}", flush=True)
                 wel_by_policy[tag] = per["WEL"]
                 per_by_policy[tag] = per
-                print(f"  [gen] {region}/{condition}: {tag} "
-                      f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}", flush=True)
-            env.close()
+            if env is not None:
+                env.close()
 
             noop_wel = float(np.mean(wel_by_policy.get("noop", [float("nan")])))
             cond_entry = {}
@@ -364,7 +433,10 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
             reg_summary[condition] = cond_entry
         summary["regions"][region] = reg_summary
 
-    pd.DataFrame(raw_all).to_csv(out_dir / "generalization_raw.csv", index=False)
+    if raw_all:
+        pd.DataFrame(raw_all).drop_duplicates(
+            subset=["region", "condition", "policy", "ckpt_region", "train_seed", "eval_seed", "episode"]
+        ).to_csv(raw_path, index=False)
     (out_dir / "generalization_summary.json").write_text(json.dumps(summary, indent=2))
     _emit_generalization_table(summary, out_dir / "phase6_generalization_table.tex")
     return summary

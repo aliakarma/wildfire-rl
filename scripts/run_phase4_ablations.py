@@ -368,18 +368,36 @@ def _emit_ablation_table(summary, out_path: Path) -> None:
 
 
 def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds):
-    """Zero-shot eval of frozen default-trained policies across easy/medium/hard regimes."""
+    """Zero-shot eval of frozen default-trained policies across easy/medium/hard regimes (resumable)."""
     regimes = ["easy", "medium", "hard"]
     policies = ["noop", "value_first", "commnet", "hiercomm_heur"]
-    rows = []
+    out_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = out_dir / "robustness_results.csv"
+    existing = pd.read_csv(csv_path) if csv_path.exists() else pd.DataFrame()
+    rows = existing.to_dict("records") if len(existing) else []
+
+    def _done(region, regime, kind):
+        if len(existing) == 0:
+            return None
+        sub = existing[(existing.region == region) & (existing.regime == regime)
+                       & (existing.policy == kind)]
+        return sub.iloc[0].to_dict() if len(sub) else None
+
     summary = {"protocol": {"regimes": regimes, "eval_seeds": eval_seeds, "episodes": episodes},
                "regions": {}}
     for region in REGIONS:
         reg = {}
         for regime in regimes:
-            env = make_marl_env(region, regime, reward_cls=WELISRDeltaReward)
             reg[regime] = {}
+            env = None
             for kind in policies:
+                cached = _done(region, regime, kind)
+                if cached is not None:
+                    reg[regime][kind] = {"WEL_mean": float(cached["WEL"]), "ISR_mean": float(cached["ISR"])}
+                    print(f"  [robust] SKIP (done) {region}/{regime}/{kind}", flush=True)
+                    continue
+                if env is None:
+                    env = make_marl_env(region, regime, reward_cls=WELISRDeltaReward)
                 seeds_to_use = train_seeds if kind in ("commnet", "hiercomm_heur") else [None]
                 wel_vals, isr_vals = [], []
                 for ts in seeds_to_use:
@@ -397,14 +415,17 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
                     continue
                 reg[regime][kind] = {"WEL_mean": float(np.mean(wel_vals)),
                                      "ISR_mean": float(np.mean(isr_vals))}
-                rows.append({"region": region, "regime": regime, "policy": kind,
-                             "WEL": float(np.mean(wel_vals)), "ISR": float(np.mean(isr_vals))})
+                row = {"region": region, "regime": regime, "policy": kind,
+                       "WEL": float(np.mean(wel_vals)), "ISR": float(np.mean(isr_vals))}
+                pd.DataFrame([row]).to_csv(csv_path, mode="a", header=not csv_path.exists(), index=False)
+                rows.append(row)
                 print(f"  [robust] {region}/{regime}/{kind}: WEL={np.mean(wel_vals):.2f} "
                       f"ISR={np.mean(isr_vals):.3f}", flush=True)
-            env.close()
+            if env is not None:
+                env.close()
         summary["regions"][region] = reg
-    out_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows).to_csv(out_dir / "robustness_results.csv", index=False)
+    pd.DataFrame(rows).drop_duplicates(
+        subset=["region", "regime", "policy"], keep="last").to_csv(csv_path, index=False)
     (out_dir / "robustness_summary.json").write_text(json.dumps(summary, indent=2))
     # monotonicity check on No-Op WEL
     for region in REGIONS:
