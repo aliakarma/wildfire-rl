@@ -1,9 +1,0 @@
-region,comparison,p_value,cohens_d,significant
-saudi,ppo_vs_noop,0.8474832907931115,-0.061237232167924545,False
-saudi,ppo_vs_random,0.11109038255223849,-0.5164735011421585,False
-saudi,ppo_vs_nearest_fire,0.5333418785075235,-0.19880846861693383,False
-saudi,ppo_vs_frontier,0.42221019236120483,-0.25662484412599396,False
-california,ppo_vs_noop,1.0,0.0,False
-california,ppo_vs_random,7.760166843543725e-06,-1.6386611469985901,True
-california,ppo_vs_nearest_fire,0.0015862036974320871,-1.0772044918933017,True
-california,ppo_vs_frontier,5.530933609528653e-07,-1.9007543483851148,True

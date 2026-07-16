@@ -1,5 +1,0 @@
-episode,map,reset_s,steps,mean_step_s,episode_s
-0,Saudi,0.0276,40,0.0098,0.4212
-1,Saudi,0.0953,40,0.0102,0.5047
-2,Saudi,0.0945,40,0.012,0.5753
-summary,Saudi,0.0725,120,0.0107,17.44
