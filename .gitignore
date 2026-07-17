@@ -181,3 +181,13 @@ third_party/firehose/cell2fire/Cell2FireC/Cell2Fire
 third_party/firehose/cell2fire/Cell2FireC/*.o
 third_party/firehose/cell2fire/Cell2FireC/*.gch
 /venv_wsl
+
+# ---- Dashboard (static results site; see dashboard/README.md) ---------------
+# Re-include source files caught by broad rules above (`lib/`, `*token*`);
+# node_modules/dist/media stay ignored via dashboard/.gitignore.
+!dashboard/src/lib/
+!dashboard/src/lib/**
+!dashboard/src/theme/tokens.css
+dashboard/node_modules/
+dashboard/dist/
+Dashboard_Guide.md
