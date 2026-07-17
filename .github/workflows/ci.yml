@@ -88,3 +88,47 @@ jobs:
         run: python -m wildfire_marl.reproducibility.check_seed_integrity
       - name: Significance artifacts (ported statistical core)
         run: pytest tests/test_significance.py tests/test_metrics.py -q
+
+  dashboard:
+    # Dashboard integrity gate (Dashboard_Guide.md §4.3): the committed dashboard JSON
+    # must match the frozen summaries and the paper's headline values exactly, and the
+    # static site must typecheck and build. (The fingerprint gate itself runs locally in
+    # build_dashboard_data.py — the checkpoints it hashes are not committed.)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Paper-consistency assertions
+        run: python scripts/check_dashboard_consistency.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Unit tests (format rules + locale parity)
+        working-directory: dashboard
+        run: |
+          npm ci
+          npm test
+      - name: Build static site
+        working-directory: dashboard
+        run: npm run build
+      - name: Accessibility matrix (axe-core, routes × locales × themes)
+        working-directory: dashboard
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+      - name: Lighthouse budgets (Dashboard_Guide.md §14)
+        working-directory: dashboard
+        run: npx --yes @lhci/cli@0.14.x autorun
+      - name: Anonymity grep (review channel, Dashboard_Guide.md §15)
+        working-directory: dashboard
+        run: |
+          if grep -rIiqE "akarma" dist; then
+            echo "ERROR: identifying strings found in dist/:"
+            grep -rIiE "akarma" dist | head
+            exit 1
+          fi
+          echo "dist/ clean"

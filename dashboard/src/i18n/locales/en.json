@@ -1,0 +1,301 @@
+{
+  "app": {
+    "title": "Wildfire-MARL Benchmark",
+    "tagline": "Infrastructure-aware wildfire coordination — a physics-grounded MARL benchmark and HierComm, a value-aware hierarchical method.",
+    "skipToContent": "Skip to content"
+  },
+  "nav": {
+    "overview": "Overview",
+    "replays": "Simulation Replays",
+    "results": "Main Results",
+    "ablation": "Ablation Analysis",
+    "robustness": "Robustness",
+    "generalization": "Generalization & Transfer",
+    "benchmark": "Benchmark & Data",
+    "method": "Method: HierComm",
+    "reproducibility": "Reproducibility",
+    "about": "About & Paper",
+    "more": "More"
+  },
+  "region": {
+    "label": "Region",
+    "saudi": "Saudi Arabia — Eastern Province",
+    "saudiShort": "Saudi Arabia",
+    "california": "Northern California (WUI)",
+    "californiaShort": "California",
+    "both": "Both regions"
+  },
+  "metric": {
+    "wel": { "name": "Weighted Economic Loss (WEL)", "hint": "Total value of burned infrastructure — lower is better" },
+    "isr": { "name": "Infrastructure Survival Rate (ISR)", "hint": "Fraction of assets unburned — higher is better" },
+    "ce": { "name": "Coordination Efficiency (CE)", "hint": "How efficiently agents divide the work" },
+    "dwel": { "name": "ΔWEL vs No-Op (within condition)", "hint": "Loss prevented relative to no intervention — higher is better; 0 means no added value" },
+    "trs": { "name": "Transfer Retention Score (TRS)", "hint": "Fraction of native ISR retained after cross-region transfer" }
+  },
+  "policy": {
+    "noop": "No-Op (no intervention)",
+    "value_first": "Value-First (teacher)",
+    "greedy_risk": "Greedy-Risk",
+    "local_reactive": "Local Reactive",
+    "mappo": "Flat MARL (MAPPO)",
+    "commnet": "CommNet",
+    "hiercomm_heur": "HierComm (ours)",
+    "all": "All policies"
+  },
+  "stats": {
+    "ci95": "95% confidence interval",
+    "pvalue": "p-value",
+    "effect": "Effect size (Cohen's d)",
+    "sig": "Statistically significant",
+    "ns": "Not significant (n.s.)",
+    "deterministic": "Deterministic policy — no seed variance",
+    "test": "Test",
+    "welch": "Welch t-test",
+    "oneSample": "one-sample t-test",
+    "perSeed": "per-seed values",
+    "mean": "mean",
+    "nSeeds": "{{n}} seeds"
+  },
+  "filters": {
+    "difficulty": "Difficulty",
+    "seed": "Training seed",
+    "metric": "Metric",
+    "condition": "Condition",
+    "kind": "Type",
+    "reset": "Reset filters"
+  },
+  "difficulty": { "easy": "Easy", "medium": "Medium", "hard": "Hard" },
+  "condition": {
+    "standard": "Standard",
+    "heldout_ignition": "Held-out ignitions",
+    "wind_plus90": "Wind rotated +90°",
+    "assets_rot90": "Rotated asset layout",
+    "cross_region": "Cross-region transfer"
+  },
+  "transfer": {
+    "native": "Native",
+    "transferred": "Transferred",
+    "trainedOn": "Trained on",
+    "evaluatedOn": "Evaluated on",
+    "matrixTitle": "Transfer matrix — WEL",
+    "trsTitle": "Transfer retention (TRS, ISR-based)"
+  },
+  "actions": {
+    "viewTable": "View as table",
+    "viewChart": "View as chart",
+    "downloadCsv": "Download CSV",
+    "downloadPng": "Download chart (PNG)",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyLink": "Copy link",
+    "play": "Play",
+    "retry": "Retry",
+    "exploreResults": "Explore results",
+    "watchReplays": "Watch replays",
+    "readPaper": "Read the paper"
+  },
+  "theme": { "dark": "Dark mode", "light": "Light mode" },
+  "lang": { "switch": "العربية", "label": "Switch language" },
+  "footer": {
+    "provenance": "All values are generated from frozen artifacts",
+    "fingerprint": "Freeze fingerprint",
+    "commit": "commit",
+    "built": "built",
+    "verified": "SHA-256 verified",
+    "downloads": "Data downloads",
+    "license": "Code: MIT · Cell2Fire: GPL-3.0"
+  },
+  "common": {
+    "loading": "Loading…",
+    "loadError": "Could not load this panel's data.",
+    "noData": "No data for this filter.",
+    "sourceArtifact": "Source: {{path}}",
+    "protocolNote": "5 training seeds × 15 held-out episodes; unit of analysis = per-training-seed mean (n = 5)",
+    "lowerBetter": "lower is better",
+    "higherBetter": "higher is better",
+    "ours": "ours",
+    "vsNoop": "vs No-Op {{value}}"
+  },
+  "overview": {
+    "title": "Infrastructure-Aware Wildfire Coordination",
+    "subtitle": "A physics-grounded MARL benchmark on validated Cell2Fire fire physics, plus HierComm — a value-aware hierarchical multi-agent method. 2 regions · 7 policies · 5 seeds · frozen results.",
+    "tiles": {
+      "welSaudi": "HierComm WEL — Saudi",
+      "welCalifornia": "HierComm WEL — California",
+      "isrBoth": "ISR (Saudi / California)",
+      "isrContext": "best in both regions",
+      "protocol": "Seeds × episodes",
+      "protocolValue": "5 × 15",
+      "protocolContext": "held-out evaluation stream"
+    },
+    "comparisonCaption": "HierComm versus baselines on the same episode ({{region}}). Full replays on the Replays page.",
+    "whatWorks": {
+      "title": "What makes it work?",
+      "hierarchy": "Value-aware hierarchy",
+      "tactical": "Learned tactical policy",
+      "finetune": "RL fine-tuning",
+      "comms": "Explicit communication",
+      "commsNote": "not a statistically significant driver at the 3-agent scale studied — see the ablation",
+      "significant": "significant contribution"
+    },
+    "honesty": "Honest caveat: on Saudi Arabia the margin over the strongest flat baseline (MAPPO) is within seed variance ({{p}}). We report this plainly."
+  },
+  "results": {
+    "title": "Main Results",
+    "summary": "The interactive twin of the paper's Table 1: Weighted Economic Loss and Infrastructure Survival Rate for all 7 policies, with bootstrap 95% CIs and every per-seed value visible. Learned methods aggregate 5 training seeds × 15 held-out episodes; heuristics are deterministic.",
+    "welByPolicy": "WEL by policy",
+    "isrByPolicy": "ISR by policy",
+    "statsPanel": "Significance — HierComm vs baselines",
+    "statsSubtitle": "Welch t-test for learned baselines; one-sample t-test against deterministic heuristics",
+    "trainingCurves": "Training curves — WEL over training",
+    "curvesSubtitle": "{{window}}-episode rolling mean · median across 5 seeds, aligned by episode (each method spans the ≥ {{n}} episodes common to its seeds; ≈100k env steps)",
+    "episodeAxis": "episode",
+    "envSteps": "≈ env steps",
+    "perSeedToggle": "Show per-seed curves",
+    "comparison": "Comparison",
+    "baseline": "Baseline"
+  },
+  "ablation": {
+    "title": "Ablation Analysis",
+    "summary": "Single-factor component ablation of HierComm: each variant removes one part. Removing the hierarchy, the learned tactical policy, or RL fine-tuning significantly hurts; removing communication or shaping does not — the paper reports that negative result plainly.",
+    "contribution": "Component contributions — WEL vs Full HierComm",
+    "contributionSubtitle": "Bars show each ablated variant's WEL relative to the full method; sorted by effect",
+    "negativeTitle": "The communication negative result",
+    "negativeBody": "Removing explicit communication produces no statistically significant change (Saudi <bdi>{{pSaudi}}</bdi>, California <bdi>{{pCalifornia}}</bdi>). We report this plainly rather than claiming communication as a driver of the results.",
+    "tableTitle": "Full ablation table",
+    "variantCol": "Variant",
+    "deterministicNote": "deterministic — magnitude only, no seed-variance test (n = 1)"
+  },
+  "robustness": {
+    "title": "Robustness",
+    "summary": "An easy/medium/hard difficulty sweep (wind scaling and fire-weather index). No-Op's monotone worsening anchors the axis; HierComm stays lowest-WEL in every region × difficulty cell.",
+    "sweep": "WEL across difficulty",
+    "callout": "HierComm is the lowest-WEL policy in {{hc}} / {{total}} region × difficulty cells.",
+    "anchor": "No-Op worsens monotonically with difficulty — the sweep is doing what it should."
+  },
+  "generalization": {
+    "title": "Generalization & Transfer",
+    "summary": "Held-out ignitions, rotated wind, rotated assets, and cross-region transfer. ΔWEL vs No-Op is the falsifiability axis: a policy adding no value sits at zero. The transfer matrix shows where learned coordination survives a region swap — and where it collapses.",
+    "deltaTitle": "ΔWEL vs No-Op by condition",
+    "deltaSubtitle": "Higher = more loss prevented within that condition; zero = no added value",
+    "matrixSubtitle": "Rows = trained on; columns = evaluated on. Every cell is annotated — color is never the only encoding.",
+    "asymmetry": "Asymmetric collapse: CommNet transfers well in one direction (TRS {{good}}) and collapses in the other (TRS {{bad}}). HierComm degrades under transfer but never collapses.",
+    "transferReplays": "Watch the native-vs-transferred rollouts on the Replays page."
+  },
+  "benchmark": {
+    "title": "Benchmark & Data",
+    "summary": "Two GIS-derived 32×32 landscapes with real, provenance-documented critical assets, run on unmodified Cell2Fire fire physics under a suppression-relevant regime.",
+    "regionCards": "The two regions",
+    "saudiDesc": "Desert-petroleum regime: concentrated, high-value petroleum infrastructure. If no one acts, WEL = {{wel}}.",
+    "californiaDesc": "Forest-WUI regime: scattered critical facilities across the wildland–urban interface. If no one acts, WEL = {{wel}}.",
+    "regime": "Suppression-relevant regime",
+    "regimeIntro": "The stock Cell2Fire setup is unsuppressible for a 3-agent team; the benchmark derives a regime in which suppression is possible but not trivial: scaled wind, fixed fire-weather (FFMC), one threat-biased upwind ignition, a crew-scale treatment footprint (radius 1), and 30 simulated minutes per agent step.",
+    "regimeParam": "Parameter",
+    "regimeCellNote": "Cells show Saudi / California where the two regions differ",
+    "pipeline": "GIS pipeline",
+    "pipelineSteps": {
+      "ndvi": "MODIS NDVI → FBP fuel model",
+      "era5": "ERA5 → hourly weather + CFFDRS FWI",
+      "srtm": "SRTM → slope",
+      "firms": "FIRMS → ignition sampling",
+      "crit": "Stylized Gaussian criticality (declared as stylized)"
+    },
+    "glossary": "Metrics glossary",
+    "boundary": "Cell2Fire vs wrapper boundary",
+    "boundaryPhysics": "Validated physics (never modified): fire growth, spread rates, fuel consumption — Cell2Fire C++.",
+    "boundaryWrapper": "Wrapper (this benchmark): suppression treatment, asset cascade, rewards, observations, PettingZoo multi-agent layer."
+  },
+  "method": {
+    "title": "Method: HierComm",
+    "summary": "A value-aware hierarchical policy: a rule-based strategic commander assigns agents to threatened assets; a learned communicating tactical policy builds firebreaks. Trained by behavior cloning of a value-aware expert, then PPO fine-tuning.",
+    "architecture": "Architecture",
+    "archCommander": "Strategic commander (value-aware rule)",
+    "archCommanderDesc": "Every {{n}} steps, scores each asset by threat τ = v/(1+d) — value over distance-to-fire — and assigns agents to the top assets.",
+    "archTactical": "Communicating tactical policy (learned)",
+    "archTacticalDesc": "CNN over a 9×9 egocentric crop + target encoding; {{r}} communication rounds; outputs move/treat actions.",
+    "archEnv": "Cell2Fire environment",
+    "archEnvDesc": "Validated fire physics; the wrapper applies treatments and computes WEL/ISR rewards.",
+    "storyboard": "How it decides, step by step",
+    "storySteps": {
+      "s1": "Threat scores τ = v/(1+d) are computed for every asset.",
+      "s2": "Agents are assigned to the top-threat assets.",
+      "s3": "The tactical policy builds a firebreak at the fire frontier nearest its asset.",
+      "s4": "At the next macro-step the commander reassigns as threats shift."
+    },
+    "training": "Training recipe",
+    "trainingBC": "Behavior-cloning warm start: 30 demonstration episodes from the value-aware asset-defense expert.",
+    "trainingPPO": "PPO fine-tuning: 100k environment steps on the WEL/ISR delta reward with firebreak shaping.",
+    "hyperparams": "Hyperparameters",
+    "scopeTitle": "Honest scope",
+    "scope": "No algorithmic-novelty claim: the primitives (CNN policies, communication rounds, PPO, BC) are standard. A fully learned commander variant exists and underperforms the value-aware rule — see the ablation page. The contribution is the benchmark, the integrated system, and the honest component analysis."
+  },
+  "repro": {
+    "title": "Reproducibility",
+    "summary": "Everything needed to verify or re-run the main results: the protocol, the frozen fingerprint, per-checkpoint hashes, and one-command reproduction.",
+    "protocol": "Protocol",
+    "protocolItems": {
+      "seeds": "5 training seeds: {42, 1042, 2042, 3042, 4042}",
+      "eval": "Evaluation: held-out seed groups × 15 episodes; disjoint train/eval seed streams (no leakage)",
+      "unit": "Unit of analysis: per-training-seed mean (n = 5)",
+      "determinism": "Bit-identical CPU determinism (verified)"
+    },
+    "hashes": "Checkpoint hashes (seed 42)",
+    "hashesSubtitle": "SHA-256 over the released checkpoints; the full {{n}}-checkpoint manifest is downloadable below",
+    "downloads": "Downloads",
+    "downloadsNote": "Checkpoints are released upon acceptance (anonymity protocol).",
+    "reproduce": "Reproduce the main table",
+    "verify": "Verify this dashboard",
+    "verifySteps": "Re-run the freeze script against the results directory; the fingerprint must match the value in the footer.",
+    "compute": "Compute disclosure",
+    "file": "File",
+    "artifact": "Artifact"
+  },
+  "about": {
+    "title": "About & Paper",
+    "summary": "The paper, in brief.",
+    "abstract": "Abstract",
+    "citation": "Citation",
+    "citationNote": "Anonymized during double-blind review; the full citation is added upon acceptance.",
+    "license": "License",
+    "licenseBody": "Repository code: MIT. Cell2Fire (fire physics): GPL-3.0. Data sources are credited in the data card.",
+    "anonymity": "This site is anonymized for AAAI double-blind review: no author names, institutions, or repository links appear anywhere."
+  },
+  "replay": {
+    "interactiveTitle": "Interactive replay",
+    "play": "Play",
+    "pause": "Pause",
+    "step": "Step",
+    "speed": "Speed",
+    "reset": "Restart",
+    "compare": "Compare with…",
+    "compareNone": "No comparison",
+    "policy": "Policy",
+    "overlays": "Overlays",
+    "trails": "Agent trails",
+    "burned": "Burned cells",
+    "transferFrom": "transferred from {{region}}",
+    "verifiedCaption": "Recorded from the frozen checkpoints on the held-out evaluation stream (episode seed {{seed}}); the endpoint is verified against the frozen per-episode record."
+  },
+  "overlay": {
+    "assets": "Assets",
+    "targets": "Assigned targets",
+    "treated": "Treated cells (firebreak)",
+    "fire": "Active fire",
+    "agents": "Agents",
+    "burnedOut": "Burned-out"
+  },
+  "replays": {
+    "title": "Simulation Replays",
+    "summary": "Pre-rendered rollouts of the frozen policies on both regions, including native-vs-transferred pairs. Every replay is recorded from the released checkpoints on the held-out evaluation stream — the same rollouts behind the reported numbers.",
+    "honesty": "Replays are recorded from the frozen released checkpoints on the held-out evaluation stream — the same rollouts behind the reported numbers. Single episodes are illustrative; aggregate results are in Main Results.",
+    "kind": {
+      "comparison": "Side-by-side comparison",
+      "rollout": "Single-policy rollout",
+      "transfer_native": "Transfer — native",
+      "transfer_cross": "Transfer — cross-region"
+    },
+    "clickToPlay": "Click to load and play ({{size}})",
+    "mediaUnavailable": "Media not included in this build — regenerate with build_dashboard_data.py --copy-media.",
+    "gallery": "Replay gallery"
+  }
+}

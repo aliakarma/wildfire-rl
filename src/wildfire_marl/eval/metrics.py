@@ -96,7 +96,9 @@ def weighted_economic_loss(
     for code, val in asset_values.items():
         m = asset_type == int(code)
         if m.any():
-            total += float(val) * float(fire[m].sum())
+            # Only burned intensity counts as loss; treated/harvested asset cells (fire < 0)
+            # are protected, not "negative loss", so clamp at 0.
+            total += float(val) * float(np.clip(fire[m], 0.0, None).sum())
     return float(total)
 
 

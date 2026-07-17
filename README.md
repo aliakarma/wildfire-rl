@@ -1,12 +1,9 @@
 # wildfire-marl — Multi-Agent Wildfire Suppression on Validated Fire Physics
 
-> **Project status (2026-07-04): migrating to Cell2Fire.** This repository is being re-founded
-> on a peer-reviewed, physics-validated fire simulator ([Cell2Fire](https://github.com/cell2fire/Cell2Fire),
-> via a fresh Gymnasium binding modeled on the Firehose RL wrapper), following
-> [`REMEDIATION_PLAN_V2.md`](REMEDIATION_PLAN_V2.md). The previous prototype — a hand-rolled
-> toy simulator with oracle heuristics and a stubbed controller — is frozen, unmodified, in
-> [`legacy_v1/`](legacy_v1/FROZEN.md) as an honest-negative-result historical artifact.
-> **Nothing in `legacy_v1/` is cited as a result; it is prior art / motivation only.**
+> **Project status:** this repository is founded on a peer-reviewed, physics-validated fire
+> simulator ([Cell2Fire](https://github.com/cell2fire/Cell2Fire), via a fresh Gymnasium
+> binding modeled on the Firehose RL wrapper). An earlier hand-rolled prototype simulator
+> (V1) has been removed; nothing from it is cited as a result.
 
 ## The research bet
 
@@ -50,8 +47,7 @@ src/wildfire_marl/          V2 package
   viz/, experiments/        visualization + experiment drivers (later phases)
 tests/                      ported test suite (runs on Linux)
 data/                       preserved region rasters + tensors (feed Phase 2)
-docs/                       data card, MIGRATION.md
-legacy_v1/                  FROZEN V1 prototype — see legacy_v1/FROZEN.md
+docs/                       data card, MIGRATION.md, RESULTS_FROZEN.md
 ```
 
 ## Getting started (Linux only)
@@ -72,13 +68,13 @@ python -c "import wildfire_marl; from wildfire_marl.eval import metrics, signifi
 pytest tests/
 ```
 
-## Migration provenance
+## Provenance
 
-- What carried over, what was retired, and the three AAAI rejection reasons the migration
-  fixes: [`docs/MIGRATION.md`](docs/MIGRATION.md)
-- The full 16-phase plan with mandatory per-phase checkpoints: [`REMEDIATION_PLAN_V2.md`](REMEDIATION_PLAN_V2.md)
-- Phase execution log: [`Phases.md`](Phases.md)
-- The frozen V1 prototype and its freeze rules: [`legacy_v1/FROZEN.md`](legacy_v1/FROZEN.md)
+- What carried over from V1, what was retired, and the three AAAI rejection reasons the
+  migration fixes: [`docs/MIGRATION.md`](docs/MIGRATION.md)
+- Peer-review remediation plan and its execution log:
+  [`PEER_REVIEW_REMEDIATION_PLAN.md`](PEER_REVIEW_REMEDIATION_PLAN.md), [`peer_phases.md`](peer_phases.md)
+- Frozen canonical main results for the paper: [`docs/RESULTS_FROZEN.md`](docs/RESULTS_FROZEN.md)
 
 ## License
 

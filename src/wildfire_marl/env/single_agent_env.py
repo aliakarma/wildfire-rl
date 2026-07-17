@@ -64,6 +64,61 @@ def _read_fbp_nonfuel_codes(lookup_csv: Path) -> set[int]:
     return nonfuel
 
 
+def _cffdrs_isi(ws_kmh: float, ffmc: float) -> float:
+    """Initial Spread Index from wind speed (km/h) and FFMC (standard CFFDRS equations)."""
+    m = 147.2 * (101.0 - ffmc) / (59.5 + ffmc)
+    f_f = 91.9 * np.exp(-0.1386 * m) * (1.0 + (m**5.31) / 4.93e7)
+    f_w = np.exp(0.05039 * ws_kmh)
+    return float(0.208 * f_w * f_f)
+
+
+def _cffdrs_fwi(isi: float, bui: float) -> float:
+    """Fire Weather Index from ISI and BUI (standard CFFDRS equations)."""
+    if bui <= 80.0:
+        f_d = 0.626 * (bui**0.809) + 2.0
+    else:
+        f_d = 1000.0 / (25.0 + 108.64 * np.exp(-0.023 * bui))
+    b = 0.1 * isi * f_d
+    if b > 1.0:
+        return float(np.exp(2.72 * ((0.434 * np.log(b)) ** 0.647)))
+    return float(b)
+
+
+def _moderate_weather_csv(path: Path, wind_scale: float = 1.0, ffmc: float | None = None) -> None:
+    """Rewrite a Cell2Fire ``Weather.csv`` in place to a milder fire-weather regime.
+
+    Scales the wind speed by ``wind_scale`` and (optionally) overrides FFMC to ``ffmc``; ISI and
+    FWI are recomputed from the moderated WS/FFMC via the standard CFFDRS equations so each row
+    stays internally consistent. BUI/DMC/DC (drought codes) and wind direction are left
+    unchanged. This defines the *suppression-relevant fire-weather regime* (a documented
+    benchmark revision): the FBP spread physics inside Cell2Fire is never modified — only the
+    scenario's weather inputs are moderated so that suppression is physically meaningful.
+    """
+    lines = path.read_text().splitlines()
+    if not lines:
+        return
+    idx = {name: i for i, name in enumerate(lines[0].split(","))}
+    if "WS" not in idx:
+        return
+    out = [lines[0]]
+    for row in lines[1:]:
+        if not row.strip():
+            continue
+        c = row.split(",")
+        ws = float(c[idx["WS"]]) * wind_scale
+        c[idx["WS"]] = f"{ws:.2f}"
+        ff = ffmc if ffmc is not None else float(c[idx["FFMC"]])
+        if "FFMC" in idx:
+            c[idx["FFMC"]] = f"{ff:.2f}"
+        if "ISI" in idx:
+            isi = _cffdrs_isi(ws, ff)
+            c[idx["ISI"]] = f"{isi:.2f}"
+            if "FWI" in idx and "BUI" in idx:
+                c[idx["FWI"]] = f"{_cffdrs_fwi(isi, float(c[idx['BUI']])):.2f}"
+        out.append(",".join(c))
+    path.write_text("\n".join(out) + "\n")
+
+
 class FireSuppressionEnv(gym.Env):
     """Single-agent cell-treatment suppression on validated Cell2Fire physics."""
 
@@ -88,6 +143,11 @@ class FireSuppressionEnv(gym.Env):
         cascade_prob: float = 0.0,
         infra_dir: str | Path | None = None,
         asset_values: dict[int, float] | None = None,
+        wind_scale: float = 1.0,
+        ffmc: float | None = None,
+        ignition_mode: str = "uniform",
+        ignition_dist: tuple[int, int] = (6, 12),
+        ignition_arc_deg: float = 60.0,
     ):
         """
         Args:
@@ -175,6 +235,20 @@ class FireSuppressionEnv(gym.Env):
         self._input_dir = Path(tempfile.mkdtemp(prefix=f"c2f_in_{fire_map}_"))
         shutil.copytree(self.map_dir, self._input_dir, dirs_exist_ok=True)
 
+        # --- suppression-relevant fire-weather regime (documented benchmark revision) -----
+        # Moderate the scenario weather in the scratch copy only; Cell2Fire FBP physics and the
+        # source data are never modified. Applied once here so it persists across episodes.
+        self.wind_scale = float(wind_scale)
+        self.ffmc = ffmc
+        if self.wind_scale != 1.0 or self.ffmc is not None:
+            _moderate_weather_csv(self._input_dir / "Weather.csv", self.wind_scale, self.ffmc)
+        self._mean_wd = self._read_mean_wd()
+
+        # --- ignition sampling policy (Phase-1: threat-biased upwind distribution) --------
+        self.ignition_mode = str(ignition_mode)
+        self.ignition_dist = (int(ignition_dist[0]), int(ignition_dist[1]))
+        self.ignition_arc_deg = float(ignition_arc_deg)
+
         # --- simulator binding + reward -------------------------------------------------
         self.binding = Cell2FireBinding(
             input_folder=self._input_dir,
@@ -206,12 +280,52 @@ class FireSuppressionEnv(gym.Env):
             if 0 <= yy < self.height and 0 <= xx < self.width
         ]
 
+    def _read_mean_wd(self) -> float:
+        """Mean wind FROM-direction (degrees) over the scenario weather rows (0 if absent)."""
+        wpath = self._input_dir / "Weather.csv"
+        if not wpath.exists():
+            return 0.0
+        lines = wpath.read_text().splitlines()
+        if len(lines) < 2:
+            return 0.0
+        idx = {name: i for i, name in enumerate(lines[0].split(","))}
+        if "WD" not in idx:
+            return 0.0
+        vals = [float(r.split(",")[idx["WD"]]) for r in lines[1:] if r.strip()]
+        return float(np.mean(vals)) if vals else 0.0
+
     def _sample_ignition_cell(self) -> int:
-        """Random fuel cell, drawn from the env's seeded RNG (leakage-free protocol)."""
+        """Sample the episode ignition cell per ``ignition_mode`` (leakage-free via np_random).
+
+        ``uniform`` — a random burnable cell. ``threat`` — a burnable cell sampled from an
+        upwind arc of the asset cluster (using the wind FROM-direction), so the fire advances
+        onto the infrastructure and suppression is decision-relevant. Distance and bearing are
+        jittered each episode, giving the "more random spawns" variety without multiple fires
+        (Cell2Fire ignites one cell per simulation).
+        """
         candidates = np.flatnonzero(self.fuel_mask.ravel() > 0)
         if candidates.size == 0:
             raise RuntimeError(f"No fuel cells to ignite on map {self.fire_map}")
-        return int(self.np_random.choice(candidates))
+        if self.ignition_mode != "threat" or self.asset_type is None:
+            return int(self.np_random.choice(candidates))
+
+        ys, xs = np.where(self.asset_type > 0)
+        if ys.size == 0:
+            return int(self.np_random.choice(candidates))
+        cy, cx = float(ys.mean()), float(xs.mean())
+        bearing = np.deg2rad(
+            self._mean_wd
+            + self.np_random.uniform(-self.ignition_arc_deg / 2.0, self.ignition_arc_deg / 2.0)
+        )
+        dist = self.np_random.uniform(self.ignition_dist[0], self.ignition_dist[1])
+        # Wind FROM-direction (upwind) offset: grid row increases south, col increases east,
+        # north is -row. An ignition upwind of the assets burns downwind onto them.
+        ty = cy - dist * np.cos(bearing)
+        tx = cx + dist * np.sin(bearing)
+        fuel_yx = np.argwhere(self.fuel_mask > 0)
+        d2 = (fuel_yx[:, 0] - ty) ** 2 + (fuel_yx[:, 1] - tx) ** 2
+        yy, xx = fuel_yx[int(np.argmin(d2))]
+        return int(yy * self.width + xx)
 
     def _write_ignition_csv(self, cell_0indexed: int) -> None:
         # Cell2Fire is 1-indexed.

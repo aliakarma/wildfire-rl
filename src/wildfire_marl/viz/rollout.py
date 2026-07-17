@@ -119,6 +119,40 @@ def render_rollout_frame(
     return img
 
 
+def tile_frames_grid(
+    frame_lists: list[list[Image.Image]],
+    cols: int = 2,
+    pad: int = 4,
+) -> list[Image.Image]:
+    """Tile multiple frame lists into a grid GIF (frame-synchronised).
+
+    ``frame_lists`` is a list of per-policy frame sequences.  Shorter sequences are
+    padded by repeating the last frame.  Returns a new frame list where each frame is a
+    ``cols``-column grid of the corresponding per-policy frames.
+    """
+    if not frame_lists:
+        return []
+    max_len = max(len(fl) for fl in frame_lists)
+    for fl in frame_lists:
+        while len(fl) < max_len:
+            fl.append(fl[-1])
+
+    rows = -(-len(frame_lists) // cols)  # ceil division
+    w, h = frame_lists[0][0].size
+    grid_w = cols * w + (cols - 1) * pad
+    grid_h = rows * h + (rows - 1) * pad
+    grid_frames: list[Image.Image] = []
+
+    for i in range(max_len):
+        canvas = Image.new("RGBA", (grid_w, grid_h), (30, 30, 30, 255))
+        for j, fl in enumerate(frame_lists):
+            r, c = divmod(j, cols)
+            canvas.paste(fl[i], (c * (w + pad), r * (h + pad)))
+        grid_frames.append(canvas)
+
+    return grid_frames
+
+
 def compile_rollout_gif(
     frames: list[Image.Image],
     save_path: str | Path,

@@ -1,0 +1,73 @@
+[TRAIN] ablation wo_comms/saudi/s3042 (100000 steps)...
+[BC] Collecting tactical demonstrations (30 episodes)...
+[BC] Training tactical actor for 60 epochs on 3473 timesteps...
+[BC] epoch 0/60 loss 21.551
+[BC] epoch 15/60 loss 12.139
+[BC] epoch 30/60 loss 9.702
+[BC] epoch 45/60 loss 8.272
+Steps 1580/100000 | ep_return(10) -26.25 | last WEL 4.0 ISR 0.857
+Steps 3174/100000 | ep_return(10) -30.86 | last WEL 0.0 ISR 1.000
+Steps 4807/100000 | ep_return(10) -32.59 | last WEL 13.0 ISR 0.571
+Steps 6307/100000 | ep_return(10) -36.03 | last WEL 19.0 ISR 0.571
+Steps 7933/100000 | ep_return(10) -35.53 | last WEL 13.0 ISR 0.714
+Steps 9528/100000 | ep_return(10) -37.02 | last WEL 17.0 ISR 0.429
+Steps 11103/100000 | ep_return(10) -29.54 | last WEL 27.0 ISR 0.286
+Steps 12608/100000 | ep_return(10) -30.57 | last WEL 8.0 ISR 0.714
+Steps 14222/100000 | ep_return(10) -23.77 | last WEL 8.0 ISR 0.714
+Steps 15722/100000 | ep_return(10) -30.46 | last WEL 8.0 ISR 0.714
+Steps 17236/100000 | ep_return(10) -31.73 | last WEL 13.0 ISR 0.571
+Steps 18787/100000 | ep_return(10) -23.04 | last WEL 9.0 ISR 0.714
+Steps 20294/100000 | ep_return(10) -16.72 | last WEL 9.0 ISR 0.714
+Steps 21902/100000 | ep_return(10) -25.73 | last WEL 0.0 ISR 1.000
+Steps 23546/100000 | ep_return(10) -26.40 | last WEL 8.0 ISR 0.714
+Steps 25122/100000 | ep_return(10) -21.21 | last WEL 7.0 ISR 0.714
+Steps 26640/100000 | ep_return(10) -22.11 | last WEL 4.0 ISR 0.857
+Steps 28140/100000 | ep_return(10) -24.99 | last WEL 11.0 ISR 0.571
+Steps 29760/100000 | ep_return(10) -26.76 | last WEL 0.0 ISR 1.000
+Steps 31356/100000 | ep_return(10) -26.96 | last WEL 13.0 ISR 0.571
+Steps 32995/100000 | ep_return(10) -23.46 | last WEL 4.0 ISR 0.857
+Steps 34497/100000 | ep_return(10) -22.96 | last WEL 13.0 ISR 0.571
+Steps 35997/100000 | ep_return(10) -27.80 | last WEL 0.0 ISR 1.000
+Steps 37619/100000 | ep_return(10) -19.03 | last WEL 10.0 ISR 0.857
+Steps 39119/100000 | ep_return(10) -25.89 | last WEL 23.0 ISR 0.429
+Steps 40681/100000 | ep_return(10) -24.62 | last WEL 8.0 ISR 0.714
+Steps 42186/100000 | ep_return(10) -19.10 | last WEL 9.0 ISR 0.714
+Steps 43731/100000 | ep_return(10) -20.43 | last WEL 14.0 ISR 0.714
+Steps 45280/100000 | ep_return(10) -17.52 | last WEL 14.0 ISR 0.714
+Steps 46842/100000 | ep_return(10) -18.90 | last WEL 9.0 ISR 0.714
+Steps 48389/100000 | ep_return(10) -17.90 | last WEL 10.0 ISR 0.857
+Steps 49988/100000 | ep_return(10) -20.56 | last WEL 0.0 ISR 1.000
+Steps 51614/100000 | ep_return(10) -18.93 | last WEL 13.0 ISR 0.571
+Steps 53231/100000 | ep_return(10) -24.21 | last WEL 9.0 ISR 0.714
+Steps 54861/100000 | ep_return(10) -15.23 | last WEL 4.0 ISR 0.857
+Steps 56361/100000 | ep_return(10) -19.95 | last WEL 9.0 ISR 0.714
+Steps 57908/100000 | ep_return(10) -21.73 | last WEL 9.0 ISR 0.714
+Steps 59447/100000 | ep_return(10) -20.69 | last WEL 14.0 ISR 0.714
+Steps 60972/100000 | ep_return(10) -27.23 | last WEL 4.0 ISR 0.857
+Steps 62565/100000 | ep_return(10) -19.97 | last WEL 4.0 ISR 0.857
+Steps 64183/100000 | ep_return(10) -24.81 | last WEL 18.0 ISR 0.571
+Steps 65739/100000 | ep_return(10) -23.98 | last WEL 11.0 ISR 0.571
+Steps 67247/100000 | ep_return(10) -20.65 | last WEL 8.0 ISR 0.714
+Steps 68883/100000 | ep_return(10) -26.24 | last WEL 13.0 ISR 0.571
+Steps 70441/100000 | ep_return(10) -23.17 | last WEL 7.0 ISR 0.714
+Steps 71941/100000 | ep_return(10) -27.25 | last WEL 0.0 ISR 1.000
+Steps 73576/100000 | ep_return(10) -19.59 | last WEL 4.0 ISR 0.857
+Steps 75097/100000 | ep_return(10) -22.41 | last WEL 8.0 ISR 0.714
+Steps 76621/100000 | ep_return(10) -25.30 | last WEL 4.0 ISR 0.857
+Steps 78166/100000 | ep_return(10) -25.11 | last WEL 23.0 ISR 0.429
+Steps 79670/100000 | ep_return(10) -22.09 | last WEL 4.0 ISR 0.857
+Steps 81170/100000 | ep_return(10) -28.67 | last WEL 13.0 ISR 0.571
+Steps 82784/100000 | ep_return(10) -30.71 | last WEL 14.0 ISR 0.714
+Steps 84310/100000 | ep_return(10) -22.07 | last WEL 18.0 ISR 0.571
+Steps 85866/100000 | ep_return(10) -23.34 | last WEL 18.0 ISR 0.571
+Steps 87482/100000 | ep_return(10) -14.55 | last WEL 0.0 ISR 1.000
+Steps 89023/100000 | ep_return(10) -14.38 | last WEL 7.0 ISR 0.714
+Steps 90595/100000 | ep_return(10) -19.49 | last WEL 17.0 ISR 0.429
+Steps 92176/100000 | ep_return(10) -21.61 | last WEL 18.0 ISR 0.571
+Steps 93729/100000 | ep_return(10) -18.79 | last WEL 8.0 ISR 0.714
+Steps 95242/100000 | ep_return(10) -21.51 | last WEL 18.0 ISR 0.571
+Steps 96839/100000 | ep_return(10) -19.06 | last WEL 4.0 ISR 0.857
+Steps 98372/100000 | ep_return(10) -16.95 | last WEL 8.0 ISR 0.714
+Steps 99922/100000 | ep_return(10) -18.22 | last WEL 10.0 ISR 0.857
+Steps 101426/100000 | ep_return(10) -19.63 | last WEL 13.0 ISR 0.571
+[TRAIN] wo_comms/saudi/s3042 done in 39.8 min -> /content/drive/MyDrive/wildfire_phase4/checkpoint_ablation_wo_comms_saudi_s3042.pt

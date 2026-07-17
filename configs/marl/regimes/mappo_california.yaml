@@ -1,0 +1,22 @@
+# MAPPO baseline on the suppression-relevant default regime (California).
+# Env conditions come from the regime factory (region-specific California overrides live in
+# src/wildfire_marl/env/regimes.py); only the learning budget lives here.
+region: california
+regime: default
+algo: mappo
+reward: welisr
+num_agents: 3
+crop_size: 9
+coordination_penalty: 0.1
+total_steps: 100000
+n_steps: 1024
+batch_size: 64
+ppo_epochs: 4
+clip_eps: 0.2
+gamma: 0.99
+gae_lambda: 0.95
+lr_actor: 0.0003
+lr_critic: 0.001
+seed: 42
+data_dir: data/cell2fire
+save_dir: results/phase3

@@ -25,6 +25,7 @@ from wildfire_marl.agents.agent_networks import (
     QMIXMixingNetwork,
 )
 from wildfire_marl.env.marl_env import MultiAgentFireEnv
+from wildfire_marl.env.regimes import make_marl_env
 from wildfire_marl.env.rewards import (
     FireSizeReward,
     InfrastructureWeightedReward,
@@ -57,6 +58,18 @@ def set_seed(seed: int):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+
+def _train_reset_seed(cfg: dict[str, Any], episode_idx: int) -> int:
+    """Deterministic per-episode env seed for a training run.
+
+    ``set_seed`` seeds the networks and global NumPy/torch/random, but NOT the environment's
+    own ``np_random`` generator (which drives ignition sampling, the Cell2Fire sim seed, and the
+    cascade RNG). Passing this per-episode seed to ``env.reset(seed=...)`` makes the fire
+    scenarios reproducible. Base ``seed * 100000`` keeps the training ignition stream disjoint
+    from the evaluation stream (eval uses ``seed + 100000``) and from BC/pretrain (5000/7000).
+    """
+    return int(cfg.get("seed", 42)) * 100_000 + episode_idx
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -140,7 +153,8 @@ def train_mappo(
     gamma = float(cfg.get("gamma", 0.99))
     gae_lambda = float(cfg.get("gae_lambda", 0.95))
 
-    obs_dict, info_dict = env.reset()
+    episode_idx = 0
+    obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
     global_state = env.get_global_state()
 
     step_count = 0
@@ -216,7 +230,8 @@ def train_mappo(
                         "ISR": ep_isr,
                     }
                 )
-                obs_dict, info_dict = env.reset()
+                episode_idx += 1
+                obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
                 global_state = env.get_global_state()
                 curr_ep_reward = 0.0
             else:
@@ -338,7 +353,6 @@ def train_commnet(
     states before acting. Added for the peer-review remediation (issue M3).
     """
     num_agents = env.num_agents
-    crop_size = env.crop_size
 
     actor = CommNetActor(
         in_channels=8,
@@ -359,7 +373,8 @@ def train_commnet(
     gamma = float(cfg.get("gamma", 0.99))
     gae_lambda = float(cfg.get("gae_lambda", 0.95))
 
-    obs_dict, info_dict = env.reset()
+    episode_idx = 0
+    obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
     global_state = env.get_global_state()
 
     step_count = 0
@@ -384,12 +399,12 @@ def train_commnet(
             obs_list = [obs_dict[f"agent_{i}"] for i in range(num_agents)]
             mask_list = [info_dict[f"agent_{i}"]["action_mask"] for i in range(num_agents)]
 
-            obs_t = torch.tensor(
-                np.array(obs_list), dtype=torch.float32, device=device
-            ).unsqueeze(0)  # [1, N, 8, K, K]
-            mask_t = torch.tensor(
-                np.array(mask_list), dtype=torch.bool, device=device
-            ).unsqueeze(0)  # [1, N, 6]
+            obs_t = torch.tensor(np.array(obs_list), dtype=torch.float32, device=device).unsqueeze(
+                0
+            )  # [1, N, 8, K, K]
+            mask_t = torch.tensor(np.array(mask_list), dtype=torch.bool, device=device).unsqueeze(
+                0
+            )  # [1, N, 6]
 
             with torch.no_grad():
                 logits = actor(obs_t, mask_t)  # [1, N, 6]
@@ -397,9 +412,9 @@ def train_commnet(
                 actions_t = dist.sample()  # [1, N]
                 log_probs_t = dist.log_prob(actions_t)  # [1, N]
 
-                state_t = torch.tensor(
-                    global_state, dtype=torch.float32, device=device
-                ).unsqueeze(0)
+                state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                    0
+                )
                 val_t = critic(state_t).squeeze(0)
 
             actions_np = actions_t.squeeze(0).cpu().numpy()
@@ -437,7 +452,8 @@ def train_commnet(
                         "ISR": ep_isr,
                     }
                 )
-                obs_dict, info_dict = env.reset()
+                episode_idx += 1
+                obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
                 global_state = env.get_global_state()
                 curr_ep_reward = 0.0
             else:
@@ -449,9 +465,9 @@ def train_commnet(
         critic.train()
 
         with torch.no_grad():
-            next_state_t = torch.tensor(
-                global_state, dtype=torch.float32, device=device
-            ).unsqueeze(0)
+            next_state_t = torch.tensor(global_state, dtype=torch.float32, device=device).unsqueeze(
+                0
+            )
             next_val = critic(next_state_t).item()
 
         values = np.array(val_buf + [next_val])
@@ -547,16 +563,20 @@ def train_qmix(
     optimizer = optim.Adam(params, lr=float(cfg.get("lr", 5e-4)))
 
     total_steps = int(cfg.get("total_steps", 50000))
-    buffer = QMIXReplayBuffer(capacity=5000, num_agents=num_agents, crop_size=crop_size)
+    buffer = QMIXReplayBuffer(
+        capacity=int(cfg.get("buffer_capacity", 5000)), num_agents=num_agents, crop_size=crop_size
+    )
 
     batch_size = int(cfg.get("batch_size", 32))
     gamma = float(cfg.get("gamma", 0.99))
     target_update_interval = int(cfg.get("target_update_interval", 200))
-    epsilon_start = 1.0
-    epsilon_end = 0.05
-    epsilon_decay_steps = int(total_steps * 0.6)
+    # Exploration schedule is configurable (exposed for the documented QMIX retrain).
+    epsilon_start = float(cfg.get("epsilon_start", 1.0))
+    epsilon_end = float(cfg.get("epsilon_end", 0.05))
+    epsilon_decay_steps = int(total_steps * float(cfg.get("epsilon_decay_frac", 0.6)))
 
-    obs_dict, info_dict = env.reset()
+    episode_idx = 0
+    obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
     global_state = env.get_global_state()
 
     step_count = 0
@@ -622,7 +642,8 @@ def train_qmix(
                     "ISR": ep_isr,
                 }
             )
-            obs_dict, info_dict = env.reset()
+            episode_idx += 1
+            obs_dict, info_dict = env.reset(seed=_train_reset_seed(cfg, episode_idx))
             global_state = env.get_global_state()
             curr_ep_reward = 0.0
         else:
@@ -705,9 +726,7 @@ def main():
 
     # Setup environment parameters
     region = cfg.get("region", "saudi")
-    map_name = "Saudi" if region.lower() == "saudi" else "California"
     data_dir = cfg.get("data_dir", "data/cell2fire")
-    infra_dir = f"{data_dir}/{map_name}"
 
     # Training-objective selection (peer-review issue H1: match the evaluation objective)
     reward_name = str(cfg.get("reward", "firesize")).lower()
@@ -720,20 +739,33 @@ def main():
         raise ValueError(f"Unknown reward '{reward_name}' (choose from {list(reward_classes)})")
     reward_cls = reward_classes[reward_name]
 
-    # Init environment
-    env = MultiAgentFireEnv(
+    # Init environment via the regime factory (one env definition shared across all methods).
+    # `regime` selects the suppression-relevant benchmark conditions (default: "default");
+    # any spec-level key present in the config overrides the regime default.
+    regime = str(cfg.get("regime", "default"))
+    _spec_keys = (
+        "steps_per_action",
+        "max_steps",
+        "treat_radius",
+        "wind_scale",
+        "ffmc",
+        "ros_cv",
+        "ignition_mode",
+        "ignition_dist",
+        "ignition_arc_deg",
+    )
+    overrides = {k: cfg[k] for k in _spec_keys if k in cfg}
+    env = make_marl_env(
+        region,
+        regime=regime,
+        data_dir=data_dir,
         num_agents=int(cfg.get("num_agents", 3)),
         crop_size=int(cfg.get("crop_size", 9)),
         coordination_penalty=float(cfg.get("coordination_penalty", 0.1)),
-        fire_map=map_name,
-        data_dir=data_dir,
-        max_steps=int(cfg.get("max_steps", 150)),
-        steps_per_action=60,  # 60 fire periods (simulated minutes) per agent step
-        observe_infra=True,
-        catastrophe_weight=2.0,
-        cascade_prob=0.1,
-        infra_dir=infra_dir,
+        catastrophe_weight=float(cfg.get("catastrophe_weight", 2.0)),
+        cascade_prob=float(cfg.get("cascade_prob", 0.1)),
         reward_cls=reward_cls,
+        **overrides,
     )
 
     seed = int(cfg.get("seed", 42))

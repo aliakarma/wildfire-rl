@@ -27,6 +27,7 @@ class MultiAgentFireEnv(ParallelEnv):
         crop_size: int = 9,
         coordination_penalty: float = 0.1,
         fire_map: str = "Sub40x40",
+        treat_radius: int = 0,
         **kwargs: Any,
     ):
         """
@@ -35,6 +36,9 @@ class MultiAgentFireEnv(ParallelEnv):
             crop_size: Size of the egocentric view square (default 9x9).
             coordination_penalty: Reward penalty for redundant treatments.
             fire_map: Instance map name.
+            treat_radius: Firebreak footprint radius. 0 = single-cell treatment; r>0 clears a
+                ``(2r+1)^2`` patch of fuel around each treated cell (a fire crew clearing a
+                firebreak), letting coordinated suppression actually hold a line.
             **kwargs: Passthrough arguments to FireSuppressionEnv.
         """
         super().__init__()
@@ -44,6 +48,7 @@ class MultiAgentFireEnv(ParallelEnv):
             raise ValueError("crop_size must be an odd integer")
         self.crop_radius = self.crop_size // 2
         self.coordination_penalty = float(coordination_penalty)
+        self.treat_radius = int(treat_radius)
 
         # Underlying single-agent env to manage simulator state
         self.env = FireSuppressionEnv(fire_map=fire_map, **kwargs)
@@ -143,6 +148,29 @@ class MultiAgentFireEnv(ParallelEnv):
         # Movement is always valid (boundary hits just keep agent in place)
         return np.array([True, True, True, True, True, treat_valid], dtype=bool)
 
+    def _expand_treatments(self, cells: set[tuple[int, int]]) -> list[int]:
+        """Flatten treated (y, x) cells to 0-indexed ids, expanded by ``treat_radius``.
+
+        With ``treat_radius = r > 0`` each treated cell becomes a ``(2r+1)^2`` block of fuel
+        cells (a cleared firebreak), so a coordinated team can build a barrier the fire cannot
+        cross. Non-fuel cells are skipped (they are already non-burnable).
+        """
+        r = self.treat_radius
+        if r <= 0:
+            return [y * self.width + x for (y, x) in cells]
+        out: set[int] = set()
+        for y, x in cells:
+            for dy in range(-r, r + 1):
+                for dx in range(-r, r + 1):
+                    ny, nx = y + dy, x + dx
+                    if (
+                        0 <= ny < self.height
+                        and 0 <= nx < self.width
+                        and self.env.fuel_mask[ny, nx] > 0
+                    ):
+                        out.add(ny * self.width + nx)
+        return sorted(out)
+
     def reset(
         self,
         *,
@@ -231,8 +259,8 @@ class MultiAgentFireEnv(ParallelEnv):
             else:
                 unique_cells.add(cell)
 
-        # Apply treatments to binding
-        patch = [y * self.width + x for y, x in unique_cells]
+        # Apply treatments to binding (expanded to a firebreak footprint if configured)
+        patch = self._expand_treatments(unique_cells)
         if patch:
             self.env.binding.apply_actions(patch)
             self.env.prev_actions.update(patch)

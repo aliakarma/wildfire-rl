@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\caption{\textbf{Main results} (mean $\pm$ std over 5 training seeds; heuristics are deterministic). Lower WEL / higher ISR is better; \textbf{bold} marks the best WEL per region.}
+\label{tab:main_results}
+\begin{tabular}{llcc}
+\toprule
+Region & Policy & WEL $\downarrow$ & ISR $\uparrow$ \\
+\midrule
+\multirow{7}{*}{\textbf{Saudi Arabia}}
+& No-Op & 27.00 $\pm$ 0.00 & 0.286 $\pm$ 0.000 \\
+& Value-First & 18.84 $\pm$ 0.00 & 0.545 $\pm$ 0.000 \\
+& Greedy-Risk & 24.72 $\pm$ 0.00 & 0.358 $\pm$ 0.000 \\
+& Local Reactive & 11.91 $\pm$ 0.00 & 0.720 $\pm$ 0.000 \\
+& Flat MARL (MAPPO) & 9.77 $\pm$ 5.10 & 0.692 $\pm$ 0.158 \\
+& CommNet & 12.44 $\pm$ 4.32 & 0.682 $\pm$ 0.106 \\
+& HierComm (heur. cmd) & \textbf{7.02} $\pm$ 2.36 & 0.809 $\pm$ 0.058 \\
+\midrule
+\multirow{7}{*}{\textbf{California}}
+& No-Op & 34.00 $\pm$ 0.00 & 0.000 $\pm$ 0.000 \\
+& Value-First & 28.40 $\pm$ 0.00 & 0.156 $\pm$ 0.000 \\
+& Greedy-Risk & 28.40 $\pm$ 0.00 & 0.156 $\pm$ 0.000 \\
+& Local Reactive & 10.23 $\pm$ 0.00 & 0.702 $\pm$ 0.000 \\
+& Flat MARL (MAPPO) & 14.17 $\pm$ 2.89 & 0.624 $\pm$ 0.110 \\
+& CommNet & 19.58 $\pm$ 7.77 & 0.398 $\pm$ 0.248 \\
+& HierComm (heur. cmd) & \textbf{5.88} $\pm$ 1.04 & 0.832 $\pm$ 0.027 \\
+\bottomrule
+\end{tabular}
+\end{table*}

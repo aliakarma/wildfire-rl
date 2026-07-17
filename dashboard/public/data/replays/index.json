@@ -1,0 +1,274 @@
+{
+ "replays": [
+  {
+   "file": "saudi_noop_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "noop",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 27.0,
+    "ISR": 0.2857142857142857,
+    "CE": 1.0,
+    "burned": 483,
+    "return": -434.4140625
+   }
+  },
+  {
+   "file": "saudi_value_first_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "value_first",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 18.0,
+    "ISR": 0.5714285714285714,
+    "CE": 0.9955849889624724,
+    "burned": 467,
+    "return": -412.685546875
+   }
+  },
+  {
+   "file": "saudi_local_reactive_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "local_reactive",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 77,
+   "final": {
+    "WEL": 23.0,
+    "ISR": 0.42857142857142855,
+    "CE": 0.4188034188034188,
+    "burned": 116,
+    "return": -65.17812500000001
+   }
+  },
+  {
+   "file": "saudi_mappo_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "mappo",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 4.0,
+    "ISR": 0.8571428571428571,
+    "CE": 1.0,
+    "burned": 331,
+    "return": -246.8359375
+   }
+  },
+  {
+   "file": "saudi_commnet_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "commnet",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 0.0,
+    "ISR": 1.0,
+    "CE": 0.9249448123620309,
+    "burned": 118,
+    "return": -79.784765625
+   }
+  },
+  {
+   "file": "saudi_hiercomm_heur_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "hiercomm_heur",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 4.0,
+    "ISR": 0.8571428571428571,
+    "CE": 1.0,
+    "burned": 112,
+    "return": -136.162109375
+   }
+  },
+  {
+   "file": "california_noop_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "noop",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 138,
+   "final": {
+    "WEL": 34.0,
+    "ISR": 0.0,
+    "CE": 1.0,
+    "burned": 827,
+    "return": -565.37109375
+   }
+  },
+  {
+   "file": "california_value_first_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "value_first",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 138,
+   "final": {
+    "WEL": 28.0,
+    "ISR": 0.16666666666666666,
+    "CE": 0.9952038369304557,
+    "burned": 818,
+    "return": -554.326171875
+   }
+  },
+  {
+   "file": "california_local_reactive_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "local_reactive",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 28.0,
+    "ISR": 0.16666666666666666,
+    "CE": 0.41280353200883,
+    "burned": 515,
+    "return": -270.96953125
+   }
+  },
+  {
+   "file": "california_mappo_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "mappo",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 22.0,
+    "ISR": 0.5,
+    "CE": 0.8432671081677704,
+    "burned": 736,
+    "return": -532.219140625
+   }
+  },
+  {
+   "file": "california_commnet_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "commnet",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 15.0,
+    "ISR": 0.5,
+    "CE": 0.9845474613686535,
+    "burned": 422,
+    "return": -324.14296875
+   }
+  },
+  {
+   "file": "california_hiercomm_heur_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "hiercomm_heur",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 71,
+   "final": {
+    "WEL": 6.0,
+    "ISR": 0.8333333333333334,
+    "CE": 1.0,
+    "burned": 109,
+    "return": -51.11328125
+   }
+  },
+  {
+   "file": "saudi_hiercomm_heur_from_california_s42.json",
+   "kind": "transfer",
+   "region": "saudi",
+   "policy": "hiercomm_heur",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 93,
+   "final": {
+    "WEL": 4.0,
+    "ISR": 0.8571428571428571,
+    "CE": 0.9964539007092199,
+    "burned": 212,
+    "return": -132.44140625
+   }
+  },
+  {
+   "file": "saudi_commnet_from_california_s42.json",
+   "kind": "transfer",
+   "region": "saudi",
+   "policy": "commnet",
+   "ckpt_region": "california",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 27.0,
+    "ISR": 0.2857142857142857,
+    "CE": 1.0,
+    "burned": 367,
+    "return": -362.01171875
+   }
+  },
+  {
+   "file": "california_hiercomm_heur_from_saudi_s42.json",
+   "kind": "transfer",
+   "region": "california",
+   "policy": "hiercomm_heur",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 18.0,
+    "ISR": 0.3333333333333333,
+    "CE": 1.0,
+    "burned": 517,
+    "return": -355.4296875
+   }
+  },
+  {
+   "file": "california_commnet_from_saudi_s42.json",
+   "kind": "transfer",
+   "region": "california",
+   "policy": "commnet",
+   "ckpt_region": "saudi",
+   "episode_seed": 100042,
+   "steps": 150,
+   "final": {
+    "WEL": 31.0,
+    "ISR": 0.16666666666666666,
+    "CE": 0.6821192052980133,
+    "burned": 663,
+    "return": -539.355078125
+   }
+  }
+ ],
+ "skipped_unverified": [
+  {
+   "region": "saudi",
+   "policy": "greedy_risk",
+   "kind": "native",
+   "reason": "saudi/greedy_risk: replay CE 0.9911699779249448 != frozen 0.9933774834437086 \u2014 the replay is NOT the reported rollout."
+  },
+  {
+   "region": "california",
+   "policy": "greedy_risk",
+   "kind": "native",
+   "reason": "california/greedy_risk: replay CE 0.9952038369304557 != frozen 0.9928057553956835 \u2014 the replay is NOT the reported rollout."
+  }
+ ]
+}

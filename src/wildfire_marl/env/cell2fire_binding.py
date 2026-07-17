@@ -128,7 +128,12 @@ class Cell2FireBinding:
         self.read_timeout_s = float(read_timeout_s)
         self.verbose = verbose
 
-        self._workdir = Path(tempfile.mkdtemp(prefix="c2f_out_"))
+        if os.name == "nt":
+            tmp_root = Path("C:/Users/Public/c2f_tmp")
+            tmp_root.mkdir(exist_ok=True)
+            self._workdir = Path(tempfile.mkdtemp(prefix="c2f_out_", dir=tmp_root))
+        else:
+            self._workdir = Path(tempfile.mkdtemp(prefix="c2f_out_"))
         self._spawn_count = 0
         self.process: subprocess.Popen | None = None
         self.lines: list[str] = []
@@ -141,23 +146,70 @@ class Cell2FireBinding:
 
     def spawn(self) -> None:
         self.output_folder.mkdir(parents=True, exist_ok=True)
-        cmd = _build_command(
-            self.binary,
-            self.input_folder,
-            self.output_folder,
-            seed=self.seed,
-            steps_before_sim=self.steps_before_sim,
-            steps_per_action=self.steps_per_action,
-            ros_cv=self.ros_cv,
-            ignition_radius=self.ignition_radius,
-        )
+        if os.name == "nt":
+            def to_wsl_path(path: Path | str) -> str:
+                p = Path(path).resolve().as_posix()
+                if len(p) > 1 and p[1] == ":":
+                    p = f"/mnt/{p[0].lower()}{p[2:]}"
+                return p
+
+            cmd = [
+                "wsl",
+                to_wsl_path(self.binary),
+                "--input-instance-folder",
+                to_wsl_path(self.input_folder) + "/",
+                "--output-folder",
+                to_wsl_path(self.output_folder) + "/",
+                "--ignitions",
+                "--sim-years",
+                "1",
+                "--nsims",
+                "1",
+                "--grids",
+                "--final-grid",
+                "--Fire-Period-Length",
+                "1.0",
+                "--output-messages",
+                "--weather",
+                "rows",
+                "--nweathers",
+                "1",
+                "--ROS-CV",
+                str(self.ros_cv),
+                "--IgnitionRad",
+                str(self.ignition_radius),
+                "--seed",
+                str(self.seed),
+                "--nthreads",
+                "1",
+                "--ROS-Threshold",
+                "0.1",
+                "--HFI-Threshold",
+                "0.1",
+                "--steps-action",
+                str(self.steps_per_action),
+                "--steps-before",
+                str(self.steps_before_sim),
+                "--HarvestPlan",
+            ]
+        else:
+            cmd = _build_command(
+                self.binary,
+                self.input_folder,
+                self.output_folder,
+                seed=self.seed,
+                steps_before_sim=self.steps_before_sim,
+                steps_per_action=self.steps_per_action,
+                ros_cv=self.ros_cv,
+                ignition_radius=self.ignition_radius,
+            )
         if self.verbose:
             print("Spawning:", " ".join(cmd))
         self.process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stdin=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
         )
         self._spawn_count += 1
         self.finished = False
@@ -179,6 +231,13 @@ class Cell2FireBinding:
         while line != _INPUT_MARKER:
             line = self._read_line()
             if line == "" and self.process.poll() is not None:
+                code = self.process.poll()
+                if code != 0:
+                    output_dump = "\n".join(self.lines)
+                    raise RuntimeError(
+                        f"Cell2Fire subprocess exited unexpectedly with code {code}.\n"
+                        f"Output:\n{output_dump}"
+                    )
                 break  # process exited; caller checks `finished`
             if line == "" and time.monotonic() > deadline:
                 raise TimeoutError(
@@ -188,7 +247,16 @@ class Cell2FireBinding:
             if self.verbose and line:
                 print("[c2f]", line)
             if ".csv" in line and "Forest" in line and "We are plotting" not in line:
-                csv_paths.append(Path(line))
+                if os.name == "nt" and line.startswith("/mnt/"):
+                    parts = line.split("/", 3)
+                    if len(parts) >= 3:
+                        drive = parts[2].upper() + ":"
+                        rest = parts[3] if len(parts) > 3 else ""
+                        csv_paths.append(Path(f"{drive}/{rest}"))
+                    else:
+                        csv_paths.append(Path(line))
+                else:
+                    csv_paths.append(Path(line))
             if _FINISHED_MARKER in line:
                 self.finished = True
         return csv_paths
