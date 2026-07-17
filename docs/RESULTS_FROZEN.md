@@ -13,6 +13,13 @@
 Verify integrity at any time: `python scripts/freeze_results.py wildfire_phase3_multiseed` → the
 `fingerprint_sha256` must match the value above.
 
+> **Provenance note:** `FREEZE.json` records `git_dirty: true` — the freeze was taken from a
+> working tree with uncommitted changes at `567945f`. The manifest **fingerprint** (a SHA-256
+> over every frozen file), not the commit hash, is therefore the authoritative reference for
+> the frozen content. The ablation/robustness (`wildfire_phase4/`) and generalization/transfer
+> (`wildfire_phase6/`) directories carry their own `FREEZE.json` fingerprints, pinned by
+> `scripts/build_dashboard_data.py`.
+
 ## Reproduction command
 
 ```bash
