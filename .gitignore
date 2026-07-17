@@ -191,3 +191,6 @@ third_party/firehose/cell2fire/Cell2FireC/*.gch
 dashboard/node_modules/
 dashboard/dist/
 Dashboard_Guide.md
+
+.vercel
+.env*
