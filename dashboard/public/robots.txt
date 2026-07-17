@@ -1,0 +1,4 @@
+# Review channel (AAAI double-blind): keep the site out of search indexes until
+# acceptance. Replace with an allow-all robots.txt for the camera-ready deploy.
+User-agent: *
+Disallow: /

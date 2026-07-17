@@ -1,0 +1,236 @@
+{
+ "meta": {
+  "fingerprint": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
+  "fingerprints": {
+   "wildfire_phase3_multiseed": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
+   "wildfire_phase4": "be6d0e218ffe77f144a9171ac21ec5562c422cf9180c1d543fa150a11c36f94d",
+   "wildfire_phase6": "cfce760842dd1e2f67d1a0f9709b8be4c701c464353d69d81d884626ba9af93b"
+  },
+  "frozen_utc": "2026-07-10T18:28:20Z",
+  "freeze_commit": "567945f3823d196e8975ccab776e9b63b516b0b3",
+  "commit": "24613d2eaea444bfcca325e52baf7fa6d9bf69fa",
+  "git_dirty": true,
+  "built": "2026-07-17",
+  "protocol": {
+   "train_seeds": [
+    42,
+    1042,
+    2042,
+    3042,
+    4042
+   ],
+   "episodes": 15,
+   "unit": "per-training-seed mean (n=5)"
+  }
+ },
+ "items": [
+  {
+   "id": "comparison_grid_saudi",
+   "kind": "comparison",
+   "region": "saudi",
+   "policy": "all",
+   "src": "media/wildfire_phase5_gifs/comparison_grid_saudi.mp4",
+   "bytes": 2864722,
+   "gif_fallback": "media/wildfire_phase5_gifs/comparison_grid_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/comparison_snapshot_saudi.png"
+  },
+  {
+   "id": "rollout_noop_saudi",
+   "kind": "rollout",
+   "region": "saudi",
+   "policy": "noop",
+   "src": "media/wildfire_phase5_gifs/rollout_noop_saudi.mp4",
+   "bytes": 770862,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_noop_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_noop_saudi.png"
+  },
+  {
+   "id": "rollout_local_reactive_saudi",
+   "kind": "rollout",
+   "region": "saudi",
+   "policy": "local_reactive",
+   "src": "media/wildfire_phase5_gifs/rollout_local_reactive_saudi.mp4",
+   "bytes": 344864,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_local_reactive_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_local_reactive_saudi.png"
+  },
+  {
+   "id": "rollout_mappo_saudi",
+   "kind": "rollout",
+   "region": "saudi",
+   "policy": "mappo",
+   "src": "media/wildfire_phase5_gifs/rollout_mappo_saudi.mp4",
+   "bytes": 633834,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_mappo_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_mappo_saudi.png"
+  },
+  {
+   "id": "rollout_commnet_saudi",
+   "kind": "rollout",
+   "region": "saudi",
+   "policy": "commnet",
+   "src": "media/wildfire_phase5_gifs/rollout_commnet_saudi.mp4",
+   "bytes": 737762,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_commnet_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_commnet_saudi.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_saudi",
+   "kind": "rollout",
+   "region": "saudi",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase5_gifs/rollout_hiercomm_heur_saudi.mp4",
+   "bytes": 792399,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_hiercomm_heur_saudi.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_hiercomm_heur_saudi.png"
+  },
+  {
+   "id": "rollout_commnet_saudi_native",
+   "kind": "transfer_native",
+   "region": "saudi",
+   "policy": "commnet",
+   "src": "media/wildfire_phase6_gifs/rollout_commnet_saudi_native.mp4",
+   "bytes": 860526,
+   "direction": "saudi->saudi",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_commnet_saudi_native.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_commnet_saudi.png"
+  },
+  {
+   "id": "rollout_commnet_saudi_to_california",
+   "kind": "transfer_cross",
+   "region": "saudi",
+   "policy": "commnet",
+   "src": "media/wildfire_phase6_gifs/rollout_commnet_saudi_to_california.mp4",
+   "bytes": 2228599,
+   "direction": "saudi->california",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_commnet_saudi_to_california.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_commnet_saudi.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_saudi_native",
+   "kind": "transfer_native",
+   "region": "saudi",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_saudi_native.mp4",
+   "bytes": 793664,
+   "direction": "saudi->saudi",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_saudi_native.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_hiercomm_heur_saudi.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_saudi_to_california",
+   "kind": "transfer_cross",
+   "region": "saudi",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_saudi_to_california.mp4",
+   "bytes": 1727293,
+   "direction": "saudi->california",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_saudi_to_california.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_hiercomm_heur_saudi.png"
+  },
+  {
+   "id": "comparison_grid_california",
+   "kind": "comparison",
+   "region": "california",
+   "policy": "all",
+   "src": "media/wildfire_phase5_gifs/comparison_grid_california.mp4",
+   "bytes": 7455787,
+   "gif_fallback": "media/wildfire_phase5_gifs/comparison_grid_california.gif",
+   "poster": "media/wildfire_phase5_gifs/comparison_snapshot_california.png"
+  },
+  {
+   "id": "rollout_noop_california",
+   "kind": "rollout",
+   "region": "california",
+   "policy": "noop",
+   "src": "media/wildfire_phase5_gifs/rollout_noop_california.mp4",
+   "bytes": 2223948,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_noop_california.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_noop_california.png"
+  },
+  {
+   "id": "rollout_local_reactive_california",
+   "kind": "rollout",
+   "region": "california",
+   "policy": "local_reactive",
+   "src": "media/wildfire_phase5_gifs/rollout_local_reactive_california.mp4",
+   "bytes": 1556710,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_local_reactive_california.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_local_reactive_california.png"
+  },
+  {
+   "id": "rollout_mappo_california",
+   "kind": "rollout",
+   "region": "california",
+   "policy": "mappo",
+   "src": "media/wildfire_phase5_gifs/rollout_mappo_california.mp4",
+   "bytes": 2364591,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_mappo_california.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_mappo_california.png"
+  },
+  {
+   "id": "rollout_commnet_california",
+   "kind": "rollout",
+   "region": "california",
+   "policy": "commnet",
+   "src": "media/wildfire_phase5_gifs/rollout_commnet_california.mp4",
+   "bytes": 1400917,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_commnet_california.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_commnet_california.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_california",
+   "kind": "rollout",
+   "region": "california",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase5_gifs/rollout_hiercomm_heur_california.mp4",
+   "bytes": 752354,
+   "gif_fallback": "media/wildfire_phase5_gifs/rollout_hiercomm_heur_california.gif",
+   "poster": "media/wildfire_phase5_gifs/snapshot_hiercomm_heur_california.png"
+  },
+  {
+   "id": "rollout_commnet_california_native",
+   "kind": "transfer_native",
+   "region": "california",
+   "policy": "commnet",
+   "src": "media/wildfire_phase6_gifs/rollout_commnet_california_native.mp4",
+   "bytes": 1872361,
+   "direction": "california->california",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_commnet_california_native.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_commnet_california.png"
+  },
+  {
+   "id": "rollout_commnet_california_to_saudi",
+   "kind": "transfer_cross",
+   "region": "california",
+   "policy": "commnet",
+   "src": "media/wildfire_phase6_gifs/rollout_commnet_california_to_saudi.mp4",
+   "bytes": 1157705,
+   "direction": "california->saudi",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_commnet_california_to_saudi.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_commnet_california.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_california_native",
+   "kind": "transfer_native",
+   "region": "california",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_california_native.mp4",
+   "bytes": 756896,
+   "direction": "california->california",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_california_native.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_hiercomm_heur_california.png"
+  },
+  {
+   "id": "rollout_hiercomm_heur_california_to_saudi",
+   "kind": "transfer_cross",
+   "region": "california",
+   "policy": "hiercomm_heur",
+   "src": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_california_to_saudi.mp4",
+   "bytes": 794966,
+   "direction": "california->saudi",
+   "gif_fallback": "media/wildfire_phase6_gifs/rollout_hiercomm_heur_california_to_saudi.gif",
+   "poster": "media/wildfire_phase6_gifs/fig_transfer_hiercomm_heur_california.png"
+  }
+ ]
+}

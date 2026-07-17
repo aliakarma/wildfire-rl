@@ -1,0 +1,156 @@
+{
+ "meta": {
+  "fingerprint": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
+  "fingerprints": {
+   "wildfire_phase3_multiseed": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
+   "wildfire_phase4": "be6d0e218ffe77f144a9171ac21ec5562c422cf9180c1d543fa150a11c36f94d",
+   "wildfire_phase6": "cfce760842dd1e2f67d1a0f9709b8be4c701c464353d69d81d884626ba9af93b"
+  },
+  "frozen_utc": "2026-07-10T18:28:20Z",
+  "freeze_commit": "567945f3823d196e8975ccab776e9b63b516b0b3",
+  "commit": "24613d2eaea444bfcca325e52baf7fa6d9bf69fa",
+  "git_dirty": true,
+  "built": "2026-07-17",
+  "protocol": {
+   "train_seeds": [
+    42,
+    1042,
+    2042,
+    3042,
+    4042
+   ],
+   "episodes": 15,
+   "unit": "per-training-seed mean (n=5)"
+  }
+ },
+ "source": "wildfire_phase4/robustness_summary.json",
+ "protocol": {
+  "regimes": [
+   "easy",
+   "medium",
+   "hard"
+  ],
+  "eval_seeds": [
+   42,
+   1042,
+   2042,
+   3042,
+   4042
+  ],
+  "episodes": 10
+ },
+ "regions": {
+  "saudi": {
+   "easy": {
+    "noop": {
+     "WEL_mean": 26.786666666666665,
+     "ISR_mean": 0.2933333333333332
+    },
+    "value_first": {
+     "WEL_mean": 17.96,
+     "ISR_mean": 0.5714285714285713
+    },
+    "commnet": {
+     "WEL_mean": 4.176,
+     "ISR_mean": 0.8864761904761906
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 3.272,
+     "ISR_mean": 0.908952380952381
+    }
+   },
+   "medium": {
+    "noop": {
+     "WEL_mean": 27.0,
+     "ISR_mean": 0.2857142857142856
+    },
+    "value_first": {
+     "WEL_mean": 18.84,
+     "ISR_mean": 0.5447619047619046
+    },
+    "commnet": {
+     "WEL_mean": 12.44,
+     "ISR_mean": 0.6819047619047618
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 7.023999999999999,
+     "ISR_mean": 0.8087619047619047
+    }
+   },
+   "hard": {
+    "noop": {
+     "WEL_mean": 27.0,
+     "ISR_mean": 0.2857142857142856
+    },
+    "value_first": {
+     "WEL_mean": 19.44,
+     "ISR_mean": 0.5238095238095236
+    },
+    "commnet": {
+     "WEL_mean": 17.951999999999998,
+     "ISR_mean": 0.5436190476190477
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 11.309333333333331,
+     "ISR_mean": 0.7150476190476189
+    }
+   }
+  },
+  "california": {
+   "easy": {
+    "noop": {
+     "WEL_mean": 12.68,
+     "ISR_mean": 0.571111111111111
+    },
+    "value_first": {
+     "WEL_mean": 6.96,
+     "ISR_mean": 0.7333333333333334
+    },
+    "commnet": {
+     "WEL_mean": 8.064,
+     "ISR_mean": 0.7666666666666665
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 0.448,
+     "ISR_mean": 0.9875555555555556
+    }
+   },
+   "medium": {
+    "noop": {
+     "WEL_mean": 34.0,
+     "ISR_mean": 0.0
+    },
+    "value_first": {
+     "WEL_mean": 28.4,
+     "ISR_mean": 0.1555555555555555
+    },
+    "commnet": {
+     "WEL_mean": 19.576,
+     "ISR_mean": 0.3977777777777777
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 5.8773333333333335,
+     "ISR_mean": 0.8320000000000001
+    }
+   },
+   "hard": {
+    "noop": {
+     "WEL_mean": 34.0,
+     "ISR_mean": 0.0
+    },
+    "value_first": {
+     "WEL_mean": 32.8,
+     "ISR_mean": 0.0333333333333333
+    },
+    "commnet": {
+     "WEL_mean": 25.586666666666662,
+     "ISR_mean": 0.2702222222222222
+    },
+    "hiercomm_heur": {
+     "WEL_mean": 17.720000000000002,
+     "ISR_mean": 0.4795555555555555
+    }
+   }
+  }
+ }
+}
