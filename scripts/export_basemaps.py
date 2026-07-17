@@ -38,8 +38,12 @@ REGIONS = ["saudi", "california"]
 OUT_DEFAULT = REPO / "dashboard" / "public" / "data" / "basemaps"
 
 
-def crop_to_extent(img: np.ndarray, ext: tuple[float, float, float, float],
-                   target: tuple[float, float, float, float], width: int) -> Image.Image:
+def crop_to_extent(
+    img: np.ndarray,
+    ext: tuple[float, float, float, float],
+    target: tuple[float, float, float, float],
+    width: int,
+) -> Image.Image:
     """Crop the tile mosaic to exactly ``target`` (Web Mercator) and resample to ``width``.
 
     ``bounds2img`` returns a tile-aligned mosaic strictly larger than the requested bounds.
@@ -59,8 +63,9 @@ def crop_to_extent(img: np.ndarray, ext: tuple[float, float, float, float],
     return src.resize((width, height), Image.LANCZOS, box=box)
 
 
-def export_region(region: str, style: str, data_dir: str, out_dir: Path,
-                  width: int, quality: int) -> dict:
+def export_region(
+    region: str, style: str, data_dir: str, out_dir: Path, width: int, quality: int
+) -> dict:
     r = GeoRenderer(region, style=style, data_dir=data_dir)
     img, ext = r._fetch_basemap()
     x0, x1, y0, y1 = r.extent_merc
