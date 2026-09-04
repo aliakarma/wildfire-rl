@@ -1,0 +1,10 @@
+{
+  "frozen_utc": "2026-07-19T06:06:37Z",
+  "frozen_date": "2026-07-19",
+  "results_dir": "wildfire_phase4_extended",
+  "git_sha": "169d553f5e2937ccf9a82148dc0f69c53675a7d6",
+  "git_branch": "main",
+  "git_dirty": true,
+  "n_files": 3,
+  "fingerprint_sha256": "cada146a7eacd3d61f86a153d3574e34024557e75fe1b36f71ba4e90c07dc5fb"
+}

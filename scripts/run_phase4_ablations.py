@@ -370,7 +370,10 @@ def _emit_ablation_table(summary, out_path: Path) -> None:
 def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds):
     """Zero-shot eval of frozen default-trained policies across easy/medium/hard regimes (resumable)."""
     regimes = ["easy", "medium", "hard"]
-    policies = ["noop", "value_first", "commnet", "hiercomm_heur"]
+    policies = [
+        "noop", "value_first", "greedy_risk", "local_reactive",
+        "mappo", "commnet", "hiercomm_heur",
+    ]
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / "robustness_results.csv"
     existing = pd.read_csv(csv_path) if csv_path.exists() else pd.DataFrame()
@@ -398,7 +401,9 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
                     continue
                 if env is None:
                     env = make_marl_env(region, regime, reward_cls=WELISRDeltaReward)
-                seeds_to_use = train_seeds if kind in ("commnet", "hiercomm_heur") else [None]
+                seeds_to_use = (
+                    train_seeds if kind in ("commnet", "hiercomm_heur", "mappo") else [None]
+                )
                 wel_vals, isr_vals = [], []
                 for ts in seeds_to_use:
                     try:

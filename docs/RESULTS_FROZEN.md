@@ -19,6 +19,16 @@ Verify integrity at any time: `python scripts/freeze_results.py wildfire_phase3_
 > the frozen content. The ablation/robustness (`wildfire_phase4/`) and generalization/transfer
 > (`wildfire_phase6/`) directories carry their own `FREEZE.json` fingerprints, pinned by
 > `scripts/build_dashboard_data.py`.
+>
+> **Known irreproducibility (Greedy-Risk only, 2026-07-19 audit):** re-running the frozen
+> protocol at HEAD reproduces every per-episode record bit-exactly **except** parts of the
+> Greedy-Risk stream — a pre-freeze dirty-tree behavioral delta confined to that policy's
+> collision-prone trajectories (divergences are single 3×3 treatment patches; burned-cell
+> deltas of exactly 9). Aggregates: Saudi Greedy-Risk reproduces exactly (WEL 24.72,
+> ISR 0.3581); California reproduces to WEL 28.32 / ISR 0.1578 vs the frozen 28.40 / 0.1556
+> (Δ ≤ 0.08 WEL, no ranking or conclusion affected). All other policies reproduce exactly.
+> Dashboard replays for Greedy-Risk therefore use episodes that verify bit-exactly against
+> the frozen per-episode CSV (Saudi: group 42 ep 1; California: group 42 ep 8).
 
 ## Reproduction command
 
@@ -66,11 +76,30 @@ Value-First p=4e-4, Greedy p=1e-4, No-Op p<1e-4; **vs MAPPO p=0.32 (n.s.)**.
 Do **not** use "dominates / 3–5×" language — that was an artifact of a single non-reproducible
 draw (see the reproducibility audit).
 
+## Extended difficulty sweep (2026-07-19)
+
+`wildfire_phase4_extended/` (FREEZE fingerprint `cada146a7eacd3d6…`) extends the Phase-4
+difficulty sweep to **all seven policies** and supersedes `wildfire_phase4/` as the source of
+the paper's difficulty table and the dashboard's Robustness page (ablation data still comes
+from `wildfire_phase4/`). Protocol: easy/hard computed at 10 episodes per eval-seed group;
+the **medium column equals the `default` regime and reuses the main 15-episode evaluation**
+(`scripts/postprocess_extended_robustness.py` normalizes it from `phase3_summary.json` so no
+column mixes budgets — the same convention the original 4-policy artifact used implicitly).
+Headline: Local Reactive is best in both easy cells (Saudi 3.06, California 0.00); HierComm
+is best in all four medium/hard cells (largest margins on hard).
+
 ## Not in this frozen table (deferred to appendix/ablation)
 
 - **QMIX** — degenerate (Saudi = No-Op; California partial). Report as a failed baseline.
-- **HierComm (learned commander)** — the fully-learned-`StrategicController` variant; underperforms
-  the value-heuristic commander. Report as an ablation that justifies the value dispatcher.
+- **HierComm (learned commander)** — ~~single-seed deferred~~ **completed 2026-07-19** at the
+  full 5-seed protocol: `wildfire_phase3_hiercomm_learned/` (FREEZE fingerprint
+  `925624778a321458…`, 10 checkpoints + curves + summary). Result: statistically
+  indistinguishable from the value-aware rule on Saudi (WEL 6.02 ± 2.04 vs 7.02 ± 2.36,
+  Welch p=0.49) and significantly **worse** on California (8.20 ± 1.63 vs 5.88 ± 1.04,
+  p=0.032, d=1.70) — it never significantly improves, justifying the deployed rule-based
+  dispatcher. Reproduce: `python scripts/run_phase3.py --methods hiercomm --regions
+  saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 3 --train-steps 100000
+  --episodes 15 --out wildfire_phase3_hiercomm_learned`.
 
-Both can be added by including `qmix,hiercomm` in the sweep's `--methods` (idempotent; ~20 extra
-jobs). Until then, cite them at single seed from the earlier deterministic run with a footnote.
+QMIX can still be added by including `qmix` in the sweep's `--methods` (idempotent); until
+then, cite it at single seed from the earlier deterministic run with a footnote.
