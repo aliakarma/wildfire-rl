@@ -43,9 +43,10 @@ pre-commit install          # runs ruff/black/nbstripout/large-file checks on co
 ## Adding a new region
 
 1. Place channel layers under `data/<region>/grids/<G>x<G>/` and run
-   `python scripts/build_tensors.py --region <region> --grid <G>`.
-2. Add `configs/region/<region>.yaml`.
-3. Reference it via `--config` / `--set region.dir=<region> region.name=<name>`. No new code.
+   `python -m wildfire_marl.data.to_cell2fire --region <region> --grid <G>` to emit the
+   Cell2Fire landscape under `data/cell2fire/<Region>/`.
+2. Register the region in `src/wildfire_marl/env/regimes.py` so `make_marl_env` resolves it.
+3. Add a training config under `configs/marl/` modelled on an existing one. No new code.
 
 ## Reporting bugs / requesting features
 

@@ -1,11 +1,11 @@
 # MIGRATION.md — V1 → V2 (Cell2Fire re-founding)
 
-**Date:** 2026-07-04 · **Branch:** `v2-cell2fire` · **Phase:** 0 of `REMEDIATION_PLAN_V2.md`
+**Date:** 2026-07-04 · **Branch:** `v2-cell2fire`
 
 This document records what carried over from the V1 prototype, what was retired, and why.
-The V1 surface is frozen, unmodified, under [`legacy_v1/`](../legacy_v1/FROZEN.md). The V2
-package is `src/wildfire_marl/`. **Nothing from `legacy_v1/` is ever cited as a result** — it
-is prior art / motivation only, and no V2 code imports from it.
+The V2 package is `src/wildfire_marl/`. `legacy_v1/` paths below name the *former* location
+of each file; that archive has since been removed from the tree. **Nothing from V1 is ever
+cited as a result** — it is prior art / motivation only, and no V2 code imports from it.
 
 ## Why the re-founding: the three AAAI rejection reasons this migration fixes
 
@@ -44,7 +44,6 @@ GIS asset data with provenance + sensitivity analysis).
 | `legacy_v1/scripts/check_seed_integrity.py` | `src/wildfire_marl/reproducibility/check_seed_integrity.py` | Logic unchanged; now a `python -m` module. V2 eval CSVs are registered in `EVAL_CSVS` as phases produce them (V1 CSVs are never re-certified). Learned-policy prefix set widened to `ppo|mappo|qmix`. |
 | `legacy_v1/scripts/make_manifest.py` | `src/wildfire_marl/reproducibility/make_manifest.py` | Logic unchanged; `_bootstrap` shim dropped (proper package install). |
 | `legacy_v1/scripts/validate_tensors.py` | `src/wildfire_marl/reproducibility/validate_tensors.py` | Logic unchanged; channel contract now from `wildfire_marl.data.CHANNEL_ORDER`; data root from `wildfire_marl.paths`. |
-| `legacy_v1/scripts/build_report_tables.py` | `src/wildfire_marl/reproducibility/build_report_tables.py` | Rendering mechanism unchanged; `TABLES` starts empty and is re-registered per phase (V1 tables reference retired results). |
 | `legacy_v1/tests/{test_metrics,test_significance,test_seeding,test_logging}.py` | `tests/` | Imports re-pointed at `wildfire_marl`. The torch determinism test uses `pytest.importorskip` because torch is now an optional extra. |
 | `data/<region>/` rasters + tensors | kept in place | NDVI/DEM/ERA5/FIRMS-derived 7-channel tensors feed the Phase-2 Cell2Fire landscape conversion. `CHANNEL_ORDER` frozen in `wildfire_marl.data`. |
 | `docs/data_card.md` | kept in place | Provenance note added; V1 processing references now point into `legacy_v1/`. |

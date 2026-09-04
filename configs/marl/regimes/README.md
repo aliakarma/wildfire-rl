@@ -38,7 +38,7 @@ total_steps: 100000
 Or from the eval harness:
 
 ```bash
-python scripts/eval_hierarchical.py --region saudi --regime default --episodes 15
+python scripts/run_phase4_ablations.py --study robustness --regions saudi \n    --ckpt-dir results/wildfire_phase3_multiseed --episodes 15 --out /tmp/regime_eval
 ```
 
 Programmatically:

@@ -1,28 +1,33 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Wildfire-RL: Geospatial Reinforcement Learning for Wildfire Suppression and Cross-Regional Policy Transfer"
+title: "wildfire-marl: Hierarchical Multi-Agent Reinforcement Learning for Wildfire Suppression on Validated Fire Physics"
 authors:
   - family-names: Akarma
     given-names: Ali
-version: 0.1.0
-date-released: "2026-06-26"
+version: 2.0.0a0
+date-released: "2026-07-19"
 license: MIT
 repository-code: "https://github.com/aliakarma/wildfire-rl"
 keywords:
-  - reinforcement-learning
-  - wildfire
-  - ppo
-  - transfer-learning
   - multi-agent-reinforcement-learning
+  - wildfire
+  - cell2fire
+  - mappo
+  - hierarchical-reinforcement-learning
+  - transfer-learning
   - geospatial
   - remote-sensing
   - domain-generalization
+  - benchmark
 abstract: >
-  Wildfire-RL is a reproducible framework and benchmark for training proximal-policy-
-  optimization (PPO) agents to suppress wildfires on geospatial state tensors built from
-  ERA5 climate, SRTM terrain, MODIS NDVI fuel, and FIRMS ignition data. It supports
-  single-agent and centralized cooperative multi-agent control, ablation studies,
-  multi-seed statistical evaluation, and a symmetric cross-regional transfer protocol
-  between desert (Saudi Eastern Province) and forest (Northern California) wildfire regimes.
+  wildfire-marl is a reproducible benchmark and method for multi-agent wildfire suppression on
+  validated fire physics. Firefighting agents defend critical infrastructure under Cell2Fire, a
+  peer-reviewed C++ simulator of the Canadian Forest Fire Behaviour Prediction system, on real
+  7-channel geospatial landscapes (ERA5 weather, SRTM terrain, MODIS NDVI fuel, FIRMS ignitions)
+  for two dissimilar regimes: Saudi Arabia's Eastern Province and Northern California. The
+  proposed hierarchical policy, HierComm, is compared against information-matched heuristics and
+  flat multi-agent RL over five training seeds with disjoint train/eval ignition streams,
+  bootstrap confidence intervals, effect sizes, single-factor ablations, and a symmetric
+  cross-regional transfer protocol. All reported artifacts are SHA-256 fingerprinted and frozen.
 # Optional: add a Zenodo DOI on first release, e.g.
 # doi: 10.5281/zenodo.XXXXXXX

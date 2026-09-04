@@ -76,7 +76,8 @@ Default `Ignitions.csv` = most-detected burnable cell (deterministic).
 
 Wildfire-RL builds a 7-channel geospatial **state tensor** per region from four public
 remote-sensing sources. Raw data is **not redistributed** in this repository; it is
-downloaded from the providers (see `scripts/download_data.py`) and processed into tensors.
+downloaded from the providers (see the per-source notebooks under
+`notebooks/Data Preliminary/`) and processed into tensors.
 
 ## Regions
 
@@ -101,7 +102,7 @@ col 0 = min longitude) to the ROI rectangle.
 | terrain | NASA/USGS | SRTM DEM → slope | public domain (US Gov) |
 
 > ⚠️ A known ERA5 quirk: the time coordinate is `valid_time` (not `time`). The preprocessing
-> handles this; see `scripts/download_data.py`.
+> handles this; see the ERA5 notebooks under `notebooks/Data Preliminary/`.
 
 ## Processing
 
@@ -114,7 +115,8 @@ col 0 = min longitude) to the ROI rectangle.
 
 The Saudi region additionally carries a **petroleum-asset criticality raster** (Phase 15):
 `data/saudi_eastern_province/grids/32x32/criticality.npy`, a single-channel `[0, 1]` map built by
-`scripts/build_criticality.py` (Gaussian falloff around public petroleum sites), used as an
+`python -m wildfire_marl.infra.build_infrastructure` (Gaussian falloff around public
+petroleum sites), used as an
 asset-weighted reward term — it is **not** part of the frozen 7-channel state tensor.
 
 ## Normalization caveat (important for transfer)

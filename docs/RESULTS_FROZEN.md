@@ -4,20 +4,20 @@
 
 | | |
 |---|---|
-| Results dir | `wildfire_phase3_multiseed/` (30 checkpoints, curves, summary, table, logs) |
+| Results dir | `results/wildfire_phase3_multiseed/` (30 checkpoints, curves, summary, table, logs) |
 | Git commit | `567945f` (branch `additional`) |
 | Manifest fingerprint | `da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd` |
 | Protocol | 5 **training** seeds `{42,1042,2042,3042,4042}`; eval = 5 held-out seed groups × 15 episodes |
 | Determinism | seeded env-reset pipeline; proven **bit-identical on CPU** |
 
-Verify integrity at any time: `python scripts/freeze_results.py wildfire_phase3_multiseed` → the
+Verify integrity at any time: `python scripts/freeze_results.py results/wildfire_phase3_multiseed` → the
 `fingerprint_sha256` must match the value above.
 
 > **Provenance note:** `FREEZE.json` records `git_dirty: true` — the freeze was taken from a
 > working tree with uncommitted changes at `567945f`. The manifest **fingerprint** (a SHA-256
 > over every frozen file), not the commit hash, is therefore the authoritative reference for
-> the frozen content. The ablation/robustness (`wildfire_phase4/`) and generalization/transfer
-> (`wildfire_phase6/`) directories carry their own `FREEZE.json` fingerprints, pinned by
+> the frozen content. The ablation/robustness (`results/wildfire_phase4/`) and generalization/transfer
+> (`results/wildfire_phase6/`) directories carry their own `FREEZE.json` fingerprints, pinned by
 > `scripts/build_dashboard_data.py`.
 >
 > **Known irreproducibility (Greedy-Risk only, 2026-07-19 audit):** re-running the frozen
@@ -36,7 +36,7 @@ Verify integrity at any time: `python scripts/freeze_results.py wildfire_phase3_
 python scripts/run_phase3.py \
   --methods noop,value_first,greedy_risk,local_reactive,mappo,commnet,hiercomm_heur \
   --regions saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 6 \
-  --train-steps 100000 --episodes 15 --out wildfire_phase3_multiseed
+  --train-steps 100000 --episodes 15 --out results/wildfire_phase3_multiseed
 ```
 
 Regime `default` (documented in `src/wildfire_marl/env/regimes.py`): Saudi wind×0.6 / FFMC 90,
@@ -78,10 +78,10 @@ draw (see the reproducibility audit).
 
 ## Extended difficulty sweep (2026-07-19)
 
-`wildfire_phase4_extended/` (FREEZE fingerprint `cada146a7eacd3d6…`) extends the Phase-4
-difficulty sweep to **all seven policies** and supersedes `wildfire_phase4/` as the source of
+`results/wildfire_phase4_extended/` (FREEZE fingerprint `cada146a7eacd3d6…`) extends the Phase-4
+difficulty sweep to **all seven policies** and supersedes `results/wildfire_phase4/` as the source of
 the paper's difficulty table and the dashboard's Robustness page (ablation data still comes
-from `wildfire_phase4/`). Protocol: easy/hard computed at 10 episodes per eval-seed group;
+from `results/wildfire_phase4/`). Protocol: easy/hard computed at 10 episodes per eval-seed group;
 the **medium column equals the `default` regime and reuses the main 15-episode evaluation**
 (`scripts/postprocess_extended_robustness.py` normalizes it from `phase3_summary.json` so no
 column mixes budgets — the same convention the original 4-policy artifact used implicitly).
@@ -92,14 +92,14 @@ is best in all four medium/hard cells (largest margins on hard).
 
 - **QMIX** — degenerate (Saudi = No-Op; California partial). Report as a failed baseline.
 - **HierComm (learned commander)** — ~~single-seed deferred~~ **completed 2026-07-19** at the
-  full 5-seed protocol: `wildfire_phase3_hiercomm_learned/` (FREEZE fingerprint
+  full 5-seed protocol: `results/wildfire_phase3_hiercomm_learned/` (FREEZE fingerprint
   `925624778a321458…`, 10 checkpoints + curves + summary). Result: statistically
   indistinguishable from the value-aware rule on Saudi (WEL 6.02 ± 2.04 vs 7.02 ± 2.36,
   Welch p=0.49) and significantly **worse** on California (8.20 ± 1.63 vs 5.88 ± 1.04,
   p=0.032, d=1.70) — it never significantly improves, justifying the deployed rule-based
   dispatcher. Reproduce: `python scripts/run_phase3.py --methods hiercomm --regions
   saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 3 --train-steps 100000
-  --episodes 15 --out wildfire_phase3_hiercomm_learned`.
+  --episodes 15 --out results/wildfire_phase3_hiercomm_learned`.
 
 QMIX can still be added by including `qmix` in the sweep's `--methods` (idempotent); until
 then, cite it at single seed from the earlier deterministic run with a footnote.
