@@ -174,7 +174,13 @@ legacy_v1/figures/*.pdf
 #      Phase 2) — committed so CI and reviewers can run the simulator directly ----
 !data/cell2fire/
 !data/cell2fire/**
-/AAAI Template
+# ---- AAAI Paper intermediates -----------------------------------------------
+AAAI Template/*.aux
+AAAI Template/*.bbl
+AAAI Template/*.blg
+AAAI Template/*.log
+AAAI Template/*.synctex.gz
+AAAI Template/*.out
 
 # ---- Cell2Fire C++ compiled binaries and intermediates ----------------------
 third_party/firehose/cell2fire/Cell2FireC/Cell2Fire
@@ -194,3 +200,6 @@ Dashboard_Guide.md
 
 .vercel
 .env*
+.gstack/
+peer_review_report_AAAI2027_HierComm.md
+

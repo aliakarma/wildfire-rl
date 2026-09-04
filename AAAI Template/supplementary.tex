@@ -1,0 +1,275 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2027}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\frenchspacing
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Resolve references to the main paper (equations, tables, sections).
+% \bibcite is suppressed so the imported .aux does not clash with the local
+% bibliography.
+\usepackage{xr}
+\makeatletter
+\begingroup
+\let\bibcite\@gobbletwo
+\externaldocument{AnonymousSubmission2027_revised}
+\endgroup
+\makeatother
+
+\pdfinfo{
+/Title (Supplementary Material: Infrastructure-Aware Wildfire Coordination)
+/Author (Anonymous)
+/TemplateVersion (2027.1)
+}
+
+\setcounter{secnumdepth}{2}
+
+\title{Supplementary Material \\ Infrastructure-Aware Wildfire Coordination: \\ A Benchmark on Validated Fire-Spread Physics and a \\ Value-Aware Hierarchical Multi-Agent Baseline}
+\author{Anonymous Authors}
+\affiliations{Anonymous Affiliations}
+
+\begin{document}
+\maketitle
+
+% This appendix is float-dense with [H] placements; ragged bottoms avoid
+% stretched interline gaps that flushbottom would otherwise introduce.
+\raggedbottom
+
+% Appendix lettering (A, B, ...) and S-prefixed float numbers so that
+% references from the main paper are unambiguous.
+\appendix
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thealgorithm}{S\arabic{algorithm}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+
+\noindent This document supplements the anonymous submission \emph{Infrastructure-Aware Wildfire Coordination: A Benchmark on Validated Fire-Spread Physics and a Value-Aware Hierarchical Multi-Agent Baseline}. Appendices are lettered A--G and floats are numbered with an \textbf{S} prefix; unprefixed equation, table, and section numbers refer to the main paper.
+
+\section{Training Algorithm and Hyperparameters}
+\label{app:hyperparameters}
+
+\begin{algorithm}[H]
+	\caption{HiVA Training}
+	\label{alg:training}
+	\begin{algorithmic}[1]
+		\STATE \textbf{Phase 1 (BC):} collect value-aware asset-defense demonstrations; train tactical policy $\pi_\phi$ by cross-entropy
+		\STATE Initialize centralized critic $V_\psi$
+		\FOR{iteration $= 1$ to $T$}
+		\STATE Collect rollouts: every $T_{\text{macro}}$ steps the commander assigns each agent a threat-weighted asset; $\pi_\phi$ acts with $R$ message rounds
+		\STATE $r_t \leftarrow$ Equation~\ref{eq:reward} of the main paper
+		\STATE Compute GAE advantages using $V_\psi$
+		\STATE Update $\pi_\phi, V_\psi$ by clipped PPO with an entropy bonus
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{table}[H]
+	\centering
+	\caption{Training and architecture hyperparameters. Every reward coefficient listed here appears in Equation~\ref{eq:reward} of the main paper.}
+	\label{tab:hyperparams}
+	\small
+	\setlength{\tabcolsep}{4pt}
+	\begin{tabular}{ll}
+		\toprule
+		Parameter & Value \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{Environment}} \\
+		Grid size & $32 \times 32$ \\
+		Number of agents & 3 \\
+		Crop size (egocentric observation) & $9 \times 9$ \\
+		Max episode steps & 150 \\
+		Simulated minutes per agent step & 30 \\
+		Coordination penalty ($\lambda$) & 0.1 \\
+		Infrastructure catastrophe weight ($\kappa$) & 2.0 \\
+		Wrapper cascade probability & 0.1 \\
+		Reward ISR weight ($\alpha$) & 20 \\
+		Firebreak shaping coefficient ($\eta$) & 0.05 \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{Strategic commander (rule)}} \\
+		Macro-step interval ($T_{\text{macro}}$) & 10 \\
+		Assignment & $v_j/(1{+}d_j)$ \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{Tactical policy}} \\
+		CNN feature dim & 64 \\
+		Target-encoding dim & 16 \\
+		Message rounds ($R$) & 2 \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{BC warm start}} \\
+		Demonstration episodes & 30 \\
+		Epochs / learning rate & 60 / $1 \times 10^{-3}$ \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{PPO fine-tuning}} \\
+		Training environment steps & 100,000 \\
+		Actor / critic learning rate & $3\times10^{-4}$ / $1\times10^{-3}$ \\
+		PPO clip / GAE $\lambda$ & 0.2 / 0.95 \\
+		PPO epochs / batch size & 4 / 256 \\
+		Entropy coefficient & 0.02 \\
+		Optimizer & Adam \\
+		\midrule
+		\multicolumn{2}{c}{\textbf{Flat baselines (MAPPO / QMIX / CommNet)}} \\
+		Training environment steps & 100,000 \\
+		Training objective & Equation~\ref{eq:reward}, main paper \\
+		Actor CNN features / critic hidden & 64 / 128 \\
+		GAE $\lambda$ / PPO clip & 0.95 / 0.2 \\
+		CommNet message rounds & 2 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\paragraph{Hyperparameter selection and sensitivity.} The values above were selected from the ranges in Table~\ref{tab:sensitivity} on Saudi validation ignitions disjoint from both the training and the evaluation streams, and were then frozen for California. We report $\alpha$ and $\eta$ sensitivity because $\alpha$ sets the entire loss-versus-survival tradeoff and because removing $\eta$ entirely improves Saudi WEL, which makes its default value hard to justify without evidence.
+
+\begin{table}[H]
+	\centering
+	\caption{Hyperparameter ranges searched and sensitivity (Saudi seed-mean WEL).}
+	\label{tab:sensitivity}
+	\small
+	\begin{tabular}{llc}
+		\toprule
+		Parameter & Values tried & WEL at setting \\
+		\midrule
+		\multirow{3}{*}{$\alpha$ (ISR weight)} & 5 & 9.10 \\
+		& \textbf{20} & \textbf{7.02} \\
+		& 50 & 7.60 \\
+		\midrule
+		\multirow{3}{*}{$\eta$ (shaping)} & 0.00 & 5.41 \\
+		& \textbf{0.05} & \textbf{7.02} \\
+		& 0.20 & 8.80 \\
+		\midrule
+		\multirow{3}{*}{$T_{\text{macro}}$} & 5 & 7.40 \\
+		& \textbf{10} & \textbf{7.02} \\
+		& 25 & 8.90 \\
+		\midrule
+		BC episodes & 10 / \textbf{30} / 60 & 9.20 / \textbf{7.02} / 6.90 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Models are trained over five seeds $\{42,1042,2042,3042,4042\}$ and evaluated on a held-out ignition stream. Compute and software versions are in Appendix~\ref{app:compute}.
+
+\section{Statistical Test Details}
+\label{app:statistics}
+
+Comparisons use per-seed means ($n=5$). Against deterministic heuristics we use a one-sample $t$-test; against learned baselines, Welch's $t$-test. At five seeds a bootstrap over seed means is no better resolved than the $t$ interval, so we report the latter. We report Cohen's $d$ with a \textbf{pooled} standard deviation, and we \emph{omit} $d$ where a comparator has zero variance, reporting a raw difference with a confidence interval instead, since a standardized effect size against a zero-variance arm is an artifact of the divisor.
+
+\begin{table}[H]
+	\centering
+	\caption{Primary WEL comparisons with Holm--Bonferroni correction across the family of six. Effect sizes use pooled SD; for the deterministic Value-First comparator, $d$ is omitted and the raw difference with 95\% CI is given instead.}
+	\label{tab:statistics}
+	\footnotesize
+	\setlength{\tabcolsep}{2.5pt}
+	\begin{tabular}{llcccc}
+		\toprule
+		Region & Comparison & $t$ & $p$ & Holm $p$ & $d$ \\
+		\midrule
+		\multirow{3}{*}{Saudi}
+		& vs.\ Value-First & $-11.19$ & $3.6\!\times\!10^{-4}$ & $0.0018$ & --- \\
+		& vs.\ MAPPO & $-1.09$ & $0.319$ & $0.319$ & $-0.69$ \\
+		& vs.\ CommNet & $-2.46$ & $0.048$ & $0.096$ & $-1.56$ \\
+		\midrule
+		\multirow{3}{*}{California}
+		& vs.\ Value-First & $-48.4$ & $1.1\!\times\!10^{-6}$ & $<10^{-5}$ & --- \\
+		& vs.\ MAPPO & $-6.03$ & $1.8\!\times\!10^{-3}$ & $0.0072$ & $-3.82$ \\
+		& vs.\ CommNet & $-3.90$ & $0.016$ & $0.048$ & $-2.47$ \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Raw differences against Value-First: Saudi $-11.82$ (95\% CI $[-14.75, -8.89]$); California $-22.52$ (95\% CI $[-23.81, -21.23]$).
+
+\paragraph{ISR intervals.} We report 95\% $t$ intervals on seed-mean ISR for the rows of Table~\ref{tab:main_results} of the main paper whose per-seed values were retained. Saudi: CommNet $[0.550, 0.814]$, MAPPO $[0.496, 0.888]$, HiVA $[0.737, 0.881]$. California: CommNet $[0.090, 0.706]$, MAPPO $[0.487, 0.761]$, HiVA $[0.798, 0.866]$.
+
+Four of the six primary comparisons survive Holm correction. \textbf{Saudi vs.\ CommNet does not} (adjusted $p = 0.096$), and neither does Saudi vs.\ MAPPO. Accordingly, the abstract and Section~\ref{sec:results} of the main paper claim significant improvement over the communicating baseline on California only. Every other $p$-value in this paper, including all ablation tests and the learned-commander comparison, is exploratory and uncorrected. We report Welch's test on $n = 5$ without a normality check; a Wilcoxon signed-rank test would be more defensible at this sample size. No significance test is reported for ISR anywhere in this paper: the ``best average WEL and ISR'' claim is supported by point estimates and confidence intervals for ISR, and by hypothesis tests for WEL only.
+
+\section{Simulator: Physics versus Wrapper}
+\label{app:simulator}
+
+To avoid overstating what is physically validated, we delineate which components come from Cell2Fire and which are ours.
+
+\paragraph{Cell2Fire (validated spread computation).} Fire spread is computed by the Cell2Fire C++ engine~\citep{pais2021cell2fire}, implementing the Canadian Forest Fire Behavior Prediction (FBP) system: FBP fuel types mapped from remote-sensing normalized difference vegetation index (NDVI) data, wind- and slope-driven directional rate of spread, one fire period equal to one simulated minute, and stochastic spread governed by the rate-of-spread coefficient of variation. We invoke it through an interactive stdin/stdout step protocol. As Section~\ref{sec:limitations} of the main paper records, the engine is validated at a $100$\,m operating scale that our landscapes do not respect.
+
+\paragraph{Custom wrapper (not Cell2Fire, not FBP).} The following are ours and should not be read as validated fire physics: (i) the suppression and treatment action model, which is not calibrated against real fireline production rates and provides no mapping from an agent step to a crew-hour or a retardant drop; (ii) the infrastructure cascade model, a per-neighbor ignition probability of $0.1$ when an asset cell burns, which is a wrapper parameter and not an FBP concept; (iii) the infrastructure-weighted reward of Equation~\ref{eq:reward} of the main paper; and (iv) the PettingZoo \texttt{ParallelEnv}~\citep{terry2021pettingzoo} multi-agent layer with action masking, where the treat action is masked unless the agent stands on an unburned fuel cell, movement is unmasked, and moves across the grid boundary are clipped to no-ops. Each agent step advances the simulator by $30$ fire periods.
+
+\section{Compute and Reproducibility Disclosure}
+\label{app:compute}
+
+All reported experiments are CPU-only. No GPU or CUDA was used for any training or evaluation run: the launcher sets \texttt{CUDA\_VISIBLE\_DEVICES} to the empty string and uses one thread per worker, and all released checkpoints are serialized as CPU tensors.
+
+\begin{itemize}\itemsep1pt
+	\item \textbf{Execution environment:} Google Colab CPU instances, six training jobs concurrently, one thread each.
+	\item \textbf{Software:} Python 3.12.3; PyTorch, NumPy, Gymnasium, PettingZoo, SciPy, pandas, and Matplotlib at the exact versions pinned in the released \texttt{requirements.lock}, which is authoritative and installs cleanly in a fresh virtual environment.
+	\item \textbf{Wall clock (training):} each learned run completed $100$k environment steps in $34.5$--$47.5$ minutes (mean $41.3$) under six-way concurrency.
+	\item \textbf{Wall clock (evaluation):} one evaluation episode costs $0.6$--$1.2$\,s single-threaded, so the full main-results evaluation ($1{,}425$ episodes) takes about $25$ minutes per region.
+	\item \textbf{Seeds:} five training seeds $\{42, 1042, 2042, 3042, 4042\}$; each checkpoint is evaluated over five held-out seed groups. Training and evaluation draw from disjoint reset streams: training reset seed $=$ $\text{seed} \times 10^5 + \text{episode}$, giving values in the millions; evaluation reset seed $=$ $\text{group} + 10^5 + \text{episode}$, giving values near $10^5$. The asymmetry between the two formulas is intentional and is what guarantees the streams cannot intersect.
+\end{itemize}
+
+A release manifest binds every checkpoint and result artifact to its SHA-256 hash.
+
+\section{Data Provenance}
+\label{app:data}
+
+The two regions are built from public remote-sensing sources over a June 2025 window. We do not redistribute the raw data; it is downloaded from the providers and processed deterministically into $32\times32$ Cell2Fire landscapes (converter \texttt{wildfire\_marl.data.to\_cell2fire}; every landscape carries a \texttt{conversion\_report.json} binding it to its input hashes).
+
+\begin{itemize}\itemsep1pt
+	\item \textbf{Regions:} Saudi Eastern Province (lon/lat $[45.5, 23.5, 50.5, 28.5]$) and Northern California (lon/lat $[-124.5, 36.5, -119.0, 41.5]$), CRS EPSG:4326, north-up. These extents span roughly $500 \times 553$\,km and $476 \times 553$\,km respectively; see Section~\ref{sec:limitations} of the main paper for the resolution consequences.
+	\item \textbf{Fuels:} MODIS NDVI mapped to Canadian FBP fuel classes via fixed, region-independent thresholds, which we declare as a sensitivity parameter.
+	\item \textbf{Weather:} ERA5 June-2025 extracts converted to hourly \texttt{Weather.csv}; Fire Weather Index (FWI) codes from the standard Canadian Forest Fire Danger Rating System (CFFDRS) equations. Wind direction is the meteorological from-direction.
+	\item \textbf{Topography:} SRTM digital elevation model converted to per-cell slope percent and uphill azimuth in the FBP convention.
+	\item \textbf{Ignitions:} NASA FIRMS detections restricted to burnable cells, detection-count-weighted, with disjoint train and evaluation seed streams.
+	\item \textbf{Infrastructure criticality:} a \emph{stylized} layer, Gaussian value falloff around public infrastructure locations. These are not measured economic valuations, and WEL is therefore not currency. See Section~\ref{sec:impacts} of the main paper.
+	\item \textbf{Known data debt:} the raw California NDVI GeoTIFF was not archived, so the released California NDVI is reconstructed under a declared linear assumption. We flag this because California is the region carrying the results that survive multiplicity correction, and the fuel map determines spread, which determines WEL. The released landscape and all reported results are internally consistent and reproducible from the released artifact; re-deriving the fuel map from a freshly downloaded GeoTIFF is a prerequisite for reproducing them from the original source imagery.
+	\item \textbf{Release:} code, configs, checkpoints, and generated landscapes are released with a SHA-256 manifest.
+\end{itemize}
+
+\section{Difficulty-Regime Robustness}
+\label{app:robustness}
+
+\begin{table}[H]
+	\centering
+	\caption{\textbf{Difficulty-regime robustness} (seed-mean WEL $\downarrow$; easy and hard use 10 episodes per seed group, whereas medium reuses the main 15-episode evaluation, so across-column comparisons are at unmatched budget). \textbf{Bold} marks the best per column. Per-seed dispersion was not retained for these cells.}
+	\label{tab:robustness}
+	\vspace{0.4em}
+	\setlength{\tabcolsep}{4pt}\small
+	\begin{tabular}{llccc}
+		\toprule
+		Region & Policy & Easy & Medium & Hard \\
+		\midrule
+		\multirow{7}{*}{Saudi}
+		& No-Op & 26.8 & 27.0 & 27.0 \\
+		& Value-First & 18.0 & 18.8 & 19.4 \\
+		& Greedy-Risk & 25.1 & 24.7 & 25.9 \\
+		& Local Reactive & \textbf{3.1} & 11.9 & 13.4 \\
+		& Flat MARL (MAPPO) & 6.1 & 9.8 & 16.6 \\
+		& CommNet & 4.2 & 12.4 & 18.0 \\
+		& HiVA (ours) & 3.3 & \textbf{7.0} & \textbf{11.3} \\
+		\midrule
+		\multirow{7}{*}{California}
+		& No-Op & 12.7 & 34.0 & 34.0 \\
+		& Value-First & 7.0 & 28.4 & 32.8 \\
+		& Greedy-Risk & 7.0 & 28.4 & 33.0 \\
+		& Local Reactive & \textbf{0.0} & 10.2 & 24.3 \\
+		& Flat MARL (MAPPO) & 2.4 & 14.2 & 23.3 \\
+		& CommNet & 8.1 & 19.6 & 25.6 \\
+		& HiVA (ours) & 0.4 & \textbf{5.9} & \textbf{17.7} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\section{Artifact Availability}
+\label{app:artifact}
+
+An anonymized archive containing the environment, training and evaluation code, all released checkpoints, the GIS conversion pipeline, and the SHA-256 manifest accompanies this submission as supplementary material. Every reproducibility claim in this paper is verifiable against that archive.
+
+\bibliography{aaai2027}
+
+\end{document}
