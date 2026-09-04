@@ -35,7 +35,7 @@ function TransferSection({ transfer }: { transfer: Transfer }) {
             key={policy}
             title={`${t(`policy.${policy}`)}`}
             subtitle={t("generalization.matrixSubtitle")}
-            source="wildfire_phase6/transfer_summary.json"
+            source="results/wildfire_phase6/transfer_summary.json"
             table={table}
             csvName="transfer_matrix.csv"
             ariaLabel={`${t("transfer.matrixTitle")} — ${t(`policy.${policy}`)}`}
@@ -105,7 +105,7 @@ export default function Generalization() {
                   key={region}
                   title={`${t("generalization.deltaTitle")} — ${t(`region.${region}`)}`}
                   subtitle={t("generalization.deltaSubtitle")}
-                  source="wildfire_phase6/generalization_summary.json"
+                  source="results/wildfire_phase6/generalization_summary.json"
                   table={deltaWelTable(gen.data!, region, t)}
                   csvName={`generalization_${region}.csv`}
                   ariaLabel={`${t("generalization.deltaTitle")}, ${t(`region.${region}`)}`}

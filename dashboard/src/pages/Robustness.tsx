@@ -60,7 +60,7 @@ export default function Robustness() {
                   key={region}
                   title={`${t("robustness.sweep")} — ${t(`region.${region}`)}`}
                   subtitle={t("metric.wel.hint")}
-                  source="wildfire_phase4_extended/robustness_summary.json"
+                  source="results/wildfire_phase4_extended/robustness_summary.json"
                   table={robustnessTable(data, region, t)}
                   csvName={`robustness_${region}.csv`}
                   ariaLabel={`${t("robustness.sweep")}, ${t(`region.${region}`)}`}

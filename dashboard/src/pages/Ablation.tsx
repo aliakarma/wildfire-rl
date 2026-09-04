@@ -53,7 +53,7 @@ function RegionPanels({ region, ablations }: { region: Region; ablations: Ablati
       <ChartCard
         title={`${t("ablation.contribution")} — ${t(`region.${region}`)}`}
         subtitle={t("ablation.contributionSubtitle")}
-        source="wildfire_phase4/ablation_summary.json"
+        source="results/wildfire_phase4/ablation_summary.json"
         table={table}
         csvName={`ablation_${region}.csv`}
         ariaLabel={`${t("ablation.contribution")}, ${t(`region.${region}`)}`}
@@ -69,7 +69,7 @@ function RegionPanels({ region, ablations }: { region: Region; ablations: Ablati
         <DataTable caption={t("ablation.tableTitle")} columns={table.columns} rows={table.rows} />
         <p className="card-footnote">
           † {t("ablation.deterministicNote")} ·{" "}
-          <code>wildfire_phase4/ablation_summary.json</code>
+          <code>results/wildfire_phase4/ablation_summary.json</code>
         </p>
       </div>
     </div>

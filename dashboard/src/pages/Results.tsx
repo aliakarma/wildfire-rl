@@ -60,7 +60,7 @@ function StatsPanel({ results, region }: { results: MainResults; region: Region 
       />
       <p className="card-footnote">
         {t("common.sourceArtifact", { path: "" })}
-        <code>wildfire_phase3_multiseed/phase3_summary.json</code>
+        <code>results/wildfire_phase3_multiseed/phase3_summary.json</code>
       </p>
     </div>
   );
@@ -81,7 +81,7 @@ function RegionPanels({ region }: { region: Region }) {
       <ChartCard
         title={`${t("results.welByPolicy")} — ${t(`region.${region}`)}`}
         subtitle={`${t("metric.wel.hint")} · ${t("common.protocolNote")}`}
-        source="wildfire_phase3_multiseed/phase3_summary.json"
+        source="results/wildfire_phase3_multiseed/phase3_summary.json"
         table={resultsBarsTable(r, region, "WEL", t)}
         csvName={`wel_by_policy_${region}.csv`}
         ariaLabel={`${t("results.welByPolicy")}, ${t(`region.${region}`)}`}
@@ -93,7 +93,7 @@ function RegionPanels({ region }: { region: Region }) {
       <ChartCard
         title={`${t("results.isrByPolicy")} — ${t(`region.${region}`)}`}
         subtitle={t("metric.isr.hint")}
-        source="wildfire_phase3_multiseed/phase3_summary.json"
+        source="results/wildfire_phase3_multiseed/phase3_summary.json"
         table={resultsBarsTable(r, region, "ISR", t)}
         csvName={`isr_by_policy_${region}.csv`}
         ariaLabel={`${t("results.isrByPolicy")}, ${t(`region.${region}`)}`}
@@ -117,7 +117,7 @@ function RegionPanels({ region }: { region: Region }) {
               ...Object.values(curves.data.regions[region]).map((c) => c.n_episodes),
             ),
           })}
-          source="wildfire_phase3_multiseed/train_curve_checkpoint_*.csv"
+          source="results/wildfire_phase3_multiseed/train_curve_checkpoint_*.csv"
           table={trainingCurvesTable(curves.data, region, t)}
           csvName={`train_curves_${region}.csv`}
           ariaLabel={`${t("results.trainingCurves")}, ${t(`region.${region}`)}`}

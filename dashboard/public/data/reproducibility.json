@@ -9,9 +9,9 @@
   },
   "frozen_utc": "2026-07-10T18:28:20Z",
   "freeze_commit": "567945f3823d196e8975ccab776e9b63b516b0b3",
-  "commit": "169d553f5e2937ccf9a82148dc0f69c53675a7d6",
+  "commit": "a58aa0974acff68f398e2ef3773fe510b56dffb0",
   "git_dirty": true,
-  "built": "2026-07-19",
+  "built": "2026-09-04",
   "protocol": {
    "train_seeds": [
     42,
@@ -33,7 +33,7 @@
   "checkpoint_mappo_saudi_s42.pt": "20d2c9a757acf3f900f40082eb4ddc897d07cad7b9eb508f8182d1b0c95aaf8c"
  },
  "n_checkpoints": 30,
- "reproduction_command": "python scripts/run_phase3.py \\\n  --methods noop,value_first,greedy_risk,local_reactive,mappo,commnet,hiercomm_heur \\\n  --regions saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 6 \\\n  --train-steps 100000 --episodes 15 --out wildfire_phase3_multiseed",
- "verify_command": "python scripts/freeze_results.py wildfire_phase3_multiseed",
+ "reproduction_command": "python scripts/run_phase3.py \\\n  --methods noop,value_first,greedy_risk,local_reactive,mappo,commnet,hiercomm_heur \\\n  --regions saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 6 \\\n  --train-steps 100000 --episodes 15 --out results/wildfire_phase3_multiseed",
+ "verify_command": "python scripts/freeze_results.py results/wildfire_phase3_multiseed",
  "compute": "CPU-only (Ryzen 5 5600H), WSL2 Ubuntu; bit-identical CPU determinism"
 }

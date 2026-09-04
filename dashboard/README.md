@@ -1,11 +1,11 @@
 # Wildfire-MARL Results Dashboard
 
-Static, single-page results dashboard for the AAAI submission — implemented from
-[`Dashboard_Guide.md`](../Dashboard_Guide.md). React 18 + TypeScript + Vite + ECharts,
+Static, single-page results dashboard for the AAAI submission.
+React 18 + TypeScript + Vite + ECharts,
 bilingual (English / Arabic with full RTL), two designed themes, hash routing, no backend.
 
 **Every displayed number is generated at build time from the frozen artifacts** —
-`wildfire_phase3_multiseed/`, `wildfire_phase4/`, `wildfire_phase6/` — never hand-typed.
+`results/wildfire_phase3_multiseed/`, `results/wildfire_phase4/`, `results/wildfire_phase6/` — never hand-typed.
 All three directories are fingerprint-gated: the build script re-hashes each one and
 aborts on any mismatch with the constants in `EXPECTED_FINGERPRINTS`
 (`scripts/build_dashboard_data.py`). A re-freeze of any directory
@@ -66,7 +66,7 @@ camera-ready deploy.
 | `public/media/` | no | rollout MP4s/GIFs + snapshots, copied by `--copy-media`; repo policy forbids committing large binaries |
 | `node_modules/`, `dist/` | no | standard |
 
-## Deviations from Dashboard_Guide.md (documented)
+## Design decisions (documented)
 
 - **Plain CSS tokens instead of Tailwind.** The guide's reasons for Tailwind (single
   `:root` token block, logical properties for RTL) are fully met by
