@@ -75,7 +75,7 @@ def check_exact_mirrors() -> None:
 
     for name, path in [
         ("ablations.json", PHASE4 / "ablation_summary.json"),
-        ("robustness.json", PHASE4 / "robustness_summary.json"),
+        ("robustness.json", REPO / "wildfire_phase4_extended" / "robustness_summary.json"),
         ("generalization.json", PHASE6 / "generalization_summary.json"),
         ("transfer.json", PHASE6 / "transfer_summary.json"),
     ]:

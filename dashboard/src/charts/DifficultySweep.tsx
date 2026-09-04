@@ -7,8 +7,22 @@ import { methodColor } from "../theme/echartsTheme";
 import { token } from "../theme/useTheme";
 import { EChart, type EChartsOption } from "./EChart";
 
-const POLICIES = ["noop", "value_first", "commnet", "hiercomm_heur"];
+/** Canonical policy order (Table 1); the chart renders whichever of these the artifact carries. */
+const POLICY_ORDER = [
+  "noop",
+  "value_first",
+  "greedy_risk",
+  "local_reactive",
+  "mappo",
+  "commnet",
+  "hiercomm_heur",
+];
 const REGIMES = ["easy", "medium", "hard"];
+
+/** Policies present in every regime of this region's block, in canonical order. */
+function presentPolicies(block: Robustness["regions"][Region]): string[] {
+  return POLICY_ORDER.filter((p) => REGIMES.every((r) => p in (block[r] ?? {})));
+}
 
 interface Props {
   robustness: Robustness;
@@ -19,12 +33,13 @@ interface Props {
 export function DifficultySweep({ robustness, region }: Props) {
   const { t } = useTranslation();
   const block = robustness.regions[region];
+  const POLICIES = presentPolicies(block);
   const textSecondary = token("--text-secondary");
   const textPrimary = token("--text-primary");
   const border = token("--border");
 
   const option: EChartsOption = {
-    grid: { left: 8, right: 16, top: 40, bottom: 24, containLabel: true },
+    grid: { left: 8, right: 16, top: 64, bottom: 24, containLabel: true },
     legend: {
       data: POLICIES.map((p) => t(`policy.${p}`)),
       textStyle: { color: textSecondary, fontSize: 12 },
@@ -89,6 +104,7 @@ export function robustnessTable(
   t: (k: string) => string,
 ): TableModel {
   const block = robustness.regions[region];
+  const POLICIES = presentPolicies(block);
   const rows = REGIMES.flatMap((r) =>
     POLICIES.map((p) => ({
       display: [

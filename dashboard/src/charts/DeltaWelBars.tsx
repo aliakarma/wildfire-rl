@@ -43,7 +43,7 @@ export function DeltaWelBars({ generalization, region }: Props) {
   const conditions = CONDITIONS.filter((c) => c in block);
 
   const option: EChartsOption = {
-    grid: { left: 8, right: 16, top: 40, bottom: 40, containLabel: true },
+    grid: { left: 8, right: 16, top: 64, bottom: 40, containLabel: true },
     legend: {
       data: POLICIES.map((p) => t(`policy.${p}`)),
       textStyle: { color: textSecondary, fontSize: 12 },

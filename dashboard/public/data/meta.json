@@ -3,13 +3,14 @@
  "fingerprints": {
   "wildfire_phase3_multiseed": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
   "wildfire_phase4": "be6d0e218ffe77f144a9171ac21ec5562c422cf9180c1d543fa150a11c36f94d",
+  "wildfire_phase4_extended": "cada146a7eacd3d61f86a153d3574e34024557e75fe1b36f71ba4e90c07dc5fb",
   "wildfire_phase6": "cfce760842dd1e2f67d1a0f9709b8be4c701c464353d69d81d884626ba9af93b"
  },
  "frozen_utc": "2026-07-10T18:28:20Z",
  "freeze_commit": "567945f3823d196e8975ccab776e9b63b516b0b3",
- "commit": "24613d2eaea444bfcca325e52baf7fa6d9bf69fa",
+ "commit": "169d553f5e2937ccf9a82148dc0f69c53675a7d6",
  "git_dirty": true,
- "built": "2026-07-17",
+ "built": "2026-07-19",
  "protocol": {
   "train_seeds": [
    42,

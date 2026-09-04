@@ -90,29 +90,32 @@ export default function Generalization() {
         ) : !gen.data ? (
           <Skeleton height={420} />
         ) : (
-          <section
-            className="section"
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                regions.length === 2 ? "repeat(auto-fit, minmax(min(560px, 100%), 1fr))" : "1fr",
-              gap: "var(--sp-6)",
-            }}
-          >
-            {regions.map((region) => (
-              <ChartCard
-                key={region}
-                title={`${t("generalization.deltaTitle")} — ${t(`region.${region}`)}`}
-                subtitle={t("generalization.deltaSubtitle")}
-                source="wildfire_phase6/generalization_summary.json"
-                table={deltaWelTable(gen.data!, region, t)}
-                csvName={`generalization_${region}.csv`}
-                ariaLabel={`${t("generalization.deltaTitle")}, ${t(`region.${region}`)}`}
-                anchorId={`dwel-${region}`}
-              >
-                <DeltaWelBars generalization={gen.data!} region={region} />
-              </ChartCard>
-            ))}
+          <section className="section">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  regions.length === 2 ? "repeat(auto-fit, minmax(min(560px, 100%), 1fr))" : "1fr",
+                gap: "var(--sp-6)",
+                marginBlockEnd: "var(--sp-6)",
+              }}
+            >
+              {regions.map((region) => (
+                <ChartCard
+                  key={region}
+                  title={`${t("generalization.deltaTitle")} — ${t(`region.${region}`)}`}
+                  subtitle={t("generalization.deltaSubtitle")}
+                  source="wildfire_phase6/generalization_summary.json"
+                  table={deltaWelTable(gen.data!, region, t)}
+                  csvName={`generalization_${region}.csv`}
+                  ariaLabel={`${t("generalization.deltaTitle")}, ${t(`region.${region}`)}`}
+                  anchorId={`dwel-${region}`}
+                >
+                  <DeltaWelBars generalization={gen.data!} region={region} />
+                </ChartCard>
+              ))}
+            </div>
+            <Callout>{t("generalization.honesty")}</Callout>
           </section>
         )}
 

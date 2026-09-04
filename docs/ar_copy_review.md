@@ -1,6 +1,6 @@
 # Arabic copy review deck — Wildfire-MARL dashboard
 
-*Generated 2026-07-17 from `dashboard/src/i18n/locales/*.json` by
+*Generated 2026-07-19 from `dashboard/src/i18n/locales/*.json` by
 `scripts/make_ar_review_deck.py`. Regenerate after any copy change.*
 
 ## Instructions for the reviewer
@@ -53,6 +53,7 @@ block at the end.
 |---|---|---|---|
 | `actions.copied` | Copied | <div dir="rtl">تم النسخ</div> |  |
 | `actions.copy` | Copy | <div dir="rtl">نسخ</div> |  |
+| `actions.copyLink` | Copy link | <div dir="rtl">نسخ الرابط</div> |  |
 | `actions.downloadCsv` | Download CSV | <div dir="rtl">تنزيل CSV</div> |  |
 | `actions.downloadPng` | Download chart (PNG) | <div dir="rtl">تنزيل الرسم (PNG)</div> |  |
 | `actions.exploreResults` | Explore results | <div dir="rtl">استكشاف النتائج</div> |  |
@@ -105,7 +106,7 @@ block at the end.
 | `common.lowerBetter` | lower is better | <div dir="rtl">الأقل أفضل</div> |  |
 | `common.noData` | No data for this filter. | <div dir="rtl">لا توجد بيانات لهذا المرشّح.</div> |  |
 | `common.ours` | ours | <div dir="rtl">طريقتنا</div> |  |
-| `common.protocolNote` | 5 training seeds × 15 held-out episodes; unit of analysis = per-training-seed mean (n = 5) | <div dir="rtl">5 بذور تدريب × 15 حلقة تقييم محجوبة؛ وحدة التحليل = متوسط كل بذرة تدريب (n = 5)</div> |  |
+| `common.protocolNote` | 5 training seeds × 15 held-out episodes for the main results and ablation (robustness/transfer: 10, with medium/standard cells reusing the 15-episode evaluation); unit of analysis = per-training-seed mean (n = 5) | <div dir="rtl">5 بذور تدريب × 15 حلقة تقييم محجوبة للنتائج الرئيسية وتحليل إزالة المكوّنات (المتانة والنقل: 10 حلقات، مع إعادة استخدام تقييم الـ15 حلقة لخلايا المتوسط/الوضع القياسي)؛ وحدة التحليل = متوسط كل بذرة تدريب (n = 5)</div> |  |
 | `common.sourceArtifact` | Source: {{path}} | <div dir="rtl">المصدر: {{path}}</div> |  |
 | `common.vsNoop` | vs No-Op {{value}} | <div dir="rtl">مقابل عدم التدخل {{value}}</div> |  |
 
@@ -157,6 +158,7 @@ block at the end.
 | `generalization.asymmetry` | Asymmetric collapse: CommNet transfers well in one direction (TRS {{good}}) and collapses in the other (TRS {{bad}}). HierComm degrades under transfer but never collapses. | <div dir="rtl">انهيار غير متماثل: تنتقل CommNet جيدًا في اتجاه واحد (TRS ‏{{good}}) وتنهار في الاتجاه الآخر (TRS ‏{{bad}}). أما HierComm فتتدهور مع النقل لكنها لا تنهار أبدًا.</div> |  |
 | `generalization.deltaSubtitle` | Higher = more loss prevented within that condition; zero = no added value | <div dir="rtl">الأعلى = خسارة أكبر جرى تفاديها ضمن الحالة؛ الصفر = لا قيمة مضافة</div> |  |
 | `generalization.deltaTitle` | ΔWEL vs No-Op by condition | <div dir="rtl">‏ΔWEL مقابل عدم التدخل حسب الحالة</div> |  |
+| `generalization.honesty` | Honest caveat: under perturbation, value-blind Local Reactive attains a larger ΔWEL than HierComm in five of the six held-out cells — including all three on California. HierComm never drops to inaction, but its advantage is scoped to the standard regime. | <div dir="rtl">تنويه للأمانة: تحت الاضطرابات، يحقّق «التفاعلي المحلي» — رغم أنه لا يراعي قيمة الأصول — قيمة ΔWEL أكبر من HierComm في خمس من الخلايا المحجوبة الست، بما فيها الحالات الثلاث جميعها في كاليفورنيا. لا تهبط HierComm أبدًا إلى مستوى عدم التدخل، لكن تفوّقها يقتصر على الوضع القياسي.</div> |  |
 | `generalization.matrixSubtitle` | Rows = trained on; columns = evaluated on. Every cell is annotated — color is never the only encoding. | <div dir="rtl">الصفوف = منطقة التدريب؛ الأعمدة = منطقة التقييم. كل خلية موسومة بقيمتها — اللون ليس الترميز الوحيد أبدًا.</div> |  |
 | `generalization.summary` | Held-out ignitions, rotated wind, rotated assets, and cross-region transfer. ΔWEL vs No-Op is the falsifiability axis: a policy adding no value sits at zero. The transfer matrix shows where learned coordination survives a region swap — and where it collapses. | <div dir="rtl">مواقع اشتعال محجوبة، ورياح مُدارة، وأصول مُدارة، ونقل بين المنطقتين. ‏ΔWEL مقابل عدم التدخل هو محور قابلية الدحض: السياسة التي لا تضيف قيمة تقف عند الصفر. وتُظهر مصفوفة النقل أين يصمد التنسيق المتعلَّم بعد تبديل المنطقة — وأين ينهار.</div> |  |
 | `generalization.title` | Generalization & Transfer | <div dir="rtl">التعميم والنقل</div> |  |
@@ -178,10 +180,10 @@ block at the end.
 | `method.archEnv` | Cell2Fire environment | <div dir="rtl">بيئة Cell2Fire</div> |  |
 | `method.archEnvDesc` | Validated fire physics; the wrapper applies treatments and computes WEL/ISR rewards. | <div dir="rtl">فيزياء حرائق موثّقة؛ يطبّق المغلّف المعالجات ويحسب مكافآت WEL/ISR.</div> |  |
 | `method.archTactical` | Communicating tactical policy (learned) | <div dir="rtl">السياسة التكتيكية المتواصلة (متعلَّمة)</div> |  |
-| `method.archTacticalDesc` | CNN over a 9×9 egocentric crop + target encoding; {{r}} communication rounds; outputs move/treat actions. | <div dir="rtl">شبكة CNN على مقطع ذاتي المركز 9×9 مع ترميز الهدف؛ {{r}} جولتا تواصل؛ وتُخرج أفعال الحركة/المعالجة.</div> |  |
+| `method.archTacticalDesc` | CNN over a 9×9 egocentric crop + target encoding; {{r}} communication rounds; outputs move/treat actions. | <div dir="rtl">شبكة CNN على مقطع ذاتي المركز 9×9 مع ترميز الهدف؛ {{r}} من جولات التواصل؛ وتُخرج أفعال الحركة/المعالجة.</div> |  |
 | `method.architecture` | Architecture | <div dir="rtl">البنية</div> |  |
 | `method.hyperparams` | Hyperparameters | <div dir="rtl">المعاملات الفائقة</div> |  |
-| `method.scope` | No algorithmic-novelty claim: the primitives (CNN policies, communication rounds, PPO, BC) are standard. A fully learned commander variant exists and underperforms the value-aware rule — see the ablation page. The contribution is the benchmark, the integrated system, and the honest component analysis. | <div dir="rtl">لا ادّعاء بجِدّة خوارزمية: فالمكوّنات الأولية (سياسات CNN وجولات التواصل وPPO والاستنساخ السلوكي) قياسية. ويوجد متغيّر بقائد متعلَّم بالكامل لكنه أدنى أداءً من القاعدة الواعية بالقيمة — انظر صفحة إزالة المكوّنات. الإسهام هو المنصّة، والنظام المتكامل، والتحليل الصريح للمكوّنات.</div> |  |
+| `method.scope` | No algorithmic-novelty claim: the primitives (CNN policies, communication rounds, PPO, BC) are standard. A fully learned commander variant was evaluated under the main 5-seed protocol: statistically indistinguishable from the value-aware rule on Saudi (WEL 6.02 vs 7.02, p = 0.49) and significantly worse on California (8.20 vs 5.88, p = 0.03) — so the deployed system keeps the transparent rule. The contribution is the benchmark, the integrated system, and the honest component analysis. | <div dir="rtl">لا ادّعاء بجِدّة خوارزمية: فالمكوّنات الأولية (سياسات CNN وجولات التواصل وPPO والاستنساخ السلوكي) قياسية. وقد قُيِّم متغيّر بقائد متعلَّم بالكامل وفق بروتوكول البذور الخمس الرئيسي: لا يُميَّز إحصائيًا عن القاعدة الواعية بالقيمة في السعودية (WEL ‏6.02 مقابل 7.02، ‏p = 0.49) وأسوأ بدلالة إحصائية في كاليفورنيا (8.20 مقابل 5.88، ‏p = 0.03) — لذا يعتمد النظام المنشور القاعدة الشفافة. الإسهام هو المنصّة، والنظام المتكامل، والتحليل الصريح للمكوّنات.</div> |  |
 | `method.scopeTitle` | Honest scope | <div dir="rtl">نطاق صريح</div> |  |
 | `method.storySteps.s1` | Threat scores τ = v/(1+d) are computed for every asset. | <div dir="rtl">تُحسب درجات التهديد τ = v/(1+d) لكل أصل.</div> |  |
 | `method.storySteps.s2` | Agents are assigned to the top-threat assets. | <div dir="rtl">يُعيَّن الوكلاء على الأصول الأعلى تهديدًا.</div> |  |
@@ -246,7 +248,7 @@ block at the end.
 | `overview.tiles.isrBoth` | ISR (Saudi / California) | <div dir="rtl">‏ISR (السعودية / كاليفورنيا)</div> |  |
 | `overview.tiles.isrContext` | best in both regions | <div dir="rtl">الأفضل في كلتا المنطقتين</div> |  |
 | `overview.tiles.protocol` | Seeds × episodes | <div dir="rtl">البذور × الحلقات</div> |  |
-| `overview.tiles.protocolContext` | held-out evaluation stream | <div dir="rtl">تقييم على بذور محجوبة عن التدريب</div> |  |
+| `overview.tiles.protocolContext` | held-out stream — main results; 10 episodes for robustness & transfer | <div dir="rtl">بذور محجوبة عن التدريب — النتائج الرئيسية؛ و10 حلقات للمتانة والنقل</div> |  |
 | `overview.tiles.protocolValue` | 5 × 15 | <div dir="rtl">5 × 15</div> |  |
 | `overview.tiles.welCalifornia` | HierComm WEL — California | <div dir="rtl">‏WEL لطريقة HierComm — كاليفورنيا</div> |  |
 | `overview.tiles.welSaudi` | HierComm WEL — Saudi | <div dir="rtl">‏WEL لطريقة HierComm — السعودية</div> |  |
@@ -314,7 +316,6 @@ block at the end.
 | `replays.kind.transfer_cross` | Transfer — cross-region | <div dir="rtl">النقل — بين المنطقتين</div> |  |
 | `replays.kind.transfer_native` | Transfer — native | <div dir="rtl">النقل — أصلي</div> |  |
 | `replays.mediaUnavailable` | Media not included in this build — regenerate with build_dashboard_data.py --copy-media. | <div dir="rtl">الوسائط غير مضمّنة في هذا البناء — أعد توليدها عبر build_dashboard_data.py --copy-media.</div> |  |
-| `replays.noCommnetNote` | CommNet rollouts are shown from the transfer study's native runs; the main sweep's GIF set does not include one. | <div dir="rtl">تُعرض جولات CommNet من التشغيلات الأصلية لدراسة النقل؛ فمجموعة صور المسح الرئيسي لا تتضمن واحدة.</div> |  |
 | `replays.summary` | Pre-rendered rollouts of the frozen policies on both regions, including native-vs-transferred pairs. Every replay is recorded from the released checkpoints on the held-out evaluation stream — the same rollouts behind the reported numbers. | <div dir="rtl">جولات معروضة مسبقًا للسياسات المجمَّدة على كلتا المنطقتين، بما في ذلك أزواج «أصلي مقابل منقول». كل إعادة عرض مسجَّلة من نقاط الحفظ المنشورة على تيار التقييم المحجوب — وهي الجولات نفسها وراء الأرقام المنشورة.</div> |  |
 | `replays.title` | Simulation Replays | <div dir="rtl">إعادة عرض المحاكاة</div> |  |
 
@@ -331,7 +332,7 @@ block at the end.
 | `repro.hashesSubtitle` | SHA-256 over the released checkpoints; the full {{n}}-checkpoint manifest is downloadable below | <div dir="rtl">‏SHA-256 لنقاط الحفظ المنشورة؛ يمكن تنزيل قائمة نقاط الحفظ الكاملة ({{n}}) أدناه</div> |  |
 | `repro.protocol` | Protocol | <div dir="rtl">البروتوكول</div> |  |
 | `repro.protocolItems.determinism` | Bit-identical CPU determinism (verified) | <div dir="rtl">حتمية مطابقة بِتًّا-بِبِتّ على المعالج (متحقَّق منها)</div> |  |
-| `repro.protocolItems.eval` | Evaluation: held-out seed groups × 15 episodes; disjoint train/eval seed streams (no leakage) | <div dir="rtl">التقييم: مجموعات بذور محجوبة × 15 حلقة؛ تيارات بذور منفصلة للتدريب والتقييم (لا تسرّب)</div> |  |
+| `repro.protocolItems.eval` | Evaluation: held-out seed groups × 15 episodes for the main results and ablation, 10 for the robustness and transfer studies; disjoint train/eval seed streams (no leakage) | <div dir="rtl">التقييم: مجموعات بذور محجوبة × 15 حلقة للنتائج الرئيسية وتحليل إزالة المكوّنات، و10 حلقات لدراستَي المتانة والنقل؛ تيارات بذور منفصلة للتدريب والتقييم (لا تسرّب)</div> |  |
 | `repro.protocolItems.seeds` | 5 training seeds: {42, 1042, 2042, 3042, 4042} | <div dir="rtl">5 بذور تدريب: {42, 1042, 2042, 3042, 4042}</div> |  |
 | `repro.protocolItems.unit` | Unit of analysis: per-training-seed mean (n = 5) | <div dir="rtl">وحدة التحليل: متوسط كل بذرة تدريب (n = 5)</div> |  |
 | `repro.reproduce` | Reproduce the main table | <div dir="rtl">إعادة إنتاج الجدول الرئيسي</div> |  |
@@ -363,8 +364,8 @@ block at the end.
 | Key | English | Arabic | OK? |
 |---|---|---|---|
 | `robustness.anchor` | No-Op worsens monotonically with difficulty — the sweep is doing what it should. | <div dir="rtl">«بدون تدخل» يسوء باطّراد مع الصعوبة — المسح يعمل كما ينبغي.</div> |  |
-| `robustness.callout` | HierComm is the lowest-WEL policy in {{hc}} / {{total}} region × difficulty cells. | <div dir="rtl">HierComm هي السياسة الأدنى في WEL في {{hc}} / {{total}} من خلايا المنطقة × الصعوبة.</div> |  |
-| `robustness.summary` | An easy/medium/hard difficulty sweep (wind scaling and fire-weather index). No-Op's monotone worsening anchors the axis; HierComm stays lowest-WEL in every region × difficulty cell. | <div dir="rtl">مسح صعوبة بثلاثة مستويات (سهل/متوسط/صعب) عبر تحجيم الرياح ومؤشر طقس الحرائق. تدهور «بدون تدخل» المطّرد يثبّت المحور؛ وتبقى HierComm صاحبة أدنى WEL في كل خلايا المنطقة × الصعوبة.</div> |  |
+| `robustness.callout` | HierComm is the lowest-WEL policy in {{hc}} / {{total}} region × difficulty cells, with all seven policies evaluated; value-blind Local Reactive leads the remaining easy-regime cells. | <div dir="rtl">HierComm هي السياسة الأدنى في WEL في {{hc}} / {{total}} من خلايا المنطقة × الصعوبة، مع تقييم السياسات السبع جميعها؛ ويتصدر «التفاعلي المحلي» — غير المراعي لقيمة الأصول — خليتَي المستوى السهل المتبقيتين.</div> |  |
+| `robustness.summary` | An easy/medium/hard difficulty sweep (wind scaling and fire-weather index) over all 7 policies. No-Op's monotone worsening anchors the axis. HierComm is lowest-WEL in all four medium and hard cells; on the easy regime — where a reactive policy can (nearly) contain the fire outright — Local Reactive takes both cells, with HierComm a close second. Easy/hard cells use 10 episodes per seed group; medium equals the standard regime and reuses the main 15-episode evaluation. | <div dir="rtl">مسح صعوبة بثلاثة مستويات (سهل/متوسط/صعب) عبر تحجيم الرياح ومؤشر طقس الحرائق، يشمل السياسات السبع جميعها. تدهور «بدون تدخل» المطّرد يثبّت المحور. تحقق HierComm أدنى WEL في الخلايا الأربع للمستويين المتوسط والصعب كلها؛ أما في المستوى السهل — حيث تستطيع سياسة تفاعلية احتواء الحريق كليًا تقريبًا — فيتصدر «التفاعلي المحلي» كلتا الخليتين وتأتي HierComm ثانيةً بفارق ضئيل. خلايا السهل/الصعب بواقع 10 حلقات لكل مجموعة بذور؛ والمتوسط يطابق الوضع القياسي ويعيد استخدام تقييم البروتوكول الرئيسي ذي 15 حلقة.</div> |  |
 | `robustness.sweep` | WEL across difficulty | <div dir="rtl">‏WEL عبر مستويات الصعوبة</div> |  |
 | `robustness.title` | Robustness | <div dir="rtl">المتانة</div> |  |
 
@@ -374,7 +375,7 @@ block at the end.
 |---|---|---|---|
 | `stats.ci95` | 95% confidence interval | <div dir="rtl">فترة ثقة 95٪</div> |  |
 | `stats.deterministic` | Deterministic policy — no seed variance | <div dir="rtl">سياسة حتمية — لا تباين بين البذور</div> |  |
-| `stats.effect` | Effect size (Cohen's d) | <div dir="rtl">حجم الأثر (d)</div> |  |
+| `stats.effect` | Effect size (Cohen's d) | <div dir="rtl">حجم الأثر (Cohen's d)</div> |  |
 | `stats.mean` | mean | <div dir="rtl">المتوسط</div> |  |
 | `stats.nSeeds` | {{n}} seeds | <div dir="rtl">{{n}} بذور</div> |  |
 | `stats.ns` | Not significant (n.s.) | <div dir="rtl">غير دالّ إحصائيًا</div> |  |

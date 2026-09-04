@@ -110,7 +110,7 @@
     "loadError": "Could not load this panel's data.",
     "noData": "No data for this filter.",
     "sourceArtifact": "Source: {{path}}",
-    "protocolNote": "5 training seeds × 15 held-out episodes; unit of analysis = per-training-seed mean (n = 5)",
+    "protocolNote": "5 training seeds × 15 held-out episodes for the main results and ablation (robustness/transfer: 10, with medium/standard cells reusing the 15-episode evaluation); unit of analysis = per-training-seed mean (n = 5)",
     "lowerBetter": "lower is better",
     "higherBetter": "higher is better",
     "ours": "ours",
@@ -126,7 +126,7 @@
       "isrContext": "best in both regions",
       "protocol": "Seeds × episodes",
       "protocolValue": "5 × 15",
-      "protocolContext": "held-out evaluation stream"
+      "protocolContext": "held-out stream — main results; 10 episodes for robustness & transfer"
     },
     "comparisonCaption": "HierComm versus baselines on the same episode ({{region}}). Full replays on the Replays page.",
     "whatWorks": {
@@ -168,9 +168,9 @@
   },
   "robustness": {
     "title": "Robustness",
-    "summary": "An easy/medium/hard difficulty sweep (wind scaling and fire-weather index). No-Op's monotone worsening anchors the axis; HierComm stays lowest-WEL in every region × difficulty cell.",
+    "summary": "An easy/medium/hard difficulty sweep (wind scaling and fire-weather index) over all 7 policies. No-Op's monotone worsening anchors the axis. HierComm is lowest-WEL in all four medium and hard cells; on the easy regime — where a reactive policy can (nearly) contain the fire outright — Local Reactive takes both cells, with HierComm a close second. Easy/hard cells use 10 episodes per seed group; medium equals the standard regime and reuses the main 15-episode evaluation.",
     "sweep": "WEL across difficulty",
-    "callout": "HierComm is the lowest-WEL policy in {{hc}} / {{total}} region × difficulty cells.",
+    "callout": "HierComm is the lowest-WEL policy in {{hc}} / {{total}} region × difficulty cells, with all seven policies evaluated; value-blind Local Reactive leads the remaining easy-regime cells.",
     "anchor": "No-Op worsens monotonically with difficulty — the sweep is doing what it should."
   },
   "generalization": {
@@ -180,7 +180,8 @@
     "deltaSubtitle": "Higher = more loss prevented within that condition; zero = no added value",
     "matrixSubtitle": "Rows = trained on; columns = evaluated on. Every cell is annotated — color is never the only encoding.",
     "asymmetry": "Asymmetric collapse: CommNet transfers well in one direction (TRS {{good}}) and collapses in the other (TRS {{bad}}). HierComm degrades under transfer but never collapses.",
-    "transferReplays": "Watch the native-vs-transferred rollouts on the Replays page."
+    "transferReplays": "Watch the native-vs-transferred rollouts on the Replays page.",
+    "honesty": "Honest caveat: under perturbation, value-blind Local Reactive attains a larger ΔWEL than HierComm in five of the six held-out cells — including all three on California. HierComm never drops to inaction, but its advantage is scoped to the standard regime."
   },
   "benchmark": {
     "title": "Benchmark & Data",
@@ -227,7 +228,7 @@
     "trainingPPO": "PPO fine-tuning: 100k environment steps on the WEL/ISR delta reward with firebreak shaping.",
     "hyperparams": "Hyperparameters",
     "scopeTitle": "Honest scope",
-    "scope": "No algorithmic-novelty claim: the primitives (CNN policies, communication rounds, PPO, BC) are standard. A fully learned commander variant exists and underperforms the value-aware rule — see the ablation page. The contribution is the benchmark, the integrated system, and the honest component analysis."
+    "scope": "No algorithmic-novelty claim: the primitives (CNN policies, communication rounds, PPO, BC) are standard. A fully learned commander variant was evaluated under the main 5-seed protocol: statistically indistinguishable from the value-aware rule on Saudi (WEL 6.02 vs 7.02, p = 0.49) and significantly worse on California (8.20 vs 5.88, p = 0.03) — so the deployed system keeps the transparent rule. The contribution is the benchmark, the integrated system, and the honest component analysis."
   },
   "repro": {
     "title": "Reproducibility",
@@ -235,7 +236,7 @@
     "protocol": "Protocol",
     "protocolItems": {
       "seeds": "5 training seeds: {42, 1042, 2042, 3042, 4042}",
-      "eval": "Evaluation: held-out seed groups × 15 episodes; disjoint train/eval seed streams (no leakage)",
+      "eval": "Evaluation: held-out seed groups × 15 episodes for the main results and ablation, 10 for the robustness and transfer studies; disjoint train/eval seed streams (no leakage)",
       "unit": "Unit of analysis: per-training-seed mean (n = 5)",
       "determinism": "Bit-identical CPU determinism (verified)"
     },

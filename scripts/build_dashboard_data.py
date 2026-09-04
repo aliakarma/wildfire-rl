@@ -29,6 +29,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 PHASE3 = REPO / "wildfire_phase3_multiseed"
 PHASE4 = REPO / "wildfire_phase4"
+#: 7-policy difficulty sweep (2026-07-19): supersedes PHASE4's 4-policy robustness artifact.
+#: Ablation data still comes from PHASE4; only the robustness sweep moved here.
+PHASE4X = REPO / "wildfire_phase4_extended"
 PHASE6 = REPO / "wildfire_phase6"
 GIFS5 = REPO / "figures" / "wildfire_phase5_gifs"
 GIFS6 = REPO / "figures" / "wildfire_phase6_gifs"
@@ -45,6 +48,9 @@ EXPECTED_FINGERPRINTS: dict[str, str] = {
         "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd"
     ),
     "wildfire_phase4": "be6d0e218ffe77f144a9171ac21ec5562c422cf9180c1d543fa150a11c36f94d",
+    "wildfire_phase4_extended": (
+        "cada146a7eacd3d61f86a153d3574e34024557e75fe1b36f71ba4e90c07dc5fb"
+    ),
     "wildfire_phase6": "cfce760842dd1e2f67d1a0f9709b8be4c701c464353d69d81d884626ba9af93b",
 }
 
@@ -369,8 +375,8 @@ def copy_downloads() -> int:
         PHASE3 / "FREEZE.json",
         PHASE4 / "ablation_results.csv",
         PHASE4 / "ablation_summary.json",
-        PHASE4 / "robustness_results.csv",
-        PHASE4 / "robustness_summary.json",
+        PHASE4X / "robustness_results.csv",
+        PHASE4X / "robustness_summary.json",
         PHASE6 / "generalization_raw.csv",
         PHASE6 / "generalization_summary.json",
         PHASE6 / "transfer_matrix_raw.csv",
@@ -489,7 +495,7 @@ def main() -> None:
         "main_results.json": build_main_results(meta),
         "train_curves.json": build_train_curves(meta),
         "ablations.json": build_passthrough(meta, PHASE4 / "ablation_summary.json"),
-        "robustness.json": build_passthrough(meta, PHASE4 / "robustness_summary.json"),
+        "robustness.json": build_passthrough(meta, PHASE4X / "robustness_summary.json"),
         "generalization.json": build_passthrough(meta, PHASE6 / "generalization_summary.json"),
         "transfer.json": build_passthrough(meta, PHASE6 / "transfer_summary.json"),
         "benchmark.json": build_benchmark(meta),

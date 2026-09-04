@@ -9,9 +9,9 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 27.0,
+    "WEL": 27,
     "ISR": 0.2857142857142857,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 483,
     "return": -434.4140625
    }
@@ -25,7 +25,7 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 18.0,
+    "WEL": 18,
     "ISR": 0.5714285714285714,
     "CE": 0.9955849889624724,
     "burned": 467,
@@ -41,7 +41,7 @@
    "episode_seed": 100042,
    "steps": 77,
    "final": {
-    "WEL": 23.0,
+    "WEL": 23,
     "ISR": 0.42857142857142855,
     "CE": 0.4188034188034188,
     "burned": 116,
@@ -57,9 +57,9 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 4.0,
+    "WEL": 4,
     "ISR": 0.8571428571428571,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 331,
     "return": -246.8359375
    }
@@ -73,8 +73,8 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 0.0,
-    "ISR": 1.0,
+    "WEL": 0,
+    "ISR": 1,
     "CE": 0.9249448123620309,
     "burned": 118,
     "return": -79.784765625
@@ -89,11 +89,27 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 4.0,
+    "WEL": 4,
     "ISR": 0.8571428571428571,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 112,
     "return": -136.162109375
+   }
+  },
+  {
+   "file": "saudi_greedy_risk_s42.json",
+   "kind": "native",
+   "region": "saudi",
+   "policy": "greedy_risk",
+   "ckpt_region": "saudi",
+   "episode_seed": 100043,
+   "steps": 150,
+   "final": {
+    "WEL": 27,
+    "ISR": 0.2857142857142857,
+    "CE": 0.9867549668874173,
+    "burned": 357,
+    "return": -293.291015625
    }
   },
   {
@@ -105,9 +121,9 @@
    "episode_seed": 100042,
    "steps": 138,
    "final": {
-    "WEL": 34.0,
-    "ISR": 0.0,
-    "CE": 1.0,
+    "WEL": 34,
+    "ISR": 0,
+    "CE": 1,
     "burned": 827,
     "return": -565.37109375
    }
@@ -121,7 +137,7 @@
    "episode_seed": 100042,
    "steps": 138,
    "final": {
-    "WEL": 28.0,
+    "WEL": 28,
     "ISR": 0.16666666666666666,
     "CE": 0.9952038369304557,
     "burned": 818,
@@ -137,7 +153,7 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 28.0,
+    "WEL": 28,
     "ISR": 0.16666666666666666,
     "CE": 0.41280353200883,
     "burned": 515,
@@ -153,7 +169,7 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 22.0,
+    "WEL": 22,
     "ISR": 0.5,
     "CE": 0.8432671081677704,
     "burned": 736,
@@ -169,7 +185,7 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 15.0,
+    "WEL": 15,
     "ISR": 0.5,
     "CE": 0.9845474613686535,
     "burned": 422,
@@ -185,11 +201,27 @@
    "episode_seed": 100042,
    "steps": 71,
    "final": {
-    "WEL": 6.0,
+    "WEL": 6,
     "ISR": 0.8333333333333334,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 109,
     "return": -51.11328125
+   }
+  },
+  {
+   "file": "california_greedy_risk_s42.json",
+   "kind": "native",
+   "region": "california",
+   "policy": "greedy_risk",
+   "ckpt_region": "california",
+   "episode_seed": 100050,
+   "steps": 150,
+   "final": {
+    "WEL": 28,
+    "ISR": 0.16666666666666666,
+    "CE": 0.9933774834437086,
+    "burned": 788,
+    "return": -460.380859375
    }
   },
   {
@@ -201,7 +233,7 @@
    "episode_seed": 100042,
    "steps": 93,
    "final": {
-    "WEL": 4.0,
+    "WEL": 4,
     "ISR": 0.8571428571428571,
     "CE": 0.9964539007092199,
     "burned": 212,
@@ -217,9 +249,9 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 27.0,
+    "WEL": 27,
     "ISR": 0.2857142857142857,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 367,
     "return": -362.01171875
    }
@@ -233,9 +265,9 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 18.0,
+    "WEL": 18,
     "ISR": 0.3333333333333333,
-    "CE": 1.0,
+    "CE": 1,
     "burned": 517,
     "return": -355.4296875
    }
@@ -249,7 +281,7 @@
    "episode_seed": 100042,
    "steps": 150,
    "final": {
-    "WEL": 31.0,
+    "WEL": 31,
     "ISR": 0.16666666666666666,
     "CE": 0.6821192052980133,
     "burned": 663,
@@ -257,18 +289,5 @@
    }
   }
  ],
- "skipped_unverified": [
-  {
-   "region": "saudi",
-   "policy": "greedy_risk",
-   "kind": "native",
-   "reason": "saudi/greedy_risk: replay CE 0.9911699779249448 != frozen 0.9933774834437086 \u2014 the replay is NOT the reported rollout."
-  },
-  {
-   "region": "california",
-   "policy": "greedy_risk",
-   "kind": "native",
-   "reason": "california/greedy_risk: replay CE 0.9952038369304557 != frozen 0.9928057553956835 \u2014 the replay is NOT the reported rollout."
-  }
- ]
+ "skipped_unverified": []
 }

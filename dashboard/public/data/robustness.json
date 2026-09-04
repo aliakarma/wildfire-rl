@@ -4,13 +4,14 @@
   "fingerprints": {
    "wildfire_phase3_multiseed": "da4a381dc6ab43e5cb2a01b60fd5c8f32f2b111587fa38b0277b100fc35586dd",
    "wildfire_phase4": "be6d0e218ffe77f144a9171ac21ec5562c422cf9180c1d543fa150a11c36f94d",
+   "wildfire_phase4_extended": "cada146a7eacd3d61f86a153d3574e34024557e75fe1b36f71ba4e90c07dc5fb",
    "wildfire_phase6": "cfce760842dd1e2f67d1a0f9709b8be4c701c464353d69d81d884626ba9af93b"
   },
   "frozen_utc": "2026-07-10T18:28:20Z",
   "freeze_commit": "567945f3823d196e8975ccab776e9b63b516b0b3",
-  "commit": "24613d2eaea444bfcca325e52baf7fa6d9bf69fa",
+  "commit": "169d553f5e2937ccf9a82148dc0f69c53675a7d6",
   "git_dirty": true,
-  "built": "2026-07-17",
+  "built": "2026-07-19",
   "protocol": {
    "train_seeds": [
     42,
@@ -23,7 +24,7 @@
    "unit": "per-training-seed mean (n=5)"
   }
  },
- "source": "wildfire_phase4/robustness_summary.json",
+ "source": "wildfire_phase4_extended/robustness_summary.json",
  "protocol": {
   "regimes": [
    "easy",
@@ -37,7 +38,12 @@
    3042,
    4042
   ],
-  "episodes": 10
+  "episodes": 10,
+  "episodes_by_regime": {
+   "easy": 10,
+   "medium": "main protocol (15; medium == default regime, values from phase3_summary.json)",
+   "hard": 10
+  }
  },
  "regions": {
   "saudi": {
@@ -49,6 +55,18 @@
     "value_first": {
      "WEL_mean": 17.96,
      "ISR_mean": 0.5714285714285713
+    },
+    "greedy_risk": {
+     "WEL_mean": 25.06,
+     "ISR_mean": 0.34571428571428564
+    },
+    "local_reactive": {
+     "WEL_mean": 3.06,
+     "ISR_mean": 0.9342857142857143
+    },
+    "mappo": {
+     "WEL_mean": 6.048,
+     "ISR_mean": 0.7965714285714286
     },
     "commnet": {
      "WEL_mean": 4.176,
@@ -68,6 +86,18 @@
      "WEL_mean": 18.84,
      "ISR_mean": 0.5447619047619046
     },
+    "greedy_risk": {
+     "WEL_mean": 24.72,
+     "ISR_mean": 0.358095238095238
+    },
+    "local_reactive": {
+     "WEL_mean": 11.906666666666666,
+     "ISR_mean": 0.72
+    },
+    "mappo": {
+     "WEL_mean": 9.770666666666667,
+     "ISR_mean": 0.6918095238095237
+    },
     "commnet": {
      "WEL_mean": 12.44,
      "ISR_mean": 0.6819047619047618
@@ -85,6 +115,18 @@
     "value_first": {
      "WEL_mean": 19.44,
      "ISR_mean": 0.5238095238095236
+    },
+    "greedy_risk": {
+     "WEL_mean": 25.92,
+     "ISR_mean": 0.32
+    },
+    "local_reactive": {
+     "WEL_mean": 13.42,
+     "ISR_mean": 0.6971428571428571
+    },
+    "mappo": {
+     "WEL_mean": 16.612000000000002,
+     "ISR_mean": 0.5462857142857142
     },
     "commnet": {
      "WEL_mean": 17.951999999999998,
@@ -106,6 +148,18 @@
      "WEL_mean": 6.96,
      "ISR_mean": 0.7333333333333334
     },
+    "greedy_risk": {
+     "WEL_mean": 6.96,
+     "ISR_mean": 0.73
+    },
+    "local_reactive": {
+     "WEL_mean": 0.0,
+     "ISR_mean": 1.0
+    },
+    "mappo": {
+     "WEL_mean": 2.4,
+     "ISR_mean": 0.9333333333333333
+    },
     "commnet": {
      "WEL_mean": 8.064,
      "ISR_mean": 0.7666666666666665
@@ -122,11 +176,23 @@
     },
     "value_first": {
      "WEL_mean": 28.4,
-     "ISR_mean": 0.1555555555555555
+     "ISR_mean": 0.15555555555555553
+    },
+    "greedy_risk": {
+     "WEL_mean": 28.4,
+     "ISR_mean": 0.15555555555555553
+    },
+    "local_reactive": {
+     "WEL_mean": 10.226666666666667,
+     "ISR_mean": 0.7022222222222222
+    },
+    "mappo": {
+     "WEL_mean": 14.165333333333333,
+     "ISR_mean": 0.6235555555555556
     },
     "commnet": {
      "WEL_mean": 19.576,
-     "ISR_mean": 0.3977777777777777
+     "ISR_mean": 0.39777777777777773
     },
     "hiercomm_heur": {
      "WEL_mean": 5.8773333333333335,
@@ -141,6 +207,18 @@
     "value_first": {
      "WEL_mean": 32.8,
      "ISR_mean": 0.0333333333333333
+    },
+    "greedy_risk": {
+     "WEL_mean": 33.04,
+     "ISR_mean": 0.026666666666666665
+    },
+    "local_reactive": {
+     "WEL_mean": 24.3,
+     "ISR_mean": 0.2666666666666666
+    },
+    "mappo": {
+     "WEL_mean": 23.284000000000002,
+     "ISR_mean": 0.38866666666666666
     },
     "commnet": {
      "WEL_mean": 25.586666666666662,
