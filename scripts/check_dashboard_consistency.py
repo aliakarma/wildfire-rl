@@ -19,9 +19,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "dashboard" / "public" / "data"
 PUBLIC = REPO / "dashboard" / "public"
-PHASE3 = REPO / "wildfire_phase3_multiseed"
-PHASE4 = REPO / "wildfire_phase4"
-PHASE6 = REPO / "wildfire_phase6"
+PHASE3 = REPO / "results" / "wildfire_phase3_multiseed"
+PHASE4 = REPO / "results" / "wildfire_phase4"
+PHASE6 = REPO / "results" / "wildfire_phase6"
 
 # Single source of truth for the expected fingerprints lives in the build script.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -75,7 +75,10 @@ def check_exact_mirrors() -> None:
 
     for name, path in [
         ("ablations.json", PHASE4 / "ablation_summary.json"),
-        ("robustness.json", REPO / "wildfire_phase4_extended" / "robustness_summary.json"),
+        (
+            "robustness.json",
+            REPO / "results" / "wildfire_phase4_extended" / "robustness_summary.json",
+        ),
         ("generalization.json", PHASE6 / "generalization_summary.json"),
         ("transfer.json", PHASE6 / "transfer_summary.json"),
     ]:
@@ -134,7 +137,8 @@ def check_meta() -> None:
     # Every gated directory: FREEZE.json on disk and meta.fingerprints must both match
     # the expected constants (the full re-hash runs in build_dashboard_data.py).
     for dirname, expected in EXPECTED_FINGERPRINTS.items():
-        recorded = json.loads((REPO / dirname / "FREEZE.json").read_text())["fingerprint_sha256"]
+        freeze = REPO / "results" / dirname / "FREEZE.json"
+        recorded = json.loads(freeze.read_text())["fingerprint_sha256"]
         if recorded != expected:
             _fail(f"{dirname}/FREEZE.json fingerprint != expected constant")
         if meta.get("fingerprints", {}).get(dirname) != expected:

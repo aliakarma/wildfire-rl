@@ -103,9 +103,7 @@ class CommNetActor(nn.Module):
             h = torch.tanh(self.f_h(h) + self.f_c(comm))
         logits = self.action_head(h)
         if action_mask is not None:
-            logits = torch.where(
-                action_mask, logits, torch.tensor(-1e9, device=logits.device)
-            )
+            logits = torch.where(action_mask, logits, torch.tensor(-1e9, device=logits.device))
         return logits
 
 

@@ -96,7 +96,12 @@ REGIMES: dict[str, dict[str, Any]] = {
 #: contain the fire, leaving room for strategic coordination).
 REGION_OVERRIDES: dict[str, dict[str, dict[str, Any]]] = {
     "california": {
-        "easy": {"wind_scale": 0.35, "ffmc": 87.0, "steps_per_action": 30, "ignition_dist": (8, 14)},
+        "easy": {
+            "wind_scale": 0.35,
+            "ffmc": 87.0,
+            "steps_per_action": 30,
+            "ignition_dist": (8, 14),
+        },
         "default": {
             "wind_scale": 0.5,
             "ffmc": 90.0,

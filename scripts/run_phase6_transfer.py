@@ -3,7 +3,7 @@
 Two studies, both scored under the identical Phase-3 protocol (``make_marl_env(region, "default")``,
 disjoint eval seed stream ``seed + 100000 + episode``) and driven by the *same* action dispatcher
 the frozen results and the Phase-5 GIFs use (``phase3_eval.select_actions``) — so every number here
-is directly comparable to ``wildfire_phase3_multiseed/phase3_summary.json``.
+is directly comparable to ``results/wildfire_phase3_multiseed/phase3_summary.json``.
 
 1. **Transfer matrix** (train-on-A -> eval-on-B, both directions) for the learned policies that own
    region-specific checkpoints (CommNet, HierComm). Reports the full WEL/ISR matrix plus
@@ -27,12 +27,12 @@ Examples
 --------
 Smoke (validate end-to-end, ~minutes)::
 
-    python scripts/run_phase6_transfer.py --ckpt-dir wildfire_phase3_multiseed \\
+    python scripts/run_phase6_transfer.py --ckpt-dir results/wildfire_phase3_multiseed \\
         --out results/phase6 --quick
 
 Full (5 training seeds x 15 episodes, both directions, all conditions)::
 
-    python scripts/run_phase6_transfer.py --ckpt-dir wildfire_phase3_multiseed \\
+    python scripts/run_phase6_transfer.py --ckpt-dir results/wildfire_phase3_multiseed \\
         --out results/phase6 --train-seeds 42,1042,2042,3042,4042 --episodes 15
 """
 
@@ -61,7 +61,6 @@ from wildfire_marl.eval.phase3_eval import (  # noqa: E402
     EVAL_OFFSET,
     LABELS,
     LEARNED,
-    checkpoint_path,
     load_nets,
     select_actions,
 )
@@ -113,8 +112,9 @@ def _wind_env(region: str, delta: int = 90, **overrides):
         w = pd.read_csv(dst / "Weather.csv")
         w["WD"] = (w["WD"] + delta) % 360
         w.to_csv(dst / "Weather.csv", index=False)
-    return make_marl_env(region, "default", data_dir=str(parent), reward_cls=WELISRDeltaReward,
-                         **overrides)
+    return make_marl_env(
+        region, "default", data_dir=str(parent), reward_cls=WELISRDeltaReward, **overrides
+    )
 
 
 def _rot_infra_env(region: str, **overrides):
@@ -127,8 +127,9 @@ def _rot_infra_env(region: str, **overrides):
         f = dst / f"{layer}.npy"
         if not f.exists():
             np.save(f, np.ascontiguousarray(np.rot90(np.load(src / f"{layer}.npy"))))
-    return make_marl_env(region, "default", infra_dir=str(dst), reward_cls=WELISRDeltaReward,
-                         **overrides)
+    return make_marl_env(
+        region, "default", infra_dir=str(dst), reward_cls=WELISRDeltaReward, **overrides
+    )
 
 
 def _stress_ignition_cells(env) -> list[int]:
@@ -203,8 +204,15 @@ def eval_policy_seedscores(
                 if ignition_cells is not None:
                     opts = {"ignition_cell": ignition_cells[e % len(ignition_cells)]}
                 m = rollout_once(env, kind, nets, device, seed=s + EVAL_OFFSET + e, options=opts)
-                m.update({"policy": kind, "ckpt_region": ckpt_region, "train_seed": ts,
-                          "eval_seed": s, "episode": e})
+                m.update(
+                    {
+                        "policy": kind,
+                        "ckpt_region": ckpt_region,
+                        "train_seed": ts,
+                        "eval_seed": s,
+                        "episode": e,
+                    }
+                )
                 raw.append(m)
                 for k in METRICS:
                     ep_metrics[k].append(m[k])
@@ -254,8 +262,9 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
     def _prev_rows(kind, tr, er):
         if len(existing) == 0:
             return None
-        sub = existing[(existing.policy == kind) & (existing.ckpt_region == tr)
-                       & (existing.eval_region == er)]
+        sub = existing[
+            (existing.policy == kind) & (existing.ckpt_region == tr) & (existing.eval_region == er)
+        ]
         return sub.to_dict("records") if len(sub) else None
 
     for eval_region in REGIONS:
@@ -265,7 +274,10 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
                 prev = _prev_rows(kind, train_region, eval_region)
                 if prev is not None:
                     cell[(kind, train_region, eval_region)] = _rebuild_per(prev)
-                    print(f"  [transfer] SKIP (done) {kind}: {train_region}->{eval_region}", flush=True)
+                    print(
+                        f"  [transfer] SKIP (done) {kind}: {train_region}->{eval_region}",
+                        flush=True,
+                    )
                     continue
                 if env is None:
                     env = _std_env(eval_region)
@@ -277,21 +289,28 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
                 _append_rows(raw_path, raw)
                 all_rows.extend(raw)
                 cell[(kind, train_region, eval_region)] = per
-                print(f"  [transfer] {kind}: train={train_region} eval={eval_region} "
-                      f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}", flush=True)
+                print(
+                    f"  [transfer] {kind}: train={train_region} eval={eval_region} "
+                    f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}",
+                    flush=True,
+                )
         if env is not None:
             env.close()
 
-    summary: dict = {"protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds,
-                                  "episodes": episodes}, "policies": {}}
+    summary: dict = {
+        "protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds, "episodes": episodes},
+        "policies": {},
+    }
     for kind in policies:
         entry: dict = {"label": LABELS[kind], "directions": {}, "matrix": {}}
         for tr in REGIONS:
             for er in REGIONS:
                 c = cell[(kind, tr, er)]
                 entry["matrix"][f"{tr}->{er}"] = {
-                    "WEL_mean": float(np.mean(c["WEL"])), "WEL_std": float(np.std(c["WEL"], ddof=1) if len(c["WEL"]) > 1 else 0.0),
-                    "ISR_mean": float(np.mean(c["ISR"])), "ISR_std": float(np.std(c["ISR"], ddof=1) if len(c["ISR"]) > 1 else 0.0),
+                    "WEL_mean": float(np.mean(c["WEL"])),
+                    "WEL_std": float(np.std(c["WEL"], ddof=1) if len(c["WEL"]) > 1 else 0.0),
+                    "ISR_mean": float(np.mean(c["ISR"])),
+                    "ISR_std": float(np.std(c["ISR"], ddof=1) if len(c["ISR"]) > 1 else 0.0),
                 }
         trs_pair = {}
         for a, b in (("saudi", "california"), ("california", "saudi")):
@@ -302,15 +321,25 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
             trs = transfer_robustness_score(nat, xfer)
             trs_pair[f"{a}->{b}"] = trs
             # Welch on the per-seed ISR: native vs transferred (does transfer degrade?)
-            w = (welch_ttest(cell[(kind, a, a)]["ISR"], cell[(kind, a, b)]["ISR"])
-                 if len(train_seeds) > 1 else {"p_value": float("nan"), "cohens_d": float("nan")})
+            w = (
+                welch_ttest(cell[(kind, a, a)]["ISR"], cell[(kind, a, b)]["ISR"])
+                if len(train_seeds) > 1
+                else {"p_value": float("nan"), "cohens_d": float("nan")}
+            )
             entry["directions"][f"{a}->{b}"] = {
-                "native_ISR": nat, "transfer_ISR": xfer, "TRS_ISR": trs,
-                "native_WEL": nat_wel, "transfer_WEL": xfer_wel,
+                "native_ISR": nat,
+                "transfer_ISR": xfer,
+                "TRS_ISR": trs,
+                "native_WEL": nat_wel,
+                "transfer_WEL": xfer_wel,
                 "WEL_gap": cross_domain_gap(nat_wel, xfer_wel),
-                "ISR_degradation_p": w["p_value"], "ISR_degradation_d": w["cohens_d"],
+                "ISR_degradation_p": w["p_value"],
+                "ISR_degradation_d": w["cohens_d"],
             }
-        if all(k in trs_pair and not np.isnan(trs_pair[k]) for k in ("saudi->california", "california->saudi")):
+        if all(
+            k in trs_pair and not np.isnan(trs_pair[k])
+            for k in ("saudi->california", "california->saudi")
+        ):
             entry["adaptation_asymmetry_TRS"] = adaptation_asymmetry(
                 trs_pair["saudi->california"], trs_pair["california->saudi"]
             )
@@ -328,19 +357,27 @@ def run_transfer(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_
 
 def _emit_transfer_table(summary, policies, out_path: Path) -> None:
     lines = [
-        r"\begin{table}[t]", r"\centering",
+        r"\begin{table}[t]",
+        r"\centering",
         r"\caption{\textbf{Cross-region transfer.} Native vs transferred ISR (higher is better) "
         r"with Transfer-Robustness-Score (TRS $=$ transfer/native ISR). Mean over training seeds.}",
-        r"\label{tab:transfer}", r"\begin{tabular}{llccc}", r"\toprule",
-        r"Policy & Direction & Native ISR & Transfer ISR & TRS \\", r"\midrule",
+        r"\label{tab:transfer}",
+        r"\begin{tabular}{llccc}",
+        r"\toprule",
+        r"Policy & Direction & Native ISR & Transfer ISR & TRS \\",
+        r"\midrule",
     ]
     for kind in policies:
         d = summary["policies"][kind]["directions"]
         for i, (dirn, v) in enumerate(d.items()):
             pol = LABELS[kind] if i == 0 else ""
-            arrow = dirn.replace("saudi", "SA").replace("california", "CA").replace("->", r" $\to$ ")
-            lines.append(rf"{pol} & {arrow} & {v['native_ISR']:.3f} & {v['transfer_ISR']:.3f} "
-                         rf"& {v['TRS_ISR']:.2f} \\")
+            arrow = (
+                dirn.replace("saudi", "SA").replace("california", "CA").replace("->", r" $\to$ ")
+            )
+            lines.append(
+                rf"{pol} & {arrow} & {v['native_ISR']:.3f} & {v['transfer_ISR']:.3f} "
+                rf"& {v['TRS_ISR']:.2f} \\"
+            )
         lines.append(r"\midrule")
     lines[-1] = r"\bottomrule"
     lines += [r"\end{tabular}", r"\end{table}", ""]
@@ -364,19 +401,27 @@ def _condition_env(region: str, condition: str):
     return env, cells
 
 
-def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_seeds, device):
+def run_generalization(
+    ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, train_seeds, device
+):
     """Per-region stress conditions with falsifiable dWEL vs the per-condition No-Op baseline (resumable)."""
     raw_path = out_dir / "generalization_raw.csv"
     existing = _load_existing(raw_path)
     raw_all: list[dict] = existing.to_dict("records") if len(existing) else []
-    summary: dict = {"protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds,
-                                  "episodes": episodes}, "regions": {}}
+    summary: dict = {
+        "protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds, "episodes": episodes},
+        "regions": {},
+    }
 
     def _prev_rows(region, condition, kind, ckpt_region):
         if len(existing) == 0:
             return None
-        sub = existing[(existing.region == region) & (existing.condition == condition)
-                       & (existing.policy == kind) & (existing.ckpt_region == ckpt_region)]
+        sub = existing[
+            (existing.region == region)
+            & (existing.condition == condition)
+            & (existing.policy == kind)
+            & (existing.ckpt_region == ckpt_region)
+        ]
         return sub.to_dict("records") if len(sub) else None
 
     for region in REGIONS:
@@ -395,7 +440,11 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
             wel_by_policy: dict[str, list[float]] = {}
             per_by_policy: dict[str, dict] = {}
             for kind, ckpt_region in cond_policies:
-                tag = kind if condition != "cross_region" or kind == "noop" else f"{kind}_from_{other}"
+                tag = (
+                    kind
+                    if condition != "cross_region" or kind == "noop"
+                    else f"{kind}_from_{other}"
+                )
                 prev = _prev_rows(region, condition, kind, ckpt_region)
                 if prev is not None:
                     per = _rebuild_per(prev)
@@ -404,7 +453,14 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
                     if env is None:
                         env, cells = _condition_env(region, condition)
                     raw, per = eval_policy_seedscores(
-                        env, kind, ckpt_region, ckpt_dir, device, eval_seeds, episodes, train_seeds,
+                        env,
+                        kind,
+                        ckpt_region,
+                        ckpt_dir,
+                        device,
+                        eval_seeds,
+                        episodes,
+                        train_seeds,
                         ignition_cells=cells,
                     )
                     for r in raw:
@@ -412,8 +468,11 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
                         r["condition"] = condition
                     _append_rows(raw_path, raw)
                     raw_all.extend(raw)
-                    print(f"  [gen] {region}/{condition}: {tag} "
-                          f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}", flush=True)
+                    print(
+                        f"  [gen] {region}/{condition}: {tag} "
+                        f"WEL={np.mean(per['WEL']):.2f} ISR={np.mean(per['ISR']):.3f}",
+                        flush=True,
+                    )
                 wel_by_policy[tag] = per["WEL"]
                 per_by_policy[tag] = per
             if env is not None:
@@ -425,9 +484,14 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
                 wel_mean = float(np.mean(per["WEL"]))
                 cond_entry[tag] = {
                     "WEL_mean": wel_mean,
-                    "WEL_ci": list(bootstrap_ci(per["WEL"])) if len(per["WEL"]) > 1 else [wel_mean, wel_mean],
+                    "WEL_ci": (
+                        list(bootstrap_ci(per["WEL"]))
+                        if len(per["WEL"]) > 1
+                        else [wel_mean, wel_mean]
+                    ),
                     "ISR_mean": float(np.mean(per["ISR"])),
-                    "dWEL": noop_wel - wel_mean,  # >0 == policy saves value vs No-Op in this condition
+                    "dWEL": noop_wel
+                    - wel_mean,  # >0 == policy saves value vs No-Op in this condition
                     "n_seeds": len(per["WEL"]),
                 }
             reg_summary[condition] = cond_entry
@@ -435,7 +499,15 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
 
     if raw_all:
         pd.DataFrame(raw_all).drop_duplicates(
-            subset=["region", "condition", "policy", "ckpt_region", "train_seed", "eval_seed", "episode"]
+            subset=[
+                "region",
+                "condition",
+                "policy",
+                "ckpt_region",
+                "train_seed",
+                "eval_seed",
+                "episode",
+            ]
         ).to_csv(raw_path, index=False)
     (out_dir / "generalization_summary.json").write_text(json.dumps(summary, indent=2))
     _emit_generalization_table(summary, out_dir / "phase6_generalization_table.tex")
@@ -444,19 +516,28 @@ def run_generalization(ckpt_dir, out_dir: Path, policies, eval_seeds, episodes, 
 
 def _emit_generalization_table(summary, out_path: Path) -> None:
     lines = [
-        r"\begin{table}[t]", r"\centering",
+        r"\begin{table}[t]",
+        r"\centering",
         r"\caption{\textbf{Generalization / failure modes.} $\Delta$WEL $=$ WEL(No-Op) $-$ "
         r"WEL(policy) within each condition (higher is better; No-Op $=0$ by construction).}",
-        r"\label{tab:generalization}", r"\begin{tabular}{llc}", r"\toprule",
-        r"Region & Condition & $\Delta$WEL (proposed) \\", r"\midrule",
+        r"\label{tab:generalization}",
+        r"\begin{tabular}{llc}",
+        r"\toprule",
+        r"Region & Condition & $\Delta$WEL (proposed) \\",
+        r"\midrule",
     ]
     for region, conds in summary["regions"].items():
         rlabel = {"saudi": "Saudi", "california": "California"}[region]
         for i, (cond, entry) in enumerate(conds.items()):
-            tag = PROPOSED if PROPOSED in entry else next(
-                (t for t in entry if t.startswith(PROPOSED)), None)
+            tag = (
+                PROPOSED
+                if PROPOSED in entry
+                else next((t for t in entry if t.startswith(PROPOSED)), None)
+            )
             dwel = f"{entry[tag]['dWEL']:.2f}" if tag else "--"
-            lines.append(rf"{rlabel if i == 0 else ''} & {cond.replace('_', chr(92)+'_')} & {dwel} \\")
+            lines.append(
+                rf"{rlabel if i == 0 else ''} & {cond.replace('_', chr(92)+'_')} & {dwel} \\"
+            )
         lines.append(r"\midrule")
     lines[-1] = r"\bottomrule"
     lines += [r"\end{tabular}", r"\end{table}", ""]
@@ -467,8 +548,10 @@ def _emit_generalization_table(summary, out_path: Path) -> None:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Phase-6 transfer + generalization (frozen checkpoints).")
-    ap.add_argument("--ckpt-dir", default="wildfire_phase3_multiseed")
+    ap = argparse.ArgumentParser(
+        description="Phase-6 transfer + generalization (frozen checkpoints)."
+    )
+    ap.add_argument("--ckpt-dir", default="results/wildfire_phase3_multiseed")
     ap.add_argument("--out", default="results/phase6")
     ap.add_argument("--policies", default=",".join(DEFAULT_POLICIES))
     ap.add_argument("--eval-seeds", default="42,1042,2042,3042,4042")
@@ -491,18 +574,24 @@ def main() -> None:
     set_seed(0)
     device = torch.device("cpu")
 
-    print(f"Phase-6 | ckpt={args.ckpt_dir} study={args.study} policies={policies}\n"
-          f"         train_seeds={train_seeds} eval_seeds={eval_seeds} episodes={episodes}",
-          flush=True)
+    print(
+        f"Phase-6 | ckpt={args.ckpt_dir} study={args.study} policies={policies}\n"
+        f"         train_seeds={train_seeds} eval_seeds={eval_seeds} episodes={episodes}",
+        flush=True,
+    )
 
     if args.study in ("transfer", "both"):
         print("\n=== TRANSFER MATRIX ===", flush=True)
         transfer_policies = [p for p in policies if p in TRANSFER_POLICIES]
-        run_transfer(args.ckpt_dir, out_dir, transfer_policies, eval_seeds, episodes, train_seeds, device)
+        run_transfer(
+            args.ckpt_dir, out_dir, transfer_policies, eval_seeds, episodes, train_seeds, device
+        )
 
     if args.study in ("generalization", "both"):
         print("\n=== GENERALIZATION / FAILURE MODES ===", flush=True)
-        run_generalization(args.ckpt_dir, out_dir, policies, eval_seeds, episodes, train_seeds, device)
+        run_generalization(
+            args.ckpt_dir, out_dir, policies, eval_seeds, episodes, train_seeds, device
+        )
 
     print(f"\nPhase-6 complete. Artifacts -> {out_dir}/", flush=True)
 

@@ -33,11 +33,19 @@ except ImportError:  # significance checks degrade to SKIP rather than failing t
 # development repo layout and the flattened supplement layout.
 # --------------------------------------------------------------------------------------
 DIR_CANDIDATES = {
-    "phase3": ["results/phase3", "wildfire_phase3_multiseed"],
-    "phase3_learned": ["results/phase3_hiercomm_learned", "wildfire_phase3_hiercomm_learned"],
-    "phase4": ["results/phase4", "wildfire_phase4"],
-    "phase4_extended": ["results/phase4_extended", "wildfire_phase4_extended"],
-    "phase6": ["results/phase6", "wildfire_phase6"],
+    "phase3": ["results/wildfire_phase3_multiseed", "results/phase3", "wildfire_phase3_multiseed"],
+    "phase3_learned": [
+        "results/wildfire_phase3_hiercomm_learned",
+        "results/phase3_hiercomm_learned",
+        "wildfire_phase3_hiercomm_learned",
+    ],
+    "phase4": ["results/wildfire_phase4", "results/phase4", "wildfire_phase4"],
+    "phase4_extended": [
+        "results/wildfire_phase4_extended",
+        "results/phase4_extended",
+        "wildfire_phase4_extended",
+    ],
+    "phase6": ["results/wildfire_phase6", "results/phase6", "wildfire_phase6"],
 }
 
 # Values as printed in docs/RESULTS_FROZEN.md and the paper's main table.
@@ -93,9 +101,7 @@ class Report:
         self.rows: list[dict] = []
 
     def add(self, section: str, name: str, status: str, detail: str) -> None:
-        self.rows.append(
-            {"section": section, "check": name, "status": status, "detail": detail}
-        )
+        self.rows.append({"section": section, "check": name, "status": status, "detail": detail})
         mark = {"PASS": "  ok  ", "FAIL": " FAIL ", "SKIP": " skip "}[status]
         print(f"[{mark}] {name:<52} {detail}")
 
@@ -413,7 +419,9 @@ def check_manifests(root: Path, rep: Report) -> None:
         detail = f"{present} files verified, {absent} omitted (size cap)"
         if bad:
             detail = f"{bad} HASH MISMATCH: {', '.join(bad_names[:3])}"
-        rep.add(section, f"{key}: shipped files match frozen hashes", "FAIL" if bad else "PASS", detail)
+        rep.add(
+            section, f"{key}: shipped files match frozen hashes", "FAIL" if bad else "PASS", detail
+        )
 
         freeze = d / "FREEZE.json"
         if freeze.is_file():
@@ -428,7 +436,9 @@ def check_manifests(root: Path, rep: Report) -> None:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("--root", default=".", help="archive or repo root (default: cwd)")
     ap.add_argument("--json", dest="json_out", help="also write the report as JSON")
     args = ap.parse_args()

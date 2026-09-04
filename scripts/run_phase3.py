@@ -257,9 +257,19 @@ def emit_latex(summary: dict, regions: list[str], kinds: list[str], out_path: Pa
 def _worker_cmd(method: str, region: str, train_seed: int, out_dir: Path, steps: int, quick: bool):
     """Command that trains exactly one (method, region, seed) job in an isolated process."""
     cmd = [
-        sys.executable, str(Path(__file__).resolve()), "--train-one",
-        "--method", method, "--region", region, "--train-seed", str(train_seed),
-        "--out", str(out_dir), "--train-steps", str(steps),
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--train-one",
+        "--method",
+        method,
+        "--region",
+        region,
+        "--train-seed",
+        str(train_seed),
+        "--out",
+        str(out_dir),
+        "--train-steps",
+        str(steps),
     ]
     if quick:
         cmd.append("--quick")
@@ -275,8 +285,11 @@ def _run_parallel(jobs: list, n_parallel: int, out_dir: Path) -> None:
     # Single-thread + CPU per worker so N jobs map to N cores (no oversubscription).
     env = {
         **os.environ,
-        "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1",
-        "NUMEXPR_NUM_THREADS": "1", "CUDA_VISIBLE_DEVICES": "",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1",
+        "CUDA_VISIBLE_DEVICES": "",
     }
     procs: list = []
     for m, r, s, cmd in jobs:
@@ -328,8 +341,12 @@ def build_multiseed_summary(
                 std = float(vals.std(ddof=1)) if len(vals) > 1 else 0.0
                 lo, hi = bootstrap_ci(vals) if len(vals) > 1 else (mean, mean)
                 reg[kind]["metrics"][metric] = {
-                    "mean": mean, "std": std, "ci_lo": lo, "ci_hi": hi,
-                    "n_train_seeds": int(len(vals)), "values": vals.tolist(),
+                    "mean": mean,
+                    "std": std,
+                    "ci_lo": lo,
+                    "ci_hi": hi,
+                    "n_train_seeds": int(len(vals)),
+                    "values": vals.tolist(),
                 }
         reg["comparisons"] = {}
         if (proposed, region) in scores:
@@ -355,7 +372,10 @@ def build_multiseed_summary(
                         d = (pv.mean() - ov[0]) / sd if sd > 0 else 0.0
                         test = "one-sample"
                     reg["comparisons"][metric][f"proposed_vs_{kind}"] = {
-                        "t": float(t), "p": float(p), "d": float(d), "test": test,
+                        "t": float(t),
+                        "p": float(p),
+                        "d": float(d),
+                        "test": test,
                     }
         summary["regions"][region] = reg
     return summary
@@ -366,12 +386,17 @@ def emit_latex_multiseed(
 ) -> None:
     """Main table with WEL/ISR as mean +/- std over training seeds; bold best WEL per region."""
     lines = [
-        r"\begin{table*}[t]", r"\centering",
-        r"\caption{\textbf{Main results} (mean $\pm$ std over " + str(n_seeds) +
-        r" training seeds; heuristics are deterministic). Lower WEL / higher ISR is better; "
+        r"\begin{table*}[t]",
+        r"\centering",
+        r"\caption{\textbf{Main results} (mean $\pm$ std over "
+        + str(n_seeds)
+        + r" training seeds; heuristics are deterministic). Lower WEL / higher ISR is better; "
         r"\textbf{bold} marks the best WEL per region.}",
-        r"\label{tab:main_results}", r"\begin{tabular}{llcc}", r"\toprule",
-        r"Region & Policy & WEL $\downarrow$ & ISR $\uparrow$ \\", r"\midrule",
+        r"\label{tab:main_results}",
+        r"\begin{tabular}{llcc}",
+        r"\toprule",
+        r"Region & Policy & WEL $\downarrow$ & ISR $\uparrow$ \\",
+        r"\midrule",
     ]
     for ri, region in enumerate(regions):
         reg = summary["regions"][region]
@@ -390,8 +415,18 @@ def emit_latex_multiseed(
     out_path.write_text("\n".join(lines))
 
 
-def run_multiseed(kinds, regions, train_seeds, eval_seeds, episodes, steps, quick,
-                  out_dir: Path, n_parallel: int, force: bool) -> None:
+def run_multiseed(
+    kinds,
+    regions,
+    train_seeds,
+    eval_seeds,
+    episodes,
+    steps,
+    quick,
+    out_dir: Path,
+    n_parallel: int,
+    force: bool,
+) -> None:
     """Train each learned method over several TRAINING seeds (parallel), evaluate each seed's
     checkpoint on the fixed eval stream, and report mean +/- std over training seeds."""
     learned = [k for k in kinds if k in LEARNED]
@@ -410,8 +445,9 @@ def run_multiseed(kinds, regions, train_seeds, eval_seeds, episodes, steps, quic
             _run_parallel(jobs, n_parallel, out_dir)
         else:
             for m, r, s, _cmd in jobs:
-                train_method(m, r, steps, quick, out_dir, torch.device("cpu"),
-                             train_seed=s, suffix_seed=True)
+                train_method(
+                    m, r, steps, quick, out_dir, torch.device("cpu"), train_seed=s, suffix_seed=True
+                )
 
     device = torch.device("cpu")
     scores: dict = {}
@@ -444,7 +480,9 @@ def run_multiseed(kinds, regions, train_seeds, eval_seeds, episodes, steps, quic
     summary = build_multiseed_summary(scores, regions, present, train_seeds)
     pd.DataFrame(raw).to_csv(out_dir / "phase3_raw.csv", index=False)
     (out_dir / "phase3_summary.json").write_text(json.dumps(summary, indent=2))
-    emit_latex_multiseed(summary, regions, present, out_dir / "phase3_main_table.tex", len(train_seeds))
+    emit_latex_multiseed(
+        summary, regions, present, out_dir / "phase3_main_table.tex", len(train_seeds)
+    )
 
     print("\n========= MULTI-SEED SUMMARY (mean +/- std over training seeds) =========")
     for region in regions:
@@ -453,8 +491,10 @@ def run_multiseed(kinds, regions, train_seeds, eval_seeds, episodes, steps, quic
         for k in present:
             m = reg.get(k, {}).get("metrics", {})
             if "WEL" in m:
-                print(f"  {LABELS[k]:<22} WEL {m['WEL']['mean']:6.2f} +/- {m['WEL']['std']:.2f}  "
-                      f"ISR {m['ISR']['mean']:.3f}  (n={m['WEL']['n_train_seeds']})")
+                print(
+                    f"  {LABELS[k]:<22} WEL {m['WEL']['mean']:6.2f} +/- {m['WEL']['std']:.2f}  "
+                    f"ISR {m['ISR']['mean']:.3f}  (n={m['WEL']['n_train_seeds']})"
+                )
         for k, c in reg.get("comparisons", {}).get("WEL", {}).items():
             print(f"    {k}: p={c['p']:.4f} d={c['d']:.2f} [{c['test']}]")
     print(f"\nArtifacts -> {out_dir}/ (phase3_raw.csv, phase3_summary.json, phase3_main_table.tex)")
@@ -474,7 +514,8 @@ def main() -> None:
         "--eval-only", action="store_true", help="Skip training; evaluate existing checkpoints"
     )
     ap.add_argument(
-        "--train-seeds", default=None,
+        "--train-seeds",
+        default=None,
         help="Comma TRAINING seeds -> multi-seed protocol (mean +/- std over training seeds)",
     )
     ap.add_argument("--parallel", type=int, default=1, help="Concurrent training subprocesses")
@@ -497,8 +538,16 @@ def main() -> None:
     # --- worker mode: train exactly one (method, region, seed) and exit (used by --parallel) ---
     if args.train_one:
         torch.set_num_threads(1)
-        train_method(args.method, args.region, steps, args.quick, out_dir,
-                     torch.device("cpu"), train_seed=args.train_seed, suffix_seed=True)
+        train_method(
+            args.method,
+            args.region,
+            steps,
+            args.quick,
+            out_dir,
+            torch.device("cpu"),
+            train_seed=args.train_seed,
+            suffix_seed=True,
+        )
         return
 
     # --- multi-seed protocol: train N training seeds, aggregate mean +/- std over them ---------
@@ -511,8 +560,18 @@ def main() -> None:
             f"eval_seeds={seeds} parallel={args.parallel} steps={steps}",
             flush=True,
         )
-        run_multiseed(kinds, regions, train_seeds, seeds, episodes, steps, args.quick,
-                      out_dir, args.parallel, args.force)
+        run_multiseed(
+            kinds,
+            regions,
+            train_seeds,
+            seeds,
+            episodes,
+            steps,
+            args.quick,
+            out_dir,
+            args.parallel,
+            args.force,
+        )
         return
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

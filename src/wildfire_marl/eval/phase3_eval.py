@@ -176,7 +176,9 @@ def _qmix_actions(env, net, obs, info, device) -> dict[str, int]:
     return acts
 
 
-def select_actions(env, kind: str, nets: dict[str, Any], obs, info, device, sc: int) -> dict[str, int]:
+def select_actions(
+    env, kind: str, nets: dict[str, Any], obs, info, device, sc: int
+) -> dict[str, int]:
     """Strategic dispatch + low-level action selection for one env step of a policy ``kind``.
 
     Shared by :func:`rollout_episode` (evaluation) and the Phase-5 GIF renderer so both step the

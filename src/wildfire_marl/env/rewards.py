@@ -129,6 +129,5 @@ class WELISRDeltaReward(Reward):
 
 
 REWARD_CLASSES: dict[str, type[Reward]] = {
-    cls.name(): cls
-    for cls in (FireSizeReward, InfrastructureWeightedReward, WELISRDeltaReward)
+    cls.name(): cls for cls in (FireSizeReward, InfrastructureWeightedReward, WELISRDeltaReward)
 }

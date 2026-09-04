@@ -1,0 +1,208 @@
+{
+  "protocol": {
+    "regimes": [
+      "easy",
+      "medium",
+      "hard"
+    ],
+    "eval_seeds": [
+      42,
+      1042,
+      2042,
+      3042,
+      4042
+    ],
+    "episodes": 10,
+    "episodes_by_regime": {
+      "easy": 10,
+      "medium": "main protocol (15; medium == default regime, values from phase3_summary.json)",
+      "hard": 10
+    }
+  },
+  "regions": {
+    "saudi": {
+      "easy": {
+        "noop": {
+          "WEL_mean": 26.786666666666665,
+          "ISR_mean": 0.2933333333333332
+        },
+        "value_first": {
+          "WEL_mean": 17.96,
+          "ISR_mean": 0.5714285714285713
+        },
+        "greedy_risk": {
+          "WEL_mean": 25.06,
+          "ISR_mean": 0.34571428571428564
+        },
+        "local_reactive": {
+          "WEL_mean": 3.06,
+          "ISR_mean": 0.9342857142857143
+        },
+        "mappo": {
+          "WEL_mean": 6.048,
+          "ISR_mean": 0.7965714285714286
+        },
+        "commnet": {
+          "WEL_mean": 4.176,
+          "ISR_mean": 0.8864761904761906
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 3.272,
+          "ISR_mean": 0.908952380952381
+        }
+      },
+      "medium": {
+        "noop": {
+          "WEL_mean": 27.0,
+          "ISR_mean": 0.2857142857142856
+        },
+        "value_first": {
+          "WEL_mean": 18.84,
+          "ISR_mean": 0.5447619047619046
+        },
+        "greedy_risk": {
+          "WEL_mean": 24.72,
+          "ISR_mean": 0.358095238095238
+        },
+        "local_reactive": {
+          "WEL_mean": 11.906666666666666,
+          "ISR_mean": 0.72
+        },
+        "mappo": {
+          "WEL_mean": 9.770666666666667,
+          "ISR_mean": 0.6918095238095237
+        },
+        "commnet": {
+          "WEL_mean": 12.44,
+          "ISR_mean": 0.6819047619047618
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 7.023999999999999,
+          "ISR_mean": 0.8087619047619047
+        }
+      },
+      "hard": {
+        "noop": {
+          "WEL_mean": 27.0,
+          "ISR_mean": 0.2857142857142856
+        },
+        "value_first": {
+          "WEL_mean": 19.44,
+          "ISR_mean": 0.5238095238095236
+        },
+        "greedy_risk": {
+          "WEL_mean": 25.92,
+          "ISR_mean": 0.32
+        },
+        "local_reactive": {
+          "WEL_mean": 13.42,
+          "ISR_mean": 0.6971428571428571
+        },
+        "mappo": {
+          "WEL_mean": 16.612000000000002,
+          "ISR_mean": 0.5462857142857142
+        },
+        "commnet": {
+          "WEL_mean": 17.951999999999998,
+          "ISR_mean": 0.5436190476190477
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 11.309333333333331,
+          "ISR_mean": 0.7150476190476189
+        }
+      }
+    },
+    "california": {
+      "easy": {
+        "noop": {
+          "WEL_mean": 12.68,
+          "ISR_mean": 0.571111111111111
+        },
+        "value_first": {
+          "WEL_mean": 6.96,
+          "ISR_mean": 0.7333333333333334
+        },
+        "greedy_risk": {
+          "WEL_mean": 6.96,
+          "ISR_mean": 0.73
+        },
+        "local_reactive": {
+          "WEL_mean": 0.0,
+          "ISR_mean": 1.0
+        },
+        "mappo": {
+          "WEL_mean": 2.4,
+          "ISR_mean": 0.9333333333333333
+        },
+        "commnet": {
+          "WEL_mean": 8.064,
+          "ISR_mean": 0.7666666666666665
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 0.448,
+          "ISR_mean": 0.9875555555555556
+        }
+      },
+      "medium": {
+        "noop": {
+          "WEL_mean": 34.0,
+          "ISR_mean": 0.0
+        },
+        "value_first": {
+          "WEL_mean": 28.4,
+          "ISR_mean": 0.15555555555555553
+        },
+        "greedy_risk": {
+          "WEL_mean": 28.4,
+          "ISR_mean": 0.15555555555555553
+        },
+        "local_reactive": {
+          "WEL_mean": 10.226666666666667,
+          "ISR_mean": 0.7022222222222222
+        },
+        "mappo": {
+          "WEL_mean": 14.165333333333333,
+          "ISR_mean": 0.6235555555555556
+        },
+        "commnet": {
+          "WEL_mean": 19.576,
+          "ISR_mean": 0.39777777777777773
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 5.8773333333333335,
+          "ISR_mean": 0.8320000000000001
+        }
+      },
+      "hard": {
+        "noop": {
+          "WEL_mean": 34.0,
+          "ISR_mean": 0.0
+        },
+        "value_first": {
+          "WEL_mean": 32.8,
+          "ISR_mean": 0.0333333333333333
+        },
+        "greedy_risk": {
+          "WEL_mean": 33.04,
+          "ISR_mean": 0.026666666666666665
+        },
+        "local_reactive": {
+          "WEL_mean": 24.3,
+          "ISR_mean": 0.2666666666666666
+        },
+        "mappo": {
+          "WEL_mean": 23.284000000000002,
+          "ISR_mean": 0.38866666666666666
+        },
+        "commnet": {
+          "WEL_mean": 25.586666666666662,
+          "ISR_mean": 0.2702222222222222
+        },
+        "hiercomm_heur": {
+          "WEL_mean": 17.720000000000002,
+          "ISR_mean": 0.4795555555555555
+        }
+      }
+    }
+  }
+}

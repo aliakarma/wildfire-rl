@@ -1,0 +1,83 @@
+/home/ali_akarma/venvs/wildfire-marl/lib/python3.12/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12090). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+
+[TRAIN] hiercomm / saudi / seed 42 (100000 steps)...
+Generating demonstrations for behavior cloning (40 episodes)...
+Collected 600 transitions. Training BC for 100 epochs...
+BC Epoch 0/100 | Loss: 11.9402
+BC Epoch 20/100 | Loss: 2.1954
+BC Epoch 40/100 | Loss: 1.0094
+BC Epoch 60/100 | Loss: 0.6731
+BC Epoch 80/100 | Loss: 0.5021
+[BC] Collecting tactical demonstrations (30 episodes)...
+[BC] Training tactical actor for 60 epochs on 3589 timesteps...
+[BC] epoch 0/60 loss 22.839
+[BC] epoch 15/60 loss 15.076
+[BC] epoch 30/60 loss 12.267
+[BC] epoch 45/60 loss 9.875
+Steps 1500/100000 | ep_return(10) -36.89 | last WEL 13.0 ISR 0.714
+Steps 3000/100000 | ep_return(10) -38.04 | last WEL 10.0 ISR 0.857
+Steps 4526/100000 | ep_return(10) -35.14 | last WEL 16.0 ISR 0.714
+Steps 6026/100000 | ep_return(10) -32.88 | last WEL 19.0 ISR 0.571
+Steps 7643/100000 | ep_return(10) -36.62 | last WEL 13.0 ISR 0.571
+Steps 9143/100000 | ep_return(10) -35.23 | last WEL 13.0 ISR 0.571
+Steps 10643/100000 | ep_return(10) -41.10 | last WEL 4.0 ISR 0.857
+Steps 12229/100000 | ep_return(10) -28.82 | last WEL 23.0 ISR 0.429
+Steps 13878/100000 | ep_return(10) -31.22 | last WEL 14.0 ISR 0.714
+Steps 15378/100000 | ep_return(10) -38.38 | last WEL 17.0 ISR 0.429
+Steps 16878/100000 | ep_return(10) -29.96 | last WEL 13.0 ISR 0.571
+Steps 18378/100000 | ep_return(10) -29.33 | last WEL 13.0 ISR 0.571
+Steps 19878/100000 | ep_return(10) -28.28 | last WEL 4.0 ISR 0.857
+Steps 21378/100000 | ep_return(10) -34.11 | last WEL 14.0 ISR 0.714
+Steps 23015/100000 | ep_return(10) -31.53 | last WEL 4.0 ISR 0.857
+Steps 24638/100000 | ep_return(10) -25.65 | last WEL 19.0 ISR 0.571
+Steps 26234/100000 | ep_return(10) -28.63 | last WEL 8.0 ISR 0.714
+Steps 27836/100000 | ep_return(10) -28.63 | last WEL 4.0 ISR 0.857
+Steps 29429/100000 | ep_return(10) -29.81 | last WEL 14.0 ISR 0.714
+Steps 30929/100000 | ep_return(10) -28.33 | last WEL 13.0 ISR 0.571
+Steps 32429/100000 | ep_return(10) -37.42 | last WEL 14.0 ISR 0.714
+Steps 33929/100000 | ep_return(10) -34.43 | last WEL 17.0 ISR 0.429
+Steps 35564/100000 | ep_return(10) -23.19 | last WEL 8.0 ISR 0.714
+Steps 37064/100000 | ep_return(10) -32.10 | last WEL 13.0 ISR 0.571
+Steps 38564/100000 | ep_return(10) -38.93 | last WEL 8.0 ISR 0.714
+Steps 40064/100000 | ep_return(10) -33.02 | last WEL 11.0 ISR 0.571
+Steps 41564/100000 | ep_return(10) -25.70 | last WEL 4.0 ISR 0.857
+Steps 43174/100000 | ep_return(10) -27.63 | last WEL 14.0 ISR 0.714
+Steps 44674/100000 | ep_return(10) -27.93 | last WEL 13.0 ISR 0.571
+Steps 46179/100000 | ep_return(10) -24.61 | last WEL 17.0 ISR 0.429
+Steps 47679/100000 | ep_return(10) -28.33 | last WEL 4.0 ISR 0.857
+Steps 49210/100000 | ep_return(10) -30.62 | last WEL 13.0 ISR 0.571
+Steps 50829/100000 | ep_return(10) -30.16 | last WEL 19.0 ISR 0.571
+Steps 52329/100000 | ep_return(10) -32.79 | last WEL 8.0 ISR 0.714
+Steps 53829/100000 | ep_return(10) -27.94 | last WEL 0.0 ISR 1.000
+Steps 55329/100000 | ep_return(10) -25.97 | last WEL 4.0 ISR 0.857
+Steps 56977/100000 | ep_return(10) -27.66 | last WEL 11.0 ISR 0.571
+Steps 58477/100000 | ep_return(10) -27.07 | last WEL 8.0 ISR 0.714
+Steps 59977/100000 | ep_return(10) -24.66 | last WEL 0.0 ISR 1.000
+Steps 61477/100000 | ep_return(10) -30.17 | last WEL 17.0 ISR 0.429
+Steps 63107/100000 | ep_return(10) -21.82 | last WEL 4.0 ISR 0.857
+Steps 64607/100000 | ep_return(10) -28.67 | last WEL 4.0 ISR 0.857
+Steps 66107/100000 | ep_return(10) -30.54 | last WEL 4.0 ISR 0.857
+Steps 67607/100000 | ep_return(10) -28.76 | last WEL 4.0 ISR 0.857
+Steps 69107/100000 | ep_return(10) -28.91 | last WEL 8.0 ISR 0.714
+Steps 70607/100000 | ep_return(10) -24.52 | last WEL 4.0 ISR 0.857
+Steps 72107/100000 | ep_return(10) -26.91 | last WEL 9.0 ISR 0.714
+Steps 73744/100000 | ep_return(10) -24.64 | last WEL 4.0 ISR 0.857
+Steps 75244/100000 | ep_return(10) -24.03 | last WEL 4.0 ISR 0.857
+Steps 76744/100000 | ep_return(10) -27.67 | last WEL 4.0 ISR 0.857
+Steps 78249/100000 | ep_return(10) -25.30 | last WEL 13.0 ISR 0.571
+Steps 79896/100000 | ep_return(10) -26.15 | last WEL 8.0 ISR 0.714
+Steps 81492/100000 | ep_return(10) -24.79 | last WEL 9.0 ISR 0.714
+Steps 83101/100000 | ep_return(10) -22.22 | last WEL 13.0 ISR 0.571
+Steps 84720/100000 | ep_return(10) -24.87 | last WEL 13.0 ISR 0.571
+Steps 86316/100000 | ep_return(10) -22.95 | last WEL 4.0 ISR 0.857
+Steps 87818/100000 | ep_return(10) -25.42 | last WEL 9.0 ISR 0.714
+Steps 89318/100000 | ep_return(10) -27.25 | last WEL 0.0 ISR 1.000
+Steps 90849/100000 | ep_return(10) -18.22 | last WEL 19.0 ISR 0.571
+Steps 92405/100000 | ep_return(10) -16.37 | last WEL 4.0 ISR 0.857
+Steps 93906/100000 | ep_return(10) -20.08 | last WEL 7.0 ISR 0.714
+Steps 95514/100000 | ep_return(10) -22.56 | last WEL 8.0 ISR 0.714
+Steps 97090/100000 | ep_return(10) -20.68 | last WEL 13.0 ISR 0.571
+Steps 98688/100000 | ep_return(10) -17.62 | last WEL 9.0 ISR 0.714
+Steps 100188/100000 | ep_return(10) -25.15 | last WEL 9.0 ISR 0.714
+[TRAIN] hiercomm/saudi/s42 done in 31.1 min -> wildfire_phase3_hiercomm_learned/checkpoint_hiercomm_saudi_s42.pt

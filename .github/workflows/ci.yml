@@ -57,19 +57,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Guard against large files in the tree
+      - name: Guard against large files in the repository
         run: |
-          big=$(find . -type f -not -path './.git/*' -size +50M)
+          # Tracked files only — untracked render output and local venvs are irrelevant.
+          big=$(git ls-files -z | xargs -0 -r ls -l | awk '$5 > 50*1024*1024 {print $5, $NF}')
           if [ -n "$big" ]; then
-            echo "ERROR: files >50MB committed:"; echo "$big"; exit 1
+            echo "ERROR: tracked files >50MB:"; echo "$big"; exit 1
           fi
-          echo "OK: no file exceeds 50MB."
+          echo "OK: no tracked file exceeds 50MB."
 
   validate:
     # Scientific-integrity gates on the ported V2 core: determinism, tensor validity,
     # seed integrity, and the significance test surface. A red job blocks merge.
-    # Later phases extend this job (landscape validity, effective-method gate,
-    # report<->CSV consistency, CI-sized MARL smoke) per REMEDIATION_PLAN_V2.md.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +89,7 @@ jobs:
         run: pytest tests/test_significance.py tests/test_metrics.py -q
 
   dashboard:
-    # Dashboard integrity gate (Dashboard_Guide.md §4.3): the committed dashboard JSON
+    # Dashboard integrity gate: the committed dashboard JSON
     # must match the frozen summaries and the paper's headline values exactly, and the
     # static site must typecheck and build. (The fingerprint gate itself runs locally in
     # build_dashboard_data.py — the checkpoints it hashes are not committed.)
@@ -120,10 +119,10 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm run test:e2e
-      - name: Lighthouse budgets (Dashboard_Guide.md §14)
+      - name: Lighthouse budgets
         working-directory: dashboard
         run: npx --yes @lhci/cli@0.14.x autorun
-      - name: Anonymity grep (review channel, Dashboard_Guide.md §15)
+      - name: Anonymity grep (anonymous review channel)
         working-directory: dashboard
         run: |
           if grep -rIiqE "akarma" dist; then

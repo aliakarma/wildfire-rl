@@ -39,8 +39,21 @@ LEAK_PATTERNS = [
 ]
 # Binary/opaque files we never scan (checksums make tampering evident instead).
 LEAK_SCAN_SKIP_SUFFIXES = {
-    ".pt", ".npy", ".mp4", ".jpg", ".jpeg", ".png", ".gif", ".pdf", ".nc",
-    ".tif", ".gz", ".zip", ".woff", ".woff2", ".ico",
+    ".pt",
+    ".npy",
+    ".mp4",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".pdf",
+    ".nc",
+    ".tif",
+    ".gz",
+    ".zip",
+    ".woff",
+    ".woff2",
+    ".ico",
 }
 
 SEED42 = "_s42.pt"
@@ -51,9 +64,12 @@ SEED42 = "_s42.pt"
 # so every command quoted in RESULTS_FROZEN.md works verbatim inside the archive.
 # --------------------------------------------------------------------------------------
 
+
 def _no_cache(p: Path) -> bool:
     parts = set(p.parts)
-    return not (parts & {"__pycache__", ".pytest_cache", ".ipynb_checkpoints"}) and p.suffix != ".pyc"
+    return (
+        not (parts & {"__pycache__", ".pytest_cache", ".ipynb_checkpoints"}) and p.suffix != ".pyc"
+    )
 
 
 def py_only(p: Path) -> bool:
@@ -77,7 +93,7 @@ def results_no_ckpt(p: Path) -> bool:
     """Frozen results with no weights at all.
 
     Used for the ablation/transfer directories: re-running those studies loads checkpoints
-    via ``--ckpt-dir wildfire_phase3_multiseed``, so their own copies are dead weight.
+    via ``--ckpt-dir results/wildfire_phase3_multiseed``, so their own copies are dead weight.
     """
     return _no_cache(p) and p.suffix != ".pt"
 
@@ -90,9 +106,8 @@ def simulator_source(p: Path) -> bool:
         return False
     if p.name == "Cell2Fire" and p.suffix == "":  # compiled binary
         return False
-    if "parallel_code" in p.parts:  # unused variant, ~0.1 MB but noise
-        return False
-    return True
+    # "parallel_code" is an unused upstream variant: ~0.1 MB, but noise in the archive.
+    return "parallel_code" not in p.parts
 
 
 def dashboard_source(p: Path) -> bool:
@@ -131,11 +146,15 @@ COPY_SPECS: list[tuple[str, str, object]] = [
     ("data/california/grids", "data/california/grids", everything),
     ("data/saudi_eastern_province/grids", "data/saudi_eastern_province/grids", everything),
     # --- frozen results (seed-42 checkpoints only) ------------------------------------
-    ("wildfire_phase3_multiseed", "wildfire_phase3_multiseed", results_seed42_ckpt),
-    ("wildfire_phase3_hiercomm_learned", "wildfire_phase3_hiercomm_learned", results_seed42_ckpt),
-    ("wildfire_phase4", "wildfire_phase4", results_no_ckpt),
-    ("wildfire_phase4_extended", "wildfire_phase4_extended", results_no_ckpt),
-    ("wildfire_phase6", "wildfire_phase6", results_no_ckpt),
+    ("results/wildfire_phase3_multiseed", "results/wildfire_phase3_multiseed", results_seed42_ckpt),
+    (
+        "results/wildfire_phase3_hiercomm_learned",
+        "results/wildfire_phase3_hiercomm_learned",
+        results_seed42_ckpt,
+    ),
+    ("results/wildfire_phase4", "results/wildfire_phase4", results_no_ckpt),
+    ("results/wildfire_phase4_extended", "results/wildfire_phase4_extended", results_no_ckpt),
+    ("results/wildfire_phase6", "results/wildfire_phase6", results_no_ckpt),
     # --- docs -------------------------------------------------------------------------
     ("docs/data_card.md", "docs/data_card.md", everything),
     ("docs/infra_card.md", "docs/infra_card.md", everything),
@@ -152,8 +171,8 @@ COPY_SPECS: list[tuple[str, str, object]] = [
 
 # Files inside otherwise-allowlisted trees that must never ship.
 DENY_NAMES = {
-    "build_supplement.py",   # contains the leak patterns above
-    "deploy_review.sh",      # deployment plumbing
+    "build_supplement.py",  # contains the leak patterns above
+    "deploy_review.sh",  # deployment plumbing
     ".env.local",
     ".env",
 }
@@ -200,7 +219,7 @@ def stage(dest_root: Path) -> int:
 
 
 def install_assets(dest_root: Path) -> None:
-    assets = REPO / "supplement_assets"
+    assets = REPO / "docs" / "supplement_assets"
     for staged_rel, asset_name in ASSET_FILES.items():
         source = assets / asset_name
         if not source.is_file():
@@ -226,9 +245,13 @@ def anonymize(dest_root: Path) -> list[str]:
     pyproject = dest_root / "pyproject.toml"
     if pyproject.is_file():
         text = pyproject.read_text(encoding="utf-8")
-        text = re.sub(r'^authors = .*$', 'authors = [{ name = "Anonymous Authors" }]',
-                      text, flags=re.MULTILINE)
-        text = re.sub(r'\n\[project\.urls\]\n(?:.*\n)*?(?=\n\[)', '\n', text)
+        text = re.sub(
+            r"^authors = .*$",
+            'authors = [{ name = "Anonymous Authors" }]',
+            text,
+            flags=re.MULTILINE,
+        )
+        text = re.sub(r"\n\[project\.urls\]\n(?:.*\n)*?(?=\n\[)", "\n", text)
         pyproject.write_text(text, encoding="utf-8")
         notes.append("pyproject.toml: authors anonymized, [project.urls] removed")
 
@@ -239,7 +262,9 @@ def anonymize(dest_root: Path) -> list[str]:
         if isinstance(src, str) and ("\\" in src or ":" in src):
             marker = "data"
             idx = src.replace("\\", "/").find(f"/{marker}/")
-            blob["source"] = src.replace("\\", "/")[idx + 1:] if idx >= 0 else f"{marker}/<region>/raw/firms/"
+            blob["source"] = (
+                src.replace("\\", "/")[idx + 1 :] if idx >= 0 else f"{marker}/<region>/raw/firms/"
+            )
             js.write_text(json.dumps(blob, indent=2), encoding="utf-8")
             notes.append(f"{js.relative_to(dest_root)}: absolute source path -> relative")
 
@@ -269,10 +294,28 @@ def build_media(dest_root: Path, crf: int, width: int) -> dict:
         dst = out_media / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(
-            ["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp4),
-             "-vf", f"scale='min({width},iw)':-2:flags=lanczos",
-             "-c:v", "libx264", "-crf", str(crf), "-preset", "slow",
-             "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", str(dst)],
+            [
+                "ffmpeg",
+                "-y",
+                "-loglevel",
+                "error",
+                "-i",
+                str(mp4),
+                "-vf",
+                f"scale='min({width},iw)':-2:flags=lanczos",
+                "-c:v",
+                "libx264",
+                "-crf",
+                str(crf),
+                "-preset",
+                "slow",
+                "-pix_fmt",
+                "yuv420p",
+                "-movflags",
+                "+faststart",
+                "-an",
+                str(dst),
+            ],
             check=True,
         )
         stats["mp4_in"] += mp4.stat().st_size

@@ -1,14 +1,19 @@
 # =============================================================================
-# Wildfire-RL .gitignore  —  STRICT: protects against accidental large pushes
-# The repo root is intentionally scoped to THIS project (not the home dir).
-# Large binaries (models, raw data, tensors, figures) are NEVER committed.
+# wildfire-marl — .gitignore
+#
+# Policy: the repository tracks source, configs, frozen result tables/logs and
+# the dashboard. It never tracks model weights, raw rasters, rendered media, or
+# LaTeX build output — those are large, regenerable, or published elsewhere.
+# Broad rules below are root-anchored (`/build/`, not `build/`) so they cannot
+# swallow package directories such as `src/wildfire_marl/env/`.
 # =============================================================================
 
-# ---- Trained models / checkpoints (2.2 GB+ — published via HF/Zenodo) -------
-# Ignore everything under models/ EXCEPT the explanatory README.
+# ---- Manuscript working directory (LaTeX sources, PDFs, build artifacts) ----
+AAAI Template/
+
+# ---- Model weights / checkpoints (published via the supplement, not git) ----
 models/**
 !models/README.md
-*.zip
 *.pt
 *.pth
 *.ckpt
@@ -16,12 +21,11 @@ models/**
 *.pkl
 *.h5
 *.sb3
+*.zip
 
-# ---- Datasets: raw + processed + generated tensors --------------------------
-# Ignore everything under data/ (re-includes for the sample + README are at the
-# END of this file so they override the *.npy / *.tif rules below).
-data/**
-!data/README.md
+# ---- Datasets: raw rasters, processed tensors, tile caches -------------------
+# Raster/tensor extensions are excluded first; the re-includes at the bottom of
+# this block then pin the small, deterministic inputs that CI and reviewers need.
 *.npy
 *.npz
 *.nc
@@ -33,26 +37,27 @@ data/**
 *.geotiff
 *.hdf
 *.he5
+data/**
+data/geo_cache/
+!data/README.md
+!data/sample/
+!data/sample/**
+!data/cell2fire/
+!data/cell2fire/**
+!data/california/grids/
+!data/california/grids/**
+!data/saudi_eastern_province/grids/
+!data/saudi_eastern_province/grids/**
 
-# ---- Results that are regenerable (keep only canonical small CSVs) ----------
+# ---- Rendered media (GIF/MP4/PNG rollouts) ----------------------------------
+# Regenerate with scripts/render_phase5_gifs.py and render_phase6_transfer.py;
+# the web-sized copies that ship live in dashboard/public/media/.
+/figures/
+
+# ---- Regenerable result artifacts -------------------------------------------
 results/logs/
 results/runs/
-results/Legacy/
 results/**/*.parquet
-
-# ---- Figures (generated; paper-final figures live under docs/paper/) --------
-figures/*.png
-figures/*.jpg
-figures/*.jpeg
-figures/*.gif
-figures/*.svg
-figures/*.pdf
-figures/phase5*/
-figures/phase5_geo/
-!figures/.gitkeep
-
-# ---- GIS basemap tile cache (contextily) ------------------------------------
-data/geo_cache/
 
 # ---- Experiment tracking ----------------------------------------------------
 wandb/
@@ -63,143 +68,85 @@ multirun/
 events.out.tfevents.*
 lightning_logs/
 
-# ---- Python -----------------------------------------------------------------
+# ---- Python ------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
+/build/
+/dist/
+/sdist/
+/wheels/
+/downloads/
+/eggs/
+/.eggs/
+/develop-eggs/
+/var/
 *.egg-info/
-.installed.cfg
 *.egg
-pip-log.txt
-pip-delete-this-directory.txt
+.installed.cfg
 
-# ---- Virtual environments (root-anchored! bare `env/` would also ignore the
-# wildfire_marl.env PACKAGE — that bug silently dropped src/wildfire_marl/env/) --
+# ---- Virtual environments ----------------------------------------------------
 /.venv/
 /venv/
+/venv_wsl/
 /env/
 /ENV/
 .conda/
 conda-meta/
 
-# ---- Testing / coverage / typing / linting ----------------------------------
+# ---- Testing / coverage / typing / linting -----------------------------------
 .pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
+.mypy_cache/
+.ruff_cache/
 .tox/
 .nox/
 .cache/
-.mypy_cache/
 .dmypy.json
-.ruff_cache/
+.coverage
+.coverage.*
 coverage.xml
+htmlcov/
 *.cover
 
-# ---- Jupyter ----------------------------------------------------------------
+# ---- Jupyter -----------------------------------------------------------------
 .ipynb_checkpoints/
-*/.ipynb_checkpoints/*
 profile_default/
 ipython_config.py
 
-# ---- Secrets / credentials (NEVER commit) -----------------------------------
+# ---- Node / dashboard build ---------------------------------------------------
+node_modules/
+dashboard/dist/
+dashboard/test-results/
+dashboard/playwright-report/
+
+# ---- Secrets & credentials (never commit) -------------------------------------
 .env
 .env.*
 !.env.example
 *.key
 *.pem
-*.json.key
 .cdsapirc
 .earthengine/
 credentials.json
 service_account*.json
-*secret*
-*token*
 
-# ---- OS / editor ------------------------------------------------------------
+# ---- Tooling / editor / OS ----------------------------------------------------
+.claude/
+.gstack/
+.vercel/
+.idea/
+.vscode/
 .DS_Store
 Thumbs.db
 desktop.ini
-.idea/
-.vscode/
 *.swp
 *.swo
 *~
 
-# ---- Misc temp --------------------------------------------------------------
+# ---- Scratch ------------------------------------------------------------------
 tmp/
 temp/
 _scratch/
-_code/
-_audit_*.py
-_dump.py
-_smoke.py
-_prep.py
-
-# ---- V1 archive (frozen, Phase 0 of REMEDIATION_PLAN_V2) --------------------
-# Large V1 artifacts stay untracked exactly as they were at the old paths.
-legacy_v1/models/**
-!legacy_v1/models/README.md
-legacy_v1/results/logs/
-legacy_v1/results/runs/
-legacy_v1/results/Legacy/
-legacy_v1/figures/*.png
-legacy_v1/figures/*.jpg
-legacy_v1/figures/*.jpeg
-legacy_v1/figures/*.gif
-legacy_v1/figures/*.svg
-legacy_v1/figures/*.pdf
-!legacy_v1/figures/.gitkeep
-
-# ---- Keep the tiny committed sample (MUST be last to override *.npy etc.) ----
-!data/sample/
-!data/sample/**
-
-/legacy_v1
-# ---- Keep generated Cell2Fire landscapes (small, deterministic, manifest-hashed;
-#      Phase 2) — committed so CI and reviewers can run the simulator directly ----
-!data/cell2fire/
-!data/cell2fire/**
-# ---- AAAI Paper intermediates -----------------------------------------------
-AAAI Template/*.aux
-AAAI Template/*.bbl
-AAAI Template/*.blg
-AAAI Template/*.log
-AAAI Template/*.synctex.gz
-AAAI Template/*.out
-
-# ---- Cell2Fire C++ compiled binaries and intermediates ----------------------
-third_party/firehose/cell2fire/Cell2FireC/Cell2Fire
-third_party/firehose/cell2fire/Cell2FireC/*.o
-third_party/firehose/cell2fire/Cell2FireC/*.gch
-/venv_wsl
-
-# ---- Dashboard (static results site; see dashboard/README.md) ---------------
-# Re-include source files caught by broad rules above (`lib/`, `*token*`);
-# node_modules/dist/media stay ignored via dashboard/.gitignore.
-!dashboard/src/lib/
-!dashboard/src/lib/**
-!dashboard/src/theme/tokens.css
-dashboard/node_modules/
-dashboard/dist/
-Dashboard_Guide.md
-
-.vercel
-.env*
-.gstack/
-peer_review_report_AAAI2027_HierComm.md
-
+peer_review_report_*.md

@@ -1,7 +1,7 @@
 """Build the dashboard data layer from the frozen result artifacts.
 
 The only writer of ``dashboard/public/data/``. Reads the frozen artifacts
-(``wildfire_phase3_multiseed/``, ``wildfire_phase4/``, ``wildfire_phase6/``), verifies the
+(``results/wildfire_phase3_multiseed/``, ``results/wildfire_phase4/``, ``results/wildfire_phase6/``), verifies the
 freeze fingerprint first (same computation as ``scripts/freeze_results.py``; aborts on
 mismatch), and emits schema-checked JSON the static site consumes. Numbers are emitted at
 full precision — rounding happens only at render time — and labels are emitted as keys
@@ -27,12 +27,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-PHASE3 = REPO / "wildfire_phase3_multiseed"
-PHASE4 = REPO / "wildfire_phase4"
+PHASE3 = REPO / "results" / "wildfire_phase3_multiseed"
+PHASE4 = REPO / "results" / "wildfire_phase4"
 #: 7-policy difficulty sweep (2026-07-19): supersedes PHASE4's 4-policy robustness artifact.
 #: Ablation data still comes from PHASE4; only the robustness sweep moved here.
-PHASE4X = REPO / "wildfire_phase4_extended"
-PHASE6 = REPO / "wildfire_phase6"
+PHASE4X = REPO / "results" / "wildfire_phase4_extended"
+PHASE6 = REPO / "results" / "wildfire_phase6"
 GIFS5 = REPO / "figures" / "wildfire_phase5_gifs"
 GIFS6 = REPO / "figures" / "wildfire_phase6_gifs"
 PAPER_FIGS = REPO / "AAAI Template" / "Figures"
@@ -96,7 +96,7 @@ def verify_freeze() -> dict:
     """Verify every gated artifact directory; return the phase-3 freeze record."""
     freezes: dict[str, dict] = {}
     for dirname, expected in EXPECTED_FINGERPRINTS.items():
-        root = REPO / dirname
+        root = REPO / "results" / dirname
         freeze = json.loads((root / "FREEZE.json").read_text())
         recorded = freeze["fingerprint_sha256"]
         if recorded != expected:
@@ -357,9 +357,9 @@ def build_repro(meta: dict) -> dict:
             "python scripts/run_phase3.py \\\n"
             "  --methods noop,value_first,greedy_risk,local_reactive,mappo,commnet,hiercomm_heur \\\n"
             "  --regions saudi,california --train-seeds 42,1042,2042,3042,4042 --parallel 6 \\\n"
-            "  --train-steps 100000 --episodes 15 --out wildfire_phase3_multiseed"
+            "  --train-steps 100000 --episodes 15 --out results/wildfire_phase3_multiseed"
         ),
-        "verify_command": "python scripts/freeze_results.py wildfire_phase3_multiseed",
+        "verify_command": "python scripts/freeze_results.py results/wildfire_phase3_multiseed",
         "compute": "CPU-only (Ryzen 5 5600H), WSL2 Ubuntu; bit-identical CPU determinism",
     }
 

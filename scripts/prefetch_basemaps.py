@@ -19,9 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import contextily as cx
 
-from wildfire_marl.viz.geo_renderer import GeoRenderer, _TILE_PROVIDERS
+from wildfire_marl.viz.geo_renderer import _TILE_PROVIDERS, GeoRenderer
 
 
 def main() -> None:

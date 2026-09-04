@@ -6,8 +6,8 @@ Reproduces the evaluation rollout **exactly** (``phase3_eval.rollout_episode``: 
 rollout into ``dashboard/public/data/replays/`` plus an ``index.json``.
 
 **Self-verifying:** each native replay's final WEL/ISR/burned must equal the matching
-``wildfire_phase3_multiseed/phase3_raw.csv`` row, and each cross-region replay the matching
-``wildfire_phase6/transfer_matrix_raw.csv`` row — otherwise the export aborts. Replays are
+``results/wildfire_phase3_multiseed/phase3_raw.csv`` row, and each cross-region replay the matching
+``results/wildfire_phase6/transfer_matrix_raw.csv`` row — otherwise the export aborts. Replays are
 therefore provably the rollouts behind the reported numbers.
 
 Frame encoding: sparse cell-index deltas (``y*W + x``) instead of the guide's illustrative
@@ -56,8 +56,8 @@ HIERARCHICAL = {"hiercomm_heur", "hiercomm"}
 REGIONS = ["saudi", "california"]
 TRANSFER_POLICIES = ["hiercomm_heur", "commnet"]
 
-PHASE3_RAW = REPO / "wildfire_phase3_multiseed" / "phase3_raw.csv"
-TRANSFER_RAW = REPO / "wildfire_phase6" / "transfer_matrix_raw.csv"
+PHASE3_RAW = REPO / "results" / "wildfire_phase3_multiseed" / "phase3_raw.csv"
+TRANSFER_RAW = REPO / "results" / "wildfire_phase6" / "transfer_matrix_raw.csv"
 OUT_DEFAULT = REPO / "dashboard" / "public" / "data" / "replays"
 
 
@@ -261,7 +261,7 @@ def verify_transfer(
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--ckpt-dir", default="wildfire_phase3_multiseed")
+    ap.add_argument("--ckpt-dir", default="results/wildfire_phase3_multiseed")
     ap.add_argument("--out", default=str(OUT_DEFAULT))
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--episode", type=int, default=0)

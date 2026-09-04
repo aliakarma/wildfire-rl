@@ -15,7 +15,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import torch
 from PIL import Image
@@ -32,16 +31,23 @@ from wildfire_marl.eval.metrics import (  # noqa: E402
     infrastructure_survival_rate,
     weighted_economic_loss,
 )
-from wildfire_marl.eval.phase3_eval import EVAL_OFFSET, LABELS, load_nets, select_actions  # noqa: E402
+from wildfire_marl.eval.phase3_eval import (  # noqa: E402
+    EVAL_OFFSET,
+    LABELS,
+    load_nets,
+    select_actions,
+)
 
-CKPT = "wildfire_phase3_multiseed"
+CKPT = "results/wildfire_phase3_multiseed"
 FIGDIR = Path("AAAI Template/Figures")
 COMM = {"hiercomm_heur", "commnet"}
 DEVICE = torch.device("cpu")
 #: Paper-facing panel labels (the frozen LABELS tag hiercomm_heur as "heur. cmd").
 PAPER_LABELS = {
-    "hiercomm_heur": "HierComm (ours)", "commnet": "CommNet",
-    "mappo": "Flat MARL (MAPPO)", "noop": "No-Op",
+    "hiercomm_heur": "HierComm (ours)",
+    "commnet": "CommNet",
+    "mappo": "Flat MARL (MAPPO)",
+    "noop": "No-Op",
 }
 
 
@@ -61,11 +67,17 @@ def _final_frame(renderer, env, kind, nets, region, seed):
     wel = float(weighted_economic_loss(env.env.asset_type, fs, env.env.asset_values))
     isr = float(infrastructure_survival_rate(env.env.asset_type, fs))
     frame = renderer.render_frame(
-        fire_state=fs.copy(), asset_type=env.env.asset_type,
+        fire_state=fs.copy(),
+        asset_type=env.env.asset_type,
         agent_positions=env.agent_positions.copy(),
-        strategic_targets=env.strategic_targets.copy(), step_idx=sc - 1,
-        wel=wel, isr=isr, ce=float(ce), region=region,
-        policy_name=PAPER_LABELS.get(kind, LABELS.get(kind, kind)), prev_positions=pos_hist,
+        strategic_targets=env.strategic_targets.copy(),
+        step_idx=sc - 1,
+        wel=wel,
+        isr=isr,
+        ce=float(ce),
+        region=region,
+        policy_name=PAPER_LABELS.get(kind, LABELS.get(kind, kind)),
+        prev_positions=pos_hist,
         comm_active=kind in COMM,
     )
     print(f"  {kind}/{region}: final WEL={wel:.1f} ISR={isr:.2f} (step {sc})", flush=True)
@@ -80,7 +92,11 @@ def make_qualitative(region="california", seed=42):
     policies = ["hiercomm_heur", "commnet", "mappo", "noop"]
     panels = []
     for kind in policies:
-        nets = load_nets(kind, region, CKPT, env.num_agents, DEVICE, seed=seed) if kind != "noop" else {}
+        nets = (
+            load_nets(kind, region, CKPT, env.num_agents, DEVICE, seed=seed)
+            if kind != "noop"
+            else {}
+        )
         renderer._fire_history.clear()
         panels.append(_final_frame(renderer, env, kind, nets, region, seed))
     env.close()
@@ -100,11 +116,13 @@ def make_qualitative(region="california", seed=42):
 
 def make_training_curves():
     regions = ["saudi", "california"]
-    methods = [("mappo", "Flat MARL (MAPPO)", "#888888"),
-               ("commnet", "CommNet", "#1f77b4"),
-               ("hiercomm_heur", "HierComm (ours)", "#d62728")]
+    methods = [
+        ("mappo", "Flat MARL (MAPPO)", "#888888"),
+        ("commnet", "CommNet", "#1f77b4"),
+        ("hiercomm_heur", "HierComm (ours)", "#d62728"),
+    ]
     fig, axes = plt.subplots(1, 2, figsize=(8.0, 3.2))
-    for ax, region in zip(axes, regions):
+    for ax, region in zip(axes, regions, strict=False):
         for stem, label, color in methods:
             f = Path(CKPT) / f"train_curve_checkpoint_{stem}_{region}_s42.csv"
             if not f.exists():

@@ -5,7 +5,7 @@ Writes a SHA-256 ``MANIFEST.sha256`` over every file in the directory and a sing
 numbers are tamper-evident and reproducible. Re-running with the same inputs yields the same
 fingerprint.
 
-    python scripts/freeze_results.py wildfire_phase3_multiseed
+    python scripts/freeze_results.py results/wildfire_phase3_multiseed
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import argparse
 import hashlib
 import json
 import subprocess
-from datetime import date, timezone, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 _SKIP = {"MANIFEST.sha256", "FREEZE.json"}
@@ -43,9 +43,7 @@ def main() -> None:
     if not root.is_dir():
         raise SystemExit(f"Not a directory: {root}")
 
-    files = sorted(
-        p for p in root.rglob("*") if p.is_file() and p.name not in _SKIP
-    )
+    files = sorted(p for p in root.rglob("*") if p.is_file() and p.name not in _SKIP)
     manifest = "".join(f"{sha256(p)}  {p.relative_to(root).as_posix()}\n" for p in files)
     (root / "MANIFEST.sha256").write_text(manifest)
     fingerprint = hashlib.sha256(manifest.encode()).hexdigest()

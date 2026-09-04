@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 import matplotlib.patches as mpatches
@@ -143,15 +144,49 @@ _AGENT_LABELS = ["A1", "A2", "A3"]
 # ---------------------------------------------------------------------------
 
 _HOUSE_MKR = MPath(
-    [(0, .55), (-.42, .0), (-.3, .0), (-.3, -.45), (.3, -.45), (.3, .0), (.42, .0), (0, .55)],
-    [MPath.MOVETO, MPath.LINETO, MPath.LINETO, MPath.LINETO,
-     MPath.LINETO, MPath.LINETO, MPath.LINETO, MPath.CLOSEPOLY],
+    [
+        (0, 0.55),
+        (-0.42, 0.0),
+        (-0.3, 0.0),
+        (-0.3, -0.45),
+        (0.3, -0.45),
+        (0.3, 0.0),
+        (0.42, 0.0),
+        (0, 0.55),
+    ],
+    [
+        MPath.MOVETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.CLOSEPOLY,
+    ],
 )
 
 _DERRICK_MKR = MPath(
-    [(0, .55), (-.28, -.45), (-.1, -.45), (-.04, .12), (.04, .12), (.1, -.45), (.28, -.45), (0, .55)],
-    [MPath.MOVETO, MPath.LINETO, MPath.LINETO, MPath.LINETO,
-     MPath.LINETO, MPath.LINETO, MPath.LINETO, MPath.CLOSEPOLY],
+    [
+        (0, 0.55),
+        (-0.28, -0.45),
+        (-0.1, -0.45),
+        (-0.04, 0.12),
+        (0.04, 0.12),
+        (0.1, -0.45),
+        (0.28, -0.45),
+        (0, 0.55),
+    ],
+    [
+        MPath.MOVETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.LINETO,
+        MPath.CLOSEPOLY,
+    ],
 )
 
 # ---------------------------------------------------------------------------
@@ -178,6 +213,7 @@ _REGION_META: dict[str, dict[str, Any]] = {
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _load_cell_coords(data_dir: str | Path, region: str) -> tuple[np.ndarray, np.ndarray]:
     """Read per-cell (lat, lon) from Data.csv. Returns arrays of shape (nrows, ncols)."""
     map_name = "Saudi" if region.lower() == "saudi" else "California"
@@ -200,7 +236,8 @@ def _lonlat_to_webmerc(lon: float, lat: float) -> tuple[float, float]:
 
 
 def frame_interest_score(
-    fire_state: np.ndarray, asset_type: np.ndarray | None,
+    fire_state: np.ndarray,
+    asset_type: np.ndarray | None,
 ) -> float:
     """Score how visually informative a frame is (for auto-snapshot selection).
 
@@ -227,6 +264,7 @@ def frame_interest_score(
 # =========================================================================
 # GeoRenderer
 # =========================================================================
+
 
 class GeoRenderer:
     """GIS-aware rollout frame renderer with theme support.
@@ -314,9 +352,13 @@ class GeoRenderer:
             Path(self._cache_dir).mkdir(parents=True, exist_ok=True)
 
         img, ext = cx.bounds2img(
-            self.extent_merc[0], self.extent_merc[2],
-            self.extent_merc[1], self.extent_merc[3],
-            zoom="auto", ll=False, **kwargs,
+            self.extent_merc[0],
+            self.extent_merc[2],
+            self.extent_merc[1],
+            self.extent_merc[3],
+            zoom="auto",
+            ll=False,
+            **kwargs,
         )
         self._basemap_img = img
         self._basemap_extent = ext
@@ -327,15 +369,18 @@ class GeoRenderer:
     def _cell_center(self, row: int, col: int) -> tuple[float, float]:
         return float(self._cell_x[row, col]), float(self._cell_y[row, col])
 
-    def _rounded_patch(self, cx_: float, cy: float, expand: float = 1.0,
-                       rpad_frac: float = 0.12) -> mpatches.FancyBboxPatch:
+    def _rounded_patch(
+        self, cx_: float, cy: float, expand: float = 1.0, rpad_frac: float = 0.12
+    ) -> mpatches.FancyBboxPatch:
         rpad = self._cell_half_w * rpad_frac
         w = self._cell_half_w * 2 * expand
         h = self._cell_half_h * 2 * expand
         iw = max(w - 2 * rpad, rpad * 0.1)
         ih = max(h - 2 * rpad, rpad * 0.1)
         return mpatches.FancyBboxPatch(
-            (cx_ - w / 2 + rpad, cy - h / 2 + rpad), iw, ih,
+            (cx_ - w / 2 + rpad, cy - h / 2 + rpad),
+            iw,
+            ih,
             boxstyle=f"round,pad={rpad}",
         )
 
@@ -409,8 +454,16 @@ class GeoRenderer:
             n_protected = int(((asset_type > 0) & (fire_state <= 0)).sum())
             total_assets = int((asset_type > 0).sum())
         self._draw_metrics_panel(
-            fig, step_idx, wel, isr, ce,
-            burned_cells, suppressed_cells, n_protected, total_assets, fs,
+            fig,
+            step_idx,
+            wel,
+            isr,
+            ce,
+            burned_cells,
+            suppressed_cells,
+            n_protected,
+            total_assets,
+            fs,
         )
         self._draw_legend(fig, fs)
 
@@ -422,8 +475,12 @@ class GeoRenderer:
 
         if save_pdf:
             fig.savefig(
-                str(save_pdf), format="pdf", dpi=self.dpi,
-                facecolor=fig.get_facecolor(), edgecolor="none", bbox_inches="tight",
+                str(save_pdf),
+                format="pdf",
+                dpi=self.dpi,
+                facecolor=fig.get_facecolor(),
+                edgecolor="none",
+                bbox_inches="tight",
             )
 
         fig.canvas.draw()
@@ -445,16 +502,22 @@ class GeoRenderer:
         alpha = self._t["grid_alpha"]
         h_segs = []
         for r in range(self.grid_size + 1):
-            yv = (self._cell_y[r, 0] + self._cell_half_h if r < self.grid_size
-                  else self._cell_y[r - 1, 0] - self._cell_half_h)
+            yv = (
+                self._cell_y[r, 0] + self._cell_half_h
+                if r < self.grid_size
+                else self._cell_y[r - 1, 0] - self._cell_half_h
+            )
             x0 = self._cell_x[0, 0] - self._cell_half_w
             x1 = self._cell_x[0, -1] + self._cell_half_w
             h_segs.append([(x0, yv), (x1, yv)])
 
         v_segs = []
         for c in range(self.grid_size + 1):
-            xv = (self._cell_x[0, c] - self._cell_half_w if c < self.grid_size
-                  else self._cell_x[0, c - 1] + self._cell_half_w)
+            xv = (
+                self._cell_x[0, c] - self._cell_half_w
+                if c < self.grid_size
+                else self._cell_x[0, c - 1] + self._cell_half_w
+            )
             y0 = self._cell_y[0, 0] + self._cell_half_h
             y1 = self._cell_y[-1, 0] - self._cell_half_h
             v_segs.append([(xv, y0), (xv, y1)])
@@ -495,13 +558,18 @@ class GeoRenderer:
                 hot_patches.append(self._rounded_patch(cx_, cy, expand=0.55, rpad_frac=0.25))
                 hot_colors.append([1.0, 1.0, 0.85, 0.30 * (1.0 - age / 3.0)])
 
-        ax.add_collection(PatchCollection(glow_patches, facecolors=glow_colors,
-                                          edgecolors="none", zorder=3))
-        ax.add_collection(PatchCollection(fire_patches, facecolors=fire_colors,
-                                          edgecolors=fire_ec, linewidths=0.5, zorder=5))
+        ax.add_collection(
+            PatchCollection(glow_patches, facecolors=glow_colors, edgecolors="none", zorder=3)
+        )
+        ax.add_collection(
+            PatchCollection(
+                fire_patches, facecolors=fire_colors, edgecolors=fire_ec, linewidths=0.5, zorder=5
+            )
+        )
         if hot_patches:
-            ax.add_collection(PatchCollection(hot_patches, facecolors=hot_colors,
-                                              edgecolors="none", zorder=6))
+            ax.add_collection(
+                PatchCollection(hot_patches, facecolors=hot_colors, edgecolors="none", zorder=6)
+            )
 
     # ------------------------------------------------------------------ firebreaks
 
@@ -526,14 +594,22 @@ class GeoRenderer:
                 hatch_segs.append([(x0 + w * t_, y0), (x0, y0 + h * t_)])
                 hatch_segs.append([(x0 + w, y0 + h * (1 - t_)), (x0 + w * (1 - t_), y0 + h)])
 
-        ax.add_collection(PatchCollection(glow_p, facecolors=(0.3, 0.75, 1.0, 0.08),
-                                          edgecolors="none", zorder=4))
-        ax.add_collection(PatchCollection(fill_p, facecolors=(0.55, 0.92, 1.0, 0.28),
-                                          edgecolors=(0.55, 0.95, 1.0, 0.75),
-                                          linewidths=0.7, zorder=5))
+        ax.add_collection(
+            PatchCollection(glow_p, facecolors=(0.3, 0.75, 1.0, 0.08), edgecolors="none", zorder=4)
+        )
+        ax.add_collection(
+            PatchCollection(
+                fill_p,
+                facecolors=(0.55, 0.92, 1.0, 0.28),
+                edgecolors=(0.55, 0.95, 1.0, 0.75),
+                linewidths=0.7,
+                zorder=5,
+            )
+        )
         if hatch_segs:
-            ax.add_collection(LineCollection(hatch_segs, colors=(0.55, 0.95, 1.0, 0.40),
-                                             linewidths=0.4, zorder=6))
+            ax.add_collection(
+                LineCollection(hatch_segs, colors=(0.55, 0.95, 1.0, 0.40), linewidths=0.4, zorder=6)
+            )
 
     # ------------------------------------------------------------------ assets (vector icons)
 
@@ -556,21 +632,36 @@ class GeoRenderer:
                 fc, ec, alpha = "#666666", "#FF0000", 0.5
             elif defended:
                 fc, ec, alpha = "#FFFFFF", "#00E676", 0.95
-                ax.add_patch(mpatches.Circle(
-                    (cx_, cy), self._cell_half_w * 0.75,
-                    facecolor="none", edgecolor="#00E67650",
-                    linewidth=1.8, zorder=7,
-                ))
+                ax.add_patch(
+                    mpatches.Circle(
+                        (cx_, cy),
+                        self._cell_half_w * 0.75,
+                        facecolor="none",
+                        edgecolor="#00E67650",
+                        linewidth=1.8,
+                        zorder=7,
+                    )
+                )
             else:
                 fc, ec, alpha = "#FFFFFF", color, 0.95
 
-            ax.scatter(cx_, cy, marker=marker, s=120, c=fc, edgecolors=ec,
-                       linewidths=1.4, alpha=alpha, zorder=8)
+            ax.scatter(
+                cx_,
+                cy,
+                marker=marker,
+                s=120,
+                c=fc,
+                edgecolors=ec,
+                linewidths=1.4,
+                alpha=alpha,
+                zorder=8,
+            )
 
     # ------------------------------------------------------------------ communication
 
-    def _draw_communication(self, ax, agent_positions: dict[str, tuple[int, int]],
-                            step_idx: int) -> None:
+    def _draw_communication(
+        self, ax, agent_positions: dict[str, tuple[int, int]], step_idx: int
+    ) -> None:
         """Bezier curves with animated pulse travelling along the link."""
         agents = sorted(agent_positions.keys())
         if len(agents) < 2:
@@ -591,8 +682,8 @@ class GeoRenderer:
                 pts = []
                 for k in range(n_pts + 1):
                     t_ = k / n_pts
-                    bx = (1 - t_) ** 2 * x1 + 2 * (1 - t_) * t_ * mx + t_ ** 2 * x2
-                    by = (1 - t_) ** 2 * y1 + 2 * (1 - t_) * t_ * my + t_ ** 2 * y2
+                    bx = (1 - t_) ** 2 * x1 + 2 * (1 - t_) * t_ * mx + t_**2 * x2
+                    by = (1 - t_) ** 2 * y1 + 2 * (1 - t_) * t_ * my + t_**2 * y2
                     pts.append((bx, by))
 
                 for k in range(len(pts) - 1):
@@ -609,10 +700,14 @@ class GeoRenderer:
 
     # ------------------------------------------------------------------ agents
 
-    def _draw_agents(self, ax, agent_positions: dict[str, tuple[int, int]],
-                     strategic_targets: dict[str, tuple[int, int]],
-                     prev_positions: list[dict[str, tuple[int, int]]] | None,
-                     step_idx: int) -> None:
+    def _draw_agents(
+        self,
+        ax,
+        agent_positions: dict[str, tuple[int, int]],
+        strategic_targets: dict[str, tuple[int, int]],
+        prev_positions: list[dict[str, tuple[int, int]]] | None,
+        step_idx: int,
+    ) -> None:
         """Agents with fading trails (width + alpha decay), directional arrow, target glow."""
         t = self._t
         agents = sorted(agent_positions.keys())
@@ -637,8 +732,11 @@ class GeoRenderer:
                         ax.plot(
                             [trail[k][0], trail[k + 1][0]],
                             [trail[k][1], trail[k + 1][1]],
-                            color=color, alpha=alpha, linewidth=lw,
-                            solid_capstyle="round", zorder=9,
+                            color=color,
+                            alpha=alpha,
+                            linewidth=lw,
+                            solid_capstyle="round",
+                            zorder=9,
                         )
                     if n >= 2:
                         dx = trail[-1][0] - trail[-2][0]
@@ -647,10 +745,15 @@ class GeoRenderer:
                         if ln > 0:
                             sc = self._cell_half_w * 0.5
                             ax.annotate(
-                                "", xy=(trail[-1][0] + dx / ln * sc, trail[-1][1] + dy / ln * sc),
+                                "",
+                                xy=(trail[-1][0] + dx / ln * sc, trail[-1][1] + dy / ln * sc),
                                 xytext=trail[-1],
-                                arrowprops=dict(arrowstyle="-|>", color=color, lw=1.5,
-                                                mutation_scale=8),
+                                arrowprops={
+                                    "arrowstyle": "-|>",
+                                    "color": color,
+                                    "lw": 1.5,
+                                    "mutation_scale": 8,
+                                },
                                 zorder=9,
                             )
 
@@ -658,40 +761,98 @@ class GeoRenderer:
             if tar:
                 tr, tc = tar
                 tx, ty = self._cell_center(tr, tc)
-                ax.plot([ax_, tx], [ay, ty], color="#AB47BC", linestyle="--",
-                        linewidth=0.9, alpha=0.40, zorder=9)
+                ax.plot(
+                    [ax_, tx],
+                    [ay, ty],
+                    color="#AB47BC",
+                    linestyle="--",
+                    linewidth=0.9,
+                    alpha=0.40,
+                    zorder=9,
+                )
                 pulse_r = self._cell_half_w * (0.55 + 0.15 * math.sin(step_idx * 0.7))
                 pulse_a = 0.22 + 0.12 * math.sin(step_idx * 0.7)
-                ax.add_patch(mpatches.Circle(
-                    (tx, ty), pulse_r, facecolor="#AB47BC10",
-                    edgecolor=(*matplotlib.colors.to_rgb("#AB47BC"), pulse_a),
-                    linewidth=1.3, zorder=9,
-                ))
-                ax.scatter(tx, ty, marker="X", s=75 * t["fs"],
-                           c="#AB47BC", edgecolors="white", linewidths=0.7,
-                           alpha=0.85, zorder=10)
+                ax.add_patch(
+                    mpatches.Circle(
+                        (tx, ty),
+                        pulse_r,
+                        facecolor="#AB47BC10",
+                        edgecolor=(*matplotlib.colors.to_rgb("#AB47BC"), pulse_a),
+                        linewidth=1.3,
+                        zorder=9,
+                    )
+                )
+                ax.scatter(
+                    tx,
+                    ty,
+                    marker="X",
+                    s=75 * t["fs"],
+                    c="#AB47BC",
+                    edgecolors="white",
+                    linewidths=0.7,
+                    alpha=0.85,
+                    zorder=10,
+                )
 
-            ax.add_patch(mpatches.Circle(
-                (ax_, ay), self._cell_half_w * 0.50,
-                facecolor="none", edgecolor=color, linewidth=0.7, alpha=0.25, zorder=10,
-            ))
-            ax.add_patch(mpatches.Circle(
-                (ax_, ay), self._cell_half_w * 0.38,
-                facecolor="white", edgecolor="none", alpha=0.70, zorder=10.5,
-            ))
-            ax.scatter(ax_, ay, marker="o", s=180 * t["fs"], c=color,
-                       edgecolors="white", linewidths=1.8, zorder=11)
-            ax.annotate(label, (ax_, ay), fontsize=7 * t["fs"], fontweight="bold",
-                        color="white", ha="center", va="center", zorder=12)
+            ax.add_patch(
+                mpatches.Circle(
+                    (ax_, ay),
+                    self._cell_half_w * 0.50,
+                    facecolor="none",
+                    edgecolor=color,
+                    linewidth=0.7,
+                    alpha=0.25,
+                    zorder=10,
+                )
+            )
+            ax.add_patch(
+                mpatches.Circle(
+                    (ax_, ay),
+                    self._cell_half_w * 0.38,
+                    facecolor="white",
+                    edgecolor="none",
+                    alpha=0.70,
+                    zorder=10.5,
+                )
+            )
+            ax.scatter(
+                ax_,
+                ay,
+                marker="o",
+                s=180 * t["fs"],
+                c=color,
+                edgecolors="white",
+                linewidths=1.8,
+                zorder=11,
+            )
+            ax.annotate(
+                label,
+                (ax_, ay),
+                fontsize=7 * t["fs"],
+                fontweight="bold",
+                color="white",
+                ha="center",
+                va="center",
+                zorder=12,
+            )
 
     # ================================================================== decorations
 
     def _draw_title(self, ax, policy_name: str, fs: float) -> None:
         region_label = self.meta["display_name"]
-        ax.set_title(policy_name, fontsize=12 * fs, fontweight="bold", color="white",
-                     pad=10 * fs, loc="left")
-        ax.text(1.0, 1.025, region_label, transform=ax.transAxes,
-                fontsize=7.5 * fs, color="#aaaaaa", ha="right", va="bottom")
+        ax.set_title(
+            policy_name, fontsize=12 * fs, fontweight="bold", color="white", pad=10 * fs, loc="left"
+        )
+        ax.text(
+            1.0,
+            1.025,
+            region_label,
+            transform=ax.transAxes,
+            fontsize=7.5 * fs,
+            color="#aaaaaa",
+            ha="right",
+            va="bottom",
+        )
 
     def _draw_scale_bar(self, ax, fs: float) -> None:
         x0, x1 = ax.get_xlim()
@@ -706,13 +867,29 @@ class GeoRenderer:
         for s in range(n_seg):
             c = "white" if s % 2 == 0 else "#333333"
             sx = bx + s * seg_len
-            ax.fill_between([sx, sx + seg_len], by - th, by + th,
-                            color=c, zorder=15, edgecolor="white", linewidth=0.3)
+            ax.fill_between(
+                [sx, sx + seg_len],
+                by - th,
+                by + th,
+                color=c,
+                zorder=15,
+                edgecolor="white",
+                linewidth=0.3,
+            )
 
         for val, off in [(0, 0), (50, 0.5), (100, 1.0)]:
             lbl = f"{val}" if val < 100 else "100 km"
-            ax.text(bx + bar_len * off, by - th * 2.8, lbl, color="white",
-                    fontsize=4.5 * fs, ha="center", va="top", fontweight="bold", zorder=15)
+            ax.text(
+                bx + bar_len * off,
+                by - th * 2.8,
+                lbl,
+                color="white",
+                fontsize=4.5 * fs,
+                ha="center",
+                va="top",
+                fontweight="bold",
+                zorder=15,
+            )
 
     def _draw_north_arrow(self, ax, fs: float) -> None:
         x0, x1 = ax.get_xlim()
@@ -723,23 +900,49 @@ class GeoRenderer:
         ah = span * 0.035
         aw = (x1 - x0) * 0.011
 
-        ax.add_patch(plt.Polygon(
-            [(nx + aw * 0.08, ny - ah + span * 0.002),
-             (nx - aw + aw * 0.08, ny - ah * 1.7 + span * 0.002),
-             (nx + aw + aw * 0.08, ny - ah * 1.7 + span * 0.002)],
-            closed=True, facecolor="#00000030", edgecolor="none", zorder=14,
-        ))
-        ax.add_patch(plt.Polygon(
-            [(nx, ny - ah), (nx - aw, ny - ah * 1.7), (nx + aw, ny - ah * 1.7)],
-            closed=True, facecolor="white", edgecolor="#cccccc", linewidth=0.4, zorder=15,
-        ))
-        ax.text(nx, ny - ah * 0.70, "N", color="white", fontsize=7.5 * fs,
-                fontweight="bold", ha="center", va="bottom", zorder=15)
+        ax.add_patch(
+            plt.Polygon(
+                [
+                    (nx + aw * 0.08, ny - ah + span * 0.002),
+                    (nx - aw + aw * 0.08, ny - ah * 1.7 + span * 0.002),
+                    (nx + aw + aw * 0.08, ny - ah * 1.7 + span * 0.002),
+                ],
+                closed=True,
+                facecolor="#00000030",
+                edgecolor="none",
+                zorder=14,
+            )
+        )
+        ax.add_patch(
+            plt.Polygon(
+                [(nx, ny - ah), (nx - aw, ny - ah * 1.7), (nx + aw, ny - ah * 1.7)],
+                closed=True,
+                facecolor="white",
+                edgecolor="#cccccc",
+                linewidth=0.4,
+                zorder=15,
+            )
+        )
+        ax.text(
+            nx,
+            ny - ah * 0.70,
+            "N",
+            color="white",
+            fontsize=7.5 * fs,
+            fontweight="bold",
+            ha="center",
+            va="bottom",
+            zorder=15,
+        )
 
     def _draw_attribution(self, ax) -> None:
         txt = AnchoredText(
-            self.tile_info["attribution"], loc="lower right",
-            prop=dict(size=4.5, color="#999999"), frameon=True, borderpad=0.3, pad=0.2,
+            self.tile_info["attribution"],
+            loc="lower right",
+            prop={"size": 4.5, "color": "#999999"},
+            frameon=True,
+            borderpad=0.3,
+            pad=0.2,
         )
         txt.patch.set_facecolor("#00000080")
         txt.patch.set_edgecolor("none")
@@ -748,8 +951,17 @@ class GeoRenderer:
     # ================================================================== panels
 
     def _draw_metrics_panel(
-        self, fig, step: int, wel: float, isr: float, ce: float,
-        burned: int, suppressed: int, protected: int, total_assets: int, fs: float,
+        self,
+        fig,
+        step: int,
+        wel: float,
+        isr: float,
+        ce: float,
+        burned: int,
+        suppressed: int,
+        protected: int,
+        total_assets: int,
+        fs: float,
     ) -> None:
         t = self._t
         p = fig.add_axes(t["panel_rect"])
@@ -766,13 +978,31 @@ class GeoRenderer:
         sim_m = step * 30
         sh, sm = divmod(sim_m, 60)
 
-        p.text(0.01, 0.80, f"STEP {step:03d}", fontsize=8.5 * fs, color="#E0E0E0",
-               va="center", ha="left", fontweight="bold", fontfamily="monospace")
-        p.text(0.20, 0.80, f"T+{sh}h{sm:02d}m", fontsize=6.5 * fs, color="#777799",
-               va="center", ha="left", fontfamily="monospace")
+        p.text(
+            0.01,
+            0.80,
+            f"STEP {step:03d}",
+            fontsize=8.5 * fs,
+            color="#E0E0E0",
+            va="center",
+            ha="left",
+            fontweight="bold",
+            fontfamily="monospace",
+        )
+        p.text(
+            0.20,
+            0.80,
+            f"T+{sh}h{sm:02d}m",
+            fontsize=6.5 * fs,
+            color="#777799",
+            va="center",
+            ha="left",
+            fontfamily="monospace",
+        )
 
-        p.plot([0.0, 1.0], [0.55, 0.55], color=t["panel_border"], linewidth=0.4,
-               transform=p.transData)
+        p.plot(
+            [0.0, 1.0], [0.55, 0.55], color=t["panel_border"], linewidth=0.4, transform=p.transData
+        )
 
         wel_c = "#76FF03" if wel < 5 else "#FFD600" if wel < 15 else "#FF3D00"
         isr_c = "#76FF03" if isr > 0.8 else "#FFD600" if isr > 0.5 else "#FF3D00"
@@ -780,24 +1010,42 @@ class GeoRenderer:
         metrics = [
             ("WEL", f"{wel:.1f}", 0.01, wel_c),
             ("ISR", f"{isr:.2f}", 0.16, isr_c),
-            ("CE",  f"{ce:.2f}", 0.31, "#B0BEC5"),
+            ("CE", f"{ce:.2f}", 0.31, "#B0BEC5"),
             ("BRN", f"{burned}", 0.46, "#FF3D00"),
             ("SUP", f"{suppressed}", 0.61, "#00D9FF"),
             ("DEF", f"{protected}/{total_assets}", 0.78, "#76FF03"),
         ]
         for lbl, val, x, color in metrics:
-            p.text(x, 0.35, lbl, fontsize=5 * fs, color="#888899", va="center",
-                   ha="left", fontweight="bold", fontfamily="monospace")
-            p.text(x, 0.10, val, fontsize=7.5 * fs, color=color, va="center",
-                   ha="left", fontweight="bold", fontfamily="monospace")
+            p.text(
+                x,
+                0.35,
+                lbl,
+                fontsize=5 * fs,
+                color="#888899",
+                va="center",
+                ha="left",
+                fontweight="bold",
+                fontfamily="monospace",
+            )
+            p.text(
+                x,
+                0.10,
+                val,
+                fontsize=7.5 * fs,
+                color=color,
+                va="center",
+                ha="left",
+                fontweight="bold",
+                fontfamily="monospace",
+            )
 
     def _draw_legend(self, fig, fs: float) -> None:
         t = self._t
         lr = list(t["legend_rect"])
         lr[2] *= 0.82
         lr[3] *= 0.82
-        lr[0] += (t["legend_rect"][2] - lr[2])
-        lr[1] += (t["legend_rect"][3] - lr[3])
+        lr[0] += t["legend_rect"][2] - lr[2]
+        lr[1] += t["legend_rect"][3] - lr[3]
 
         lg = fig.add_axes(lr)
         lg.set_xlim(0, 1)
@@ -827,15 +1075,34 @@ class GeoRenderer:
 
         for i, (sym, color, label) in enumerate(col1):
             y = 0.82 - i * 0.30
-            lg.text(0.05, y, sym, fontsize=6.5 * fs, color=color, va="center", fontfamily="monospace")
+            lg.text(
+                0.05, y, sym, fontsize=6.5 * fs, color=color, va="center", fontfamily="monospace"
+            )
             lg.text(0.17, y, label, fontsize=5 * fs, color="#cccccc", va="center")
 
         for i, (sym, color, label) in enumerate(col2):
             y = 0.82 - i * 0.30
             if sym:
-                lg.text(0.56, y, sym, fontsize=6.5 * fs, color=color, va="center", fontfamily="monospace")
+                lg.text(
+                    0.56,
+                    y,
+                    sym,
+                    fontsize=6.5 * fs,
+                    color=color,
+                    va="center",
+                    fontfamily="monospace",
+                )
             else:
-                lg.scatter([0.58], [y], marker=marker, s=35 * fs, c="#FFFFFF",
-                           edgecolors=color, linewidths=0.8, transform=lg.transData,
-                           clip_on=False, zorder=5)
+                lg.scatter(
+                    [0.58],
+                    [y],
+                    marker=marker,
+                    s=35 * fs,
+                    c="#FFFFFF",
+                    edgecolors=color,
+                    linewidths=0.8,
+                    transform=lg.transData,
+                    clip_on=False,
+                    zorder=5,
+                )
             lg.text(0.67, y, label, fontsize=5 * fs, color="#cccccc", va="center")

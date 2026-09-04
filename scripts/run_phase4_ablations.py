@@ -1,6 +1,6 @@
 """Phase-4 component ablations + regime-robustness sweep for the *proposed* HierComm model.
 
-Fills the two Phase-4 gaps the shipped ``wildfire_phase3_multiseed/`` run does not cover:
+Fills the two Phase-4 gaps the shipped ``results/wildfire_phase3_multiseed/`` run does not cover:
 
 1. **Component ablations** — does each piece of ``hiercomm_heur`` (value-aware hierarchy +
    learned communicating tactical layer + tactical shaping + RL fine-tune) add measurable value?
@@ -38,7 +38,7 @@ Full ablation (5 training seeds), then robustness::
     python scripts/run_phase4_ablations.py --study ablation \\
         --train-seeds 42,1042,2042,3042,4042 --episodes 15 --train-steps 100000
     python scripts/run_phase4_ablations.py --study robustness \\
-        --ckpt-dir wildfire_phase3_multiseed --episodes 15
+        --ckpt-dir results/wildfire_phase3_multiseed --episodes 15
 """
 
 from __future__ import annotations
@@ -57,14 +57,18 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from wildfire_marl.agents.agent_networks import CommNetActor, CommTacticalActor  # noqa: E402
+from wildfire_marl.agents.agent_networks import CommTacticalActor  # noqa: E402
 from wildfire_marl.env.regimes import make_marl_env  # noqa: E402
 from wildfire_marl.env.rewards import WELISRDeltaReward  # noqa: E402
 from wildfire_marl.eval.metrics import (  # noqa: E402
     infrastructure_survival_rate,
     weighted_economic_loss,
 )
-from wildfire_marl.eval.phase3_eval import EVAL_OFFSET, checkpoint_path, load_nets, rollout_episode  # noqa: E402
+from wildfire_marl.eval.phase3_eval import (  # noqa: E402
+    EVAL_OFFSET,
+    load_nets,
+    rollout_episode,
+)
 from wildfire_marl.eval.significance import bootstrap_ci, welch_ttest  # noqa: E402
 from wildfire_marl.train.hier_comm_train import _dispatch_value, train_hier_comm  # noqa: E402
 from wildfire_marl.train.hierarchical_train import target_seeking_action  # noqa: E402
@@ -131,9 +135,19 @@ def ablation_ckpt(variant: str, region: str, out_dir: Path, seed: int) -> Path:
 def _worker_cmd(variant, region, train_seed, out_dir, steps, quick):
     """Command that trains exactly one (variant, region, seed) ablation in an isolated process."""
     cmd = [
-        sys.executable, str(Path(__file__).resolve()), "--train-one",
-        "--variant", variant, "--region", region, "--train-seed", str(train_seed),
-        "--out", str(out_dir), "--train-steps", str(steps),
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--train-one",
+        "--variant",
+        variant,
+        "--region",
+        region,
+        "--train-seed",
+        str(train_seed),
+        "--out",
+        str(out_dir),
+        "--train-steps",
+        str(steps),
     ]
     if quick:
         cmd.append("--quick")
@@ -146,8 +160,11 @@ def _run_parallel(jobs, n_parallel, out_dir: Path) -> None:
     logdir.mkdir(parents=True, exist_ok=True)
     env = {
         **os.environ,
-        "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1",
-        "NUMEXPR_NUM_THREADS": "1", "CUDA_VISIBLE_DEVICES": "",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1",
+        "CUDA_VISIBLE_DEVICES": "",
     }
     procs: list = []
     for variant, region, s, cmd in jobs:
@@ -157,7 +174,10 @@ def _run_parallel(jobs, n_parallel, out_dir: Path) -> None:
         p = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT, env=env)
         procs.append((p, lf))
         active = sum(pp.poll() is None for pp, _ in procs)
-        print(f"[LAUNCH] {variant}/{region}/s{s} pid={p.pid} (active {active}/{n_parallel})", flush=True)
+        print(
+            f"[LAUNCH] {variant}/{region}/s{s} pid={p.pid} (active {active}/{n_parallel})",
+            flush=True,
+        )
     for p, lf in procs:
         p.wait()
         lf.close()
@@ -176,13 +196,18 @@ def train_variant(variant, region, steps, quick, out_dir, device, train_seed, fo
     cfg.update(TRAIN_ABLATIONS[variant])
     cfg["seed"] = train_seed
     t0 = time.time()
-    print(f"[TRAIN] ablation {variant}/{region}/s{train_seed} ({cfg['total_steps']} steps)...", flush=True)
+    print(
+        f"[TRAIN] ablation {variant}/{region}/s{train_seed} ({cfg['total_steps']} steps)...",
+        flush=True,
+    )
     actor, _critic, _cmd, _curve = train_hier_comm(env, cfg, device)
     env.close()
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"config": cfg, "actor_state_dict": actor.state_dict()}, path)
-    print(f"[TRAIN] {variant}/{region}/s{train_seed} done in {(time.time()-t0)/60:.1f} min -> {path}",
-          flush=True)
+    print(
+        f"[TRAIN] {variant}/{region}/s{train_seed} done in {(time.time()-t0)/60:.1f} min -> {path}",
+        flush=True,
+    )
 
 
 # --------------------------------------------------------------------------- eval
@@ -194,6 +219,7 @@ def _rollout_value_chebyshev(env, device, seed) -> dict:
     env.apply_target_compliance = False
     done, sc, ep_ret, ce = False, 0, 0.0, 1.0
     from wildfire_marl.eval.phase3_eval import MACRO_INTERVAL
+
     while not done:
         if sc % MACRO_INTERVAL == 0:
             _dispatch_value(env)
@@ -207,7 +233,9 @@ def _rollout_value_chebyshev(env, device, seed) -> dict:
     return {
         "WEL": float(weighted_economic_loss(env.env.asset_type, fs, env.env.asset_values)),
         "ISR": float(infrastructure_survival_rate(env.env.asset_type, fs)),
-        "CE": float(ce), "burned": int((fs > 0).sum()), "return": ep_ret,
+        "CE": float(ce),
+        "burned": int((fs > 0).sum()),
+        "return": ep_ret,
     }
 
 
@@ -223,7 +251,9 @@ def _load_variant_nets(variant, region, out_dir, ckpt_dir, num_agents, device, t
             return None, None
         ck = torch.load(path, map_location=device)
         actor = CommTacticalActor(
-            in_channels=8, action_dim=6, features_dim=64,
+            in_channels=8,
+            action_dim=6,
+            features_dim=64,
             comm_rounds=int(ck.get("config", {}).get("comm_rounds", 2)),
         ).to(device)
         actor.load_state_dict(ck["actor_state_dict"])
@@ -238,12 +268,16 @@ def _load_variant_nets(variant, region, out_dir, ckpt_dir, num_agents, device, t
     raise ValueError(variant)
 
 
-def eval_variant(env, variant, region, out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds):
+def eval_variant(
+    env, variant, region, out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds
+):
     """One score per training seed (mean over eval stream); heuristics -> single score."""
     per = {m: [] for m in METRICS}
     seeds_to_use = train_seeds if variant not in ("wo_learned_tactic",) else [None]
     for ts in seeds_to_use:
-        kind, nets = _load_variant_nets(variant, region, out_dir, ckpt_dir, env.num_agents, device, ts)
+        kind, nets = _load_variant_nets(
+            variant, region, out_dir, ckpt_dir, env.num_agents, device, ts
+        )
         if kind is None:
             print(f"[EVAL] skip {variant}/{region}/s{ts}: no ckpt", flush=True)
             continue
@@ -251,8 +285,11 @@ def eval_variant(env, variant, region, out_dir, ckpt_dir, device, eval_seeds, ep
         for s in eval_seeds:
             for e in range(episodes):
                 seed = s + EVAL_OFFSET + e
-                m = (_rollout_value_chebyshev(env, device, seed) if kind == "_chebyshev"
-                     else rollout_episode(env, kind, nets, device, seed))
+                m = (
+                    _rollout_value_chebyshev(env, device, seed)
+                    if kind == "_chebyshev"
+                    else rollout_episode(env, kind, nets, device, seed)
+                )
                 for k in METRICS:
                     ep[k].append(m[k])
         for k in METRICS:
@@ -260,8 +297,9 @@ def eval_variant(env, variant, region, out_dir, ckpt_dir, device, eval_seeds, ep
     return per
 
 
-def run_ablation(out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, train_seeds,
-                 force, n_parallel=1):
+def run_ablation(
+    out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, train_seeds, force, n_parallel=1
+):
     # 1. train the config-toggle variants (parallel subprocesses when n_parallel > 1)
     out_dir.mkdir(parents=True, exist_ok=True)
     if n_parallel > 1:
@@ -272,7 +310,14 @@ def run_ablation(out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, 
                     if ablation_ckpt(variant, region, out_dir, ts).exists() and not force:
                         print(f"[SKIP] {variant}/{region}/s{ts} exists", flush=True)
                         continue
-                    jobs.append((variant, region, ts, _worker_cmd(variant, region, ts, out_dir, steps, quick)))
+                    jobs.append(
+                        (
+                            variant,
+                            region,
+                            ts,
+                            _worker_cmd(variant, region, ts, out_dir, steps, quick),
+                        )
+                    )
         if jobs:
             _run_parallel(jobs, n_parallel, out_dir)
     else:
@@ -281,8 +326,10 @@ def run_ablation(out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, 
                 for ts in train_seeds:
                     train_variant(variant, region, steps, quick, out_dir, device, ts, force)
     # 2. evaluate every variant
-    summary = {"protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds,
-                            "episodes": episodes}, "regions": {}}
+    summary = {
+        "protocol": {"train_seeds": train_seeds, "eval_seeds": eval_seeds, "episodes": episodes},
+        "regions": {},
+    }
     rows = []
     for region in REGIONS:
         env = make_marl_env(region, "default", reward_cls=WELISRDeltaReward)
@@ -292,8 +339,9 @@ def run_ablation(out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, 
         reg = {}
         full_wel = None
         for variant in ALL_VARIANTS:
-            per = eval_variant(env, variant, region, out_dir, ckpt_dir, device,
-                               eval_seeds, episodes, train_seeds)
+            per = eval_variant(
+                env, variant, region, out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds
+            )
             if not per["WEL"]:
                 continue
             wel_mean = float(np.mean(per["WEL"]))
@@ -303,19 +351,36 @@ def run_ablation(out_dir, ckpt_dir, steps, quick, device, eval_seeds, episodes, 
                 "label": VLABEL[variant],
                 "WEL_mean": wel_mean,
                 "WEL_std": float(np.std(per["WEL"], ddof=1)) if len(per["WEL"]) > 1 else 0.0,
-                "WEL_ci": list(bootstrap_ci(per["WEL"])) if len(per["WEL"]) > 1 else [wel_mean, wel_mean],
+                "WEL_ci": (
+                    list(bootstrap_ci(per["WEL"])) if len(per["WEL"]) > 1 else [wel_mean, wel_mean]
+                ),
                 "ISR_mean": float(np.mean(per["ISR"])),
                 "dWEL_vs_noop": noop_wel - wel_mean,
                 "n_seeds": len(per["WEL"]),
                 "_wel_vals": per["WEL"],
             }
-            rows.append({"region": region, "variant": variant, "WEL": wel_mean,
-                         "ISR": float(np.mean(per["ISR"])), "dWEL": noop_wel - wel_mean})
-            print(f"  [ablation] {region}/{variant}: WEL={wel_mean:.2f} ISR={np.mean(per['ISR']):.3f} "
-                  f"dWEL={noop_wel-wel_mean:.2f}", flush=True)
+            rows.append(
+                {
+                    "region": region,
+                    "variant": variant,
+                    "WEL": wel_mean,
+                    "ISR": float(np.mean(per["ISR"])),
+                    "dWEL": noop_wel - wel_mean,
+                }
+            )
+            print(
+                f"  [ablation] {region}/{variant}: WEL={wel_mean:.2f} ISR={np.mean(per['ISR']):.3f} "
+                f"dWEL={noop_wel-wel_mean:.2f}",
+                flush=True,
+            )
         # significance: each ablation vs full (does removing the component hurt?)
         for variant, entry in reg.items():
-            if variant == "full" or full_wel is None or len(entry["_wel_vals"]) < 2 or len(full_wel) < 2:
+            if (
+                variant == "full"
+                or full_wel is None
+                or len(entry["_wel_vals"]) < 2
+                or len(full_wel) < 2
+            ):
                 continue
             w = welch_ttest(entry["_wel_vals"], full_wel)
             entry["vs_full_WEL"] = {"p": w["p_value"], "d": w["cohens_d"]}
@@ -343,21 +408,34 @@ def rollout_scores(env, kind, nets, device, eval_seeds, episodes) -> dict:
 
 def _emit_ablation_table(summary, out_path: Path) -> None:
     lines = [
-        r"\begin{table}[t]", r"\centering",
+        r"\begin{table}[t]",
+        r"\centering",
         r"\caption{\textbf{Component ablation of the proposed model.} Each row removes one "
         r"component; lower WEL / higher ISR / higher $\Delta$WEL is better. Removing any component "
         r"degrades the full system.}",
-        r"\label{tab:ablation}", r"\begin{tabular}{llccc}", r"\toprule",
-        r"Region & Variant & WEL $\downarrow$ & ISR $\uparrow$ & $\Delta$WEL $\uparrow$ \\", r"\midrule",
+        r"\label{tab:ablation}",
+        r"\begin{tabular}{llccc}",
+        r"\toprule",
+        r"Region & Variant & WEL $\downarrow$ & ISR $\uparrow$ & $\Delta$WEL $\uparrow$ \\",
+        r"\midrule",
     ]
-    order = ["full", "wo_comms", "wo_hierarchy", "wo_learned_tactic", "wo_rl_finetune", "wo_shaping"]
+    order = [
+        "full",
+        "wo_comms",
+        "wo_hierarchy",
+        "wo_learned_tactic",
+        "wo_rl_finetune",
+        "wo_shaping",
+    ]
     for region, reg in summary["regions"].items():
         rlabel = {"saudi": "Saudi", "california": "California"}[region]
         present = [v for v in order if v in reg]
         for i, v in enumerate(present):
             e = reg[v]
-            lines.append(rf"{rlabel if i == 0 else ''} & {e['label']} & {e['WEL_mean']:.2f} "
-                         rf"& {e['ISR_mean']:.3f} & {e['dWEL_vs_noop']:.2f} \\")
+            lines.append(
+                rf"{rlabel if i == 0 else ''} & {e['label']} & {e['WEL_mean']:.2f} "
+                rf"& {e['ISR_mean']:.3f} & {e['dWEL_vs_noop']:.2f} \\"
+            )
         lines.append(r"\midrule")
     lines[-1] = r"\bottomrule"
     lines += [r"\end{tabular}", r"\end{table}", ""]
@@ -371,8 +449,13 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
     """Zero-shot eval of frozen default-trained policies across easy/medium/hard regimes (resumable)."""
     regimes = ["easy", "medium", "hard"]
     policies = [
-        "noop", "value_first", "greedy_risk", "local_reactive",
-        "mappo", "commnet", "hiercomm_heur",
+        "noop",
+        "value_first",
+        "greedy_risk",
+        "local_reactive",
+        "mappo",
+        "commnet",
+        "hiercomm_heur",
     ]
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / "robustness_results.csv"
@@ -382,12 +465,15 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
     def _done(region, regime, kind):
         if len(existing) == 0:
             return None
-        sub = existing[(existing.region == region) & (existing.regime == regime)
-                       & (existing.policy == kind)]
+        sub = existing[
+            (existing.region == region) & (existing.regime == regime) & (existing.policy == kind)
+        ]
         return sub.iloc[0].to_dict() if len(sub) else None
 
-    summary = {"protocol": {"regimes": regimes, "eval_seeds": eval_seeds, "episodes": episodes},
-               "regions": {}}
+    summary = {
+        "protocol": {"regimes": regimes, "eval_seeds": eval_seeds, "episodes": episodes},
+        "regions": {},
+    }
     for region in REGIONS:
         reg = {}
         for regime in regimes:
@@ -396,7 +482,10 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
             for kind in policies:
                 cached = _done(region, regime, kind)
                 if cached is not None:
-                    reg[regime][kind] = {"WEL_mean": float(cached["WEL"]), "ISR_mean": float(cached["ISR"])}
+                    reg[regime][kind] = {
+                        "WEL_mean": float(cached["WEL"]),
+                        "ISR_mean": float(cached["ISR"]),
+                    }
                     print(f"  [robust] SKIP (done) {region}/{regime}/{kind}", flush=True)
                     continue
                 if env is None:
@@ -414,31 +503,55 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
                     for s in eval_seeds:
                         for e in range(episodes):
                             m = rollout_episode(env, kind, nets, device, s + EVAL_OFFSET + e)
-                            ep_wel.append(m["WEL"]); ep_isr.append(m["ISR"])
-                    wel_vals.append(float(np.mean(ep_wel))); isr_vals.append(float(np.mean(ep_isr)))
+                            ep_wel.append(m["WEL"])
+                            ep_isr.append(m["ISR"])
+                    wel_vals.append(float(np.mean(ep_wel)))
+                    isr_vals.append(float(np.mean(ep_isr)))
                 if not wel_vals:
                     continue
-                reg[regime][kind] = {"WEL_mean": float(np.mean(wel_vals)),
-                                     "ISR_mean": float(np.mean(isr_vals))}
-                row = {"region": region, "regime": regime, "policy": kind,
-                       "WEL": float(np.mean(wel_vals)), "ISR": float(np.mean(isr_vals))}
-                pd.DataFrame([row]).to_csv(csv_path, mode="a", header=not csv_path.exists(), index=False)
+                reg[regime][kind] = {
+                    "WEL_mean": float(np.mean(wel_vals)),
+                    "ISR_mean": float(np.mean(isr_vals)),
+                }
+                row = {
+                    "region": region,
+                    "regime": regime,
+                    "policy": kind,
+                    "WEL": float(np.mean(wel_vals)),
+                    "ISR": float(np.mean(isr_vals)),
+                }
+                pd.DataFrame([row]).to_csv(
+                    csv_path, mode="a", header=not csv_path.exists(), index=False
+                )
                 rows.append(row)
-                print(f"  [robust] {region}/{regime}/{kind}: WEL={np.mean(wel_vals):.2f} "
-                      f"ISR={np.mean(isr_vals):.3f}", flush=True)
+                print(
+                    f"  [robust] {region}/{regime}/{kind}: WEL={np.mean(wel_vals):.2f} "
+                    f"ISR={np.mean(isr_vals):.3f}",
+                    flush=True,
+                )
             if env is not None:
                 env.close()
         summary["regions"][region] = reg
-    pd.DataFrame(rows).drop_duplicates(
-        subset=["region", "regime", "policy"], keep="last").to_csv(csv_path, index=False)
+    pd.DataFrame(rows).drop_duplicates(subset=["region", "regime", "policy"], keep="last").to_csv(
+        csv_path, index=False
+    )
     (out_dir / "robustness_summary.json").write_text(json.dumps(summary, indent=2))
     # monotonicity check on No-Op WEL
     for region in REGIONS:
-        noop_wel = [summary["regions"][region].get(r, {}).get("noop", {}).get("WEL_mean", float("nan"))
-                    for r in regimes]
-        mono = all(a <= b for a, b in zip(noop_wel, noop_wel[1:]) if not (np.isnan(a) or np.isnan(b)))
-        print(f"  [robust] {region} No-Op WEL by difficulty {[round(x,1) for x in noop_wel]} "
-              f"-> monotonic={mono}", flush=True)
+        noop_wel = [
+            summary["regions"][region].get(r, {}).get("noop", {}).get("WEL_mean", float("nan"))
+            for r in regimes
+        ]
+        mono = all(
+            a <= b
+            for a, b in zip(noop_wel, noop_wel[1:], strict=False)
+            if not (np.isnan(a) or np.isnan(b))
+        )
+        print(
+            f"  [robust] {region} No-Op WEL by difficulty {[round(x,1) for x in noop_wel]} "
+            f"-> monotonic={mono}",
+            flush=True,
+        )
     print(f"\nRobustness artifacts -> {out_dir}/", flush=True)
 
 
@@ -446,16 +559,23 @@ def run_robustness(out_dir, ckpt_dir, device, eval_seeds, episodes, train_seeds)
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Phase-4 ablations + regime robustness (proposed model).")
+    ap = argparse.ArgumentParser(
+        description="Phase-4 ablations + regime robustness (proposed model)."
+    )
     ap.add_argument("--study", default="ablation", choices=["ablation", "robustness", "both"])
     ap.add_argument("--out", default="results/phase4_ablation")
-    ap.add_argument("--ckpt-dir", default="wildfire_phase3_multiseed",
-                    help="Frozen checkpoints for wo_hierarchy (CommNet) + robustness sweep")
+    ap.add_argument(
+        "--ckpt-dir",
+        default="results/wildfire_phase3_multiseed",
+        help="Frozen checkpoints for wo_hierarchy (CommNet) + robustness sweep",
+    )
     ap.add_argument("--train-seeds", default="42,1042,2042,3042,4042")
     ap.add_argument("--eval-seeds", default="42,1042,2042,3042,4042")
     ap.add_argument("--episodes", type=int, default=15)
     ap.add_argument("--train-steps", type=int, default=100000)
-    ap.add_argument("--parallel", type=int, default=1, help="Concurrent ablation-training subprocesses")
+    ap.add_argument(
+        "--parallel", type=int, default=1, help="Concurrent ablation-training subprocesses"
+    )
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--quick", action="store_true", help="Tiny end-to-end validation")
     # worker mode (used by --parallel): train exactly one (variant, region, seed) and exit
@@ -476,17 +596,38 @@ def main() -> None:
     # --- worker mode: train exactly one ablation variant and exit (used by --parallel) ---
     if args.train_one:
         torch.set_num_threads(1)
-        train_variant(args.variant, args.region, steps, args.quick, out_dir,
-                      torch.device("cpu"), args.train_seed, args.force)
+        train_variant(
+            args.variant,
+            args.region,
+            steps,
+            args.quick,
+            out_dir,
+            torch.device("cpu"),
+            args.train_seed,
+            args.force,
+        )
         return
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Phase-4 | study={args.study} train_seeds={train_seeds} eval_seeds={eval_seeds} "
-          f"episodes={episodes} steps={steps} parallel={args.parallel} device={device}", flush=True)
+    print(
+        f"Phase-4 | study={args.study} train_seeds={train_seeds} eval_seeds={eval_seeds} "
+        f"episodes={episodes} steps={steps} parallel={args.parallel} device={device}",
+        flush=True,
+    )
 
     if args.study in ("ablation", "both"):
-        run_ablation(out_dir, args.ckpt_dir, steps, args.quick, device,
-                     eval_seeds, episodes, train_seeds, args.force, n_parallel=args.parallel)
+        run_ablation(
+            out_dir,
+            args.ckpt_dir,
+            steps,
+            args.quick,
+            device,
+            eval_seeds,
+            episodes,
+            train_seeds,
+            args.force,
+            n_parallel=args.parallel,
+        )
     if args.study in ("robustness", "both"):
         run_robustness(out_dir, args.ckpt_dir, device, eval_seeds, episodes, train_seeds)
 

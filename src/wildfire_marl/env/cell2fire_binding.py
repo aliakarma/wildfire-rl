@@ -147,6 +147,7 @@ class Cell2FireBinding:
     def spawn(self) -> None:
         self.output_folder.mkdir(parents=True, exist_ok=True)
         if os.name == "nt":
+
             def to_wsl_path(path: Path | str) -> str:
                 p = Path(path).resolve().as_posix()
                 if len(p) > 1 and p[1] == ":":

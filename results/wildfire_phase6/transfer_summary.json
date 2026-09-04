@@ -1,0 +1,125 @@
+{
+  "protocol": {
+    "train_seeds": [
+      42,
+      1042,
+      2042,
+      3042,
+      4042
+    ],
+    "eval_seeds": [
+      42,
+      1042,
+      2042,
+      3042,
+      4042
+    ],
+    "episodes": 10
+  },
+  "policies": {
+    "commnet": {
+      "label": "CommNet",
+      "directions": {
+        "saudi->california": {
+          "native_ISR": 0.6819047619047618,
+          "transfer_ISR": 0.0653333333333333,
+          "TRS_ISR": 0.09581005586592176,
+          "native_WEL": 12.44,
+          "transfer_WEL": 32.488,
+          "WEL_gap": -20.048000000000002,
+          "ISR_degradation_p": 1.0425642242143174e-05,
+          "ISR_degradation_d": 6.4608011437203015
+        },
+        "california->saudi": {
+          "native_ISR": 0.39777777777777773,
+          "transfer_ISR": 0.3809523809523808,
+          "TRS_ISR": 0.957701516360734,
+          "native_WEL": 19.576,
+          "transfer_WEL": 23.503999999999998,
+          "WEL_gap": -3.9279999999999973,
+          "ISR_degradation_p": 0.8895385293966322,
+          "ISR_degradation_d": 0.09288480546329952
+        }
+      },
+      "matrix": {
+        "saudi->saudi": {
+          "WEL_mean": 12.44,
+          "WEL_std": 4.31646975097835,
+          "ISR_mean": 0.6819047619047618,
+          "ISR_std": 0.10575288870469568
+        },
+        "saudi->california": {
+          "WEL_mean": 32.488,
+          "WEL_std": 1.7569063720073426,
+          "ISR_mean": 0.0653333333333333,
+          "ISR_std": 0.08385172097882729
+        },
+        "california->saudi": {
+          "WEL_mean": 23.503999999999998,
+          "WEL_std": 2.3104285316797837,
+          "ISR_mean": 0.3809523809523808,
+          "ISR_std": 0.06441081302442256
+        },
+        "california->california": {
+          "WEL_mean": 19.576,
+          "WEL_std": 7.774850623788359,
+          "ISR_mean": 0.39777777777777773,
+          "ISR_std": 0.24794463738882624
+        }
+      },
+      "adaptation_asymmetry_TRS": -0.8618914604948122
+    },
+    "hiercomm_heur": {
+      "label": "HierComm (heur. cmd)",
+      "directions": {
+        "saudi->california": {
+          "native_ISR": 0.8087619047619047,
+          "transfer_ISR": 0.3831111111111111,
+          "TRS_ISR": 0.4737007379494427,
+          "native_WEL": 7.023999999999999,
+          "transfer_WEL": 19.648,
+          "WEL_gap": -12.624,
+          "ISR_degradation_p": 0.007464246367712427,
+          "ISR_degradation_d": 2.8578159068112363
+        },
+        "california->saudi": {
+          "native_ISR": 0.8320000000000001,
+          "transfer_ISR": 0.5523809523809523,
+          "TRS_ISR": 0.6639194139194138,
+          "native_WEL": 5.8773333333333335,
+          "transfer_WEL": 16.84,
+          "WEL_gap": -10.962666666666667,
+          "ISR_degradation_p": 1.754920388510062e-05,
+          "ISR_degradation_d": 7.266297909943963
+        }
+      },
+      "matrix": {
+        "saudi->saudi": {
+          "WEL_mean": 7.023999999999999,
+          "WEL_std": 2.360666572531298,
+          "ISR_mean": 0.8087619047619047,
+          "ISR_std": 0.05819039825417582
+        },
+        "saudi->california": {
+          "WEL_mean": 19.648,
+          "WEL_std": 6.228212513322832,
+          "ISR_mean": 0.3831111111111111,
+          "ISR_std": 0.20243944377285208
+        },
+        "california->saudi": {
+          "WEL_mean": 16.84,
+          "WEL_std": 1.7939404176901261,
+          "ISR_mean": 0.5523809523809523,
+          "ISR_std": 0.04729412959213386
+        },
+        "california->california": {
+          "WEL_mean": 5.8773333333333335,
+          "WEL_std": 1.0402307436333538,
+          "ISR_mean": 0.8320000000000001,
+          "ISR_std": 0.02692467774375283
+        }
+      },
+      "adaptation_asymmetry_TRS": -0.1902186759699711
+    }
+  }
+}

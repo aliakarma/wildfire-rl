@@ -2,7 +2,7 @@
 
 Generates per-policy rollout GIFs, a 2x2 comparison grid, publication-quality PNGs
 (300 DPI), and optionally MP4 video / PDF vector, using the *frozen* seed-42
-checkpoints from ``wildfire_phase3_multiseed/``.
+checkpoints from ``results/wildfire_phase3_multiseed/``.
 
 Policy behaviour is identical to the evaluation pipeline — it calls
 ``phase3_eval.select_actions`` — so the GIFs are faithful to the frozen table.
@@ -13,24 +13,24 @@ Generation commands
 
     # === AAAI paper figures (default paper theme) ===
     python scripts/render_phase5_gifs.py \\
-        --ckpt-dir wildfire_phase3_multiseed --out figures/phase5 \\
+        --ckpt-dir results/wildfire_phase3_multiseed --out figures/phase5 \\
         --seed 42 --regions saudi,california --max-steps 150 \\
         --style EsriWorldTopo --figures comparison,temporal --pdf
 
     # === Presentation slides (1920x1080 dark dashboard) ===
     python scripts/render_phase5_gifs.py \\
-        --ckpt-dir wildfire_phase3_multiseed --out figures/phase5_pres \\
+        --ckpt-dir results/wildfire_phase3_multiseed --out figures/phase5_pres \\
         --seed 42 --regions saudi,california --max-steps 150 \\
         --theme presentation --mp4 --duration 150
 
     # === Quick smoke test ===
     python scripts/render_phase5_gifs.py \\
-        --ckpt-dir wildfire_phase3_multiseed --out figures/phase5 \\
+        --ckpt-dir results/wildfire_phase3_multiseed --out figures/phase5 \\
         --seed 42 --regions saudi --max-steps 5 --policies hiercomm_heur,noop
 
     # === Legacy plain renderer (no basemap) ===
     python scripts/render_phase5_gifs.py \\
-        --ckpt-dir wildfire_phase3_multiseed --out figures/phase5 \\
+        --ckpt-dir results/wildfire_phase3_multiseed --out figures/phase5 \\
         --seed 42 --no-geo
 """
 
@@ -53,7 +53,7 @@ from wildfire_marl.eval.metrics import (
     weighted_economic_loss,
 )
 from wildfire_marl.eval.phase3_eval import load_nets, select_actions
-from wildfire_marl.viz.rollout import compile_rollout_gif, render_rollout_frame, tile_frames_grid
+from wildfire_marl.viz.rollout import compile_rollout_gif, render_rollout_frame
 
 SHOWCASE_POLICIES = ["hiercomm_heur", "local_reactive", "mappo", "noop"]
 SHOWCASE_LABELS = {
@@ -153,8 +153,9 @@ def _best_frame_idx(scores: list[float]) -> int:
     return int(np.argmax(scores))
 
 
-def _save_snapshot_png(frames: list[Image.Image], path: Path, step: int = -1,
-                       dpi: int = 300) -> None:
+def _save_snapshot_png(
+    frames: list[Image.Image], path: Path, step: int = -1, dpi: int = 300
+) -> None:
     idx = step if step >= 0 else max(0, len(frames) + step)
     idx = min(idx, len(frames) - 1)
     img = frames[idx]
@@ -172,13 +173,23 @@ def _save_mp4(frames: list[Image.Image], path: Path, fps: int = 5) -> bool:
         return False
     path.parent.mkdir(parents=True, exist_ok=True)
     rgb_frames = [np.array(f.convert("RGB")) for f in frames]
-    iio.imwrite(str(path), rgb_frames, fps=fps, codec="libx264",
-                plugin="pyav", pixelformat="yuv420p")
+    iio.imwrite(
+        str(path), rgb_frames, fps=fps, codec="libx264", plugin="pyav", pixelformat="yuv420p"
+    )
     return True
 
 
 def _save_pdf_snapshot(
-    renderer, env, kind, nets, device, seed, region, max_steps, step_idx, out_path,
+    renderer,
+    env,
+    kind,
+    nets,
+    device,
+    seed,
+    region,
+    max_steps,
+    step_idx,
+    out_path,
 ):
     """Re-render a single frame and save as PDF vector."""
     set_seed(seed)
@@ -209,7 +220,10 @@ def _save_pdf_snapshot(
                 asset_type=env.env.asset_type,
                 agent_positions=env.agent_positions.copy(),
                 strategic_targets=env.strategic_targets.copy(),
-                step_idx=sc, wel=float(wel), isr=float(isr), ce=float(ce),
+                step_idx=sc,
+                wel=float(wel),
+                isr=float(isr),
+                ce=float(ce),
                 region=region,
                 policy_name=SHOWCASE_LABELS.get(kind, kind),
                 prev_positions=position_history,
@@ -290,7 +304,7 @@ def _make_comparison_snapshot(
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Phase-5 rollout GIF renderer (GIS).")
-    ap.add_argument("--ckpt-dir", default="wildfire_phase3_multiseed")
+    ap.add_argument("--ckpt-dir", default="results/wildfire_phase3_multiseed")
     ap.add_argument("--out", default="figures/phase5")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--regions", default="saudi,california")
@@ -301,16 +315,20 @@ def main() -> None:
     ap.add_argument("--style", default="EsriWorldTopo")
     ap.add_argument("--theme", default="paper", choices=["paper", "presentation"])
     ap.add_argument("--no-geo", action="store_true", help="Use legacy plain renderer")
-    ap.add_argument("--snapshot-step", type=int, default=-2,
-                    help="Step for PNG snapshot (-1=last, -2=auto-select best)")
+    ap.add_argument(
+        "--snapshot-step",
+        type=int,
+        default=-2,
+        help="Step for PNG snapshot (-1=last, -2=auto-select best)",
+    )
     ap.add_argument("--mp4", action="store_true")
     ap.add_argument("--pdf", action="store_true", help="Also generate PDF vector snapshots")
     ap.add_argument("--data-dir", default="data/cell2fire")
-    ap.add_argument("--figures", default="",
-                    help="Comma-separated: comparison,temporal")
+    ap.add_argument("--figures", default="", help="Comma-separated: comparison,temporal")
     ap.add_argument("--temporal-steps", default="20,60,100,140")
-    ap.add_argument("--comparison-step", type=int, default=-2,
-                    help="Step for comparison figure (-2=auto)")
+    ap.add_argument(
+        "--comparison-step", type=int, default=-2, help="Step for comparison figure (-2=auto)"
+    )
     args = ap.parse_args()
 
     device = torch.device("cpu")
@@ -325,6 +343,7 @@ def main() -> None:
     if not args.no_geo:
         try:
             from wildfire_marl.viz.geo_renderer import GeoRenderer as _GR
+
             GeoRenderer = _GR
             print(f"GIS renderer: {args.style} / theme={args.theme}")
         except ImportError:
@@ -337,8 +356,9 @@ def main() -> None:
 
         renderer = None
         if GeoRenderer is not None:
-            renderer = GeoRenderer(region, style=args.style, data_dir=args.data_dir,
-                                   theme=args.theme)
+            renderer = GeoRenderer(
+                region, style=args.style, data_dir=args.data_dir, theme=args.theme
+            )
             print(f"  Basemap: {renderer.tile_info['name']}")
 
         all_frame_lists: list[list[Image.Image]] = []
@@ -349,11 +369,15 @@ def main() -> None:
             set_seed(args.seed)
             env = make_marl_env(region, regime=args.regime)
 
-            train_seed = args.seed if kind in {"mappo", "commnet", "hiercomm_heur",
-                                                "hiercomm", "qmix"} else None
+            train_seed = (
+                args.seed
+                if kind in {"mappo", "commnet", "hiercomm_heur", "hiercomm", "qmix"}
+                else None
+            )
             try:
-                nets = load_nets(kind, region, args.ckpt_dir, env.num_agents, device,
-                                 seed=train_seed)
+                nets = load_nets(
+                    kind, region, args.ckpt_dir, env.num_agents, device, seed=train_seed
+                )
             except FileNotFoundError as e:
                 print(f"  SKIP {kind}: {e}")
                 env.close()
@@ -367,7 +391,13 @@ def main() -> None:
                 renderer._step = -1
 
             frames, scores = rollout_frames(
-                env, kind, nets, device, args.seed, region, args.max_steps,
+                env,
+                kind,
+                nets,
+                device,
+                args.seed,
+                region,
+                args.max_steps,
                 renderer=renderer,
             )
             env.close()
@@ -390,7 +420,7 @@ def main() -> None:
             if args.mp4:
                 mp4_path = out_dir / f"rollout_{kind}_{region}.mp4"
                 if _save_mp4(frames, mp4_path):
-                    print(f" MP4", end="", flush=True)
+                    print(" MP4", end="", flush=True)
 
             print(f" -> {gif_path}")
             all_frame_lists.append(frames)
@@ -402,20 +432,20 @@ def main() -> None:
             comp_step = _best_frame_idx(all_scores_by_policy["hiercomm_heur"])
         elif comp_step < 0:
             comp_step = 80
-        min_ep_len = min(
-            (len(fl) for fl in all_frames_by_policy.values()), default=comp_step + 1
-        )
+        min_ep_len = min((len(fl) for fl in all_frames_by_policy.values()), default=comp_step + 1)
         comp_step = min(comp_step, min_ep_len - 1)
 
         if "comparison" in figures and all_frames_by_policy:
             _make_comparison_snapshot(
-                all_frames_by_policy, comp_step,
+                all_frames_by_policy,
+                comp_step,
                 out_dir / f"fig_comparison_{region}.png",
             )
 
         if "temporal" in figures and all_frames_by_policy:
             _make_temporal_strip(
-                all_frames_by_policy, temporal_steps,
+                all_frames_by_policy,
+                temporal_steps,
                 out_dir / f"fig_temporal_{region}.png",
             )
 
@@ -432,7 +462,11 @@ def main() -> None:
                 indices = list(range(max_len))
                 gif_duration = args.duration
 
-            print(f"  Composing {len(all_frame_lists)}-panel comparison grid ({len(indices)} frames)...", end=" ", flush=True)
+            print(
+                f"  Composing {len(all_frame_lists)}-panel comparison grid ({len(indices)} frames)...",
+                end=" ",
+                flush=True,
+            )
             cols = 2
             rows = -(-len(all_frame_lists) // cols)
             w, h = all_frame_lists[0][0].size
@@ -453,8 +487,11 @@ def main() -> None:
                     append_frames.append(canvas)
             grid_path = out_dir / f"comparison_grid_{region}.gif"
             first_frame.save(
-                grid_path, save_all=True, append_images=append_frames,
-                duration=gif_duration, loop=0,
+                grid_path,
+                save_all=True,
+                append_images=append_frames,
+                duration=gif_duration,
+                loop=0,
             )
             del append_frames, first_frame
             print(f"-> {grid_path}")
@@ -472,12 +509,16 @@ def main() -> None:
     print("\nPhase 5 GIF rendering complete.")
     print("\n--- Generation commands ---")
     print("# AAAI paper:")
-    print(f"python scripts/render_phase5_gifs.py --ckpt-dir {args.ckpt_dir} "
-          f"--out figures/phase5 --seed 42 --style EsriWorldTopo "
-          f"--figures comparison,temporal --pdf")
+    print(
+        f"python scripts/render_phase5_gifs.py --ckpt-dir {args.ckpt_dir} "
+        f"--out figures/phase5 --seed 42 --style EsriWorldTopo "
+        f"--figures comparison,temporal --pdf"
+    )
     print("# Presentation:")
-    print(f"python scripts/render_phase5_gifs.py --ckpt-dir {args.ckpt_dir} "
-          f"--out figures/phase5_pres --seed 42 --theme presentation --mp4")
+    print(
+        f"python scripts/render_phase5_gifs.py --ckpt-dir {args.ckpt_dir} "
+        f"--out figures/phase5_pres --seed 42 --theme presentation --mp4"
+    )
 
 
 if __name__ == "__main__":
