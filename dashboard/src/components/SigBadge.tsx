@@ -16,7 +16,7 @@ export function SigBadge({ p, showP = false }: Props) {
   const stars = sigStars(p);
   const label = stars === "n.s." ? t("stats.ns") : t("stats.sig");
   return (
-    <span className="sig-badge" title={fmtP(p)} aria-label={`${label}, ${fmtP(p)}`}>
+    <span role="img" className="sig-badge" title={fmtP(p)} aria-label={`${label}, ${fmtP(p)}`}>
       <span aria-hidden>{stars}</span>
       {showP && <span className="p">{fmtP(p)}</span>}
     </span>

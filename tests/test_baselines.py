@@ -39,7 +39,7 @@ def test_heuristics_predictions():
 
     for policy in policies:
         action, state = policy.predict(obs)
-        assert isinstance(action, (int, np.integer))
+        assert isinstance(action, int | np.integer)
         assert 0 <= action < h * w
         assert state is None
 

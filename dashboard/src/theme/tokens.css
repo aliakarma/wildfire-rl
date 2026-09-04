@@ -15,9 +15,9 @@
   --surface-2: #f0efec;
   --text-primary: #0b0b0b;
   --text-secondary: #52514e;
-  --text-muted: #7a7873;
+  --text-muted: #615f5a;
   --border: #e3e1dc;
-  --accent: #eb6834;
+  --accent: #b84214;
   --focus-ring: #2a78d6;
 
   /* Method colors (categorical, fixed — §7.3; never re-mapped on filter) */
@@ -70,7 +70,7 @@
   --text-secondary: #c3c2b7;
   --text-muted: #8f8e86;
   --border: #32322f;
-  --accent: #d95926;
+  --accent: #f2723f;
   --focus-ring: #3987e5;
 
   --m-valuefirst: #3987e5;
@@ -102,7 +102,7 @@
     --text-secondary: #c3c2b7;
     --text-muted: #8f8e86;
     --border: #32322f;
-    --accent: #d95926;
+    --accent: #f2723f;
     --focus-ring: #3987e5;
     --m-valuefirst: #3987e5;
     --m-greedy: #008300;
