@@ -63,9 +63,9 @@ function RegionPanels({ region, ablations }: { region: Region; ablations: Ablati
       </ChartCard>
 
       <div className="card">
-        <h3 className="card-title" style={{ marginBlockEnd: "var(--sp-3)" }}>
+        <h2 className="card-title" style={{ marginBlockEnd: "var(--sp-3)" }}>
           {t("ablation.tableTitle")} — {t(`region.${region}`)}
-        </h3>
+        </h2>
         <DataTable caption={t("ablation.tableTitle")} columns={table.columns} rows={table.rows} />
         <p className="card-footnote">
           † {t("ablation.deterministicNote")} ·{" "}

@@ -27,9 +27,9 @@ function StatsPanel({ results, region }: { results: MainResults; region: Region 
   const comps = results.regions[region].comparisons.WEL;
   return (
     <div className="card">
-      <h3 className="card-title">
+      <h2 className="card-title">
         {t("results.statsPanel")} — {t(`region.${region}`)}
-      </h3>
+      </h2>
       <p className="card-subtitle" style={{ marginBlockEnd: "var(--sp-3)" }}>
         {t("results.statsSubtitle")}
       </p>
@@ -41,7 +41,7 @@ function StatsPanel({ results, region }: { results: MainResults; region: Region 
           { header: t("stats.pvalue"), numeric: true },
           { header: t("stats.effect"), numeric: true },
           { header: t("stats.test") },
-          { header: "" },
+          { header: t("stats.sig") },
         ]}
         rows={BASELINE_ORDER.filter((k) => comps[k]).map((k) => {
           const c = comps[k];

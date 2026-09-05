@@ -72,7 +72,7 @@ export function ChartCard({
     >
       <div className="chart-card-head">
         <div className="titles">
-          <h3 className="card-title">{title}</h3>
+          <h2 className="card-title">{title}</h2>
           {subtitle && <p className="card-subtitle">{subtitle}</p>}
         </div>
         <div className="chart-actions">

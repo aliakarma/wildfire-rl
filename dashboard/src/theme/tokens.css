@@ -656,7 +656,8 @@ table {
   border-radius: 50%;
   background: rgb(0 0 0 / 0.55);
 }
-.play-overlay .size-note {
+.play-overlay .size-note,
+.matte .size-note {
   position: absolute;
   inset-block-end: var(--sp-2);
   inset-inline-end: var(--sp-3);
@@ -664,6 +665,7 @@ table {
   font-family: var(--font-mono);
   color: #ffffff;
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+  pointer-events: none;
 }
 
 /* ==========================================================================

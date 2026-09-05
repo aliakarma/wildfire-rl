@@ -79,10 +79,10 @@ export function MediaFrame({ item, caption }: Props) {
                   <path d="M8 5.5v13l11-6.5-11-6.5Z" />
                 </svg>
               </span>
-              <span className="size-note" aria-hidden>
-                {fmtBytes(item.bytes)}
-              </span>
             </button>
+            <span className="size-note" aria-hidden>
+              {fmtBytes(item.bytes)}
+            </span>
           </>
         )}
       </div>

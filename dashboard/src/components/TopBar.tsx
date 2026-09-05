@@ -142,7 +142,7 @@ export function TopBar() {
         </div>
       </nav>
       <div className="topbar-controls">
-        <button className="lang-switch" onClick={switchLang} aria-label={t("lang.label")}>
+        <button className="lang-switch" onClick={switchLang}>
           {t("lang.switch")}
         </button>
         <button

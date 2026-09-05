@@ -18,9 +18,9 @@ function WhatWorksCard() {
   ];
   return (
     <div className="card">
-      <h3 className="card-title" style={{ marginBlockEnd: "var(--sp-3)" }}>
+      <h2 className="card-title" style={{ marginBlockEnd: "var(--sp-3)" }}>
         {t("overview.whatWorks.title")}
-      </h3>
+      </h2>
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "var(--sp-2)" }}>
         {rows.map((r) => (
           <li key={r.key} style={{ display: "flex", gap: "var(--sp-2)", alignItems: "baseline" }}>

@@ -164,7 +164,7 @@ export function ReplayViewer({ region, entries }: { region: Region; entries: Rep
     <section className="card replay-viewer" aria-label={tr("replay.interactiveTitle")}>
       <div className="chart-card-head">
         <div className="titles">
-          <h3 className="card-title">{tr("replay.interactiveTitle")}</h3>
+          <h2 className="card-title">{tr("replay.interactiveTitle")}</h2>
           <p className="card-subtitle">
             {tr("replay.verifiedCaption", { seed: String(main.episode_seed) })}
           </p>
